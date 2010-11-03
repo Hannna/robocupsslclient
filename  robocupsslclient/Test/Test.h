@@ -9,9 +9,7 @@
 #define TEST_H_
 
 #include "../VideoServer/Videoserver.h"
-//#include "src/Logger/Logger.h"
 #include "../Robot/Robot.h"
-
 
 extern const std::string ifaceName;
 
@@ -20,6 +18,7 @@ typedef struct threadArg{
 	Videoserver * video;
 	Robot* robot;
 } * threadArgPtr;
+
 //testuje predkosc w srodowisku gazebo
 void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime);
 
@@ -32,15 +31,20 @@ void testRotation(Videoserver & video,Robot& robot);
 //testuje obliczanie przyspieszenia
 void checkAcceleration(Vector2D speed, Videoserver & video,Robot& robot);
 
-//testuje algorytm rrt
-void testRRT(Pose goalPose,Videoserver & video,Robot* robot);
-
-//testuje algortym rrt jako odpalany w osobnym watku
-void testRRTThread(Videoserver & video);
-
-void* RRTThread(void * arg);
-
+//testuje warstwe odpowiedzialna za sterowaniem robotem, wyhamowaniem przed celem itp
 void testMotion(Pose goalPose,Videoserver & video,Robot& robot);
+
+/*@brief testuje algortym rrt w srodowisku wieloagentowym
+ *  wielu agentów ma za zadanie poruszac sie do dwolnych losowych punktow docelowych
+ */
+void testMultiRRTThread(Videoserver & video);
+
+/*@brief testuje algortym rrt dla pojedynczego robota
+ *  pozostale roboty sa statyczne, po osiagnieciu wyznaczonego celu
+ *  lub kolizji funkcja konczy sie*
+ */
+void testSingleRRTThread(Videoserver & video);
+
 
 // testowanie rozwiazania wielowatkowego
  // dla kazdego robota tworzony jest osobny watek
