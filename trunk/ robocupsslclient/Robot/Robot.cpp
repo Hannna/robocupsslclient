@@ -27,8 +27,8 @@ Robot::Robot(const std::string robotName,const std::string posIfaceName)
 	posIface->Lock(1);
 	posIface->data->cmdEnableMotors = 1;
 	posIface->Unlock();
-#endif
 	Videoserver::getInstance().registerRobot(posIface,this->robotName);
+#endif
 
 }
 std::string Robot::getRobotName() const
@@ -79,12 +79,13 @@ std::pair<Vector2D,double> Robot::getDesiredVel() const
 std::pair<Vector2D,double> Robot::getVelocity() const
 {
 	double vx,vy,w;
+#ifdef GAZEBO
 	posIface->Lock(1);
 	vx = posIface->data->velocity.pos.x;
 	vy = posIface->data->velocity.pos.y;
 	w = posIface->data->cmdVelocity.yaw;
 	posIface->Unlock();
-
+#endif
 
 	if(robotName.compare(Config::getInstance().getTestModelName())==0){
 		Logger::getInstance().LogToFile(PATH,"robot %s from gazebo vx=%lf\t vy=%lf\t w=%lf,"
@@ -96,20 +97,24 @@ std::pair<Vector2D,double> Robot::getVelocity() const
 }
 
 bool Robot::kickerReady(){
-       bool ready = false;
-       posIface->Lock(1);
-       if (posIface->data->cmdVelocity.pos.z <= 0) ready = true;
-       posIface->Unlock();
-       return ready;
+	bool ready = false;
+#ifdef GAZEBO
+	posIface->Lock(1);
+	if (posIface->data->cmdVelocity.pos.z <= 0) ready = true;
+	posIface->Unlock();
+#endif
+	return ready;
 }
 
 bool Robot::kick(){
-       if (!kickerReady()) return false;
-       posIface->Lock(1);
-       //this is never used by other methods, so will be used to fire kicker
-       posIface->data->cmdVelocity.pos.z = 1;
-       posIface->Unlock();
-       return true;
+	if (!kickerReady()) return false;
+#ifdef GAZEBO
+	posIface->Lock(1);
+	//this is never used by other methods, so will be used to fire kicker
+	posIface->data->cmdVelocity.pos.z = 1;
+	posIface->Unlock();
+#endif
+	return true;
 }
 
 Robot::~Robot()

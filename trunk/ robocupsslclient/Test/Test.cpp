@@ -202,7 +202,9 @@ void testTaskThread(){
     while(true){
         pthread_create(&red0, &attr, testTask, (void *) &redRobot0);
         pthread_join(red0,NULL);
-        SimControl::getInstance().restart();
+		#ifdef GAZEBO
+			SimControl::getInstance().restart();
+		#endif
     }
 
 
@@ -394,7 +396,9 @@ void testRRT(Pose goalPose,Videoserver & video,Robot* robot){
 				}
 				else{
 					robot->setSpeed(Vector2D(0.0,0.0),0);
-					SimControl::getInstance().setSimPos(robot->getRobotName().c_str(), goalPose);
+					#ifdef GAZEBO
+						SimControl::getInstance().setSimPos(robot->getRobotName().c_str(), goalPose);
+					#endif
 					break;
 				}
 			}
