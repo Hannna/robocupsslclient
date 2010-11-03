@@ -251,28 +251,22 @@ void testMultiRRTThread(Videoserver & video){
 	Robot blueRobot0(std::string("blue0"),ifaceName);
 	Robot blueRobot1(std::string("blue1"),ifaceName);
 	Robot blueRobot2(std::string("blue2"),ifaceName);
+
+
+	TestRRT testRRTred0(&redRobot0,&video,Pose(5.5,2.5,0));
+	testRRTred0.Start(NULL);
+	TestRRT testRRTred1(&redRobot1,&video,Pose(1.5,2.5,0));
+	testRRTred1.Start(NULL);
+	TestRRT testRRTred2(&redRobot2,&video,Pose(5.3,0.5,0));
+	testRRTred2.Start(NULL);
+
+	TestRRT testRRTblue0(&blueRobot0,&video,Pose(1.3,0.5,0));
+	testRRTblue0.Start(NULL);
+	TestRRT testRRTblue1(&blueRobot1,&video,Pose(2.3,1.5,0));
+	testRRTblue1.Start(NULL);
+	TestRRT testRRTblue2(&blueRobot2,&video,Pose(2.6,0.5,0));
+	testRRTblue2.Start(NULL);
 /*
-	pthread_t red0,red1,red2;
-	pthread_t blue0,blue1,blue2;
-	pthread_t video_t;
-	pthread_attr_t  attr;
-	pthread_attr_init(&attr);
-
-	struct threadArg arg1;
-	arg1.goalPose=Pose(5.5,2.5,0);
-	arg1.video=&video;
-	arg1.robot=&redRobot0;
-
-	struct threadArg arg2;
-	arg2.goalPose=Pose(1.5,2.5,0);
-	arg2.video=&video;
-	arg2.robot=&redRobot1;
-
-	struct threadArg arg3;
-	arg3.goalPose=Pose(5.3,0.5,0);
-	arg3.video=&video;
-	arg3.robot=&redRobot2;
-
 	struct threadArg arg4;
 	arg4.goalPose=Pose(1.3,0.5,0);
 	arg4.video=&video;
