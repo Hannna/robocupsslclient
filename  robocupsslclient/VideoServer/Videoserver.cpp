@@ -26,6 +26,7 @@ double Videoserver::updateGameState(GameStatePtr gameState_) const{
 }
 
 void Videoserver::update(){
+#ifdef GAZZEBO
 	pthread_mutex_lock (&Videoserver::mutex);
 	double currSimTime = SimControl::getInstance().getSimTime();
 	this->updateT=currSimTime-this->lastUpdateTime;
@@ -63,19 +64,22 @@ void Videoserver::update(){
 	}
 
 	pthread_mutex_unlock (&Videoserver::mutex);
+#endif
 	return ;
 }
 double Videoserver::getUpdateDeltaTime()const{
 	return 	updateT;
 }
 
-#ifdef OLD
-void Videoserver::registerRobot( gazebo::PositionIface *posIface,std::string robotName){
-#else
-void Videoserver::registerRobot( libgazebo::PositionIface *posIface,std::string robotName){
+#ifdef GAZEBO
+	#ifdef OLD
+	void Videoserver::registerRobot( gazebo::PositionIface *posIface,std::string robotName){
+	#else
+	void Videoserver::registerRobot( libgazebo::PositionIface *posIface,std::string robotName){
+	#endif
+		this->posIfaces[robotName]=posIface;
+	}
 #endif
-	this->posIfaces[robotName]=posIface;
-}
 
 void updateVideo(int){
     //std::cout<<"alarm"<<std::endl;

@@ -53,10 +53,12 @@ public:
 	/**
 	@brief rejestruje dany interfejs robota
 	*/
-	#ifdef OLD
-	void registerRobot( gazebo::PositionIface *posIface,std::string robotName);
-	#else
-	void registerRobot( libgazebo::PositionIface *posIface,std::string robotName);
+	#ifdef GAZEBO
+		#ifdef OLD
+		void registerRobot( gazebo::PositionIface *posIface,std::string robotName);
+		#else
+		void registerRobot( libgazebo::PositionIface *posIface,std::string robotName);
+		#endif
 	#endif
 
 	~Videoserver(){
@@ -77,10 +79,12 @@ private:
 	double updateT;//[s]
 	//mutex chroniacy dostep do singletonu
 	static pthread_mutex_t  mutex;
-	#ifdef OLD
-	std::map<std::string,gazebo::PositionIface * > posIfaces;
-	#else
-	std::map<std::string,libgazebo::PositionIface * > posIfaces;
+	#ifdef GAZEBO
+		#ifdef OLD
+		std::map<std::string,gazebo::PositionIface * > posIfaces;
+		#else
+		std::map<std::string,libgazebo::PositionIface * > posIfaces;
+		#endif
 	#endif
 	static struct timeval startTime;
 
