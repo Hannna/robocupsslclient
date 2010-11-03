@@ -242,6 +242,8 @@ void testSingleRRTThread(Videoserver & video){
 	Robot redRobot0(std::string("red0"),ifaceName);
 	TestRRT testRRT(&redRobot0,&video,Pose(5.5,2.5,0));
 	testRRT.Start(NULL);
+
+	//TODO: dorobic join na wszytskie taski
 }
 void testMultiRRTThread(Videoserver & video){
 	Robot redRobot0(std::string("red0"),ifaceName);
@@ -266,20 +268,6 @@ void testMultiRRTThread(Videoserver & video){
 	testRRTblue1.Start(NULL);
 	TestRRT testRRTblue2(&blueRobot2,&video,Pose(2.6,0.5,0));
 	testRRTblue2.Start(NULL);
-/*
-	struct threadArg arg4;
-	arg4.goalPose=Pose(1.3,0.5,0);
-	arg4.video=&video;
-	arg4.robot=&blueRobot0;
 
-	struct threadArg arg5;
-	arg5.goalPose=Pose(2.3,1.5,0);
-	arg5.video=&video;
-	arg5.robot=&blueRobot1;
-
-	struct threadArg arg6;
-	arg6.goalPose=Pose(2.6,0.5,0);
-	arg6.video=&video;
-	arg6.robot=&blueRobot2;
-*/
+	//TODO: dorobic join na wszytskie taski
 }
