@@ -137,8 +137,7 @@ int main(int argc, char*argv[],char *envp[]){
 			}
             else if(testRRTPlanner){
 				std::cout<<"starting RRT tests"<<std::endl;
-				testRRTThread(Videoserver::getInstance());
-				//testRRT(Config::getInstance().getRRTGoalPose(),&videoserver,&testRobot);
+				testSingleRRTThread(Videoserver::getInstance());
 			}
 			else if(testTask){
 				std::cout<<"starting tasks tests"<<std::endl;

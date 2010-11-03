@@ -23,7 +23,7 @@
 //margines bezp przy wyznaczaniu sciezki
 //o tyle powiekszamy roboty przy wyznaczaniu sciezki
 #define SAFETY_MARGIN 0.05
-
+//czas o jaki przewidujemy ruch przeciwnika do przodu
 #define PREDICTION_TIME 0.01 //[sek]
 
 class RRTPlanner {
@@ -82,7 +82,12 @@ private:
 	 * @return
 	 */
 	RRTNodePtr findNearestToTargetState();
-
+	/**
+	 * @brief zwraca element drzewa znajdujacy sie najblizej celu ale aktualnie osiagalny.
+	 *
+	 * @param[in] punkt docelowy
+	 * @return
+	 */
 	RRTNodePtr findNearestAttainableState(const Pose & targetPose);
 	RRTNodePtr findNearestAttainableState(const Pose & targetPose,RRTNodePtr currNode);
 	/**
@@ -92,17 +97,9 @@ private:
 	 * @return
 	 */
 	Pose getRandomPose(Pose currentPose);
-	/**
-	 * @brief zaczynajac od zadanego stanu zwraca stan losowy. Uwzglednia aktualna predkość i dopuszczalna zmienę prędkości
-	 * w jednym kroku działania algorytmu.
+	/*@brief zwraca odleglosc od najblizszej przeszkody
 	 *
-	 * @param[in] currentPose
-	 * @param[in] velocity predkosc robota w aktualnym punkcie
-	 * @param[in] deltaVel dopuszczalna zmiana predkosci
-	 * @return
 	 */
-	//static	Pose getRandomPose(const Pose currentPose,Vector2D velocity, double deltaVel);
-
 	double distanceToNearestObstacle(const GameStatePtr & currState,const Pose &targetPose);
 	/**
 	 * @brief tworzy kolekcje przeszkod w zaleznosci od odleglosci od robota
@@ -111,14 +108,18 @@ private:
 	 * @return
 	 */
 	void initObstacles(const Pose& robotPose );
-
+	/*@brief zwraca losowa pozycje, uzalezniona od biezacej pozycji robota,
+	 * jego aktualnej predkosci i maxymalnego wychylenia
+	 *
+	 */
 	Pose getRandomPose(const Pose currentPose,Vector2D velocity, double deltaVel);
 	/**
 	 * @brief zwraca stan losowy losowany z rozkladem rownomiernym z przestrzeni stanow.
 	 *
 	 * @return
 	 */
-public:	Pose getRandomPose();
+	Pose getRandomPose();
+public:
 	/**
 	* @brief uruchamia algorytm rrt zwraca true jesli alg zostal poprawnie uruchomiony
 	* false gdy aktualnie robot jest w przeszkodzie.
