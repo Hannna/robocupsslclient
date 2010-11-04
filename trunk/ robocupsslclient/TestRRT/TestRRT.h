@@ -20,7 +20,7 @@ public:
 	TestRRT(Robot* robot,Videoserver* video,Pose goalPose);
 	virtual ~TestRRT();
 private:
-    virtual void Execute(void*);
+    virtual void execute(void*);
 	struct threadArg arg1;
 };
 

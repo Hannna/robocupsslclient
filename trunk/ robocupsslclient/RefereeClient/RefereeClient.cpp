@@ -23,7 +23,7 @@ RefereeClient::RefereeClient()
     //ctor
 }
 
-void RefereeClient::Execute(void* ){
+void RefereeClient::execute(void* ){
 
     if(createServer()<0)
         return;
@@ -106,7 +106,7 @@ void RefereeClient::readFromBox(){
 }
 
 void RefereeClient::testConnection(){
-    this->Start(0);
+    this->start(0);
     getchar();
     return ;
 }

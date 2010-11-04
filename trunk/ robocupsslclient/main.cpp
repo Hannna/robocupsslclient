@@ -140,12 +140,12 @@ int main(int argc, char*argv[],char *envp[]){
 			}
             else if(testRRTPlanner){
 				std::cout<<"starting RRT tests"<<std::endl;
-				Videoserver::getInstance().Start(NULL);
+				Videoserver::getInstance().start(NULL);
 				testSingleRRTThread(Videoserver::getInstance());
 			}
             else if(testMultiRRTPlanner){
 				std::cout<<"starting multi robot RRT tests"<<std::endl;
-				Videoserver::getInstance().Start(NULL);
+				Videoserver::getInstance().start(NULL);
 				testMultiRRTThread(Videoserver::getInstance());
 				//testSingleRRTThread(Videoserver::getInstance());
 			}

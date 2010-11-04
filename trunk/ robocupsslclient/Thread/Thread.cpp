@@ -5,36 +5,35 @@ Thread::Thread() {
  pthread_attr_init(&attr);
 }
 
-int Thread::Start(void * arg)
+int Thread::start(void * arg_)
 {
-   Arg(arg); // store user data
-   int code = pthread_create(&ThreadId_,&attr,Thread::EntryPoint, this);
+   arg(arg_); // store user data
+   int code = pthread_create(&threadId_,&attr,Thread::entryPoint, this);
 
    return code;
 }
 
-int Thread::Run(void * arg)
+int Thread::run(void * arg_)
 {
-    std::cout<<"Thread::Run"<<std::endl;
-    Setup();
-    Execute( arg );
+    setup();
+    execute( arg_ );
     return 0;
 }
 
-void * Thread::EntryPoint(void * pthis)
+void * Thread::entryPoint(void * pthis)
 {
    Thread * pt = (Thread*)pthis;
-   pt->Run( pt->Arg() );
+   pt->run( pt->arg() );
 
    return 0;
 }
 
-void Thread::Setup()
+void Thread::setup()
 {
     // Do any setup here
 }
 
-void Thread::Execute(void* arg)
+void Thread::execute(void* arg)
 {
         // Your code goes here
 }

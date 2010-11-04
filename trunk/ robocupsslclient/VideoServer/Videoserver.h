@@ -67,7 +67,7 @@ public:
 	friend void update(int);
 
 private:
-	virtual void Execute(void*) ;
+	virtual void execute(void*) ;
 	void update();
 	GameStatePtr gameState;
 	static Videoserver * video;

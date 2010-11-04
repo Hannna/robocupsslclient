@@ -78,7 +78,7 @@ std::pair<Vector2D,double> Robot::getDesiredVel() const
 }
 std::pair<Vector2D,double> Robot::getVelocity() const
 {
-	double vx,vy,w;
+	double vx=0,vy=0,w=0;
 #ifdef GAZEBO
 	posIface->Lock(1);
 	vx = posIface->data->velocity.pos.x;

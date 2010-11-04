@@ -10,19 +10,16 @@
 #include "../RRT/RRTPlanner.h"
 
 TestRRT::TestRRT(Robot* robot,Videoserver* video,Pose goalPose) {
-	std::cout<<"!!!!!!!!!!!!!!!Start rrt Test"<<std::endl;
+	std::cout<<"Create single rrt test for robot"<<robot->getRobotName()<<std::endl;
 	arg1.goalPose=goalPose;
 	arg1.video=video;
 	arg1.robot=robot;
-	this->Arg(reinterpret_cast<void *>(&arg1));
-
-	std::cout<<"!!!!!!!!!!!!!!!Start rrt Test"<<std::endl;
-
+	this->arg(reinterpret_cast<void *>(&arg1));
 
 }
 
-void TestRRT::Execute(void *arg){
-    std::cout<<"!!!!!!!!!!!!!!!Start rrt Test"<<std::endl;
+void TestRRT::execute(void *arg){
+    std::cout<<"Start rrt test"<<std::endl;
 
 	threadArgPtr threadArg=reinterpret_cast<threadArgPtr>(arg);
 
@@ -35,27 +32,34 @@ void TestRRT::Execute(void *arg){
 	std::list<Pose>  path;
 	std::ostringstream log;
 
-	double currTime=video->updateGameState(currGameState);
-	double prevTime;
-	int i=0;
-	double sum=0;
+	//biezacy czas symulacji
+	double currSimTime=video->updateGameState(currGameState);
+	//ostatni czas pobrany z symulacji
+	double prevSimTime;
+	//czas rozpoczecia algorytmu
+	const double startSimTime=currSimTime;
+	//maksymalny odstep pomiedzy wystawieniem nowych sterowań
 	double max=0;
-	struct timeval diff;
-	struct timeval startTime;
+
+	int i=0;
+	//struct timeval diff;
+	//struct timeval startTime;
 
 	std::ofstream out(robot->getRobotName().c_str());
 
 	while(true){
 
 		RRTPlanner * rrt;
+		double rot=0;
+
 		while(true){
 
-			if(currTime<video->updateGameState(currGameState)){
+			if( currSimTime < video->updateGameState(currGameState) ){
 				i++;
-				prevTime=currTime;
-				currTime=video->updateGameState(currGameState);
-				sum+=(currTime-prevTime);
-				(currTime-prevTime)> max ?  max=(currTime-prevTime): max=max ;
+				prevSimTime=currSimTime;
+				currSimTime=video->updateGameState(currGameState);
+
+				(currSimTime-prevSimTime)> max ?  max=(currSimTime-prevSimTime): max=max ;
 
 				//measureTime(start,&startTime);
 				//diff=measureTime(stop,&startTime);
@@ -63,10 +67,7 @@ void TestRRT::Execute(void *arg){
 				//	std::cout<<robot->getRobotName()<<" update delta time "<<video.getUpdateDeltaTime()<<std::endl;
 
 				Pose startPose=(*currGameState).getRobotPos(robot->getRobotName());
-				measureTime(start,&startTime);
-
-				//				RRTPlanner rrt (Config::getInstance().getRRTGoalProb(),
-				//						robot->getRobotName(),currGameState,goalPose,&path);
+				//measureTime(start,&startTime);
 
 				rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
 					robot->getRobotName(),currGameState,goalPose,&path);
@@ -92,7 +93,9 @@ void TestRRT::Execute(void *arg){
 				log<<"moving robot to nextPose "<<nextRobotPose<<std::endl;
 				Logger::getInstance().LogToFile(DBG,log);
 
-				double rot=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
+				//biezaca rotacja robota
+				rot=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
+
 				//macierz obrotu os OY na wprost robota
 				RotationMatrix rmY(rot);
 
@@ -113,16 +116,16 @@ void TestRRT::Execute(void *arg){
 					break;
 				}
 			}
-	}
-/*
-	while(!rrt->checkCollisions( (goalPose=rrt->getRandomPose()),0.01) ){
-		std::cout<<"getRandomPose"<<std::endl;
-	}
-*/
-	delete rrt;
+		}
+		/*
+			while(!rrt->checkCollisions( (goalPose=rrt->getRandomPose()),0.01) ){
+				std::cout<<"getRandomPose"<<std::endl;
+			}
+		*/
+		delete rrt;
 	}
 	std::cout<<robot->getRobotName()<<
-	" Mean update delta time=" <<sum/i<<" max update delta time "<<max<<std::endl;
+	" Mean update delta time=" <<(currSimTime-startSimTime)/i<<" max update delta time "<<max<<std::endl;
 	//	out.close();
 }
 TestRRT::~TestRRT() {

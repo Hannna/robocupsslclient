@@ -19,7 +19,7 @@ class RefereeClient : public Thread
 {
     public:
         RefereeClient();
-        virtual void Execute(void*);
+        virtual void execute(void*);
         virtual ~RefereeClient();
     /*@brief funkcja testujaca do test unit
     * sprawdza polaczenie z refereebox oraz odbiera komendy
