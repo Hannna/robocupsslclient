@@ -198,7 +198,7 @@ void testTaskThread(){
 	pthread_attr_init(&attr);
 
 	//uruchom videoserver
-	Videoserver::getInstance().Start(NULL);
+	Videoserver::getInstance().start(NULL);
 
     while(true){
         pthread_create(&red0, &attr, testTask, (void *) &redRobot0);
@@ -240,12 +240,13 @@ void * testTask(void * arg){
 
 void testSingleRRTThread(Videoserver & video){
 	Robot redRobot0(std::string("red0"),ifaceName);
+
 	TestRRT testRRT(&redRobot0,&video,Pose(5.5,2.5,0));
-	testRRT.Start(NULL);
+	testRRT.start(NULL);
     testRRT.join();
 
+    std::cout<<"exit from testSingleRRTThread"<<std::endl;
 
-	//TODO: dorobic join na wszytskie taski
 }
 void testMultiRRTThread(Videoserver & video){
 	Robot redRobot0(std::string("red0"),ifaceName);
@@ -258,18 +259,26 @@ void testMultiRRTThread(Videoserver & video){
 
 
 	TestRRT testRRTred0(&redRobot0,&video,Pose(5.5,2.5,0));
-	testRRTred0.Start(NULL);
+	testRRTred0.start(NULL);
 	TestRRT testRRTred1(&redRobot1,&video,Pose(1.5,2.5,0));
-	testRRTred1.Start(NULL);
+	testRRTred1.start(NULL);
 	TestRRT testRRTred2(&redRobot2,&video,Pose(5.3,0.5,0));
-	testRRTred2.Start(NULL);
+	testRRTred2.start(NULL);
 
 	TestRRT testRRTblue0(&blueRobot0,&video,Pose(1.3,0.5,0));
-	testRRTblue0.Start(NULL);
+	testRRTblue0.start(NULL);
 	TestRRT testRRTblue1(&blueRobot1,&video,Pose(2.3,1.5,0));
-	testRRTblue1.Start(NULL);
+	testRRTblue1.start(NULL);
 	TestRRT testRRTblue2(&blueRobot2,&video,Pose(2.6,0.5,0));
-	testRRTblue2.Start(NULL);
+	testRRTblue2.start(NULL);
 
-	//TODO: dorobic join na wszytskie taski
+	testRRTred0.join();
+	testRRTred1.join();
+	testRRTred2.join();
+
+	testRRTblue0.join();
+	testRRTblue1.join();
+	testRRTblue2.join();
+
+	std::cout<<"exit from testMultiRRTThread"<<std::endl;
 }

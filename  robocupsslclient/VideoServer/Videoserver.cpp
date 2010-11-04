@@ -87,7 +87,7 @@ void updateVideo(int){
 	ualarm(1000, 0);//1 ms
 }
 
-void Videoserver::Execute(void * arg){
+void Videoserver::execute(void * arg){
     std::cout<<"Start videoserver"<<std::endl;
 	useconds_t useconds=10; //10 ms
 	sigset_t set;
