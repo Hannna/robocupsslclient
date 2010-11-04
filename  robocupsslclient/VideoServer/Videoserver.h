@@ -40,6 +40,8 @@ public:
 	/**
 	 * metoda wypelniajaca zmienna data
 	 * pozycjami oraz prędkościami obiektów na planszy - gracze + pilka
+	 *
+	 * @return zwraca czas symulatora z jakiego pochodza te pozycje
 	 */
 	double updateGameState(GameStatePtr gameState) const;
 

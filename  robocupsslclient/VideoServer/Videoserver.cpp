@@ -37,9 +37,8 @@ void Videoserver::update(){
 	this->lastUpdateTime=currSimTime;
 
 	std::map<std::string,Pose > positions;
-//#ifdef GAZEBO
 	SimControl::getInstance().getAllPos(positions);
-//#endif
+
 	PositionsIt ii=positions.begin();
 	std::string model_name;
 	for(;ii!=positions.end();++ii){
@@ -50,9 +49,9 @@ void Videoserver::update(){
 		}
 		else{
 		    #ifdef OLD
-		    gazebo::PositionIface * posIface=this->posIfaces[model_name];
+				gazebo::PositionIface * posIface=this->posIfaces[model_name];
 		    #else
-			libgazebo::PositionIface * posIface=this->posIfaces[model_name];
+				libgazebo::PositionIface * posIface=this->posIfaces[model_name];
 			#endif
 			double vx,vy,w;
 			if(posIface){

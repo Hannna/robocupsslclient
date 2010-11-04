@@ -28,7 +28,7 @@ void TestRRT::execute(void *arg){
 	Robot* robot=threadArg->robot;
 
 	GameStatePtr currGameState(new GameState());
-	int serializedTrees=0;
+//	int serializedTrees=0;
 	std::list<Pose>  path;
 	std::ostringstream log;
 
@@ -50,10 +50,15 @@ void TestRRT::execute(void *arg){
 	while(true){
 
 		RRTPlanner * rrt;
+
 		double rot=0;
+		Vector2D currRobotVel;
+		Vector2D newRobotVel;
+		Vector2D targetRelPosition;
 
 		while(true){
 
+			//jesli videoserwer wykonal aktualizacje polozen robotow
 			if( currSimTime < video->updateGameState(currGameState) ){
 				step++;
 				prevSimTime=currSimTime;
@@ -76,40 +81,46 @@ void TestRRT::execute(void *arg){
 					);
 				if( rrt->run(currGameState,video->getUpdateDeltaTime() ) ){
 
-			/*	diff=measureTime(stop,&startTime);
-				out<<"rrt diffTime "<<diff.tv_sec<<"[s] "<<diff.tv_usec<<"[us]"<<std::endl;
-			*/
-			/*
-				std::string fileName("/home/maciek/workspace/magisterka/Debug/");
-				fileName.append(robot->getRobotName());
-				fileName.append("_rrtTree.xml");
-				rrt->serializeTree(fileName.c_str(),serializedTrees++);
-			*/
-				GameStatePtr nextState=rrt->getNextState();
-				if(nextState.get()==NULL){
-					std::cout<<"rrt planner return next state as NULL"<<std::endl;
-					robot->setSpeed(Vector2D(0.0,0.0),0);
-					break;
-				}
-				Pose nextRobotPose=nextState->getRobotPos(robot->getRobotName());
+					//pomiar czestotliowsci
+					/*	diff=measureTime(stop,&startTime);
+						out<<"rrt diffTime "<<diff.tv_sec<<"[s] "<<diff.tv_usec<<"[us]"<<std::endl;
+					*/
 
-				log<<"moving robot to nextPose "<<nextRobotPose<<std::endl;
-				Logger::getInstance().LogToFile(DBG,log);
+					//zapis drzewa rrt do pliku
+					/*
+						std::string fileName("/home/maciek/workspace/magisterka/Debug/");
+						fileName.append(robot->getRobotName());
+						fileName.append("_rrtTree.xml");
+						rrt->serializeTree(fileName.c_str(),serializedTrees++);
+					*/
 
-				//biezaca rotacja robota
-				rot=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
+					GameStatePtr nextState=rrt->getNextState();
+					if(nextState.get()==NULL){
+						std::cout<<"rrt planner return next state as NULL"<<std::endl;
+						robot->setSpeed(Vector2D(0.0,0.0),0);
+						break;
+					}
+					Pose nextRobotPose=nextState->getRobotPos(robot->getRobotName());
 
-				//macierz obrotu os OY na wprost robota
-				RotationMatrix rmY(rot);
+					log<<"moving robot to nextPose "<<nextRobotPose<<std::endl;
+					Logger::getInstance().LogToFile(DBG,log);
 
-				Pose currRobotPose=(*currGameState).getRobotPos( robot->getRobotName() );
+					//biezaca rotacja robota
+					rot=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
 
-				//pozycja celu w ukladzie wsp zwiazanych z robotem
-				Vector2D targetRelPosition=rmY.Inverse()*(nextRobotPose.getPosition()-currRobotPose.getPosition());
+					//macierz obrotu os OY na wprost robota
+					RotationMatrix rmY(rot);
 
-				Vector2D robotVel=(*currGameState).getRobotVelocity( robot->getRobotName() );
-				Vector2D speed=calculateVelocity( robotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
-				robot->setSpeed(speed,0);
+					Pose currRobotPose=(*currGameState).getRobotPos( robot->getRobotName() );
+
+					//pozycja celu w ukladzie wsp zwiazanych z robotem
+					targetRelPosition=rmY.Inverse()*(nextRobotPose.getPosition()-currRobotPose.getPosition());
+					//pobiez biezaca predkosc robota
+					currRobotVel=(*currGameState).getRobotVelocity( robot->getRobotName() );
+					//oblicz nowe sterowanie
+					newRobotVel=calculateVelocity( currRobotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
+					//ustaw sterowanie
+					robot->setSpeed(newRobotVel,0);
 				}
 				else{
 					robot->setSpeed(Vector2D(0.0,0.0),0);
@@ -126,6 +137,7 @@ void TestRRT::execute(void *arg){
 			}
 		*/
 		delete rrt;
+		break;
 	}
 	std::cout<<robot->getRobotName()<<
 	" Mean update delta time=" <<(currSimTime-startSimTime)/step<<" max update delta time "<<max<<std::endl;
