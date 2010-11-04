@@ -10,7 +10,9 @@ class Thread
     public:
         Thread();
         virtual ~Thread();
-             int Start(void * arg);
+        int Start(void * arg);
+        THREADID getThreadID(){ return this->ThreadId_;}
+        void join(){pthread_join(ThreadId_,NULL);}
     protected:
       int Run(void * arg);
       static void * EntryPoint(void*);

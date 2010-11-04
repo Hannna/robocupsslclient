@@ -10,18 +10,23 @@
 #include "../RRT/RRTPlanner.h"
 
 TestRRT::TestRRT(Robot* robot,Videoserver* video,Pose goalPose) {
+	std::cout<<"!!!!!!!!!!!!!!!Start rrt Test"<<std::endl;
 	arg1.goalPose=goalPose;
 	arg1.video=video;
 	arg1.robot=robot;
 	this->Arg(reinterpret_cast<void *>(&arg1));
 
+	std::cout<<"!!!!!!!!!!!!!!!Start rrt Test"<<std::endl;
+
 
 }
 
 void TestRRT::Execute(void *arg){
+    std::cout<<"!!!!!!!!!!!!!!!Start rrt Test"<<std::endl;
+
 	threadArgPtr threadArg=reinterpret_cast<threadArgPtr>(arg);
 
-	const Pose goalPose=threadArg->goalPose;
+	Pose goalPose=threadArg->goalPose;
 	Videoserver* video=threadArg->video;
 	Robot* robot=threadArg->robot;
 

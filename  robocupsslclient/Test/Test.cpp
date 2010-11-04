@@ -242,6 +242,8 @@ void testSingleRRTThread(Videoserver & video){
 	Robot redRobot0(std::string("red0"),ifaceName);
 	TestRRT testRRT(&redRobot0,&video,Pose(5.5,2.5,0));
 	testRRT.Start(NULL);
+    testRRT.join();
+
 
 	//TODO: dorobic join na wszytskie taski
 }
