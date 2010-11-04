@@ -68,6 +68,9 @@ public:
 
 private:
 	virtual void execute(void*) ;
+	/*@brief pobiera z symulatora pozycje wszytskich robotow na planszy oraz pilki
+	 *
+	 */
 	void update();
 	GameStatePtr gameState;
 	static Videoserver * video;

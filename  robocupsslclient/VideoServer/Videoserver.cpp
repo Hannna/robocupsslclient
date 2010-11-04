@@ -25,6 +25,10 @@ double Videoserver::updateGameState(GameStatePtr gameState_) const{
 	return currTime;
 }
 
+double Videoserver::getUpdateDeltaTime()const{
+	return 	updateT;
+}
+
 void Videoserver::update(){
 #ifdef GAZEBO
 	pthread_mutex_lock (&Videoserver::mutex);
@@ -67,9 +71,6 @@ void Videoserver::update(){
 #endif
 	return ;
 }
-double Videoserver::getUpdateDeltaTime()const{
-	return 	updateT;
-}
 
 #ifdef GAZEBO
 	#ifdef OLD
@@ -82,14 +83,13 @@ double Videoserver::getUpdateDeltaTime()const{
 #endif
 
 void updateVideo(int){
-    //std::cout<<"alarm"<<std::endl;
 	Videoserver::getInstance().update();
-	ualarm(1000, 0);//1 ms
+	ualarm(10000, 0);//10 ms
 }
 
 void Videoserver::execute(void * arg){
     std::cout<<"Start videoserver"<<std::endl;
-	useconds_t useconds=10; //10 ms
+	useconds_t useconds=10000; //10 ms
 	sigset_t set;
 	sigemptyset (&set);
 	sigaddset(&set,SIGALRM);
