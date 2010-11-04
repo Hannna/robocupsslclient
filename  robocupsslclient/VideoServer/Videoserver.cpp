@@ -84,12 +84,12 @@ void Videoserver::update(){
 
 void updateVideo(int){
 	Videoserver::getInstance().update();
-	ualarm(10000, 0);//10 ms
+	ualarm(Videoserver::updateDeltaTime, 0);
 }
 
 void Videoserver::execute(void * arg){
     std::cout<<"Start videoserver"<<std::endl;
-	useconds_t useconds=10000; //10 ms
+
 	sigset_t set;
 	sigemptyset (&set);
 	sigaddset(&set,SIGALRM);
@@ -97,9 +97,9 @@ void Videoserver::execute(void * arg){
 	struct sigaction act;
 	act.sa_handler=updateVideo;
 	sigaction(SIGALRM, &act,NULL);
-	ualarm(useconds, 0);
+	ualarm(Videoserver::updateDeltaTime, 0);
 
 	while(true){
-		usleep(useconds);
+		usleep(Videoserver::updateDeltaTime);
 	}
 }
