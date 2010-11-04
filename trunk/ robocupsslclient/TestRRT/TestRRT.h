@@ -14,12 +14,13 @@
 class Videoserver;
 class Robot;
 class goalPose;
+
 class TestRRT: public Thread {
 public:
 	TestRRT(Robot* robot,Videoserver* video,Pose goalPose);
-    virtual void Execute(void*);
 	virtual ~TestRRT();
 private:
+    virtual void Execute(void*);
 	struct threadArg arg1;
 };
 

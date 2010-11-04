@@ -63,6 +63,7 @@ int main(int argc, char*argv[],char *envp[]){
 		bool testPosition=false;
 		bool testVelocity=false;
 		bool testRRTPlanner=false;
+		bool testMultiRRTPlanner=false;
 		bool testAcc=false;
 		bool testMotion_=false;
 		bool testRot=false;
@@ -81,6 +82,8 @@ int main(int argc, char*argv[],char *envp[]){
 				testPosition=true;
 			if(strncmp(argv[2],"rrt",3)==0)
 				testRRTPlanner=true;
+            if(strncmp(argv[2],"multirrt",3)==0)
+				testMultiRRTPlanner=true;
 			if(strncmp(argv[2],"acc",3)==0)
 				testAcc=true;
 			if(strncmp(argv[2],"motion",3)==0)
@@ -137,7 +140,14 @@ int main(int argc, char*argv[],char *envp[]){
 			}
             else if(testRRTPlanner){
 				std::cout<<"starting RRT tests"<<std::endl;
+				Videoserver::getInstance().Start(NULL);
 				testSingleRRTThread(Videoserver::getInstance());
+			}
+            else if(testMultiRRTPlanner){
+				std::cout<<"starting multi robot RRT tests"<<std::endl;
+				Videoserver::getInstance().Start(NULL);
+				testMultiRRTThread(Videoserver::getInstance());
+				//testSingleRRTThread(Videoserver::getInstance());
 			}
 			else if(testTask){
 				std::cout<<"starting tasks tests"<<std::endl;

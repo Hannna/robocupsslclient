@@ -98,9 +98,9 @@ void RefereeClient::readFromBox(){
 		else
 			perror("recvfrom");
 //TODO uncomment these lines
-        //this->mutex_.lock();
+        this->mutex_.lock();
 		this->gameStatePacket_=tmpGameStatePacket;
-		//this->mutex_.unlock();
+		this->mutex_.unlock();
 
 	}while ( bytes_read > 0 );
 }

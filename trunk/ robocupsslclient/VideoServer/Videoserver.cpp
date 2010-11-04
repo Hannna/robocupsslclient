@@ -26,7 +26,7 @@ double Videoserver::updateGameState(GameStatePtr gameState_) const{
 }
 
 void Videoserver::update(){
-#ifdef GAZZEBO
+#ifdef GAZEBO
 	pthread_mutex_lock (&Videoserver::mutex);
 	double currSimTime = SimControl::getInstance().getSimTime();
 	this->updateT=currSimTime-this->lastUpdateTime;
@@ -88,6 +88,7 @@ void updateVideo(int){
 }
 
 void Videoserver::Execute(void * arg){
+    std::cout<<"Start videoserver"<<std::endl;
 	useconds_t useconds=10; //10 ms
 	sigset_t set;
 	sigemptyset (&set);
