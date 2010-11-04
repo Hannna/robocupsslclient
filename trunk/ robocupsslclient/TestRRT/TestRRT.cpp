@@ -40,8 +40,8 @@ void TestRRT::execute(void *arg){
 	const double startSimTime=currSimTime;
 	//maksymalny odstep pomiedzy wystawieniem nowych sterowań
 	double max=0;
-
-	int i=0;
+	//numer kolejnej iteracji algorytmu
+	int step=0;
 	//struct timeval diff;
 	//struct timeval startTime;
 
@@ -55,7 +55,7 @@ void TestRRT::execute(void *arg){
 		while(true){
 
 			if( currSimTime < video->updateGameState(currGameState) ){
-				i++;
+				step++;
 				prevSimTime=currSimTime;
 				currSimTime=video->updateGameState(currGameState);
 
@@ -69,22 +69,25 @@ void TestRRT::execute(void *arg){
 				Pose startPose=(*currGameState).getRobotPos(robot->getRobotName());
 				//measureTime(start,&startTime);
 
-				rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
-					robot->getRobotName(),currGameState,goalPose,&path);
-				if(rrt->run(currGameState,video->getUpdateDeltaTime())){
+				rrt = new RRTPlanner(
+						Config::getInstance().getRRTGoalProb(),
+						robot->getRobotName(),
+						currGameState,goalPose,&path
+					);
+				if( rrt->run(currGameState,video->getUpdateDeltaTime() ) ){
 
-				/*			diff=measureTime(stop,&startTime);
+			/*	diff=measureTime(stop,&startTime);
 				out<<"rrt diffTime "<<diff.tv_sec<<"[s] "<<diff.tv_usec<<"[us]"<<std::endl;
-				*/
-				/*
+			*/
+			/*
 				std::string fileName("/home/maciek/workspace/magisterka/Debug/");
 				fileName.append(robot->getRobotName());
 				fileName.append("_rrtTree.xml");
 				rrt->serializeTree(fileName.c_str(),serializedTrees++);
-				*/
+			*/
 				GameStatePtr nextState=rrt->getNextState();
 				if(nextState.get()==NULL){
-					std::cout<<"next state is NULL"<<std::endl;
+					std::cout<<"rrt planner return next state as NULL"<<std::endl;
 					robot->setSpeed(Vector2D(0.0,0.0),0);
 					break;
 				}
@@ -125,7 +128,7 @@ void TestRRT::execute(void *arg){
 		delete rrt;
 	}
 	std::cout<<robot->getRobotName()<<
-	" Mean update delta time=" <<(currSimTime-startSimTime)/i<<" max update delta time "<<max<<std::endl;
+	" Mean update delta time=" <<(currSimTime-startSimTime)/step<<" max update delta time "<<max<<std::endl;
 	//	out.close();
 }
 TestRRT::~TestRRT() {
