@@ -239,7 +239,16 @@ void * testTask(void * arg){
 }
 
 void testSingleRRTThread(Videoserver & video){
+    std::cout<<"start testSingleRRTThread"<<std::endl;
 	Robot redRobot0(std::string("red0"),ifaceName);
+	Robot redRobot1(std::string("red1"),ifaceName);
+	Robot redRobot2(std::string("red2"),ifaceName);
+
+	Robot blueRobot0(std::string("blue0"),ifaceName);
+	Robot blueRobot1(std::string("blue1"),ifaceName);
+	Robot blueRobot2(std::string("blue2"),ifaceName);
+
+    Videoserver::getInstance().start(NULL);
 
 	TestRRT testRRT(&redRobot0,&video,Pose(5.5,2.5,0));
 	testRRT.start(NULL);

@@ -11,6 +11,7 @@
 
 TestRRT::TestRRT(Robot* robot,Videoserver* video,Pose goalPose) {
 	std::cout<<"Create single rrt test for robot"<<robot->getRobotName()<<std::endl;
+	std::cout<<"Create single rrt test for robot"<<std::endl;
 	arg1.goalPose=goalPose;
 	arg1.video=video;
 	arg1.robot=robot;
@@ -57,14 +58,13 @@ void TestRRT::execute(void *arg){
 		Vector2D targetRelPosition;
 
 		while(true){
-
 			//jesli videoserwer wykonal aktualizacje polozen robotow
 			if( currSimTime < video->updateGameState(currGameState) ){
 				step++;
 				prevSimTime=currSimTime;
 				currSimTime=video->updateGameState(currGameState);
 
-				(currSimTime-prevSimTime)> max ?  max=(currSimTime-prevSimTime): max=max ;
+				(currSimTime-prevSimTime) > max ?  max=(currSimTime-prevSimTime): max=max ;
 
 				//measureTime(start,&startTime);
 				//diff=measureTime(stop,&startTime);
