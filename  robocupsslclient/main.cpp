@@ -156,7 +156,7 @@ int main(int argc, char*argv[],char *envp[]){
 
 		xmlCleanupParser();
 
-		std::cout<<"bye bye"<<std::endl;
+		std::cout<<"exit from robocup ssl client bye bye"<<std::endl;
 		return 0;
 }
 #endif

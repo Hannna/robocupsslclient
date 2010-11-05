@@ -49,7 +49,7 @@ void TestRRT::execute(void *arg){
 	std::ofstream out(robot->getRobotName().c_str());
 
 	while(true){
-
+		std::cout<<"Try to plan path to "<<goalPose<<" for robot "<<robot->getRobotName()<<std::endl;
 		RRTPlanner * rrt;
 
 		double rot=0;
@@ -73,10 +73,10 @@ void TestRRT::execute(void *arg){
 
 				Pose startPose=(*currGameState).getRobotPos(robot->getRobotName());
 				//measureTime(start,&startTime);
-
+				bool obsPredictionEnable=false;
 				rrt = new RRTPlanner(
 						Config::getInstance().getRRTGoalProb(),
-						robot->getRobotName(),
+						robot->getRobotName(),obsPredictionEnable,
 						currGameState,goalPose,&path
 					);
 				if( rrt->run(currGameState,video->getUpdateDeltaTime() ) ){

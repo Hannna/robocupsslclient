@@ -9,7 +9,6 @@
 #include "../RRT/RRTPlanner.h"
 
 GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose) {
-	// TODO Auto-generated constructor stub
 
 }
 
@@ -19,7 +18,7 @@ bool GoToPose::execute(){
 	GameStatePtr currGameState(new GameState());
 
 	double currTime=video.updateGameState(currGameState);
-
+	bool obsPredictionEnable=true;
 	/*
 	 * za pomoca algorytmu rrt pokieruj robota do celu
 	 */
@@ -27,7 +26,7 @@ bool GoToPose::execute(){
 		if(currTime<video.updateGameState(currGameState)){
 			currTime=video.updateGameState(currGameState);
 			rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
-						robot->getRobotName(),currGameState,goalPose,&path);
+						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path);
 			if(rrt->run(currGameState,video.getUpdateDeltaTime()) ){
 
 				GameStatePtr nextState=rrt->getNextState();
@@ -77,6 +76,5 @@ bool GoToPose::execute(){
 }
 
 GoToPose::~GoToPose() {
-	// TODO Auto-generated destructor stub
 
 }
