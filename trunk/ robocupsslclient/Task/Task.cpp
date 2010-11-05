@@ -8,7 +8,6 @@
 #include "Task.h"
 
 Task::Task(Robot* robot_):video(Videoserver::getInstance()), robot(robot_) {
-	// TODO Auto-generated constructor stub
 	stopTask=false;
 }
 

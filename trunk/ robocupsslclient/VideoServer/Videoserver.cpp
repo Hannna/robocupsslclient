@@ -41,6 +41,9 @@ void Videoserver::update(){
 
 	PositionsIt ii=positions.begin();
 	std::string model_name;
+
+	double vx=0,vy=0,w=0;
+	PosIfacesIterator posIface;
 	for(;ii!=positions.end();++ii){
 		model_name=(*ii).first;
 
@@ -48,19 +51,17 @@ void Videoserver::update(){
 			Videoserver::gameState->updateBallData(Vector2D((*ii).second.get<0>(),(*ii).second.get<1>()),Vector2D(0.0,0.0));
 		}
 		else{
-		    #ifdef OLD
-				gazebo::PositionIface * posIface=this->posIfaces[model_name];
-		    #else
-				libgazebo::PositionIface * posIface=this->posIfaces[model_name];
-			#endif
-			double vx,vy,w;
-			if(posIface){
-				posIface->Lock(1);
-				vx = posIface->data->velocity.pos.x;
-				vy = posIface->data->velocity.pos.y;
-				w = posIface->data->cmdVelocity.yaw;
-				//std::cout<<"vx "<<vx<<"vy "<<vy<<std::endl;
-				posIface->Unlock();
+			posIface=this->posIfaces.find(model_name);
+			if(posIface!=this->posIfaces.end()){
+				if(posIface->second!=NULL){
+					posIface->Lock(1);
+					vx = posIface->data->velocity.pos.x;
+					vy = posIface->data->velocity.pos.y;
+					//TODO:poprawic pobieranie predkosci katowej robota
+					w = posIface->data->cmdVelocity.yaw;
+					//std::cout<<"vx "<<vx<<"vy "<<vy<<std::endl;
+					posIface->Unlock();
+				}
 			}
 			Videoserver::gameState->updateRobotData(model_name,(*ii).second,Vector2D(vx,vy),w);
 		}
@@ -73,9 +74,9 @@ void Videoserver::update(){
 
 #ifdef GAZEBO
 	#ifdef OLD
-	void Videoserver::registerRobot( gazebo::PositionIface *posIface,std::string robotName){
+		void Videoserver::registerRobot( gazebo::PositionIface *posIface,std::string robotName){
 	#else
-	void Videoserver::registerRobot( libgazebo::PositionIface *posIface,std::string robotName){
+			void Videoserver::registerRobot( libgazebo::PositionIface *posIface,std::string robotName){
 	#endif
 		this->posIfaces[robotName]=posIface;
 	}

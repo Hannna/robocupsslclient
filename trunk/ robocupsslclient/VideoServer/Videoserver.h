@@ -88,9 +88,12 @@ private:
 	#ifdef GAZEBO
 		#ifdef OLD
 		std::map<std::string,gazebo::PositionIface * > posIfaces;
+		typedef std::map<std::string,gazebo::PositionIface * >::iterator PosIfacesIterator;
 		#else
 		std::map<std::string,libgazebo::PositionIface * > posIfaces;
+		typedef std::map<std::string,libgazebo::PositionIface * >::iterator PosIfacesIterator;
 		#endif
+
 	#endif
 	static struct timeval startTime;
 

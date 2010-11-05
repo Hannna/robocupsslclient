@@ -11,6 +11,7 @@
 #include "../GameState/GameState.h"
 #include "../Config/Config.h"
 #include "../additional.h"
+#include "../TestRRT/TestRRT.h"
 #include "RRTNode.h"
 
 #include <stdio.h>
@@ -21,12 +22,13 @@
 #include <boost/random.hpp>
 
 //margines bezp przy wyznaczaniu sciezki
-//o tyle powiekszamy roboty przy wyznaczaniu sciezki
+//o tyle powiekszamy promien robota przy wyznaczaniu sciezki
 #define SAFETY_MARGIN 0.05
 //czas o jaki przewidujemy ruch przeciwnika do przodu
 #define PREDICTION_TIME 0.01 //[sek]
 
 class RRTPlanner {
+	friend class TestRRT;
 public:
 	/**
 	 * @brief tworzy obiekt plannera RRT
@@ -36,7 +38,8 @@ public:
 	 * @param[in] goalPose pozycja docelowa(razem z rotacja)
 	 * @return
 	 */
-	RRTPlanner(const double goalProb,const std::string robotName,const GameStatePtr currState,const Pose goalPose,std::list<Pose> * path);
+	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,const Pose goalPose,std::list<Pose> * path);
+
 	GameStatePtr getNearestState();
 	/* zwraca wierzcholek docelowy dla robota
 	 * wierzcholek spelnia nastepujace warunki
@@ -45,11 +48,19 @@ public:
 	 * 3.Spośród wierzchołków spelniających 1 i 2 jest  wierzcholkiem najblizej celu
 	 */
 	GameStatePtr getNextState();
+	/**
+	* @brief uruchamia algorytm rrt zwraca true jesli alg zostal poprawnie uruchomiony
+	* false gdy aktualnie robot jest w przeszkodzie.
+	*
+	* @return
+	*/
+	bool run(GameStatePtr currState,double deltaSimTime);
 	/*
 	 * @brief zapis drzewa do pliku w formie dokumentu xml
 	*/
 	int serializeTree(const char * fileName,int serializedTrees);
 	virtual ~RRTPlanner();
+
 private:
 	/**
 	 * @brief zwraca kolejny punkt docelowy.(losowy lub celu).
@@ -119,14 +130,6 @@ private:
 	 * @return
 	 */
 	Pose getRandomPose();
-public:
-	/**
-	* @brief uruchamia algorytm rrt zwraca true jesli alg zostal poprawnie uruchomiony
-	* false gdy aktualnie robot jest w przeszkodzie.
-	*
-	* @return
-	*/
-	bool run(GameStatePtr currState,double deltaSimTime);
 	/**
 	 * @brief dokonuje ekspansji stanu w kierunku celu, zwraca stan pusty jesli nastapi kolizja
 	 *
@@ -137,20 +140,22 @@ public:
 	GameStatePtr extendState(const GameStatePtr & currState,const Pose &targetPose,const double robotReach);
 	/**
 	 * @brief dokonuje przewiduje polozenie przeszkod w nastepnym kroku algorytmu
+	 * przewidywane polozenie zapisyje w
 	 *
 	 * @param[in] currState aktualny stan planszy
 	 * @param[in] deltaSimTime szacowany czas pomiedzy uruchomieniami algorytmu
 	 */
 	void evaluateEnemyPositions(const GameStatePtr & currState,const double deltaSimTime);
 	/**
-	 * @brief sprawdza czy przemieszczenie do pozycji targetPose nie lezy w obrebie przeszkody
+	 * @brief sprawdza czy cel nie lezy w obrebie przeszkody
 	 *  zwraca true jesli nastapi kolizja
 
 	 * @param[in] targetPose pozycja docelowa
 	 * @param[in] safetyMarigin margines bezpieczenstwa o jaki powiekszamy przeszkode
+	 * @param[in] checkAddObstacles jesli true, to sprawdza tez kolizje z przewidywanymi polozeniami przeszkod
 	 * @return false if there is a collision with  an obstacle; true if everything is OK
 	 */
-	bool checkCollisions(const Pose &targetPose,double safetyMarigin,bool checkAddObstacles = false);
+	bool isTargetInsideObstacle(const Pose &targetPose,double safetyMarigin,bool checkAddObstacles = false);
 	/**
 	 * @brief sprawdza czy targetPose jest bezposrednio osiagalna z currPose
 	 *
@@ -158,13 +163,13 @@ public:
 	 * @param[in] targetPose pozycja docelowa
 	 * @return false if there is a collision with  an obstacle; true if everything is OK
 	 */
-	bool checkAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles = true);
+	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles = true);
 
  private:
 	//stan od ktorego zaczynamy budowac drzewo
 	RRTNodePtr root;
 	//prawdopodobienstwo wyboru punktu kierujacego na cel
-	double p;
+	const double toTargetLikelihood;
 	//nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
 	std::string robotName;
 	//promień okręgu w jakim losujemy kolejny losowy stan
@@ -177,15 +182,20 @@ public:
 	//mierzony w sekundach simTime
 	//static double lastSimTime;
 	double deltaSimTime;
+	//czy przewidujemy ruch przeszkody
+	const bool obsPredictionEnabled;
+
 	Pose (*getGoalPose)();
 	//roboty przeszkody posortowane wzgledem odleglosci od sterowanego robota
 	std::vector<Pose> obstacles;
-	std::vector<Pose> addObstacles;
+	//przewidywane polozenie przeszkod za deltaSIMTime
+	std::vector<Pose> predictedObstaclesPos;
 	//stan do ktorego ma dojechac robot w wyniku dzialania RRT
 	GameStatePtr resultState;
 	RRTNodePtr resultNode;
 	//sciezka wybrana w poprzednim kroku
 	std::list<Pose> * path;
+	//odleglosc najblizszego wezla drzewa rrt od celu
 	double shortestDist;
 
 };

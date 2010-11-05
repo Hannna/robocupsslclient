@@ -14,9 +14,9 @@ Robot::Robot(const std::string robotName,const std::string posIfaceName)
 	//alokowanie interfejsu do zmiany pozycji
 #ifdef GAZEBO
     #ifdef OLD
-	posIface = new gazebo::PositionIface();
+		posIface = new gazebo::PositionIface();
 	#else
-	posIface = new libgazebo::PositionIface();
+		posIface = new libgazebo::PositionIface();
 	#endif
 	/// Connect to the libgazebo server
 	std::string positionIfaceName=this->robotName+this->posIfaceName;

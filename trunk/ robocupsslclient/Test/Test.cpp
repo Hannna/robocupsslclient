@@ -252,6 +252,7 @@ void testSingleRRTThread(Videoserver & video){
 
 	TestRRT testRRT(&redRobot0,&video,Pose(5.5,2.5,0));
 	testRRT.start(NULL);
+	sleep(1000);
     testRRT.join();
 
     std::cout<<"exit from testSingleRRTThread"<<std::endl;

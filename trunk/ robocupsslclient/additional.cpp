@@ -28,23 +28,17 @@ Pose Pose::transform(const Vector2D& distance,const RotationMatrix & rm) const {
 }
 Names::Names()
 {
-/*
-	if(Config::getInstance().isTestMode()){
-		names_list.push_back(Config::getInstance().getTestModelName());
-	}
-	else*/{
-		strvec::const_iterator ii;
+	strvec::const_iterator ii;
 
-		strvec blueTeam=Config::getInstance().getBlueTeam();
-		for(ii=blueTeam.begin();ii!=blueTeam.end();ii++){
-				names_list.push_back(*ii);
-			}
-		strvec redTeam=Config::getInstance().getRedTeam();
-		for(ii=redTeam.begin();ii!=redTeam.end();ii++){
+	strvec blueTeam=Config::getInstance().getBlueTeam();
+	for(ii=blueTeam.begin();ii!=blueTeam.end();ii++){
 			names_list.push_back(*ii);
-		}
-		names_list.push_back("ball");
 	}
+	strvec redTeam=Config::getInstance().getRedTeam();
+	for(ii=redTeam.begin();ii!=redTeam.end();ii++){
+		names_list.push_back(*ii);
+	}
+	names_list.push_back("ball");
 }
 
 Names::~Names()

@@ -31,10 +31,12 @@
 const double RRTPlanner::randomStateReach=0.5;//[m]
 //generatory liczb losowych do losowania pozycji w drzewie rrt
 static boost::mt19937 rngA(static_cast<unsigned> (time(NULL)));
-static boost::uniform_01<boost::mt19937> genA(rngA);
+static boost::uniform_01<boost::mt19937> uniformGen_01(rngA);
 
-RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName, const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path):
-		root(new RRTNode(currState,robotName)),goalPose(goalPose_){
+RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,
+			const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path):
+		root(new RRTNode(currState,robotName)),goalPose(goalPose_),
+		toTargetLikelihood(goalProb),obsPredictionEnabled(withObsPrediction){
 
 	//clock_t startTime=clock();
 	//clock_t currTime;
@@ -43,19 +45,20 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName, const 
 	//std::cout<<"startTime"<<startTime<<std::endl;
 	this->path=path;
 	std::ostringstream log;
-	log<<"starting rrt goal Pose "<<goalPose<<" and currPose "<<currState->getRobotPos(robotName);
-	Logger::getInstance().LogToFile(DBG,log);
 
-	this->p=goalProb;
+	#ifdef DEBUG
+		log<<"starting rrt goal Pose "<<goalPose<<" and currPose "<<currState->getRobotPos(robotName);
+		Logger::getInstance().LogToFile(DBG,log);
+	#endif
+
 	this->robotName=robotName;
 
-	//evaluateEnemyPositions( (*root).state,0.01);
-	this->initObstacles(root->getRobotPos(this->robotName) );
+	//this->initObstacles(root->getRobotPos(this->robotName) );
 }
 
 bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 	std::ostringstream log;
-	double minDistance=Config::getInstance().getRRTMinDistance();
+	const double minDistance=Config::getInstance().getRRTMinDistance();
 	GameStatePtr extend;
 	bool noCollision=true;
 
@@ -63,9 +66,9 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 
 	Pose startRobotPose=root->getRobotPos(robotName);
 
-//sprawdz czy aktualnie robot  nie jest w kolizji
+	//sprawdz czy aktualnie robot  nie jest w kolizji
 	double safetyMarigin=0;
-	noCollision=checkCollisions(startRobotPose,safetyMarigin);
+	noCollision=isTargetInsideObstacle(startRobotPose,safetyMarigin);
 
 	Vector2D v=(*currState).getRobotVelocity(this->robotName);
 	startRobotPose = Pose(startRobotPose.get<0>()+v.x*deltaSimTime,startRobotPose.get<1>()+v.y*deltaSimTime,0);
@@ -81,19 +84,33 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 	}*/
 
 	//TODO: ew sprawdzic czy pkt docelowy nie jest w obrebie przeszkody
+	if(this->obsPredictionEnabled)
+		evaluateEnemyPositions( (*root).state,PREDICTION_TIME);
 
-	evaluateEnemyPositions( (*root).state,PREDICTION_TIME);
 	this->initObstacles(root->getRobotPos(robotName) );
+
+	//sprawdz czy cel nie jest bezposrednio osiagalny
+	bool checkAddObstacles = true;
+	if(this->checkTargetAttainability(startRobotPose,goalPose,checkAddObstacles)){
+		//TODO: ustawic odpowiedni wskaznik
+		return true;
+	}
 
 
 	if(noCollision){
+		//zasieg robota w 1 kroku algorytmu
 		double robotReach=Config::getInstance().getRRTRobotReach();
+		//biezaca predkosc robota
 		Vector2D robotVelocity=currState->getRobotVelocity(this->robotName);
-
-		double obstacleDist=0;
-		Pose target;
+		//odleglosc do najblizszej przeszkody
+		double toNearestObstacleDist=0;
+		//tymczasowy cel w koljenym kroku algorytmu
+		Pose temporaryTarget;
+		//pozycja robota w kolejnym kroku algorytmu
 		Pose nextRobotPose=nearest->getRobotPos(this->robotName);
+		//ograniczenie na maksymalna liczbe wezłów w drzewie
 		const unsigned int maxNodeNumber=400;
+		//numer ostatnio dodanego wezla
 		int nodeNr=0;
 
 		if(goalPose.distance( nextRobotPose ) <= minDistance ){
@@ -101,21 +118,21 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 		}
 		while( (goalPose.distance( nextRobotPose ) > minDistance ) && nodeNr<maxNodeNumber) {
 
-			//wybieram tymczasowy pkt docelowy w zaleznosci od odleglosci robota od najblizszej przeszkody
-			target=this->choseTarget(goalPose,robotVelocity,nextRobotPose,obstacleDist);
+			//wybieram tymczasowy pkt docelowy w zaleznosci od odleglosci robota do najblizszej przeszkody
+			temporaryTarget=this->choseTarget(goalPose,robotVelocity,nextRobotPose,toNearestObstacleDist);
 			//wyszukuje pkt w drzewie najblizej wybranego celu
-			nearest=findNearestState(target);
-			if(nearest->getRobotPos(this->robotName).distance( target ) > 0.009){
+			nearest=findNearestState(temporaryTarget);
+			if(nearest->getRobotPos(this->robotName).distance( temporaryTarget ) > minDistance){
 				//rozszerzam do celu
-				extend=this->extendState( nearest->state,target,robotReach);
+				extend=this->extendState( nearest->state,temporaryTarget,robotReach);
 
 				if(extend.get()!=NULL){
 					nodeNr++;
 					RRTNodePtr node(new RRTNode(extend,this->robotName));
-					node->setTargetPose(target);
+					node->setTargetPose(temporaryTarget);
 					nearest->addNode(node);
 					nextRobotPose=node->getMyRobotPos();
-					obstacleDist=this->distanceToNearestObstacle(extend,nextRobotPose);
+					toNearestObstacleDist=this->distanceToNearestObstacle(extend,nextRobotPose);
 				}
 				else{
 					Logger::getInstance().LogToFile(DBG,"extented node is in the obstacle");
@@ -131,8 +148,11 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 			*/
 		}
 
-		log<<"end rrt result "<<nearest->getRobotPos(this->robotName)<<std::endl;
-		Logger::getInstance().LogToFile(DBG,log);
+		#ifdef DEBUG
+			log<<"end rrt result "<<nearest->getRobotPos(this->robotName)<<std::endl;
+			Logger::getInstance().LogToFile(DBG,log);
+		#endif
+
 		/*
 		if(resultNode.get()==NULL){
 			if(!this->root->children.empty()){
@@ -191,6 +211,7 @@ void RRTPlanner::initObstacles(const Pose& robotPose ){
 
 }
 
+/*
 GameStatePtr RRTPlanner::getNextState(){
 	if(this->root->children.empty())
 		return GameStatePtr();
@@ -205,11 +226,11 @@ GameStatePtr RRTPlanner::getNextState(){
 	return GameStatePtr();
 
 }
-
+*/
 Pose RRTPlanner::choseTarget(Pose goalPose,Vector2D velocity,const Pose nearestPose, const double obstacleDist){
 	Pose result;
 
-	double t=genA();
+	double t=uniformGen_01();
 	//jesli w poprzednim kroku znaleziono sciezke do celu
 	if(this->path->size()!=0){
 		if(t<0.1){
@@ -220,7 +241,7 @@ Pose RRTPlanner::choseTarget(Pose goalPose,Vector2D velocity,const Pose nearestP
 		//way point
 		else if (t<0.7){
 			double p=1.0/this->path->size();
-			double g=genA();
+			double g=uniformGen_01();
 			//wybieram jako docelowy jeden z wezlow ze sciezki znalezionej w poprzednim uruchomieniu RRT
 			std::list<Pose>::iterator ii=this->path->begin();
 			for(int i=1;ii!=this->path->end();ii++,i++){
@@ -235,7 +256,7 @@ Pose RRTPlanner::choseTarget(Pose goalPose,Vector2D velocity,const Pose nearestP
 	}
 	//jesli nie znaleziono wczesniej sciezki do celu
 	else{
-		if(t<Config::getInstance().getRRTGoalProb()){
+		if(t<this->toTargetLikelihood){
 			result=goalPose;
 		}
 		else
@@ -369,7 +390,7 @@ RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose,RRTNod
 		if(nearest.get()!=NULL){
 			robotPose=nearest->getMyRobotPos();
 			if(result.get()==NULL || nearest->shortestDistance < result->shortestDistance ){
-				if(checkAttainability( startRobotPose, robotPose)==true){
+				if(checkTargetAttainability( startRobotPose, robotPose)==true){
 					result=nearest;
 				}
 			}
@@ -380,7 +401,7 @@ RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose,RRTNod
 		path->push_back(robotPose);
 
 	if(result.get()==NULL || currNode->shortestDistance < result->shortestDistance){
-		if(checkAttainability( startRobotPose, robotPose)==true){
+		if(checkTargetAttainability( startRobotPose, robotPose)==true){
 			result=currNode;
 		}
 	}
@@ -513,7 +534,7 @@ GameStatePtr RRTPlanner::extendState(const GameStatePtr & currState,const Pose& 
 	assert(currState.get()!=NULL);
 	double robotReach=robotReach_;
 	//sprawdzenie czy targetPose nie lezy w obrebie przeszkody
-	if(!checkCollisions( targetPose, SAFETY_MARGIN ,true) ){
+	if(!isTargetInsideObstacle( targetPose, SAFETY_MARGIN ,true) ){
 		return GameStatePtr();
 	}
 	std::ostringstream log;
@@ -575,7 +596,7 @@ GameStatePtr RRTPlanner::extendState(const GameStatePtr & currState,const Pose& 
 	assert(fabs(pow(robotReach,2)-test)<0.001);
 
 	//czy ten punkt nie lezy w obrebie przeszkody
-	if(!checkCollisions(  resultPose ,SAFETY_MARGIN,true) ){
+	if(!isTargetInsideObstacle(  resultPose ,SAFETY_MARGIN,true) ){
 		return GameStatePtr();
 	}
 
@@ -589,32 +610,32 @@ GameStatePtr RRTPlanner::extendState(const GameStatePtr & currState,const Pose& 
 }
 void RRTPlanner::evaluateEnemyPositions(const GameStatePtr & currState,const double deltaSimTime){
 	const std::vector<std::string> blueTeam=Config::getInstance().getBlueTeam();
- int nr=0;
+
 	BOOST_FOREACH(std::string modelName,blueTeam){
 		if(modelName.compare(this->robotName)!=0){
 			Vector2D v=(*currState).getRobotVelocity(modelName);
 			Pose rPose=(*currState).getRobotPos(modelName);
 			Pose newPose(rPose.get<0>()+v.x*deltaSimTime,rPose.get<1>()+v.y*deltaSimTime,0);
-			this->addObstacles.push_back(newPose);
+			this->predictedObstaclesPos.push_back(newPose);
 			//std::cout<<"add obstacle blue "<<nr++<<" robot velocity "<<v<<std::endl;
 			//(*currState).updateRobotData(modelName,newPose,v,0);
 		}
 	}
-	nr=0;
+
 	const std::vector<std::string> redTeam=Config::getInstance().getRedTeam();
 	BOOST_FOREACH(std::string modelName,redTeam){
 		if(modelName.compare(this->robotName)!=0){
 			Vector2D v=(*currState).getRobotVelocity(modelName);
 			Pose rPose=(*currState).getRobotPos(modelName);
 			Pose newPose(rPose.get<0>()+v.x*deltaSimTime,rPose.get<1>()+v.y*deltaSimTime,0);
-			this->addObstacles.push_back(newPose);
+			this->predictedObstaclesPos.push_back(newPose);
 			//std::cout<<"add obstacle red "<<nr++<<" robot velocity "<<v<<std::endl;
 			//(*currState).updateRobotData(modelName,newPose,v,0);
 		}
 	}
 }
 
-bool RRTPlanner::checkAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles){
+bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles){
 
 	double robotRadius=Config::getInstance().getRRTRobotRadius()+SAFETY_MARGIN;
 	Vector2D tar=( Vector2D( targetPose.get<0>(),targetPose.get<1>() ) -
@@ -671,7 +692,7 @@ bool RRTPlanner::checkAttainability(const Pose &currPose,const Pose &targetPose,
 
 	if(checkAddObstacles){
 		//sprawdz czy odcinek laczacy pkt biezacy i docelowy nie przechodzi przez przeszkode
-		BOOST_FOREACH(Pose obstaclePose,this->addObstacles){
+		BOOST_FOREACH(Pose obstaclePose,this->predictedObstaclesPos){
 	#ifdef DEBUG
 			//std::cout<<"check collision with "<<obstaclePose<<std::endl;
 	#endif
@@ -702,9 +723,9 @@ bool RRTPlanner::checkAttainability(const Pose &currPose,const Pose &targetPose,
  * @param [in] currPose biezaca pozycja robota w globalnym ukladzie wspolrzednych
  * @param [in] targetPose pozycja celu w globalnym ukladzie wsplorzednych
  */
-bool RRTPlanner::checkCollisions(const Pose &targetPose, double safetyMarigin,bool checkAddObstacles){
+bool RRTPlanner::isTargetInsideObstacle(const Pose &targetPose, double safetyMarigin,bool checkAddObstacles){
 
-	double robotRadius=Config::getInstance().getRRTRobotRadius();
+	const double robotRadius=Config::getInstance().getRRTRobotRadius();
 
 	//sprawdz czy punkt docelowy nie lezy w obrebie przeszkody
 	BOOST_FOREACH(Pose obstaclePose,this->obstacles){
@@ -717,7 +738,7 @@ bool RRTPlanner::checkCollisions(const Pose &targetPose, double safetyMarigin,bo
 
 	if(checkAddObstacles){
 		//sprawdz czy punkt docelowy nie lezy w obrebie przewidywanego polozenia przeszkody
-		BOOST_FOREACH(Pose obstaclePose,this->addObstacles){
+		BOOST_FOREACH(Pose obstaclePose,this->predictedObstaclesPos){
 			if(  pow(targetPose.get<0>()-obstaclePose.get<0>(),2) + pow(targetPose.get<1>()-obstaclePose.get<1>(),2) <=
 							pow(robotRadius,2) ){
 				return false;
@@ -818,9 +839,9 @@ int RRTPlanner::serializeTree(const char * fileName,int serializedTrees){
 		return status;
 	}
 
-	std::vector<Pose>::iterator ii=this->addObstacles.begin();
+	std::vector<Pose>::iterator ii=this->predictedObstaclesPos.begin();
 	int obsNr=0;
-	for(;ii!=this->addObstacles.end();ii++){
+	for(;ii!=this->predictedObstaclesPos.end();ii++){
 		serializeRobotToXml(writer,"obstacle",*ii,obsNr++);
 	}
 

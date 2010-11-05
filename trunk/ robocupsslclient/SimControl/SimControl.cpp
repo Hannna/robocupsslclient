@@ -262,11 +262,11 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 		std::string model_name = *ii;
 		if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
 			#ifdef OLD
-            gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
-			request->type = gazebo::SimulationRequestData::GET_POSE2D;
+				gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
+				request->type = gazebo::SimulationRequestData::GET_POSE2D;
 			#else
-			libgazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
-			request->type = libgazebo::SimulationRequestData::GET_POSE2D;
+				libgazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
+				request->type = libgazebo::SimulationRequestData::GET_POSE2D;
 			#endif
 			bzero(request->name,512);
 			memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
@@ -278,9 +278,9 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 	//simIface->Lock(1);
 	while(simIface->Lock(1)!=1);
 	#ifdef OLD
-    gazebo::SimulationRequestData *response = NULL;
+		gazebo::SimulationRequestData *response = NULL;
 	#else
-	libgazebo::SimulationRequestData *response = NULL;
+		libgazebo::SimulationRequestData *response = NULL;
 	#endif
 		if(simIface->data->responseCount > 0){
 			for(ii = names.begin(); ii!=names.end(); ii++){
@@ -290,9 +290,9 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 					response = &simIface->data->responses[i];
 					switch(response->type){
                     #ifdef OLD
-                    case gazebo::SimulationRequestData::GET_POSE2D:{
+						case gazebo::SimulationRequestData::GET_POSE2D:{
                     #else
-					case libgazebo::SimulationRequestData::GET_POSE2D:{
+						case libgazebo::SimulationRequestData::GET_POSE2D:{
 					#endif
 						if(strncmp(simIface->data->responses[i].name,model_name.c_str(),model_name.length())==0){
 							 x= simIface->data->responses[i].modelPose.pos.x; //x
