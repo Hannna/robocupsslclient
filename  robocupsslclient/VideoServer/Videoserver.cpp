@@ -54,13 +54,13 @@ void Videoserver::update(){
 			posIface=this->posIfaces.find(model_name);
 			if(posIface!=this->posIfaces.end()){
 				if(posIface->second!=NULL){
-					posIface->Lock(1);
-					vx = posIface->data->velocity.pos.x;
-					vy = posIface->data->velocity.pos.y;
+					posIface->second->Lock(1);
+					vx = posIface->second->data->velocity.pos.x;
+					vy = posIface->second->data->velocity.pos.y;
 					//TODO:poprawic pobieranie predkosci katowej robota
-					w = posIface->data->cmdVelocity.yaw;
+					w = posIface->second->data->cmdVelocity.yaw;
 					//std::cout<<"vx "<<vx<<"vy "<<vy<<std::endl;
-					posIface->Unlock();
+					posIface->second->Unlock();
 				}
 			}
 			Videoserver::gameState->updateRobotData(model_name,(*ii).second,Vector2D(vx,vy),w);
@@ -97,6 +97,8 @@ void Videoserver::execute(void * arg){
 	struct sigaction act;
 	act.sa_handler=updateVideo;
 	sigaction(SIGALRM, &act,NULL);
+	Videoserver::getInstance().update();
+
 	ualarm(Videoserver::updateDeltaTime, 0);
 
 	while(true){

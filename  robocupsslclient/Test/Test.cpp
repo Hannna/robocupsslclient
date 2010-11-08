@@ -108,7 +108,7 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 	Pose currPosition,prevPosition;
 	SimControl::getInstance().getModelPos(robot.getRobotName(),prevPosition);
 	double currSimTime,prevSimTime;
-	double vx,vy;
+	double vx=0,vy=0;
 	prevSimTime=SimControl::getInstance().getSimTime();
 	while(time(NULL)-startTime<testTime){
 		//currSimTime=SimControl::getInstance().getSimTime();
@@ -228,6 +228,7 @@ void testTaskThread(){
 }
 
 void * testTask(void * arg){
+    std::cout<<"start testTask"<<std::endl;
 
 	Robot * robot=reinterpret_cast<Robot *>(arg);
 	GameStatePtr gameState(new GameState());

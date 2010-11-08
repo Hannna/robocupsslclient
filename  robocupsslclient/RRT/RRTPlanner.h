@@ -168,14 +168,14 @@ private:
  private:
 	//stan od ktorego zaczynamy budowac drzewo
 	RRTNodePtr root;
-	//prawdopodobienstwo wyboru punktu kierujacego na cel
-	const double toTargetLikelihood;
 	//nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
 	std::string robotName;
 	//promień okręgu w jakim losujemy kolejny losowy stan
 	static const double randomStateReach;
 	//pozycja docelowa robota
 	const Pose goalPose;
+    //prawdopodobienstwo wyboru punktu kierujacego na cel
+	const double toTargetLikelihood;
 	//stan najblizej celu
 	RRTNodePtr nearest;
 	//czas ostatniego uruchomienia RRT
@@ -197,7 +197,10 @@ private:
 	std::list<Pose> * path;
 	//odleglosc najblizszego wezla drzewa rrt od celu
 	double shortestDist;
-
+    //wewnetrzna flaga okreslajaca czy juz dojechano do celu
+    bool finish;
+    //czy cel jest bezposrednio osiagalny
+    bool goDirectToTarget;
 };
 
 #endif /* RRTPLANNER_H_ */

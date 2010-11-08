@@ -67,7 +67,9 @@ int RRTNode::serializeNodeToXml( xmlTextWriterPtr & writer){
         printf("testXmlwriterTree: Error at xmlTextWriterEndElement in serializeTree\n");
         return status;
     }
+    return 0;
 }
+
 int serializeRobotToXml(xmlTextWriterPtr & writer,const char * eltname,Pose robotPose,int eltNr)
 {
 	std::ostringstream ois;
