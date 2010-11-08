@@ -396,7 +396,7 @@ RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose){
 	//znajdz bezposrednio osiagalnego potomka najblizej celu
 	BOOST_FOREACH(RRTNodePtr node,this->root->children){
 		tmpResult=findNearestAttainableState(targetPose,node);
-		//TODO: posprawdzac potomkow korzenia pod wzgledem osiagalnosci o odleglosci
+		//sprawdz potomkow korzenia pod wzgledem osiagalnosci i odleglosci
 		if(tmpResult.get()!=NULL){
 			if(result.get()==NULL || tmpResult->shortestDistance < result->shortestDistance){
 				tmpResult=result;
