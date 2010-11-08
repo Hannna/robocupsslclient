@@ -68,7 +68,7 @@ public:
 	};
 	friend void update(int);
 //czas co jaki videoserwer pobiera inf z symulatora
-	static const int updateDeltaTime=10000; //[ms]
+	static const int updateDeltaTime=100000; //100[ms]
 private:
 	virtual void execute(void*) ;
 	/*@brief pobiera z symulatora pozycje wszytskich robotow na planszy oraz pilki

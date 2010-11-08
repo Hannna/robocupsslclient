@@ -9,7 +9,7 @@
 #include "../RRT/RRTPlanner.h"
 
 GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose) {
-
+std::cout<<"create GoToPose Task, goto "<<pose<<std::endl;
 }
 
 bool GoToPose::execute(){
