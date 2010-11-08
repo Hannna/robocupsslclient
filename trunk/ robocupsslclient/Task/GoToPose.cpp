@@ -9,7 +9,7 @@
 #include "../RRT/RRTPlanner.h"
 
 GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose) {
-std::cout<<"create GoToPose Task, goto "<<pose<<std::endl;
+	std::cout<<"create GoToPose Task, goto "<<pose<<std::endl;
 }
 
 bool GoToPose::execute(){
@@ -17,16 +17,32 @@ bool GoToPose::execute(){
 	std::list<Pose>  path;
 	GameStatePtr currGameState(new GameState());
 
-	double currTime=video.updateGameState(currGameState);
+	double currSimTime=video.updateGameState(currGameState);
+	double lastSimTime=0;
 	bool obsPredictionEnable=true;
+
+	//pozycja do ktorej ma dojechac robot w kolejnym kroku
+	Pose nextRobotPose;
+	//biezaca pozycja robota
+	Pose currRobotPose;
+	//rotacja robota
+	double robotRotation=0;
+
+	//pozycja celu w ukladzie wsp zwiazanych z robotem
+	Vector2D targetRelPosition;
+
+	Vector2D robotCurrentVel;
+	Vector2D robotNewVel;
 	/*
 	 * za pomoca algorytmu rrt pokieruj robota do celu
 	 */
 	while(!this->stopTask){
-		if(currTime<video.updateGameState(currGameState)){
-			currTime=video.updateGameState(currGameState);
+		if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
+			lastSimTime=currSimTime;
+
 			rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
 						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path);
+
 			if(rrt->run(currGameState,video.getUpdateDeltaTime()) ){
 
 				GameStatePtr nextState=rrt->getNextState();
@@ -35,20 +51,21 @@ bool GoToPose::execute(){
 					std::cout<<"next state is null"<<std::endl;
 					break;
 				}
-				Pose nextRobotPose=nextState->getRobotPos(robot->getRobotName());
+				nextRobotPose=nextState->getRobotPos(robot->getRobotName());
 
-				double rot=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
+				robotRotation=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
 				//macierz obrotu os OY na wprost robota
-				RotationMatrix rmY(rot);
+				RotationMatrix rmY(robotRotation);
 
-				Pose currRobotPose=(*currGameState).getRobotPos( robot->getRobotName() );
+				currRobotPose=(*currGameState).getRobotPos( robot->getRobotName() );
 
 				//pozycja celu w ukladzie wsp zwiazanych z robotem
-				Vector2D targetRelPosition=rmY.Inverse()*(nextRobotPose.getPosition()-currRobotPose.getPosition());
+				targetRelPosition=rmY.Inverse()*(nextRobotPose.getPosition()-currRobotPose.getPosition());
 
-				Vector2D robotVel=(*currGameState).getRobotVelocity( robot->getRobotName() );
-				Vector2D speed=calculateVelocity( robotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
-				robot->setSpeed(speed,0);
+				robotCurrentVel=(*currGameState).getRobotVelocity( robot->getRobotName() );
+				robotNewVel=calculateVelocity( robotCurrentVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
+				robot->setSpeed(robotNewVel,0);
+
 				delete rrt;
 			}
 			else{

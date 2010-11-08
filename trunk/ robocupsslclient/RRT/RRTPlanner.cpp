@@ -56,7 +56,6 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName,bool wi
 
 	this->robotName=robotName;
 
-	//this->initObstacles(root->getRobotPos(this->robotName) );
 }
 
 bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
@@ -87,8 +86,8 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 	}*/
 
 	//TODO: ew sprawdzic czy pkt docelowy nie jest w obrebie przeszkody
-	if(this->obsPredictionEnabled)
-		evaluateEnemyPositions( (*root).state,PREDICTION_TIME);
+	if( this->obsPredictionEnabled )
+		evaluateEnemyPositions( (*root).state,PREDICTION_TIME );
 
 	this->initObstacles(root->getRobotPos(robotName) );
 
@@ -100,8 +99,6 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 		std::cout<<"we arrive the target"<<std::endl;
 		this->finish=true;
 	}
-
-	std::cout<<"odleglosc do celu"<<dist<<std::endl;
 
 
 	//sprawdz czy cel nie jest bezposrednio osiagalny
@@ -129,7 +126,7 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 		int nodeNr=0;
 
 
-		while( (goalPose.distance( nextRobotPose ) > minDistance ) && nodeNr<maxNodeNumber) {
+		while( (goalPose.distance( nextRobotPose ) > minDistance ) && nodeNr<maxNodeNumber ) {
 
 			//wybieram tymczasowy pkt docelowy w zaleznosci od odleglosci robota do najblizszej przeszkody
 			temporaryTarget=this->choseTarget(goalPose,robotVelocity,nextRobotPose,toNearestObstacleDist);
@@ -188,7 +185,7 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 		else{
 			resultNode=this->root;
 			resultNode->setFinal();
-			std::cout<<this->robotName<<" result is NULL"<<std::endl;
+			//std::cout<<this->robotName<<" result is NULL"<<std::endl;
 		}
 		return true;
 	}
@@ -262,8 +259,6 @@ Pose RRTPlanner::choseTarget(Pose goalPose,Vector2D velocity,const Pose nearestP
 	if(this->path->size()!=0){
 		if(t<0.1){
 			result=goalPose;
-			//nearest=findNearestState(result);
-			//nearest=findNearestToTargetState();
 		}
 		//way point
 		else if (t<0.7){
@@ -395,12 +390,19 @@ RRTNodePtr RRTPlanner::findNearestToTargetState(){
 */
 RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose){
 	//korzen tez bierze udział w poszukiwaniu najblizszego punktu
+	RRTNodePtr tmpResult;
 	RRTNodePtr result;
 	path->clear();
 	//znajdz bezposrednio osiagalnego potomka najblizej celu
 	BOOST_FOREACH(RRTNodePtr node,this->root->children){
-		result=findNearestAttainableState(targetPose,node);
+		tmpResult=findNearestAttainableState(targetPose,node);
 		//TODO: posprawdzac potomkow korzenia pod wzgledem osiagalnosci o odleglosci
+		if(tmpResult.get()!=NULL){
+			if(result.get()==NULL || tmpResult->shortestDistance < result->shortestDistance){
+				tmpResult=result;
+			}
+
+		}
 	}
 	return result;
 }
