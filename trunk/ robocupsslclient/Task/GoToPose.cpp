@@ -39,7 +39,6 @@ bool GoToPose::execute(){
 	while(!this->stopTask){
 		if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
 			lastSimTime=currSimTime;
-
 			rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
 						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path);
 
@@ -53,6 +52,8 @@ bool GoToPose::execute(){
 				}
 				nextRobotPose=nextState->getRobotPos(robot->getRobotName());
 
+                std::cout<<"go to"<<nextRobotPose<<std::endl;
+
 				robotRotation=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
 				//macierz obrotu os OY na wprost robota
 				RotationMatrix rmY(robotRotation);
@@ -64,6 +65,8 @@ bool GoToPose::execute(){
 
 				robotCurrentVel=(*currGameState).getRobotVelocity( robot->getRobotName() );
 				robotNewVel=calculateVelocity( robotCurrentVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
+
+				std::cout<<"robot->setSpeed"<<robotNewVel<<std::endl;
 				robot->setSpeed(robotNewVel,0);
 
 				delete rrt;

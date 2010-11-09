@@ -391,15 +391,21 @@ RRTNodePtr RRTPlanner::findNearestToTargetState(){
 RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose){
 	//korzen tez bierze udział w poszukiwaniu najblizszego punktu
 	RRTNodePtr tmpResult;
-	RRTNodePtr result;
+	RRTNodePtr result;//=this->root;
 	path->clear();
+	Pose startRobotPose=root->getMyRobotPos();
 	//znajdz bezposrednio osiagalnego potomka najblizej celu
 	BOOST_FOREACH(RRTNodePtr node,this->root->children){
+	    //result=findNearestAttainableState(targetPose,node);
 		tmpResult=findNearestAttainableState(targetPose,node);
+
 		//sprawdz potomkow korzenia pod wzgledem osiagalnosci i odleglosci
 		if(tmpResult.get()!=NULL){
+		    Pose robotPose=tmpResult->getMyRobotPos();
 			if(result.get()==NULL || tmpResult->shortestDistance < result->shortestDistance){
-				tmpResult=result;
+				if(checkTargetAttainability( startRobotPose, robotPose)==true){
+					result=tmpResult;;
+				}
 			}
 
 		}
