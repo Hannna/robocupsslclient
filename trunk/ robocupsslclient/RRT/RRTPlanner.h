@@ -185,14 +185,23 @@ private:
 	//czy przewidujemy ruch przeszkody
 	const bool obsPredictionEnabled;
 
+	//maksymalna liuczba potomkow korzenia drzewa RRT
+	static const unsigned int maxRootChildren = 4;
+	//ograniczenie na maksymalna liczbe wezłów w drzewie
+	static const unsigned int maxNodeNumber=400;
+
 	Pose (*getGoalPose)();
+
 	//roboty przeszkody posortowane wzgledem odleglosci od sterowanego robota
 	std::vector<Pose> obstacles;
 	//przewidywane polozenie przeszkod za deltaSIMTime
 	std::vector<Pose> predictedObstaclesPos;
+
 	//stan do ktorego ma dojechac robot w wyniku dzialania RRT
 	GameStatePtr resultState;
+	//wezel koncowy do ktorego ma dojechac robot
 	RRTNodePtr resultNode;
+
 	//sciezka wybrana w poprzednim kroku
 	std::list<Pose> * path;
 	//odleglosc najblizszego wezla drzewa rrt od celu

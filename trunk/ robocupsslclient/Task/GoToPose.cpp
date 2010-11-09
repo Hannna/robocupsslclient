@@ -12,7 +12,7 @@ GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose) {
 	std::cout<<"create GoToPose Task, goto "<<pose<<std::endl;
 }
 
-bool GoToPose::execute(){
+bool GoToPose::run(){
 	RRTPlanner * rrt;
 	std::list<Pose>  path;
 	GameStatePtr currGameState(new GameState());
@@ -42,7 +42,7 @@ bool GoToPose::execute(){
 			rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
 						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path);
 
-			if(rrt->run(currGameState,video.getUpdateDeltaTime()) ){
+			if( rrt->run(currGameState,video.getUpdateDeltaTime()) ){
 
 				GameStatePtr nextState=rrt->getNextState();
 				if(nextState.get()==NULL){
