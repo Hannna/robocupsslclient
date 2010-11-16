@@ -149,35 +149,53 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 	return;
 }
 
-void checkAcceleration(Vector2D speed,Videoserver & video,Robot& robot){
+void checkAcceleration(Vector2D speed,Robot& robot){
+	std::cout<<"checkAcceleration tests"<<std::endl;
+
 	GameStatePtr gameState(new GameState());
 	double deltaTime=0;
+	double currSimTime=0 ,prevSimTime=Videoserver::getInstance().updateGameState(gameState);
 
-	video.updateGameState(gameState);
 	bool exit=false;
+	bool brake=false;
 	Vector2D maxSpeed;
-	while(!exit){
-		video.updateGameState(gameState);
-		deltaTime+=video.getUpdateDeltaTime();
-		robot.setSpeed(speed,0);
-		(*gameState).updateRobotVel(robot.getRobotName(),robot.getVelocity() );
 
-		if( ( (fabs( (*gameState).getRobotVelocity( robot.getRobotName() ).length() - speed.length() ) <0.01 ) && !exit )
-				|| ( (fabs( (*gameState).getRobotVelocity( robot.getRobotName() ).length() ) <0.01 )  && exit ) ){
-			if(!exit){
-				std::cout<<"velocity "<<(*gameState).getRobotVelocity( robot.getRobotName())<<" delta Time "<<deltaTime<<" acc="
-					<<(*gameState).getRobotVelocity( robot.getRobotName()).length()/deltaTime<<std::endl;
-				maxSpeed=(*gameState).getRobotVelocity( robot.getRobotName());
-			}
-			else{
-				std::cout<<"velocity "<<(*gameState).getRobotVelocity( robot.getRobotName())<<" delta Time "<<deltaTime<<" dcc="
-							<<maxSpeed.length()/deltaTime<<std::endl;
-			}
-			speed=Vector2D(0,0);
-			deltaTime=0;
-			if(exit)break;
-			exit=true;
-		}
+	robot.setSpeed(speed,0);
+	while(true){
+	    currSimTime=Videoserver::getInstance().updateGameState(gameState);
+	    //std::cout<<"currSimTime"<<currSimTime<<std::endl;
+
+	    usleep(1000);
+        if( prevSimTime <  currSimTime ){
+            deltaTime+=(currSimTime - prevSimTime);
+            prevSimTime=currSimTime;
+
+            //robot.setSpeed(speed,0);
+
+            //(*gameState).updateRobotVel(robot.getRobotName(),robot.getVelocity() );
+
+
+            if( ( (fabs( (*gameState).getRobotVelocity( robot.getRobotName() ).length() - speed.length() ) <0.01 ) && !brake )
+                    || ( (fabs( (*gameState).getRobotVelocity( robot.getRobotName() ).length() ) <0.01 )  && brake ) )
+            {
+                if(!brake){
+                    std::cout<<"velocity "<<(*gameState).getRobotVelocity( robot.getRobotName())<<" delta Time "<<deltaTime<<" acc="
+                        <<(*gameState).getRobotVelocity( robot.getRobotName()).length()/deltaTime<<std::endl;
+                    maxSpeed=(*gameState).getRobotVelocity( robot.getRobotName());
+                }
+                else{
+                    std::cout<<"velocity "<<(*gameState).getRobotVelocity( robot.getRobotName())<<" delta Time "<<deltaTime<<" dcc="
+                                <<maxSpeed.length()/deltaTime<<std::endl;
+                }
+                speed=Vector2D(0,0);
+                deltaTime=0;
+                robot.setSpeed(speed,0);
+                if(exit)
+                    break;
+                exit=true;
+                brake=true;
+            }
+        }
 	}
 	robot.setSpeed(Vector2D(0,0),0);
 
@@ -191,8 +209,8 @@ void testTaskThread(){
 	Robot blueRobot1(std::string("blue1"),ifaceName);
 	Robot blueRobot2(std::string("blue2"),ifaceName);
 
-	pthread_t red0;//,red1,red2;
-	//pthread_t blue0,blue1,blue2;
+	pthread_t red0,red1,red2;
+	pthread_t blue0,blue1,blue2;
 	//pthread_t video_t;
 	pthread_attr_t  attr;
 	pthread_attr_init(&attr);
@@ -202,44 +220,44 @@ void testTaskThread(){
 
     while(true){
         pthread_create(&red0, &attr, testTask, (void *) &redRobot0);
+
+
+        //pthread_create(&red1, &attr, testTask, (void *) &redRobot1);
+        //pthread_create(&red2, &attr, testTask, (void *) &redRobot2);
+        //pthread_create(&blue0, &attr,testTask, (void *) &blueRobot0);
+       //pthread_create(&blue1, &attr, testTask, (void *) &blueRobot1);
+       // pthread_create(&blue2, &attr, testTask, (void *) &blueRobot2);
+
         pthread_join(red0,NULL);
-		#ifdef GAZEBO
+        //pthread_join(red1,NULL);
+        //pthread_join(red2,NULL);
+        //pthread_join(blue0,NULL);
+        //pthread_join(blue1,NULL);
+        //pthread_join(blue2,NULL);
+
+        #ifdef GAZEBO
 			SimControl::getInstance().restart();
+			//TODO: poczekaj az swiat sie zrestartuje!!!!!
 		#endif
-    }
 
-
-	/*
-	pthread_create(&red1, &attr, RRTThread, (void *) &arg2);
-	pthread_join(red1,NULL);
-
-	pthread_create(&red2, &attr, RRTThread, (void *) &arg3);
-	pthread_join(red2,NULL);
-
-	pthread_create(&blue0, &attr, RRTThread, (void *) &arg4);
-	pthread_join(blue0,NULL);
-
-	pthread_create(&blue1, &attr, RRTThread, (void *) &arg5);
-	pthread_join(blue1,NULL);
-
-	pthread_create(&blue2, &attr, RRTThread, (void *) &arg6);
-	pthread_join(blue2,NULL);
-*/
+   }
 }
 
 void * testTask(void * arg){
-    std::cout<<"start testTask"<<std::endl;
+    //std::cout<<"start testTask"<<std::endl;
 
 	Robot * robot=reinterpret_cast<Robot *>(arg);
 	GameStatePtr gameState(new GameState());
 	Videoserver::getInstance().updateGameState(gameState);
+
 	GoToPose goToPose( (*gameState).getBallPos(),robot);
+	//GoToPose goToPose( Pose(6.0,4.0,0.0),robot);
 	goToPose.execute();
-	std::cout<<"exit from task"<<std::endl;
+	//std::cout<<"exit from task"<<std::endl;
 	return 0;
 }
 
-void testSingleRRTThread(Videoserver & video){
+void testSingleRRTThread(){
     std::cout<<"start testSingleRRTThread"<<std::endl;
 	Robot redRobot0(std::string("red0"),ifaceName);
 	Robot redRobot1(std::string("red1"),ifaceName);
@@ -251,9 +269,7 @@ void testSingleRRTThread(Videoserver & video){
 
     Videoserver::getInstance().start(NULL);
 
-	TestRRT testRRT(&redRobot0,&video,Pose(5.5,2.5,0));
-	testRRT.start(NULL);
-	sleep(1000);
+	TestRRT testRRT(&redRobot0,Pose(4.0,6.0,0));
     testRRT.join();
 
     std::cout<<"exit from testSingleRRTThread"<<std::endl;
@@ -269,18 +285,18 @@ void testMultiRRTThread(Videoserver & video){
 	Robot blueRobot2(std::string("blue2"),ifaceName);
 
 
-	TestRRT testRRTred0(&redRobot0,&video,Pose(5.5,2.5,0));
+	TestRRT testRRTred0(&redRobot0,Pose(5.5,2.5,0));
 	testRRTred0.start(NULL);
-	TestRRT testRRTred1(&redRobot1,&video,Pose(1.5,2.5,0));
+	TestRRT testRRTred1(&redRobot1,Pose(1.5,2.5,0));
 	testRRTred1.start(NULL);
-	TestRRT testRRTred2(&redRobot2,&video,Pose(5.3,0.5,0));
+	TestRRT testRRTred2(&redRobot2,Pose(5.3,0.5,0));
 	testRRTred2.start(NULL);
 
-	TestRRT testRRTblue0(&blueRobot0,&video,Pose(1.3,0.5,0));
+	TestRRT testRRTblue0(&blueRobot0,Pose(1.3,0.5,0));
 	testRRTblue0.start(NULL);
-	TestRRT testRRTblue1(&blueRobot1,&video,Pose(2.3,1.5,0));
+	TestRRT testRRTblue1(&blueRobot1,Pose(2.3,1.5,0));
 	testRRTblue1.start(NULL);
-	TestRRT testRRTblue2(&blueRobot2,&video,Pose(2.6,0.5,0));
+	TestRRT testRRTblue2(&blueRobot2,Pose(2.6,0.5,0));
 	testRRTblue2.start(NULL);
 
 	testRRTred0.join();

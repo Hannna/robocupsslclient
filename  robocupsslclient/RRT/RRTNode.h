@@ -20,13 +20,13 @@ typedef boost::shared_ptr <RRTNode>  RRTNodePtr;
 class RRTNode {
 	friend class RRTPlanner;
 public:
-	RRTNode(const GameStatePtr & state_,const std::string robotName);
+	RRTNode(const GameStatePtr state_,const std::string robotName);
 	//void addNode(const GameStatePtr & state);
 	void addNode(const RRTNodePtr & node);
 	Pose getRobotPos(std::string robotName);
 	const Pose getMyRobotPos() const ;
 	// pobierz pozycje docelowa do ktorej prowadzi dany wezel
-	Pose getTargetPose();
+	const Pose getTargetPose() const;
 	// ustaw pozycje docelowa do ktorej prowadzi dany wezel
 	void setTargetPose(const Pose & p);
 
@@ -43,7 +43,7 @@ public:
 	void setFinal();
 private:
 	//stan planszy w aktualnym wezle
-	GameStatePtr state;
+	const GameStatePtr state;
 	//punkt docelowy do ktorego ma prowadzic dany wezel
 	Pose target;
 	//aktualna pozycja robota w danym wezle

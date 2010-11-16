@@ -12,15 +12,19 @@ Videoserver::Videoserver()
 #ifdef GAZEBO
 	lastUpdateTime = 0;
 #endif
+    std::cout<<"create VIDEOSERVER"<<std::endl;
 }
 
 double Videoserver::updateGameState(GameStatePtr gameState_) const{
-	double currTime;
+	double currTime=0;
 	pthread_mutex_lock (&Videoserver::mutex);
+
 	if( gameState_.get()!=NULL)
-		if( Videoserver::gameState.get()!=NULL )
+		if( Videoserver::gameState.get()!=NULL ){
 			(*gameState_)=(*Videoserver::gameState);
-	currTime=this->lastUpdateTime;
+			currTime=this->lastUpdateTime;
+		}
+
 	pthread_mutex_unlock (&Videoserver::mutex);
 	return currTime;
 }
@@ -83,6 +87,7 @@ void Videoserver::update(){
 #endif
 
 void updateVideo(int){
+    //std::cout<<"updateVideo"<<std::endl;
 	Videoserver::getInstance().update();
 	ualarm(Videoserver::updateDeltaTime, 0);
 }
@@ -104,4 +109,17 @@ void Videoserver::execute(void * arg){
 	while(true){
 		usleep(Videoserver::updateDeltaTime);
 	}
+}
+
+void Videoserver::testVideoserver(){
+
+    Videoserver::getInstance().start(NULL);
+	GameStatePtr currGameState(new GameState());
+
+    for(int i=0;i< 100;i++){
+        double currSimTime=video->updateGameState(currGameState);
+        std::cout<<"data from "<<currSimTime<<"[s] sim time"<<(*currGameState)<<std::endl;
+        sleep(1);
+    }
+
 }

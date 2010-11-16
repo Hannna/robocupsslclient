@@ -29,7 +29,7 @@ void testPose(Robot& robot,Pose newPose);
 void testRotation(Videoserver & video,Robot& robot);
 
 //testuje obliczanie przyspieszenia
-void checkAcceleration(Vector2D speed, Videoserver & video,Robot& robot);
+void checkAcceleration(Vector2D speed,Robot& robot);
 
 //testuje warstwe odpowiedzialna za sterowaniem robotem, wyhamowaniem przed celem itp
 void testMotion(Pose goalPose,Videoserver & video,Robot& robot);
@@ -43,7 +43,7 @@ void testMultiRRTThread(Videoserver & video);
  *  pozostale roboty sa statyczne, po osiagnieciu wyznaczonego celu
  *  lub kolizji funkcja konczy sie*
  */
-void testSingleRRTThread(Videoserver & video);
+void testSingleRRTThread();
 
 
 // testowanie rozwiazania wielowatkowego

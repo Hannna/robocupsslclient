@@ -34,10 +34,16 @@ const double RRTPlanner::randomStateReach=0.5;//[m]
 static boost::mt19937 rngA(static_cast<unsigned> (time(NULL)));
 static boost::uniform_01<boost::mt19937> uniformGen_01(rngA);
 
-RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,
+RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool withObsPrediction,
 			const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path):
-                root(new RRTNode(currState,robotName)),goalPose(goalPose_),
-                toTargetLikelihood(goalProb),obsPredictionEnabled(withObsPrediction){
+                root(new RRTNode(currState,robotName_)),
+                goalPose(goalPose_),
+                toTargetLikelihood(goalProb),
+                obsPredictionEnabled(withObsPrediction),
+                 robotName(robotName_){
+    #ifdef DEBUG
+        std::cout<<"create  RRTPlanner"<<std::endl;
+    #endif
 
     goDirectToTarget=false;
     finish=false;
@@ -55,11 +61,14 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName,bool wi
 		Logger::getInstance().LogToFile(DBG,log);
 	#endif
 
-	this->robotName=robotName;
-
 }
 
-bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
+bool RRTPlanner::run(double deltaSimTime){
+
+    #ifdef DEBUG
+        std::cout<<"start RRTPlanner::run"<<std::endl;
+    #endif
+
 	std::ostringstream log;
 	const double minDistance=Config::getInstance().getRRTMinDistance();
 	GameStatePtr extendedGameState;
@@ -69,7 +78,7 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 
 	Pose startRobotPose=root->getRobotPos(robotName);
 
-	Vector2D v=(*currState).getRobotVelocity(this->robotName);
+	Vector2D v=(root->state)->getRobotVelocity(this->robotName);
 	startRobotPose = Pose(startRobotPose.get<0>()+v.x*deltaSimTime,startRobotPose.get<1>()+v.y*deltaSimTime,0);
 
 	if( this->obsPredictionEnabled )
@@ -82,36 +91,45 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 	noCollision=isTargetInsideObstacle(startRobotPose,safetyMarigin);
 
 	if(!noCollision){
-		std::cout<<this->robotName<<" collision"<<std::endl;
+		std::cout<<this->robotName<<" robot is inside obstacle. collision"<<std::endl;
 		return false;
 	}
 
-	//TODO: ew sprawdzic czy pkt docelowy nie jest w obrebie przeszkody
+	// sprawdzic czy pkt docelowy nie jest w obrebie przeszkody
+    safetyMarigin=0;
+	noCollision=isTargetInsideObstacle(goalPose,safetyMarigin);
+	if(!noCollision){
+		std::cout<<"Achtung !!!"<<this->robotName<<" target is inside obstacle."<<std::endl;
+		return false;
+	}
 
-	//pozycja robota w kolejnym kroku algorytmu
-    Pose nextRobotPose=nearest->getRobotPos(this->robotName);
+
+
     double dist;
     //sprawdz czy robot jest u celu
-	if( (dist=goalPose.distance( nextRobotPose ) ) <= minDistance ){
-		std::cout<<"we arrive the target"<<std::endl;
+	if( (dist=goalPose.distance( startRobotPose  ) ) <= minDistance ){
+		//std::cout<<"we arrive the target"<<std::endl;
 		this->finish=true;
 		return true;
 	}
 	else
-		std::cout<<"robot is "<<dist<<" from the target"<<std::endl;
+		std::cout<<"robot is "<<dist<<" from the target, targed is "<<this->goalPose<<std::endl;
 
 	//sprawdz czy cel jest bezposrednio osiagalny
 	bool checkAddObstacles = true;
 	if(this->checkTargetAttainability(startRobotPose,goalPose,checkAddObstacles)){
-		std::cout<<"cel jest bezposrednio osiagalny"<<std::endl;
+		//std::cout<<"cel jest bezposrednio osiagalny"<<std::endl;
+		//std::cout<<"root->state"<<(*(root->state))<<std::endl;
 		this->goDirectToTarget=true;
 		return true;
 	}
 
+	//pozycja robota w kolejnym kroku algorytmu
+    Pose nextRobotPose=nearest->getRobotPos(this->robotName);
 	//zasieg robota w 1 kroku algorytmu
 	double robotReach=Config::getInstance().getRRTRobotReach();
 	//biezaca predkosc robota
-	Vector2D robotVelocity=currState->getRobotVelocity(this->robotName);
+	Vector2D robotVelocity=root->state->getRobotVelocity(this->robotName);
 	//odleglosc do najblizszej przeszkody
 	double toNearestObstacleDist=0;
 	//tymczasowy cel w koljenym kroku algorytmu
@@ -121,7 +139,6 @@ bool RRTPlanner::run(const GameStatePtr currState,double deltaSimTime){
 
 
 	while( (goalPose.distance( nextRobotPose ) > minDistance ) && nodeNr< RRTPlanner::maxNodeNumber ) {
-
 		//wybieram tymczasowy pkt docelowy w zaleznosci od odleglosci robota do najblizszej przeszkody
 		temporaryTarget=this->choseTarget(goalPose,robotVelocity,nextRobotPose,toNearestObstacleDist);
 		//wyszukuje pkt w drzewie najblizej wybranego celu
@@ -219,12 +236,13 @@ GameStatePtr RRTPlanner::getNextState(){
     }
 
     if( this->goDirectToTarget ){
-        GameStatePtr gameState(this->root->state);
+        GameStatePtr gameState(new GameState( *(this->root->state) ));
         gameState->updateRobotData(this->robotName,this->goalPose);
         //std::cout<<"jestem w"<<this->root->state->getRobotPos(this->robotName)<<std::endl;
         //std::cout<<"jade do celu "<<gameState->getRobotPos(this->robotName)<<std::endl;
         return gameState;
     }
+
 	if(this->root->children.empty()){
         return GameStatePtr();
 	}
@@ -444,9 +462,10 @@ Pose RRTPlanner::getRandomPose(){
 	//generator wspolrzednej X
 	//static boost::uniform_real<double> uni_distX(0,4);
 	//double maxXvalue=5.4;
-	double maxXvalue=5;
+	double maxXvalue=4.5;
+	double minXvalue=0.5;
 	//interesujace sa jedynie pozycje rozniace sie co najwyzej o 0.01 [m]
-	static boost::uniform_int<int> uni_distX(0,maxXvalue*100);
+	static boost::uniform_int<int> uni_distX(minXvalue*100,maxXvalue*100);
 
 //	static boost::variate_generator<boost::mt19937, boost::uniform_real<double> >
 	static boost::variate_generator<boost::mt19937, boost::uniform_int<int> >
@@ -455,9 +474,10 @@ Pose RRTPlanner::getRandomPose(){
 	//generator wspolrzednej Y
 //	static boost::uniform_real<double> uni_distY(0,4);
 //	double maxYvalue=7.4;
-	double maxYvalue=7;
+	double maxYvalue=6.5;
+	double minYvalue=0.5;
 	//interesujace sa jedynie pozycje rozniace sie co najwyzej o 0.01 [m]
-	static boost::uniform_int<int> uni_distY(0,maxYvalue*100);
+	static boost::uniform_int<int> uni_distY(minYvalue*100,maxYvalue*100);
 
 	//static boost::variate_generator<boost::mt19937, boost::uniform_real<double> >
 	static boost::variate_generator<boost::mt19937, boost::uniform_int<int> >
