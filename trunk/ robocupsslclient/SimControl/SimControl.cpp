@@ -33,12 +33,15 @@ SimControl::SimControl()
     /// Open the Simulation Interface
     try
     {
-      this->simIface->Open(client,"default");
-      //ponoc klient ma to zerowac i dekrementowac...
-      this->simIface->Lock(1);
-      this->simIface->data->responseCount=0;
-      this->simIface->data->requestCount=0;
-      this->simIface->Unlock();
+        if(this->simIface!=NULL){
+            //this->simIface->Run
+            this->simIface->Open(client,"default");
+            //ponoc klient ma to zerowac i dekrementowac...
+            this->simIface->Lock(1);
+            this->simIface->data->responseCount=0;
+            this->simIface->data->requestCount=0;
+            this->simIface->Unlock();
+        }
     }
     catch (std::string e)
     {

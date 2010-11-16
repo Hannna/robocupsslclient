@@ -17,7 +17,7 @@ class goalPose;
 
 class TestRRT: public Thread {
 public:
-	TestRRT(Robot* robot,Videoserver* video,Pose goalPose);
+	TestRRT(Robot* robot,Pose goalPose);
 	virtual ~TestRRT();
 private:
     virtual void execute(void*);

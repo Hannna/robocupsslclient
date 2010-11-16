@@ -21,8 +21,11 @@
         boost::unit_test::test_suite* ts1 = BOOST_TEST_SUITE( "test_suite1" );
 
         boost::shared_ptr<RefereeClient> instance( new RefereeClient( ) );
-        framework::master_test_suite().add( BOOST_CLASS_TEST_CASE( &RefereeClient::testConnection, instance ) );
+        //framework::master_test_suite().add( BOOST_CLASS_TEST_CASE( &RefereeClient::testConnection, instance ) );
         ts1->add( BOOST_CLASS_TEST_CASE( &RefereeClient::testConnection, instance ) );
+
+        ts1->add( BOOST_CLASS_TEST_CASE( &Videoserver::testVideoserver, Videoserver::getInstance() ) );
+
 
         boost::unit_test::framework::master_test_suite().add(ts1);
         return true;
@@ -73,25 +76,33 @@ int main(int argc, char*argv[],char *envp[]){
 
 		Config::getInstance().load("/home/maciek/codeblocks/magisterka/bin/Debug/config.xml");
 		Config::getInstance().setTestMode(true);
+
+
 		if(argc>1){
 			if(strncmp(argv[1],"test",4)==0)
 				Config::getInstance().setTestMode(true);
-			if(strncmp(argv[2],"velocity",8)==0)
-				testVelocity=true;
-			if(strncmp(argv[2],"position",8)==0)
-				testPosition=true;
-			if(strncmp(argv[2],"rrt",3)==0)
-				testRRTPlanner=true;
-            if(strncmp(argv[2],"multirrt",3)==0)
-				testMultiRRTPlanner=true;
-			if(strncmp(argv[2],"acc",3)==0)
-				testAcc=true;
-			if(strncmp(argv[2],"motion",3)==0)
-				testMotion_=true;
-			if(strncmp(argv[2],"rot",3)==0)
-				testRot=true;
-			if(strncmp(argv[2],"task",4)==0)
-				testTask=true;
+			if(argc>2){
+                if(strncmp(argv[2],"velocity",8)==0)
+                    testVelocity=true;
+                if(strncmp(argv[2],"position",8)==0)
+                    testPosition=true;
+                if(strncmp(argv[2],"rrt",3)==0)
+                    testRRTPlanner=true;
+                if(strncmp(argv[2],"multirrt",8)==0)
+                    testMultiRRTPlanner=true;
+                if(strncmp(argv[2],"acc",3)==0)
+                    testAcc=true;
+                if(strncmp(argv[2],"motion",6)==0)
+                    testMotion_=true;
+                if(strncmp(argv[2],"rot",3)==0)
+                    testRot=true;
+                if(strncmp(argv[2],"task",4)==0)
+                    testTask=true;
+			}
+			else{
+			    std::cout<<"missing param"<<std::endl;
+			    exit(0);
+			}
 		}
 
 		if(Config::getInstance().isTestMode()){
@@ -118,11 +129,29 @@ int main(int argc, char*argv[],char *envp[]){
 			}
 			else if(testAcc){
 				Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
-				Vector2D speed(1,1);
+                Robot redRobot1(std::string("red1"),ifaceName);
+                Robot redRobot2(std::string("red2"),ifaceName);
+
+                Robot blueRobot0(std::string("blue0"),ifaceName);
+                Robot blueRobot1(std::string("blue1"),ifaceName);
+                Robot blueRobot2(std::string("blue2"),ifaceName);
+
+                Videoserver::getInstance().start(NULL);
+
 				std::cout<<"starting acceleration tests"<<std::endl;
-				int i=30;
-				while(i--)
-					checkAcceleration(speed,Videoserver::getInstance(),testRobot);
+
+
+				std::vector<boost::tuple<double,double,double> > tests=Config::getInstance().getVelTests();
+				std::vector<boost::tuple<double,double,double> >::const_iterator ii=tests.begin();
+				for(;ii!=tests.end();ii++){
+				    Vector2D speed(ii->get<0>(),ii->get<1>());
+				    //int i=30;
+                    //while(i--)
+                        checkAcceleration(speed,testRobot);
+					//testVel(vel,ii->get<2>(),testRobot,Config::getInstance().getTestEstimatedTime());
+				}
+
+
 			}
 			else if(testMotion_){
 				Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
@@ -141,7 +170,7 @@ int main(int argc, char*argv[],char *envp[]){
             else if(testRRTPlanner){
 				std::cout<<"starting RRT tests"<<std::endl;
 				//Videoserver::getInstance().start(NULL);
-				testSingleRRTThread(Videoserver::getInstance());
+				testSingleRRTThread();
 			}
             else if(testMultiRRTPlanner){
 				std::cout<<"starting multi robot RRT tests"<<std::endl;

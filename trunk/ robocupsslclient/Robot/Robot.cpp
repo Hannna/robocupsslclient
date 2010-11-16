@@ -146,7 +146,7 @@ double calculateVelocity(const double vel, const double curr,const  double targe
 	//przyspieszenie
 	double acc=5;//7.5;//[m/s2]
 	//hamowanie
-	double dec=1;//9;//[m/s2]
+	double dec=0.5;//9;//[m/s2]
 	//jesli predkosc powoduje powiekszanie sie odleglosci miedzy cuur.x oraz target.x to zatrzymaj
 		if( vel*target < -0.01){
 			//std::cout<<"zly kierunek"<<std::endl;

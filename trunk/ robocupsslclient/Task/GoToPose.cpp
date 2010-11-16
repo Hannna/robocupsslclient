@@ -42,7 +42,7 @@ bool GoToPose::run(){
 			rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
 						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path);
 
-			if( rrt->run(currGameState,video.getUpdateDeltaTime()) ){
+			if( rrt->run(video.getUpdateDeltaTime()) ){
 
 				GameStatePtr nextState=rrt->getNextState();
 				if(nextState.get()==NULL){
@@ -52,7 +52,7 @@ bool GoToPose::run(){
 				}
 				nextRobotPose=nextState->getRobotPos(robot->getRobotName());
 
-                std::cout<<"go to"<<nextRobotPose<<std::endl;
+                //std::cout<<"go to"<<nextRobotPose<<std::endl;
 
 				robotRotation=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
 				//macierz obrotu os OY na wprost robota
@@ -66,7 +66,7 @@ bool GoToPose::run(){
 				robotCurrentVel=(*currGameState).getRobotVelocity( robot->getRobotName() );
 				robotNewVel=calculateVelocity( robotCurrentVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
 
-				std::cout<<"robot->setSpeed"<<robotNewVel<<std::endl;
+				//std::cout<<"robot->setSpeed"<<robotNewVel<<std::endl;
 				robot->setSpeed(robotNewVel,0);
 
 				delete rrt;
@@ -88,7 +88,7 @@ bool GoToPose::run(){
 		Pose currRobotPose=(*currGameState).getRobotPos( robot->getRobotName() );
 		//pozycja celu w ukladzie wsp zwiazanych z robotem
 		Vector2D targetRelPosition=rmY.Inverse()*(goalPose.getPosition()-currRobotPose.getPosition());
-		std::cout<<"targetRelPosition "<<targetRelPosition<<std::endl;
+		//std::cout<<"targetRelPosition "<<targetRelPosition<<std::endl;
 
 
 	}

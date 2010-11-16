@@ -54,12 +54,21 @@ public:
 	*
 	* @return
 	*/
-	bool run(GameStatePtr currState,double deltaSimTime);
+	bool run(double deltaSimTime);
 	/*
 	 * @brief zapis drzewa do pliku w formie dokumentu xml
 	*/
 	int serializeTree(const char * fileName,int serializedTrees);
 	virtual ~RRTPlanner();
+
+
+	/**
+	 * @brief zwraca stan losowy losowany z rozkladem rownomiernym z przestrzeni stanow.
+	 *
+	 * @return
+	 */
+static	Pose getRandomPose();
+
 
 private:
 	/**
@@ -123,14 +132,7 @@ private:
 	 * jego aktualnej predkosci i maxymalnego wychylenia
 	 *
 	 */
-	Pose getRandomPose(const Pose currentPose,Vector2D velocity, double deltaVel);
-	/**
-	 * @brief zwraca stan losowy losowany z rozkladem rownomiernym z przestrzeni stanow.
-	 *
-	 * @return
-	 */
-	Pose getRandomPose();
-	/**
+	Pose getRandomPose(const Pose currentPose,Vector2D velocity, double deltaVel);	/**
 	 * @brief dokonuje ekspansji stanu w kierunku celu, zwraca stan pusty jesli nastapi kolizja
 	 *
 	 * @param[in] currState aktualny stan planszy
@@ -169,7 +171,7 @@ private:
 	//stan od ktorego zaczynamy budowac drzewo
 	RRTNodePtr root;
 	//nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
-	std::string robotName;
+	const std::string robotName;
 	//promień okręgu w jakim losujemy kolejny losowy stan
 	static const double randomStateReach;
 	//pozycja docelowa robota

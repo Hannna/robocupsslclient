@@ -12,8 +12,8 @@
 #include <boost/foreach.hpp>
 #include "../Config/Config.h"
 
-RRTNode::RRTNode(const GameStatePtr & state_,const std::string robotName):state(state_),
-		currRobotPose( (*state).getRobotPos(robotName ) ){
+RRTNode::RRTNode(const GameStatePtr state_,const std::string robotName):
+                        state(state_),  currRobotPose( (*state).getRobotPos(robotName ) ){
 	this->final=false;
 	shortestDistance=std::numeric_limits<double>::infinity();
 //	this->shortestDstToTarget=std::numeric_limits<double>::infinity();
@@ -298,7 +298,7 @@ int RRTNode::serializeRecursiveToXml( xmlTextWriterPtr & writer,const std::strin
 	return 0;
 }
 // pobierz pozycje docelowa do ktorej prowadzi dany wezel
-Pose RRTNode::getTargetPose(){
+const Pose RRTNode::getTargetPose() const{
 	return this->target;
 }
 // ustaw pozycje docelowa do ktorej prowadzi dany wezel
