@@ -37,7 +37,7 @@ void testMotion(Pose goalPose,Videoserver & video,Robot& robot);
 /*@brief testuje algortym rrt w srodowisku wieloagentowym
  *  wielu agentów ma za zadanie poruszac sie do dwolnych losowych punktow docelowych
  */
-void testMultiRRTThread(Videoserver & video);
+void testMultiRRTThread();
 
 /*@brief testuje algortym rrt dla pojedynczego robota
  *  pozostale roboty sa statyczne, po osiagnieciu wyznaczonego celu

@@ -112,13 +112,13 @@ bool RRTPlanner::run(double deltaSimTime){
 		this->finish=true;
 		return true;
 	}
-	else
-		std::cout<<"robot is "<<dist<<" from the target, targed is "<<this->goalPose<<std::endl;
+	//else
+		//std::cout<<"robot is "<<dist<<" from the target, targed is "<<this->goalPose<<std::endl;
 
 	//sprawdz czy cel jest bezposrednio osiagalny
 	bool checkAddObstacles = true;
 	if(this->checkTargetAttainability(startRobotPose,goalPose,checkAddObstacles)){
-		//std::cout<<"cel jest bezposrednio osiagalny"<<std::endl;
+		std::cout<<"cel jest bezposrednio osiagalny"<<std::endl;
 		//std::cout<<"root->state"<<(*(root->state))<<std::endl;
 		this->goDirectToTarget=true;
 		return true;
@@ -685,9 +685,11 @@ void RRTPlanner::evaluateEnemyPositions(const GameStatePtr & currState,const dou
 bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles){
 
 	double robotRadius=Config::getInstance().getRRTRobotRadius()+SAFETY_MARGIN;
-	Vector2D tar=( Vector2D( targetPose.get<0>(),targetPose.get<1>() ) -
-			Vector2D( currPose.get<0>(),currPose.get<1>() ) );
+
+	Vector2D tar=( targetPose.getPosition() - currPose.getPosition()  );
+
 	//transformacja do lokalnego ukl wspolrzednych
+	//os OY na wprost do celu
 	double teta_cel=atan2( (tar.y) , (tar.x));
 	RotationMatrix rm( convertAnglePI(teta_cel - M_PI/2) );
 
@@ -706,7 +708,8 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
 	}
 
 #ifdef DEBUG
-	std::cout<<"pozycja celu w ukl zw z robotem "<<target<<std::endl;
+    Pose targetPose_r=targetPose.transform(currPose.getPosition(),rm);
+	std::cout<<"biezaca pozycja globalnie "<<currPose<<"pozycja celu globalnie "<<targetPose<<" oraz w ukl zw z robotem "<<targetPose_r<<std::endl;
 #endif
 
 	double d;
@@ -723,7 +726,7 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
 		obstaclePose_r=obstaclePose.transform(currPose.getPosition(),rm);
 
 #ifdef DEBUG
-		//std::cout<<"obstacle position in robot coordinates "<<obstaclePosition<<std::endl;
+		std::cout<<"obstacle position in robot coordinates "<<obstaclePose_r<<std::endl;
 #endif
 		if(  ( d<=robotRadius ) &&
 				//odleglosc robota do przeszkody jest mniejsza niz robota od celu
@@ -749,7 +752,7 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
 			obstaclePose_r=obstaclePose.transform(currPose.getPosition(),rm);
 
 	#ifdef DEBUG
-			std::cout<<"obstacle position in robot coordinates "<<obstaclePosition<<std::endl;
+			std::cout<<"obstacle position in robot coordinates "<<obstaclePose_r<<std::endl;
 	#endif
 			if(  ( d<=robotRadius ) &&
 					//odleglosc robota do przeszkody jest mniejsza niz robota od celu

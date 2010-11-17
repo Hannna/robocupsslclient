@@ -28,6 +28,14 @@ class Videoserver : public Thread
 friend void updateVideo(int);
 public:
 	static Videoserver& getInstance(){
+        //pthread_mutexattr_t mutexAttribute;
+        //pthread_mutexattr_init (&mutexAttribute);
+        //pthread_mutexattr_settype(&mutexAttribute,
+        //PTHREAD_MUTEX_RECURSIVE);
+        //pthread_mutex_init (&Videoserver::mutex, &mutexAttribute);
+
+       // pthread_mutex_init (&Videoserver::mutex, NULL);
+
 		if(!Videoserver::video){
 			Lock lock(mutex);
 			if(!Videoserver::video){
@@ -73,7 +81,7 @@ public:
 	};
 	friend void update(int);
 //czas co jaki videoserwer pobiera inf z symulatora
-	static const int updateDeltaTime=1000; //100[ms]
+	static const int updateDeltaTime=100000; //100[ms]
 private:
 	virtual void execute(void*) ;
 	/*@brief pobiera z symulatora pozycje wszytskich robotow na planszy oraz pilki

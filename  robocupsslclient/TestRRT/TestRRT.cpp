@@ -70,6 +70,7 @@ void TestRRT::execute(void *args){
 		std::cout<<"Try to plan path to "<<goalPose<<" from "<<currGameState->getRobotPos(robot->getRobotName())<<" for robot "<<robot->getRobotName()<<std::endl;
 		RRTPlanner  *rrt;
 
+        int serializedTrees=0;
         //biezaca rotacja sterowanego robota
 		double robotRotation=0;
 		//biezaca predkosc robota
@@ -114,22 +115,18 @@ void TestRRT::execute(void *args){
 					);
 				if( rrt->run(video->getUpdateDeltaTime() ) ){
 
-                    //currRobotVel=(*currGameState).getRobotVelocity( robot->getRobotName() );
-                    //std::cout<<"currRobotVel!!!!!!!!! "<<currRobotVel<<std::endl;
-
-
 					//pomiar czestotliowsci
 					/*	diff=measureTime(stop,&startTime);
 						out<<"rrt diffTime "<<diff.tv_sec<<"[s] "<<diff.tv_usec<<"[us]"<<std::endl;
 					*/
 
 					//zapis drzewa rrt do pliku
-					/*
-						std::string fileName("/home/maciek/workspace/magisterka/Debug/");
+
+						std::string fileName("/home/maciek/codeblocks/magisterka/bin/Debug/");
 						fileName.append(robot->getRobotName());
 						fileName.append("_rrtTree.xml");
 						rrt->serializeTree(fileName.c_str(),serializedTrees++);
-					*/
+
 
 					GameStatePtr nextState=rrt->getNextState();
 					if(nextState.get()==NULL){

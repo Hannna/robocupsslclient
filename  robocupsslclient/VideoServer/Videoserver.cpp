@@ -7,7 +7,8 @@ struct timeval Videoserver::startTime;
 Videoserver * Videoserver::video;
 Videoserver::Videoserver()
 {
-	pthread_mutex_init (&Videoserver::mutex, NULL);
+    pthread_mutex_init (&Videoserver::mutex, NULL);
+
 	Videoserver::gameState=GameStatePtr(new GameState());
 #ifdef GAZEBO
 	lastUpdateTime = 0;
@@ -34,14 +35,23 @@ double Videoserver::getUpdateDeltaTime()const{
 }
 
 void Videoserver::update(){
+
+    //std::cout<<"Videoserver::update() start"<<std::endl;
 #ifdef GAZEBO
 	pthread_mutex_lock (&Videoserver::mutex);
+
+	//std::cout<<"after lock "<<std::endl;
+
 	double currSimTime = SimControl::getInstance().getSimTime();
 	this->updateT=currSimTime-this->lastUpdateTime;
 	this->lastUpdateTime=currSimTime;
 
 	std::map<std::string,Pose > positions;
+	//std::cout<<"before getAllPos "<<std::endl;
+
 	SimControl::getInstance().getAllPos(positions);
+
+	//std::cout<<"after getAllPos "<<std::endl;
 
 	PositionsIt ii=positions.begin();
 	std::string model_name;
@@ -72,6 +82,8 @@ void Videoserver::update(){
 	}
 
 	pthread_mutex_unlock (&Videoserver::mutex);
+
+    //std::cout<<"Videoserver::update() end"<<std::endl;
 #endif
 	return ;
 }

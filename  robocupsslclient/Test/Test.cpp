@@ -163,10 +163,9 @@ void checkAcceleration(Vector2D speed,Robot& robot){
 	robot.setSpeed(speed,0);
 	while(true){
 	    currSimTime=Videoserver::getInstance().updateGameState(gameState);
-	    //std::cout<<"currSimTime"<<currSimTime<<std::endl;
 
-	    usleep(1000);
         if( prevSimTime <  currSimTime ){
+            std::cout<<"currSimTime"<<currSimTime<<std::endl;
             deltaTime+=(currSimTime - prevSimTime);
             prevSimTime=currSimTime;
 
@@ -275,7 +274,7 @@ void testSingleRRTThread(){
     std::cout<<"exit from testSingleRRTThread"<<std::endl;
 
 }
-void testMultiRRTThread(Videoserver & video){
+void testMultiRRTThread(){
 	Robot redRobot0(std::string("red0"),ifaceName);
 	Robot redRobot1(std::string("red1"),ifaceName);
 	Robot redRobot2(std::string("red2"),ifaceName);
@@ -285,8 +284,12 @@ void testMultiRRTThread(Videoserver & video){
 	Robot blueRobot2(std::string("blue2"),ifaceName);
 
 
+    Videoserver::getInstance().start(NULL);
+
+
 	TestRRT testRRTred0(&redRobot0,Pose(5.5,2.5,0));
-	testRRTred0.start(NULL);
+	//testRRTred0.start(NULL);
+	/*
 	TestRRT testRRTred1(&redRobot1,Pose(1.5,2.5,0));
 	testRRTred1.start(NULL);
 	TestRRT testRRTred2(&redRobot2,Pose(5.3,0.5,0));
@@ -298,14 +301,14 @@ void testMultiRRTThread(Videoserver & video){
 	testRRTblue1.start(NULL);
 	TestRRT testRRTblue2(&blueRobot2,Pose(2.6,0.5,0));
 	testRRTblue2.start(NULL);
-
+*/
 	testRRTred0.join();
-	testRRTred1.join();
+/*	testRRTred1.join();
 	testRRTred2.join();
 
 	testRRTblue0.join();
 	testRRTblue1.join();
 	testRRTblue2.join();
-
+*/
 	std::cout<<"exit from testMultiRRTThread"<<std::endl;
 }
