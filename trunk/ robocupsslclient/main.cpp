@@ -169,13 +169,11 @@ int main(int argc, char*argv[],char *envp[]){
 			}
             else if(testRRTPlanner){
 				std::cout<<"starting RRT tests"<<std::endl;
-				//Videoserver::getInstance().start(NULL);
 				testSingleRRTThread();
 			}
             else if(testMultiRRTPlanner){
 				std::cout<<"starting multi robot RRT tests"<<std::endl;
-				testMultiRRTThread(Videoserver::getInstance());
-				//testSingleRRTThread(Videoserver::getInstance());
+				testMultiRRTThread();
 			}
 			else if(testTask){
 				std::cout<<"starting tasks tests"<<std::endl;
