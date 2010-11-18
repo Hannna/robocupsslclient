@@ -269,7 +269,7 @@ void testSingleRRTThread(){
     Videoserver::getInstance().start(NULL);
 
 	TestRRT testRRT(&redRobot0,Pose(4.0,6.0,0));
-    testRRT.join();
+    testRRT.joinThread();
 
     std::cout<<"exit from testSingleRRTThread"<<std::endl;
 
@@ -288,27 +288,22 @@ void testMultiRRTThread(){
 
 
 	TestRRT testRRTred0(&redRobot0,Pose(5.5,2.5,0));
-	//testRRTred0.start(NULL);
-	/*
+
+
 	TestRRT testRRTred1(&redRobot1,Pose(1.5,2.5,0));
-	testRRTred1.start(NULL);
 	TestRRT testRRTred2(&redRobot2,Pose(5.3,0.5,0));
-	testRRTred2.start(NULL);
 
 	TestRRT testRRTblue0(&blueRobot0,Pose(1.3,0.5,0));
-	testRRTblue0.start(NULL);
 	TestRRT testRRTblue1(&blueRobot1,Pose(2.3,1.5,0));
-	testRRTblue1.start(NULL);
 	TestRRT testRRTblue2(&blueRobot2,Pose(2.6,0.5,0));
-	testRRTblue2.start(NULL);
-*/
-	testRRTred0.join();
-/*	testRRTred1.join();
-	testRRTred2.join();
 
-	testRRTblue0.join();
-	testRRTblue1.join();
-	testRRTblue2.join();
-*/
+	testRRTred0.joinThread();
+	testRRTred1.joinThread();
+	testRRTred2.joinThread();
+
+	testRRTblue0.joinThread();
+	testRRTblue1.joinThread();
+	testRRTblue2.joinThread();
+
 	std::cout<<"exit from testMultiRRTThread"<<std::endl;
 }

@@ -20,9 +20,11 @@ void Config::setTestMode(bool testMode){
 bool Config::isTestMode(){
 	return this->testMode;
 }
+
 bool Config::isDebugMode(){
 	return this->debug;
 }
+
 bool Config::load(std::string filename){
 
 	bool status=true;
