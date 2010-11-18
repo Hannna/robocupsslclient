@@ -30,6 +30,19 @@
 class RRTPlanner {
 	friend class TestRRT;
 public:
+
+enum ErrorCode{
+    //mamy plan jak dojechac do celu
+    Success=1,
+    //robot u celu
+    RobotReachGoalPose=0,
+    //cel jest w obrebie przeszkody
+    TargetInsideObstacle=-100,
+    //sterowany robot ulegl koliji
+    RobotCollision=-99,
+    //pkt docelowy jest poza zasiegiem
+    BadTarget=-98,
+};
 	/**
 	 * @brief tworzy obiekt plannera RRT
 	 *
@@ -54,7 +67,7 @@ public:
 	*
 	* @return
 	*/
-	bool run(double deltaSimTime);
+	ErrorCode run(double deltaSimTime);
 	/*
 	 * @brief zapis drzewa do pliku w formie dokumentu xml
 	*/
@@ -212,6 +225,12 @@ private:
     bool finish;
     //czy cel jest bezposrednio osiagalny
     bool goDirectToTarget;
+
+    static const double maxXvalue=4.5;//[m]
+    static const double minXvalue=0.5;//[m]
+
+    static const double maxYvalue=6.5;//[m]
+    static const double minYvalue=0.5;//[m]
 };
 
 #endif /* RRTPLANNER_H_ */

@@ -66,11 +66,13 @@ void TestRRT::execute(void *args){
 
 
 
+    int serializedTrees=0;
 	while(true){
-		std::cout<<"Try to plan path to "<<goalPose<<" from "<<currGameState->getRobotPos(robot->getRobotName())<<" for robot "<<robot->getRobotName()<<std::endl;
+	    #ifdef DEBUG
+            std::cout<<"Try to plan path to "<<goalPose<<" from "<<currGameState->getRobotPos(robot->getRobotName())<<" for robot "<<robot->getRobotName()<<std::endl;
+		#endif
 		RRTPlanner  *rrt;
 
-        int serializedTrees=0;
         //biezaca rotacja sterowanego robota
 		double robotRotation=0;
 		//biezaca predkosc robota
@@ -84,10 +86,10 @@ void TestRRT::execute(void *args){
         //pozycja docelowa w kolejnym kroku algorytmu
         Pose nextRobotPose;
         //czy nalezy przewidywac ruch przeszkod
-        bool obsPredictionEnable=false;
+        bool obsPredictionEnable=true;
 
         max=0;
-
+        RRTPlanner::ErrorCode rrtStatus;
 		while(true){
 			//jesli videoserwer wykonal aktualizacje polozen robotow
 			if( currSimTime < video->updateGameState(currGameState) )
@@ -113,7 +115,7 @@ void TestRRT::execute(void *args){
 						goalPose,
 						&path
 					);
-				if( rrt->run(video->getUpdateDeltaTime() ) ){
+				if( (rrtStatus=rrt->run(video->getUpdateDeltaTime() ) )== RRTPlanner::Success ){
 
 					//pomiar czestotliowsci
 					/*	diff=measureTime(stop,&startTime);
@@ -121,12 +123,12 @@ void TestRRT::execute(void *args){
 					*/
 
 					//zapis drzewa rrt do pliku
-
+/*
 						std::string fileName("/home/maciek/codeblocks/magisterka/bin/Debug/");
 						fileName.append(robot->getRobotName());
 						fileName.append("_rrtTree.xml");
 						rrt->serializeTree(fileName.c_str(),serializedTrees++);
-
+*/
 
 					GameStatePtr nextState=rrt->getNextState();
 					if(nextState.get()==NULL){
@@ -165,18 +167,30 @@ void TestRRT::execute(void *args){
                         std::cout<<"set speed "<<newRobotVel<<std::endl;
                     #endif
 					robot->setSpeed(newRobotVel,0);
+					delete rrt;
+				}
+				else if(rrtStatus==RRTPlanner::RobotReachGoalPose){
+				    std::cout<<"robot u celu"<<std::endl;
+					robot->setSpeed(Vector2D(0.0,0.0),0);
+					sleep(2);
+					delete rrt;
+					break;
 				}
 				else{
-				    std::cout<<"run retrun false"<<std::endl;
+
 					robot->setSpeed(Vector2D(0.0,0.0),0);
+					sleep(2);
 					#ifdef GAZEBO
-						SimControl::getInstance().setSimPos(robot->getRobotName().c_str(), goalPose);
+					//SimControl::getInstance().pause();
+					//SimControl::getInstance().restart();
+					//SimControl::getInstance().resume();
+					sleep(2);
+						//SimControl::getInstance().setSimPos(robot->getRobotName().c_str(), goalPose);
 					#endif
 					delete rrt;
 					break;
 				}
 
-				delete rrt;
 			}
 		}
 
@@ -188,6 +202,9 @@ void TestRRT::execute(void *args){
 
 	//	out.close();
 
+}
+void TestRRT::joinThread(){
+    this->join();
 }
 TestRRT::~TestRRT() {
 	// TODO Auto-generated destructor stub
