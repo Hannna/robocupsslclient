@@ -40,7 +40,7 @@ bool GoToPose::run(){
 		if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
 			lastSimTime=currSimTime;
 			rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
-						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path);
+						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path,currSimTime);
 
 			if( rrt->run(video.getUpdateDeltaTime()) ){
 

@@ -98,6 +98,8 @@ private:
 	double updateT;//[s]
 	//mutex chroniacy dostep do singletonu
 	static pthread_mutex_t  mutex;
+	static pthread_cond_t update_game_state_cv;
+
 	#ifdef GAZEBO
 		#ifdef OLD
 		std::map<std::string,gazebo::PositionIface * > posIfaces;

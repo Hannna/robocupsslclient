@@ -17,10 +17,11 @@ class goalPose;
 
 class TestRRT: protected Thread {
 public:
-	TestRRT(Robot* robot,Pose goalPose);
+	TestRRT(Robot* robot,Pose goalPose,bool serialize);
 	void joinThread();
 	virtual ~TestRRT();
 private:
+    const bool serialize;
     virtual void execute(void*);
 	struct threadArg arg1;
 };

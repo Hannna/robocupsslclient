@@ -21,11 +21,8 @@
 #include <limits>
 #include <boost/random.hpp>
 
-//margines bezp przy wyznaczaniu sciezki
-//o tyle powiekszamy promien robota przy wyznaczaniu sciezki
-#define SAFETY_MARGIN 0.05
 //czas o jaki przewidujemy ruch przeciwnika do przodu
-#define PREDICTION_TIME 0.01 //[sek]
+//#define PREDICTION_TIME 0.01 //[sek]
 
 class RRTPlanner {
 	friend class TestRRT;
@@ -51,7 +48,7 @@ enum ErrorCode{
 	 * @param[in] goalPose pozycja docelowa(razem z rotacja)
 	 * @return
 	 */
-	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,const Pose goalPose,std::list<Pose> * path);
+	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,const Pose goalPose,std::list<Pose> * path, double simTime_);
 
 	GameStatePtr getNearestState();
 	/* zwraca wierzcholek docelowy dla robota
@@ -226,11 +223,18 @@ private:
     //czy cel jest bezposrednio osiagalny
     bool goDirectToTarget;
 
+	//czas z sumulacji ktorego dotyczy drzewo
+	const double simTime;
+
     static const double maxXvalue=4.5;//[m]
     static const double minXvalue=0.5;//[m]
 
     static const double maxYvalue=6.5;//[m]
     static const double minYvalue=0.5;//[m]
+
+    //margines bezp przy wyznaczaniu sciezki
+    //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
+    static const double SAFETY_MARGIN = 0.05;
 };
 
 #endif /* RRTPLANNER_H_ */

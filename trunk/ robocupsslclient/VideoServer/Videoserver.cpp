@@ -2,12 +2,16 @@
 #include "../Config/Config.h"
 #include <signal.h>
 pthread_mutex_t Videoserver::mutex;
+pthread_cond_t Videoserver::update_game_state_cv;
+
 struct timeval Videoserver::startTime;
 
 Videoserver * Videoserver::video;
 Videoserver::Videoserver()
 {
     pthread_mutex_init (&Videoserver::mutex, NULL);
+    pthread_cond_init (&Videoserver::update_game_state_cv, NULL);
+
 
 	Videoserver::gameState=GameStatePtr(new GameState());
 #ifdef GAZEBO
@@ -22,8 +26,15 @@ double Videoserver::updateGameState(GameStatePtr gameState_) const{
 
 	if( gameState_.get()!=NULL)
 		if( Videoserver::gameState.get()!=NULL ){
-			(*gameState_)=(*Videoserver::gameState);
-			currTime=this->lastUpdateTime;
+		    if(gameState_->getSimTime( ) < this->lastUpdateTime){
+                (*gameState_)=(*Videoserver::gameState);
+                currTime=this->lastUpdateTime;
+		    }
+		    else{
+                pthread_cond_wait(&Videoserver::update_game_state_cv,&Videoserver::mutex);
+                (*gameState_)=(*Videoserver::gameState);
+                currTime=this->lastUpdateTime;
+		    }
 		}
 
 	pthread_mutex_unlock (&Videoserver::mutex);
@@ -45,6 +56,8 @@ void Videoserver::update(){
 	double currSimTime = SimControl::getInstance().getSimTime();
 	this->updateT=currSimTime-this->lastUpdateTime;
 	this->lastUpdateTime=currSimTime;
+
+    Videoserver::gameState->setSimTime(this->lastUpdateTime);
 
 	std::map<std::string,Pose > positions;
 	//std::cout<<"before getAllPos "<<std::endl;
@@ -80,6 +93,8 @@ void Videoserver::update(){
 			Videoserver::gameState->updateRobotData(model_name,(*ii).second,Vector2D(vx,vy),w);
 		}
 	}
+
+    pthread_cond_broadcast(&Videoserver::update_game_state_cv);
 
 	pthread_mutex_unlock (&Videoserver::mutex);
 
