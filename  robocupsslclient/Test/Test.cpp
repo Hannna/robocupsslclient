@@ -208,8 +208,8 @@ void testTaskThread(){
 	Robot blueRobot1(std::string("blue1"),ifaceName);
 	Robot blueRobot2(std::string("blue2"),ifaceName);
 
-	pthread_t red0,red1,red2;
-	pthread_t blue0,blue1,blue2;
+	pthread_t red0;//,red1,red2;
+	//pthread_t blue0,blue1,blue2;
 	//pthread_t video_t;
 	pthread_attr_t  attr;
 	pthread_attr_init(&attr);
@@ -267,8 +267,8 @@ void testSingleRRTThread(){
 	Robot blueRobot2(std::string("blue2"),ifaceName);
 
     Videoserver::getInstance().start(NULL);
-
-	TestRRT testRRT(&redRobot0,Pose(4.0,6.0,0));
+    bool serialize=true;
+	TestRRT testRRT(&redRobot0,Pose(4.0,6.0,0),serialize);
     testRRT.joinThread();
 
     std::cout<<"exit from testSingleRRTThread"<<std::endl;
@@ -287,15 +287,16 @@ void testMultiRRTThread(){
     Videoserver::getInstance().start(NULL);
 
 
-	TestRRT testRRTred0(&redRobot0,Pose(5.5,2.5,0));
+    bool serialize=false;
+	TestRRT testRRTred0(&redRobot0,Pose(5.5,2.5,0),serialize);
 
 
-	TestRRT testRRTred1(&redRobot1,Pose(1.5,2.5,0));
-	TestRRT testRRTred2(&redRobot2,Pose(5.3,0.5,0));
+	TestRRT testRRTred1(&redRobot1,Pose(1.5,2.5,0),serialize);
+	TestRRT testRRTred2(&redRobot2,Pose(5.3,0.5,0),serialize);
 
-	TestRRT testRRTblue0(&blueRobot0,Pose(1.3,0.5,0));
-	TestRRT testRRTblue1(&blueRobot1,Pose(2.3,1.5,0));
-	TestRRT testRRTblue2(&blueRobot2,Pose(2.6,0.5,0));
+	TestRRT testRRTblue0(&blueRobot0,Pose(1.3,0.5,0),serialize);
+	TestRRT testRRTblue1(&blueRobot1,Pose(2.3,1.5,0),serialize);
+	TestRRT testRRTblue2(&blueRobot2,Pose(2.6,0.5,0),serialize);
 
 	testRRTred0.joinThread();
 	testRRTred1.joinThread();

@@ -10,7 +10,7 @@
 #include "../RRT/RRTPlanner.h"
 #include "../Task/GoToPose.h"
 
-TestRRT::TestRRT(Robot* robot,Pose goalPose) {
+TestRRT::TestRRT(Robot* robot,Pose goalPose,bool serialize_ ): serialize(serialize_) {
 	arg1.goalPose=goalPose;
 	arg1.video=NULL;
 	arg1.robot=robot;
@@ -90,12 +90,15 @@ void TestRRT::execute(void *args){
 
         max=0;
         RRTPlanner::ErrorCode rrtStatus;
+
 		while(true){
 			//jesli videoserwer wykonal aktualizacje polozen robotow
 			if( currSimTime < video->updateGameState(currGameState) )
 			{	step++;
-				prevSimTime=currSimTime;
-				currSimTime=video->updateGameState(currGameState);
+                prevSimTime=currSimTime;
+                currSimTime=currGameState->getSimTime();
+
+				//currSimTime=video->updateGameState(currGameState);
 
 				(currSimTime-prevSimTime) > max ?  max=(currSimTime-prevSimTime): max=max ;
 
@@ -113,7 +116,8 @@ void TestRRT::execute(void *args){
 						obsPredictionEnable,
 						currGameState,
 						goalPose,
-						&path
+						&path,
+						currSimTime
 					);
 				if( (rrtStatus=rrt->run(video->getUpdateDeltaTime() ) )== RRTPlanner::Success ){
 
@@ -123,12 +127,12 @@ void TestRRT::execute(void *args){
 					*/
 
 					//zapis drzewa rrt do pliku
-/*
+					if(serialize){
 						std::string fileName("/home/maciek/codeblocks/magisterka/bin/Debug/");
 						fileName.append(robot->getRobotName());
 						fileName.append("_rrtTree.xml");
 						rrt->serializeTree(fileName.c_str(),serializedTrees++);
-*/
+					}
 
 					GameStatePtr nextState=rrt->getNextState();
 					if(nextState.get()==NULL){
@@ -187,6 +191,17 @@ void TestRRT::execute(void *args){
 					sleep(2);
 						//SimControl::getInstance().setSimPos(robot->getRobotName().c_str(), goalPose);
 					#endif
+
+					if(rrtStatus==RRTPlanner::BadTarget){
+					    std::cout<<"RRTPlanner::BadTarget"<<std::endl;
+
+					}
+					else if(rrtStatus==RRTPlanner::TargetInsideObstacle){
+                        std::cout<<"RRTPlanner::BadTarget"<<std::endl;
+					}
+					else if(rrtStatus==RRTPlanner::RobotCollision){
+                        std::cout<<robot->getRobotName()<<" RRTPlanner::RobotCollision"<<std::endl;
+					}
 					delete rrt;
 					break;
 				}

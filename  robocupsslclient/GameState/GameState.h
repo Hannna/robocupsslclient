@@ -44,12 +44,13 @@ public:
 	void updateBallData(Vector2D pos,Vector2D v);
 	void updateSimTime(double simTime);
 	Pose getRobotPos(std::string name);
+	double getSimTime();
+	void setSimTime(double simTime_){this->simTime=simTime_;};
 	/*@brief zwraca pozycje wszystkich robotwo poza podanym jako argument
 	 *
 	 */
 	std::vector<Pose> getEnemyRobotsPos(std::string robotName);
 	Vector2D getRobotVelocity(std::string name);
-	double getSimTime();
 	Pose getBallPos();
 	GameState & operator=(const GameState &gameState);
 	friend std::ostream& operator<<(std::ostream& os,const GameState& gs);
