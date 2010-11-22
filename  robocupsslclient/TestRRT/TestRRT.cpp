@@ -174,7 +174,7 @@ void TestRRT::execute(void *args){
 					delete rrt;
 				}
 				else if(rrtStatus==RRTPlanner::RobotReachGoalPose){
-				    std::cout<<"robot u celu"<<std::endl;
+				    //std::cout<<"robot u celu"<<std::endl;
 					robot->setSpeed(Vector2D(0.0,0.0),0);
 					sleep(2);
 					delete rrt;
@@ -197,10 +197,11 @@ void TestRRT::execute(void *args){
 
 					}
 					else if(rrtStatus==RRTPlanner::TargetInsideObstacle){
-                        std::cout<<"RRTPlanner::BadTarget"<<std::endl;
+                        std::cout<<"RRTPlanner::TargetInsideObstacle"<<std::endl;
 					}
 					else if(rrtStatus==RRTPlanner::RobotCollision){
                         std::cout<<robot->getRobotName()<<" RRTPlanner::RobotCollision"<<std::endl;
+                        return;
 					}
 					delete rrt;
 					break;
@@ -209,8 +210,10 @@ void TestRRT::execute(void *args){
 			}
 		}
 
-        std::cout<<robot->getRobotName()<<
-        " Mean update delta time=" <<(currSimTime-startSimTime)/step<<" max update delta time "<<max<<std::endl;
+        #ifdef DEBUG
+            std::cout<<robot->getRobotName()<<
+            " Mean update delta time=" <<(currSimTime-startSimTime)/step<<" max update delta time "<<max<<std::endl;
+		#endif
 		//wylosuj kolejny pkt docelowy
         goalPose=RRTPlanner::getRandomPose();
 	}
