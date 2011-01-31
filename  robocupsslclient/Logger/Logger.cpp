@@ -178,6 +178,7 @@ void Logger::LogToFile(enum level level_, const char *data,...){
 	//	setlocale (LC_ALL, "pl_PL");
 		setlocale (LC_ALL, "en_UK");
 
+        return;
 		log=log4cxx::LogManager::getLoggerRepository()->getLogger(std::string("logFile"));
 
 	/*
@@ -194,7 +195,7 @@ void Logger::LogToFile(enum level level_, const char *data,...){
 		switch(level_){
 		case PATH:
 			log=log4cxx::LogManager::getLoggerRepository()->getLogger(std::string("robotsPath"));
-			LOG4CXX_INFO(log, message);
+			//LOG4CXX_INFO(log, message);
 			break;
 		case INFO:
 			LOG4CXX_INFO(log, message);

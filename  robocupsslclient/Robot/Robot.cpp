@@ -26,6 +26,11 @@ Robot::Robot(const std::string robotName,const std::string posIfaceName)
 	//Enable the motor
 	posIface->Lock(1);
 	posIface->data->cmdEnableMotors = 1;
+
+    posIface->data->cmdVelocity.pos.x=0;
+	posIface->data->cmdVelocity.pos.y=0;
+	posIface->data->cmdVelocity.pos.z=0;
+
 	posIface->Unlock();
 	Videoserver::getInstance().registerRobot(posIface,this->robotName);
 #endif

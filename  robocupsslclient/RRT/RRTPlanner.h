@@ -69,6 +69,13 @@ enum ErrorCode{
 	 * @brief zapis drzewa do pliku w formie dokumentu xml
 	*/
 	int serializeTree(const char * fileName,int serializedTrees);
+
+	/**
+	* @brief zwraca predkosc robota w kolejny kroku algorytmu
+	*
+	*/
+	Vector2D getRobotSpeed();
+
 	virtual ~RRTPlanner();
 
 

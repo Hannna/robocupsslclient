@@ -121,7 +121,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
     double dist;
     //sprawdz czy robot jest u celu
 	if( (dist=goalPose.distance( startRobotPose  ) ) <= minDistance ){
-		//std::cout<<"we arrive the target"<<std::endl;
+		std::cout<<"we arrive the target"<<std::endl;
 		this->finish=true;
 		return RRTPlanner::RobotReachGoalPose;
 	}
@@ -132,6 +132,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	checkAddObstacles = true;
 	if(this->checkTargetAttainability(startRobotPose,goalPose,checkAddObstacles)){
 		//std::cout<<"root->state"<<(*(root->state))<<std::endl;
+		std::cout<<"go direct to target"<<std::endl;
 		this->goDirectToTarget=true;
 		return RRTPlanner::Success;
 	}
@@ -255,6 +256,7 @@ GameStatePtr RRTPlanner::getNextState(){
     }
 
 	if(this->root->children.empty()){
+
         return GameStatePtr();
 	}
 
@@ -901,6 +903,16 @@ int RRTPlanner::serializeTree(const char * fileName,int serializedTrees){
 		return status;
 	}
 
+
+	ois.str("");
+	ois<<this->robotName;
+	status = xmlTextWriterWriteAttribute(writer, BAD_CAST "robotName",
+									 BAD_CAST ois.str().c_str());
+	if (status < 0) {
+		printf("testXmlwriterTree: Error at xmlTextWriterWriteAttribute\n");
+		return status;
+	}
+
 	root->serializeNodeToXml(writer);
 
 	status = xmlTextWriterStartElement(writer, BAD_CAST "obstacles");
@@ -996,6 +1008,33 @@ int RRTPlanner::serializeTree(const char * fileName,int serializedTrees){
     serializedTrees++;
 
     return 0;
+}
+
+Vector2D RRTPlanner::getRobotSpeed(){
+
+    //biezaca rotacja robota
+    //double robotRotation=(*currGameState).getRobotPos( robot->getRobotName()).get<2>() ;
+
+    double robotRotation=this->root->getMyRobotPos().get<2>() ;
+
+    //macierz obrotu os OY na wprost robota
+    RotationMatrix rmY(robotRotation);
+
+   // Pose nextRobotPose=this->resultState->;
+/*
+    //pozycja celu w ukladzie wsp zwiazanych z robotem
+    Pose targetRelPosition=rmY.Inverse()*(nextRobotPose.getPosition() - this->root->getMyRobotPos().getPosition());
+    #ifdef DEBUG
+        std::cout<<"targetRelPosition "<<targetRelPosition<<std::endl;
+    #endif
+    //pobiez biezaca predkosc robota
+    currRobotVel=(*currGameState).getRobotVelocity( robot->getRobotName() );
+    #ifdef DEBUG
+        std::cout<<"currRobotVel "<<currRobotVel<<std::endl;
+    #endif
+    //oblicz nowe sterowanie
+    newRobotVel=calculateVelocity( currRobotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
+*/
 }
 
 RRTPlanner::~RRTPlanner() {
