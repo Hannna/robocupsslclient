@@ -104,13 +104,18 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 #ifdef GAZEBO
 	time_t startTime=time(NULL);
 	speed=speed*Config::getInstance().getSpeedFactor();
-	std::cout<<"start test with vx="<<speed.x<<" vy="<<speed.y<<" w="<<yaw<<std::endl;
-	Pose currPosition,prevPosition;
-	SimControl::getInstance().getModelPos(robot.getRobotName(),prevPosition);
+	std::cout<<"start test with vx="<<speed.x<<" vy="<<speed.y<<" w="<<yaw<<"test time "<<testTime<<std::endl;
+	Pose startPosition;
+	SimControl::getInstance().getModelPos(robot.getRobotName(),startPosition);
+	Pose prevPosition=startPosition;
+	Pose currPosition=startPosition;
 	double currSimTime,prevSimTime;
 	double vx=0,vy=0;
 	prevSimTime=SimControl::getInstance().getSimTime();
-	while(time(NULL)-startTime<testTime){
+
+	//sprawdz czy robot przejechal 1 metr
+	//while(time(NULL)-startTime<5){
+	while(startPosition.distance(currPosition)<1.0){
 		//currSimTime=SimControl::getInstance().getSimTime();
 		robot.setSpeed(speed,yaw);
 		//Pose position;
@@ -118,8 +123,8 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 		SimControl::getInstance().getModelPos(robot.getRobotName(),currPosition);
 		currSimTime=SimControl::getInstance().getSimTime();
 
-		//vx=(currPosition.get<0>()-prevPosition.get<0>())/(currSimTime-prevSimTime);
-		//vy=(currPosition.get<1>()-prevPosition.get<1>())/(currSimTime-prevSimTime);
+		vx=(currPosition.get<0>()-prevPosition.get<0>())/(currSimTime-prevSimTime);
+		vy=(currPosition.get<1>()-prevPosition.get<1>())/(currSimTime-prevSimTime);
 		//Logger::getInstance().LogToFile(DBG,"vx=%f vy=%f simTime=%f",vx,vy,currSimTime);
 
 		//double rot=currPosition.get<2>();
@@ -140,10 +145,11 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 		//SimControl::getInstance().getAllPos(positions);
 		usleep(100000);//100ms
 	}
-
+    std::cout<<"HAMOWANIE"<<std::endl;
 	robot.setSpeed(Vector2D(0.0,0.0),0);
+	sleep(10);
 	getchar();
-	SimControl::getInstance().restart();
+	//SimControl::getInstance().restart();
 	//usleep(1000000);
 #endif
 	return;
@@ -224,7 +230,7 @@ void testTaskThread(){
         //pthread_create(&red1, &attr, testTask, (void *) &redRobot1);
         //pthread_create(&red2, &attr, testTask, (void *) &redRobot2);
         //pthread_create(&blue0, &attr,testTask, (void *) &blueRobot0);
-       //pthread_create(&blue1, &attr, testTask, (void *) &blueRobot1);
+       //pthread_create(&blue1,the gossip heavy cross &attr, testTask, (void *) &blueRobot1);
        // pthread_create(&blue2, &attr, testTask, (void *) &blueRobot2);
 
         pthread_join(red0,NULL);
@@ -287,7 +293,7 @@ void testMultiRRTThread(){
     Videoserver::getInstance().start(NULL);
 
 
-    bool serialize=false;
+    bool serialize=Config::getInstance().isDebugMode();
 	TestRRT testRRTred0(&redRobot0,Pose(5.5,2.5,0),serialize);
 
 
@@ -307,4 +313,16 @@ void testMultiRRTThread(){
 	testRRTblue2.joinThread();
 
 	std::cout<<"exit from testMultiRRTThread"<<std::endl;
+}
+
+void testDribbler(Robot& robot){
+
+	GameStatePtr gameState(new GameState());
+	Videoserver::getInstance().start(NULL);
+	Videoserver::getInstance().updateGameState(gameState);
+
+	GoToPose goToPose( (*gameState).getBallPos(),&robot);
+	goToPose.execute();
+
+	sleep(1);
 }

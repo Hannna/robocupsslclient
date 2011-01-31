@@ -184,9 +184,10 @@ SimControl::~SimControl()
 	delete client;
 }
 
-void SimControl::getModelPos(std::string model_name,Pose &position)
+void SimControl::getModelPos(std::string model_name_,Pose &position)
 {
 	//this->wait();
+	std::string model_name=std::string("noname::") + model_name_;
 	int i=0;
 	while(simIface->Lock(1)!=1){
 		std::cout<<i++<<std::endl;
@@ -232,7 +233,7 @@ void SimControl::getModelPos(std::string model_name,Pose &position)
 							std::ostringstream ois;
 							ois<<"SimControl getModelPos model name "<<model_name<<" x="<<x<<" y="<<y
 							<<" rot="<<rot<<std::endl;
-							Logger::getInstance().LogToFile(DBG,ois.str().c_str());
+							//Logger::getInstance().LogToFile(DBG,ois.str().c_str());
 							 //std::cout<<model_name<<" x="<<positions[model_name].get<0>()<<" y="<<positions[model_name].get<1>()
 							//<<" rot="<<positions[model_name].get<2>()<<std::endl;
 						}
@@ -262,7 +263,8 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 	//simIface->Lock(1);
 	simIface->data->responseCount=0;
 	for(ii = names.begin(); ii!=names.end(); ii++){
-		std::string model_name = *ii;
+		std::string model_name_ = *ii;
+		std::string model_name=std::string("noname::") + model_name_;
 		if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
 			#ifdef OLD
 				gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
@@ -287,7 +289,8 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 	#endif
 		if(simIface->data->responseCount > 0){
 			for(ii = names.begin(); ii!=names.end(); ii++){
-				std::string model_name = *ii;
+				std::string model_name_ = *ii;
+                std::string model_name=std::string("noname::") + model_name_;
 				double x=0,y=0,rot=0;
 				for(unsigned long i=0;i<simIface->data->responseCount;i++){
 					response = &simIface->data->responses[i];
@@ -301,9 +304,9 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 							 x= simIface->data->responses[i].modelPose.pos.x; //x
 							 y= simIface->data->responses[i].modelPose.pos.y; //y
 							 rot= simIface->data->responses[i].modelPose.yaw; //rot
-							 positions[model_name]=Pose(x,y,rot);
+							 positions[model_name_]=Pose(x,y,rot);
 							 std::ostringstream log;
-							 log<<"SimControl getAllPos model name "<<model_name<<" x="<<positions[model_name].get<0>()<<" y="<<positions[model_name].get<1>()<<" rot="<<positions[model_name].get<2>()<<std::endl;
+							 log<<"SimControl getAllPos model name "<<model_name_<<" x="<<positions[model_name_].get<0>()<<" y="<<positions[model_name_].get<1>()<<" rot="<<positions[model_name_].get<2>()<<std::endl;
 							 Logger::getInstance().LogToFile(DBG,log);
 
 						}

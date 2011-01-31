@@ -42,7 +42,9 @@ bool GoToPose::run(){
 			rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
 						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path,currSimTime);
 
-			if( rrt->run(video.getUpdateDeltaTime()) ){
+            RRTPlanner::ErrorCode status;
+			status=rrt->run(video.getUpdateDeltaTime());
+			if( status==RRTPlanner::Success ){
 
 				GameStatePtr nextState=rrt->getNextState();
 				if(nextState.get()==NULL){
@@ -73,7 +75,8 @@ bool GoToPose::run(){
 			}
 			else{
 				robot->setSpeed(Vector2D(0.0,0.0),0);
-				std::cout<<"reache goal state"<<std::endl;
+				std::cout<<"Error nr"<<status<<std::endl;
+				//exit(0);
 				break;
 			}
 		}

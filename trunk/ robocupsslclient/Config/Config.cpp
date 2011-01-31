@@ -1,3 +1,4 @@
+
 /*
  * Config.cpp
  *
@@ -264,6 +265,10 @@ bool Config::loadRRTCfg(xmlNodePtr node,xmlDocPtr config){
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			from_string<double>(this->rrtCfg.robotRadius,data,std::dec);
+
+			std::cout<<"robotRadius"<<data<<std::endl;
+
+			//exit(0);
 		}
 		else if(!xmlStrcmp(current->name,(const xmlChar *) "maxVelocity")){
 			xmlChar * str;
