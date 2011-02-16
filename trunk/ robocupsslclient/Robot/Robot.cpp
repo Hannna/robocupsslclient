@@ -44,7 +44,7 @@ std::string Robot::getPosIfaceName() const
 {
 	return this->posIfaceName;
 }
-void Robot::setSpeed(Vector2D v, double w)
+void Robot::setRelativeSpeed(Vector2D v, double w)
 {
 	boost::tuple<double,double,double> currPositions;
 	boost::tuple<double,double,double> newVel=boost::tuple<double,double,double> (v.x,v.y,w);
@@ -74,7 +74,7 @@ void Robot::setSpeed(Vector2D v, double w)
 	//posIface->data->cmdVelocity.yaw = 0;
 	posIface->Unlock();
 #endif
-	Logger::getInstance().LogToFile(PATH,"set vel       name=%s\t vx=%lf\t vy=%lf\t,"
+	LOG_DEBUG(getLogger("path"),"set vel       name=%s\t vx=%lf\t vy=%lf\t,"
 				,this->robotName.c_str(),newVel.get<0>(),newVel.get<1>());
 }
 std::pair<Vector2D,double> Robot::getDesiredVel() const
@@ -139,9 +139,9 @@ Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & targetPose){
 	//std::cout<<"current robot vel "<<currVel<<std::endl;
 	//std::cout<<"curr relative targetPose "<<targetPose<<std::endl;
 	//std::cout<<"for X "<<std::endl;
-	newVel.x=calculateVelocity(currVel.x, 0,targetPose.get<0>());
+	newVel.x=calculateVelocity(currVel.x, 0,targetPose.get<0>() );
 	//std::cout<<"for Y "<<std::endl;
-	newVel.y=calculateVelocity(currVel.y, 0,targetPose.get<1>());
+	newVel.y=calculateVelocity(currVel.y, 0,targetPose.get<1>() );
 	//std::cout<<"new robot vel "<<newVel<<std::endl;
 	//std::cout<<"#####################################"<<std::endl;
 	return newVel;

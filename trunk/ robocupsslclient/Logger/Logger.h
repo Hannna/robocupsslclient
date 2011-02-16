@@ -11,7 +11,7 @@
 
 //#define DEBUG
 
-enum level {INFO, DBG, SYSERR, FATAL_ERR, WARNING,PATH};
+//enum level {INFO, DBG, SYSERR, FATAL_ERR, WARNING,PATH};
 
 #include <log4cxx/logger.h>
 #include <log4cxx/fileappender.h>
@@ -44,6 +44,7 @@ using namespace std;
  * localisations of logging files are unknown.
  * Even default value comes from Config object.
  */
+ /*
 class Logger{
 public:
 	static Logger& getInstance(){
@@ -63,7 +64,7 @@ private:
 	 * otrzymujemy z pliku sciezke do pliku
 	 *
 	 */
-	static int nrChangesPathFile;
+/*	static int nrChangesPathFile;
 	string det_dir_from_filename(string file_name);
 	/// sprawdza czy katalogi i pliki z logami istnieja,w p.p  tworzy je
 	bool init_log_dir_and_files();
@@ -71,23 +72,26 @@ private:
 	 *
 	 * @return true jesli operacja sie udala
 	 */
-	bool createFileIfNotExist(string filename);
+/*	bool createFileIfNotExist(string filename);
 
 public:
 	/** @brief wlacza wypisywanie wszystkich  logow na konsole
 	 *
 	 * @return true jesli operacja zakonczona pomyslnie
 	 */
+	 /*
 	bool enableCout();
 	/** @brief wylacza wypisywanie wszystkich  logow na konsole
 	 *
 	 * @return true jesli operacja zakonczona pomyslnie
 	 */
+/*
 	bool disableCout();
 	/**
 	 * @brief tworzy obiekty odpowiadajace za logowanie do poszczegolnych plikow
 	 * @return true  jesli operacja wykonana poprawnie
 	 */
+	 /*
 	bool createLoggers();
 //	void changeLogPathFile(std::string fileName);
 	/**
@@ -96,10 +100,38 @@ public:
 	 * @param level_ poziom istotnosci wiadomosci
 	 * @param logger_ gdzie logujemy wiadomosc
 	 */
+	 /*
 	void LogToFile(enum level level_, const char *data,...);
 	void LogToFile(enum level level_,  std::ostringstream & ois);
 
 	virtual ~Logger();
 
 };
+*/
+
+log4cxx::LoggerPtr getLoggerPtr (const char *const name);
+#define LOG_TRACE(l, m) \
+{LOG4CXX_TRACE(l, m);} \
+//else {LOG4CXX_TRACE(getLogger("log"), m); LOG4CXX_FATAL(getLogger(SM_ID), "loggerPtr was NULL");};
+
+#define LOG_DEBUG(l, m) \
+{LOG4CXX_DEBUG(l, m);} \
+//else {LOG4CXX_DEBUG(getLogger("log"), m); LOG4CXX_FATAL(getLogger(SM_ID), "loggerPtr was NULL");};
+
+#define LOG_INFO(l, m) \
+{LOG4CXX_INFO(l, m);} \
+//else {LOG4CXX_INFO(getLogger("log"), m); LOG4CXX_FATAL(getLogger(SM_ID), "loggerPtr was NULL");};
+
+#define LOG_WARN(l, m) \
+{LOG4CXX_WARN(l, m);} \
+//else {LOG4CXX_WARN(getLogger("log"), m); LOG4CXX_FATAL(getLogger(SM_ID), "loggerPtr was NULL");};
+
+#define LOG_ERROR(l, m) \
+{LOG4CXX_ERROR(l, m);} \
+//else {LOG4CXX_ERROR(getLogger("log"), m); LOG4CXX_FATAL(getLogger(SM_ID), "loggerPtr was NULL");};
+
+#define LOG_FATAL(l, m) \
+{LOG4CXX_FATAL(l, m);} \
+//else {LOG4CXX_FATAL(getLogger("log"), m); LOG4CXX_FATAL(getLogger(SM_ID), "loggerPtr was NULL");};
+
 #endif //LOGGER_H_

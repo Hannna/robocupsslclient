@@ -137,7 +137,7 @@ void TestRRT::execute(void *args){
 					GameStatePtr nextState=rrt->getNextState();
 					if(nextState.get()==NULL){
 						std::cout<<"rrt planner return next state as NULL"<<std::endl;
-						robot->setSpeed(Vector2D(0.0,0.0),0);
+						robot->setRelativeSpeed(Vector2D(0.0,0.0),0);
 						break;
 					}
 
@@ -170,19 +170,19 @@ void TestRRT::execute(void *args){
 					#ifdef DEBUG
                         std::cout<<"set speed "<<newRobotVel<<std::endl;
                     #endif
-					robot->setSpeed(newRobotVel,0);
+					robot->setRelativeSpeed(newRobotVel,0);
 					delete rrt;
 				}
 				else if(rrtStatus==RRTPlanner::RobotReachGoalPose){
 				    //std::cout<<"robot u celu"<<std::endl;
-					robot->setSpeed(Vector2D(0.0,0.0),0);
+					robot->setRelativeSpeed(Vector2D(0.0,0.0),0);
 					sleep(2);
 					delete rrt;
 					break;
 				}
 				else{
 
-					robot->setSpeed(Vector2D(0.0,0.0),0);
+					robot->setRelativeSpeed(Vector2D(0.0,0.0),0);
 					sleep(2);
 					#ifdef GAZEBO
 					//SimControl::getInstance().pause();

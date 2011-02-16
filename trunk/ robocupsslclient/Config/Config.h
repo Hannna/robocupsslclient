@@ -18,6 +18,7 @@
 #include <libxml/parser.h>
 #include <boost/tuple/tuple.hpp>
 
+#include <log4cxx/logger.h>
 #include "../additional.h"
 
 class Config {
@@ -53,9 +54,15 @@ private:
 		//wspo skalujacy predkosci;
 		double speedFactor;
 	};
+
+	class RobotParams{
+	public:
+        double mainCylinderRadious;
+	};
 public:
 	Config();
 	bool load(std::string configFileName);
+    double getRobotMainCylinderRadious() const ;
 	const std::vector<std::string> getBlueTeam()const;
 	const std::vector<std::string> getRedTeam()const;
 	std::string getTestModelName();
@@ -84,6 +91,8 @@ private:
 	TestCfg testCfg;
 	//konfiguracja algorytmu planowania sciezki
 	RRTCfg rrtCfg;
+	//parametry bazy jezdnej robota
+	RobotParams robotParams;
 	bool testMode;
 	//czy zapisujemy logi do plikow
 	bool debug;
@@ -98,6 +107,9 @@ private:
 	bool loadBlueTeam(xmlNodePtr node,xmlDocPtr config);
 	bool loadRedTeam(xmlNodePtr node,xmlDocPtr config);
 	bool loadRRTCfg(xmlNodePtr node,xmlDocPtr config);
+	bool loadRobotParams(xmlNodePtr node,xmlDocPtr config);
+
+	log4cxx::LoggerPtr log;
 
 };
 

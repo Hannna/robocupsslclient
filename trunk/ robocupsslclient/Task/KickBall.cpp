@@ -8,10 +8,10 @@
 #include "KickBall.h"
 
 KickBall::KickBall() {
-	// TODO Auto-generated constructor stub
+
 
 }
 
 KickBall::~KickBall() {
-	// TODO Auto-generated destructor stub
+
 }

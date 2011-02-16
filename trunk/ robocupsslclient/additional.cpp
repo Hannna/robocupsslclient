@@ -22,10 +22,7 @@ strvec & Names::getNames()
 	static Names names;
 	return names_list;
 }
-Pose Pose::transform(const Vector2D& distance,const RotationMatrix & rm) const {
-	Pose tmp(this->get<0>()-distance.x,this->get<1>()-distance.y,this->get<2>() );
-	return rm.Inverse()*tmp;
-}
+
 Names::Names()
 {
 	strvec::const_iterator ii;
@@ -45,6 +42,12 @@ Names::~Names()
 {
 }
 
+
+
+Pose Pose::transform(const Vector2D& distance,const RotationMatrix & rm) const {
+	Pose tmp(this->get<0>()-distance.x,this->get<1>()-distance.y,this->get<2>() );
+	return rm.Inverse()*tmp;
+}
 
 //*****************************************************
 
