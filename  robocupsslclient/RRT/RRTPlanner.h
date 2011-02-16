@@ -24,6 +24,8 @@
 //czas o jaki przewidujemy ruch przeciwnika do przodu
 //#define PREDICTION_TIME 0.01 //[sek]
 
+
+
 class RRTPlanner {
 	friend class TestRRT;
 public:
@@ -40,6 +42,7 @@ enum ErrorCode{
     //pkt docelowy jest poza zasiegiem
     BadTarget=-98,
 };
+
 	/**
 	 * @brief tworzy obiekt plannera RRT
 	 *
@@ -74,7 +77,7 @@ enum ErrorCode{
 	* @brief zwraca predkosc robota w kolejny kroku algorytmu
 	*
 	*/
-	Vector2D getRobotSpeed();
+	//Vector2D getRobotSpeed();
 
 	virtual ~RRTPlanner();
 
@@ -185,6 +188,7 @@ private:
 	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles = true);
 
  private:
+    const log4cxx::LoggerPtr log;
 	//stan od ktorego zaczynamy budowac drzewo
 	RRTNodePtr root;
 	//nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
@@ -242,6 +246,11 @@ private:
     //margines bezp przy wyznaczaniu sciezki
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
     static const double SAFETY_MARGIN = 0.05;
+
+    log4cxx::LoggerPtr logger;
 };
+
+
+std::ostream& operator<<(std::ostream& out, enum RRTPlanner::ErrorCode errcode );
 
 #endif /* RRTPLANNER_H_ */

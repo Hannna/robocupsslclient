@@ -51,7 +51,7 @@
 #include "Logger/Logger.h"
 #include "Config/Config.h"
 #include "Robot/Robot.h"
-#include "signal.h"
+#include "my_signal.h"
 
 bool run=true;
 
@@ -103,7 +103,8 @@ int main(int argc, char*argv[],char *envp[]){
     //Init libxml
     xmlInitParser();
     Logger::getInstance().createLoggers();
-    Logger::getInstance().disableCout();//Logger::getInstance().enableCout();
+ //   Logger::getInstance().disableCout();
+ Logger::getInstance().enableCout();
 
     Config::getInstance().load("/home/maciek/codeblocks/magisterka/bin/Debug/config.xml");
     Config::getInstance().setTestMode(true);
@@ -160,7 +161,7 @@ int main(int argc, char*argv[],char *envp[]){
                     for(;ii!=tests.end();ii++){
                         Vector2D vel(ii->get<0>(),ii->get<1>());
                         sleep(0);
-                        //testVel(vel,ii->get<2>(),testRobot,Config::getInstance().getTestEstimatedTime());
+                        testVel(vel,ii->get<2>(),testRobot,Config::getInstance().getTestEstimatedTime());
                     }
                 }
                 break;

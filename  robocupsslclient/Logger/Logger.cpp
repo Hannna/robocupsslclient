@@ -9,6 +9,7 @@
 
 #include "Logger.h"
 #include "../Config/Config.h"
+/*
 int Logger::nrChangesPathFile;
 string Logger::det_dir_from_filename(string file_name)
 {
@@ -25,6 +26,7 @@ string Logger::det_dir_from_filename(string file_name)
 	true if created
 	false not created
 */
+/*
 short Logger::create_dir_if_doesnt_exist(string dir)
 {
 	DIR *hdir;
@@ -90,6 +92,7 @@ void Logger::changeLogPathFile(std::string fileName){
 
 	//	aptr.close();
 }*/
+/*
 Logger::Logger(){
 	this->robotsPath=std::string("/home/maciek/codeblocks/magisterka/bin/Debug/robotsPath.log");
 	this->logFile=std::string("/home/maciek/codeblocks/magisterka/bin/Debug/robocup.log");
@@ -179,7 +182,7 @@ void Logger::LogToFile(enum level level_, const char *data,...){
 		setlocale (LC_ALL, "en_UK");
 
         return;
-		log=log4cxx::LogManager::getLoggerRepository()->getLogger(std::string("logFile"));
+		log=getLoggerPtr("logFile");
 
 	/*
 		switch(level_){
@@ -192,9 +195,10 @@ void Logger::LogToFile(enum level level_, const char *data,...){
 			break;
 		}
 		*/
+		/*
 		switch(level_){
 		case PATH:
-			log=log4cxx::LogManager::getLoggerRepository()->getLogger(std::string("robotsPath"));
+			//log=log4cxx::LogManager::getLoggerRepository()->getLogger(std::string("robotsPath"));
 			//LOG4CXX_INFO(log, message);
 			break;
 		case INFO:
@@ -219,3 +223,8 @@ void Logger::LogToFile(enum level level_, const char *data,...){
 	//#endif
 
 }
+*/
+log4cxx::LoggerPtr getLoggerPtr (const char *const name){
+	return log4cxx::LogManager::getLoggerRepository()->getLogger(std::string(name));
+}
+

@@ -30,8 +30,12 @@ public:
 	///metoda zwracajaca unikalna nazwe robota
 	std::string getRobotName() const ;
 	std::string getPosIfaceName() const;
-	///metoda ustalajaca predkosci liniowa oraz katowa
-	void setSpeed(Vector2D v, double w);
+	/*@brief metoda ustalajaca predkosci liniowa oraz katowa
+	 *
+     * @param v [in] predkosc liniowa robota w ukl wspolrzednych zw z robotem
+     * @param w [in] predkosci katowa robota w ukladzei wsp zw z robotem
+	 */
+	void setRelativeSpeed(Vector2D v, double w);
 	/// zwraca aktualnie zadane predkosci robota first = V  second = w
 	std::pair<Vector2D,double> getDesiredVel() const;
 	/// zwraca aktualnie  predkosci z jakimi faktycznie porusza sie robot robota first = V  second = w

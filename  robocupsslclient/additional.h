@@ -17,22 +17,22 @@
 /**
  * @mainpage
  * @author Kamil Muszyński, Maciej Gąbka
- * 
+ *
  * @ref poprawki_gazebo @n
  * @ref skladnia_plik_swiat
  */
 
 /**
  * @page poprawki_gazebo Poprawki wprowadzone do Gazebo
- * 
+ *
  * Model.cc
  * - funkcja reset - odkomentowano linie dotyczące zerowania prędkości
  * - funkcja setPose - dodano zerowanie prędkości (Model.cc -> setPose, wywolywane w World.cc)
- * 
+ *
  * World.cc
  * - dodane obsługi rządania get_all_poses - powoduje ono zapis pozycji wszystkich modeli podanych w model_name
  * simulationData do pliku /tmp/gazebo_poses.txt. Plik ten jest następnie odczytywany przez videoserver. W dużym stopniu
- * przyspiesza to pracę z symulatorem (nie potrzeba pojedynczo odpytywać o każdy z modeli). 
+ * przyspiesza to pracę z symulatorem (nie potrzeba pojedynczo odpytywać o każdy z modeli).
  */
 
 
@@ -112,7 +112,7 @@ double convertAnglePI(double angle);
 double convertAngle2PI(double angle);
 
 /** @author Kamil Muszyński
- * 
+ *
  * @brief klasa zawierająca nazwy wszystkich modeli gazebo znajdujących się na planszy
  * */
 class Names{

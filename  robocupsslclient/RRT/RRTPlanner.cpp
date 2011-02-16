@@ -41,11 +41,8 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
                 goalPose(goalPose_),
                 toTargetLikelihood(goalProb),
                 obsPredictionEnabled(withObsPrediction),
-                simTime(simTime_)
-                 {
-    #ifdef DEBUG
-        std::cout<<"create  RRTPlanner"<<std::endl;
-    #endif
+                simTime(simTime_),log(getLoggerPtr("logFile"))
+    {
 
     goDirectToTarget=false;
     finish=false;
@@ -56,28 +53,28 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
 	//std::cout<<"CLOCKS_PER_SEC"<<CLOCKS_PER_SEC<<"clocks_per_msec "<<clocks_per_msec<<std::endl;
 	//std::cout<<"startTime"<<startTime<<std::endl;
 	this->path=path;
-	std::ostringstream log;
+	//std::ostringstream log;
 
-	#ifdef DEBUG
-		log<<"starting rrt goal Pose "<<goalPose<<" and currPose "<<currState->getRobotPos(robotName);
-		Logger::getInstance().LogToFile(DBG,log);
-	#endif
+	//#ifdef DEBUG
+    LOG_DEBUG(logger,"starting rrt goal Pose "<<goalPose<<" and currPose "<<currState->getRobotPos(robotName));
+	//#endif
 
     root->setTargetPose(this->goalPose);
 }
 
 RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 
-    #ifdef DEBUG
-        std::cout<<"start RRTPlanner::run"<<std::endl;
-    #endif
+    //#ifdef DEBUG
+    //    std::cout<<"start RRTPlanner::run"<<std::endl;
+    //#endif
 
     if( this->goalPose.get<0>() > RRTPlanner::maxXvalue ||  this->goalPose.get<0>() < RRTPlanner::minXvalue ||
         this->goalPose.get<1>() > RRTPlanner::maxYvalue || this->goalPose.get<1>() < RRTPlanner::minYvalue ){
+        LOG_DEBUG(logger,"cel poza dopuszczalnymi wspolrzednymi");
         return RRTPlanner::BadTarget;
     }
 
-	std::ostringstream log;
+//	std::ostringstream log;
 	const double minDistance=Config::getInstance().getRRTMinDistance();
 	GameStatePtr extendedGameState;
 	bool noCollision=true;
@@ -100,9 +97,9 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	noCollision=isTargetInsideObstacle(startRobotPose,safetyMarigin,checkAddObstacles);
 
 	if(!noCollision){
-		#ifdef DEBUG
-		std::cout<<this->robotName<<" robot is inside obstacle. collision"<<std::endl;
-		#endif
+		//#ifdef DEBUG
+		LOG_DEBUG(logger,this->robotName<<" robot is inside obstacle. collision");
+		//#endif
 		return RRTPlanner::RobotCollision;
 	}
 
@@ -110,9 +107,9 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
     safetyMarigin=0;
 	noCollision=isTargetInsideObstacle(goalPose,safetyMarigin);
 	if(!noCollision){
-	    #ifdef DEBUG
-		std::cout<<"Achtung !!!"<<this->robotName<<" target is inside obstacle."<<std::endl;
-		#endif
+	    //#ifdef DEBUG
+		LOG_DEBUG(logger,"Achtung !!!"<<this->robotName<<" target is inside obstacle.");
+		//#endif
 		return RRTPlanner::TargetInsideObstacle;
 	}
 
@@ -121,7 +118,9 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
     double dist;
     //sprawdz czy robot jest u celu
 	if( (dist=goalPose.distance( startRobotPose  ) ) <= minDistance ){
-		std::cout<<"we arrive the target"<<std::endl;
+		 //#ifdef DEBUG
+		LOG_DEBUG(logger,"we arrive the target");
+		//#endif
 		this->finish=true;
 		return RRTPlanner::RobotReachGoalPose;
 	}
@@ -132,7 +131,10 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	checkAddObstacles = true;
 	if(this->checkTargetAttainability(startRobotPose,goalPose,checkAddObstacles)){
 		//std::cout<<"root->state"<<(*(root->state))<<std::endl;
-		std::cout<<"go direct to target"<<std::endl;
+        LOG_DEBUG(logger,"go direct to target");
+        //#ifdef DEBUG
+		//std::cout<<"go direct to target"<<std::endl;
+		//#endif
 		this->goDirectToTarget=true;
 		return RRTPlanner::Success;
 	}
@@ -169,7 +171,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 				toNearestObstacleDist=this->distanceToNearestObstacle( extendedGameState,nextRobotPose);
 			}
 			else{
-				Logger::getInstance().LogToFile(DBG,"extented node is in the obstacle");
+				LOG_DEBUG(logger,"extented node is in the obstacle");
 			}
 		}
 /*
@@ -182,10 +184,9 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		*/
 	}
 
-	#ifdef DEBUG
-		log<<"end rrt result "<<nearest->getRobotPos(this->robotName)<<std::endl;
-		Logger::getInstance().LogToFile(DBG,log);
-	#endif
+	//#ifdef DEBUG
+		LOG_DEBUG(logger,"end rrt result "<<nearest->getRobotPos(this->robotName));
+	//#endif
 
 	/*
 	if(resultNode.get()==NULL){
@@ -521,7 +522,7 @@ Pose RRTPlanner::getRandomPose(const Pose currentPose,Vector2D currentVel, doubl
 	Vector2D v2=Vector2D (currentVel.x-deltaVel,currentVel.y+deltaVel);
 
 	ois<<"current Pose "<<currentPose<<" currentVel"<<currentVel<<" v1 "<<v1<<" v2 "<<v2<<std::endl;
-	Logger::getInstance().LogToFile(DBG,ois);
+	LOG_DEBUG(logger,ois);
 	static boost::mt19937 rng(static_cast<unsigned> (time(NULL)));
 
 	//generator wspolrzednej X
@@ -554,7 +555,7 @@ Pose RRTPlanner::getRandomPose(const Pose currentPose,Vector2D currentVel, doubl
 	double c=std::max<double>(0,currentPose.get<0>()+currentVel.x*deltaT);
 	ois.str("");
 	ois<<"dla distX a="<<a<<" b="<<b<< "c="<<c <<std::endl;
-	Logger::getInstance().LogToFile(DBG,ois);
+	LOG_DEBUG(logger,ois);
 	boost::triangle_distribution<double> distX(a, c, b );
 	boost::variate_generator<boost::mt19937&, boost::triangle_distribution<double> >  genX(rng, distX);
 
@@ -574,7 +575,7 @@ Pose RRTPlanner::getRandomPose(const Pose currentPose,Vector2D currentVel, doubl
 	c=std::max<double>(0,currentPose.get<1>()+currentVel.y*deltaT);
 	ois.str("");
 	ois<<"dla distY a="<<a<<" b="<<b<< "c="<<c <<std::endl;
-	Logger::getInstance().LogToFile(DBG,ois);
+	LOG_DEBUG(logger,ois);
 	boost::triangle_distribution<double> distY(a, c , b);
 	boost::variate_generator<boost::mt19937&, boost::triangle_distribution<double> >  genY(rng, distY);
 
@@ -722,7 +723,7 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
 
 #ifdef DEBUG
     Pose targetPose_r=targetPose.transform(currPose.getPosition(),rm);
-	std::cout<<"biezaca pozycja globalnie "<<currPose<<"pozycja celu globalnie "<<targetPose<<" oraz w ukl zw z robotem "<<targetPose_r<<std::endl;
+	LOG_DEBUG(logger,"biezaca pozycja globalnie "<<currPose<<"pozycja celu globalnie "<<targetPose<<" oraz w ukl zw z robotem "<<targetPose_r<<std::endl;
 #endif
 
 	double d;
@@ -1009,7 +1010,7 @@ int RRTPlanner::serializeTree(const char * fileName,int serializedTrees){
 
     return 0;
 }
-
+/*
 Vector2D RRTPlanner::getRobotSpeed(){
 
     //biezaca rotacja robota
@@ -1035,11 +1036,41 @@ Vector2D RRTPlanner::getRobotSpeed(){
     //oblicz nowe sterowanie
     newRobotVel=calculateVelocity( currRobotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
 */
-}
+//}
 
 RRTPlanner::~RRTPlanner() {
 	ofstream myfile;
 	myfile.open ("rrtTree.xml", ios::out | ios::app);
 	myfile<<std::endl;
 	myfile.close();
+}
+
+
+std::ostream& operator<<(std::ostream& out, enum RRTPlanner::ErrorCode errcode ){
+    switch(errcode){
+        case RRTPlanner::Success:
+        out<<"Success";
+        break;
+
+        case RRTPlanner::RobotReachGoalPose:
+        out<<"RobotReachGoalPose";
+        break;
+
+        case RRTPlanner::TargetInsideObstacle:
+        out<<"TargetInsideObstacle";
+        break;
+
+        case RRTPlanner::RobotCollision:
+        out<<"RobotCollision";
+        break;
+
+        case RRTPlanner::BadTarget:
+        out<<"Badtarget";
+        break;
+        default:
+            break;
+    }
+
+    return out;
+
 }

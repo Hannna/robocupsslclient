@@ -62,28 +62,34 @@ bool Config::load(std::string filename){
 			if(!xmlStrcmp(current->name,(const xmlChar *) "blueTeam")){
 				//std::cout<<"blueTeam"<<std::endl;
 				if(!loadBlueTeam(current, config)){
-					Logger::getInstance().LogToFile(DBG,"unable to load  blue team parameters");
+					LOG_DEBUG(log,"unable to load  blue team parameters");
 					return false;
 				}
 			}
 			if(!xmlStrcmp(current->name,(const xmlChar *) "redTeam")){
 				//std::cout<<"redTeam"<<std::endl;
 				if(!loadRedTeam(current, config)){
-					Logger::getInstance().LogToFile(DBG,"unable to load red team parameters");
+					LOG_DEBUG(log,"unable to load red team parameters");
 					return false;
 				}
 			}
 			else if(!xmlStrcmp(current->name,(const xmlChar *) "settings")){
 				//std::cout<<"settings"<<std::endl;
 				if(!loadSettings(current, config)){
-					Logger::getInstance().LogToFile(DBG,"unable to load settings");
+					LOG_DEBUG(log,"unable to load settings");
 					return false;
 				}
 			}
 			else if(!xmlStrcmp(current->name,(const xmlChar *) "RRT")){
 				//std::cout<<"RRT"<<std::endl;
 				if(!loadRRTCfg(current, config)){
-					Logger::getInstance().LogToFile(DBG,"unable to load RRT");
+					LOG_DEBUG(log,"unable to load RRT");
+					return false;
+				}
+			}
+			else if(!xmlStrcmp(current->name,(const xmlChar *) "robotParams")){
+				if(!loadRobotParams(current, config)){
+					LOG_DEBUG(log,"unable to load robot params");
 					return false;
 				}
 			}
@@ -145,12 +151,12 @@ bool Config::loadTestMode(xmlNodePtr node,xmlDocPtr config){
 				v[1] = boost::lexical_cast<double>(what[5]);
 				v[2] = boost::lexical_cast<double>(what[8]);
 			}
-			Logger::getInstance().LogToFile(DBG,"**********");
+			LOG_DEBUG(log,"**********");
 			std::ostringstream ois;
 			for(int i=0;i<3;i++){
 				ois<<"v["<<i<<"]="<<v[i]<<"\t";
 			}
-			Logger::getInstance().LogToFile(DBG,ois.str().c_str());
+			LOG_DEBUG(log,ois.str().c_str());
 			this->testCfg.velocities.push_back(boost::tuple<double,double,double>(v[0],v[1],v[2]));
 			xmlFree(str);
 		}
@@ -173,10 +179,10 @@ bool Config::loadTestMode(xmlNodePtr node,xmlDocPtr config){
 				pose[1] = boost::lexical_cast<double>(what[5]);
 				pose[2] = boost::lexical_cast<double>(what[8]);
 			}
-			Logger::getInstance().LogToFile(DBG,"**********");
+			LOG_DEBUG(log,"**********");
 			std::ostringstream ois;
 			ois<<"x="<<pose[0]<<"\t"<<"y="<<pose[1]<<"\t"<<"rot="<<pose[2]<<"\t";
-			Logger::getInstance().LogToFile(DBG,ois.str().c_str());
+			LOG_DEBUG(log,ois.str().c_str());
 			this->testCfg.positions.push_back(Pose(pose[0],pose[1],pose[2]));
 			xmlFree(str);
 		}
@@ -209,6 +215,24 @@ bool Config::loadSettings(xmlNodePtr node,xmlDocPtr config){
 	}
 	return status;
 }
+
+bool Config::loadRobotParams(xmlNodePtr node,xmlDocPtr config){
+	bool status=true;
+	xmlNodePtr current = node->xmlChildrenNode;
+	while (current != NULL) {
+		if(!xmlStrcmp(current->name,(const xmlChar *) "mainCylinderRadius")){
+			xmlChar * str;
+			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
+			std::string data = std::string((const char*) str);
+			from_string<double>(this->robotParams.mainCylinderRadious,data,std::dec);
+			//this->redTeam.push_back(data);
+		}
+		current = current->next;
+	}
+	return status;
+}
+
+
 bool Config::loadRedTeam(xmlNodePtr node,xmlDocPtr config){
 	bool status=true;
 	xmlNodePtr current = node->xmlChildrenNode;
@@ -238,6 +262,7 @@ bool Config::loadBlueTeam(xmlNodePtr node,xmlDocPtr config){
 	}
 	return status;
 }
+
 bool Config::loadRRTCfg(xmlNodePtr node,xmlDocPtr config){
 	bool status=true;
 	xmlNodePtr current = node->xmlChildrenNode;
@@ -266,7 +291,7 @@ bool Config::loadRRTCfg(xmlNodePtr node,xmlDocPtr config){
 			std::string data = std::string((const char*) str);
 			from_string<double>(this->rrtCfg.robotRadius,data,std::dec);
 
-			std::cout<<"robotRadius"<<data<<std::endl;
+			//std::cout<<"robotRadius"<<data<<std::endl;
 
 			//exit(0);
 		}
@@ -299,10 +324,10 @@ bool Config::loadRRTCfg(xmlNodePtr node,xmlDocPtr config){
 					pose[1] = boost::lexical_cast<double>(what[5]);
 					pose[2] = boost::lexical_cast<double>(what[8]);
 				}
-				Logger::getInstance().LogToFile(DBG,"**********");
+				LOG_DEBUG(log,"**********");
 				std::ostringstream ois;
 				ois<<"x="<<pose[0]<<"\t"<<"y="<<pose[1]<<"\t"<<"rot="<<pose[2]<<"\t";
-				Logger::getInstance().LogToFile(DBG,ois.str().c_str());
+				LOG_DEBUG(log,ois.str().c_str());
 				this->rrtCfg.goalPose=Pose(pose[0],pose[1],pose[2]);
 			}
 			xmlFree(str);
@@ -323,6 +348,9 @@ const double Config::getSpeedFactor() const{
 	return this->testCfg.speedFactor;
 }
 
+double Config::getRobotMainCylinderRadious() const {
+    return this->robotParams.mainCylinderRadious;
+}
 
 const  std::vector<boost::tuple<double,double,double> > Config::getVelTests()const {
 	return this->testCfg.velocities;
