@@ -51,7 +51,7 @@ void TestRRT::execute(void *args){
 	//ostatni czas pobrany z symulacji
 	double prevSimTime;
 	//czas rozpoczecia algorytmu
-	const double startSimTime=currSimTime;
+//	const double startSimTime=currSimTime;
 	//maksymalny odstep pomiedzy wystawieniem nowych sterowań
 	double max=0;
 	//numer kolejnej iteracji algorytmu

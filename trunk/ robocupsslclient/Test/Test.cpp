@@ -102,7 +102,7 @@ void testMotion(Pose goalPose,Videoserver & video,Robot& robot){
 }
 void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 #ifdef GAZEBO
-	time_t startTime=time(NULL);
+//	time_t startTime=time(NULL);
 	speed=speed*Config::getInstance().getSpeedFactor();
 	std::cout<<"start test with vx="<<speed.x<<" vy="<<speed.y<<" w="<<yaw<<"test time "<<testTime<<std::endl;
 	Pose startPosition;

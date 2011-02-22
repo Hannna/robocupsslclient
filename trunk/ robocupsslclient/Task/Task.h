@@ -13,6 +13,8 @@
 #include <boost/thread/mutex.hpp>
 
 //class Videoserver;
+class Task;
+typedef boost::shared_ptr <Task> TaskPtr;
 
 class Task {
 public:

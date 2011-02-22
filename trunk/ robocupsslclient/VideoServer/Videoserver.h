@@ -15,6 +15,7 @@
 #include "../GameState/GameState.h"
 #include "../Logger/Logger.h"
 #include "../Thread/Thread.h"
+#include "../Lock/Lock.h"
 
 /**
  *  @author Kamil Muszynski i Maciej Gąbka
@@ -37,7 +38,7 @@ public:
        // pthread_mutex_init (&Videoserver::mutex, NULL);
 
 		if(!Videoserver::video){
-			Lock lock(mutex);
+			LockGuard lock(mutex);
 			if(!Videoserver::video){
 				Videoserver::video=new Videoserver();
 			}

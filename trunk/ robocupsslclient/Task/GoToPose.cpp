@@ -9,7 +9,7 @@
 #include "../RRT/RRTPlanner.h"
 
 GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose) {
-	LOG_DEBUG(getLoggerPtr( "logFile" ), "create GoToPose Task, goto "<<pose);
+	LOG_DEBUG(getLoggerPtr( (robot->getRobotName().append(".log")).c_str() ), "create GoToPose Task, goto "<<pose);
 
 }
 
@@ -59,8 +59,8 @@ bool GoToPose::run(){
 	double robotRotation=0;
 
 
-	double oldToTargetAngle=0;
-	double currTotargetAngle=0;
+//	double oldToTargetAngle=0;
+//	double currTotargetAngle=0;
 
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
 	Vector2D targetRelPosition;

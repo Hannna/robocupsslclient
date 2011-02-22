@@ -188,7 +188,6 @@ private:
 	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles = true);
 
  private:
-    const log4cxx::LoggerPtr log;
 	//stan od ktorego zaczynamy budowac drzewo
 	RRTNodePtr root;
 	//nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
@@ -247,7 +246,8 @@ private:
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
     static const double SAFETY_MARGIN = 0.05;
 
-    log4cxx::LoggerPtr logger;
+    const log4cxx::LoggerPtr logger;
+    //   log4cxx::LoggerPtr log;
 };
 
 
