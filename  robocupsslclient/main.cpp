@@ -47,6 +47,7 @@
 #include <map>
 #include <string>
 
+#include "log4cxx/propertyconfigurator.h"
 
 #include "Logger/Logger.h"
 #include "Config/Config.h"
@@ -102,10 +103,12 @@ int main(int argc, char*argv[],char *envp[]){
     // read config files
     //Init libxml
     xmlInitParser();
-    Logger::getInstance().createLoggers();
+ //   Logger::getInstance().createLoggers();
  //   Logger::getInstance().disableCout();
- Logger::getInstance().enableCout();
 
+// Logger::getInstance().enableCout();
+
+    log4cxx::PropertyConfigurator::configure("log4cxx.properties");
     Config::getInstance().load("/home/maciek/codeblocks/magisterka/bin/Debug/config.xml");
     Config::getInstance().setTestMode(true);
 

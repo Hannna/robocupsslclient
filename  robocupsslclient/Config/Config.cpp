@@ -11,7 +11,7 @@
 #include <boost/regex.hpp>	//wyrażenia regularne - do interpretacji plików, -lboost_regex!!
 #include <boost/lexical_cast.hpp>
 
-Config::Config(): configFileName("config.xml") {
+Config::Config(): configFileName("config.xml"),log(getLoggerPtr("app_debug")) {
 	testMode=false;
 	debug=false;
 }

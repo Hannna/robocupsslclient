@@ -41,7 +41,7 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
                 goalPose(goalPose_),
                 toTargetLikelihood(goalProb),
                 obsPredictionEnabled(withObsPrediction),
-                simTime(simTime_),log(getLoggerPtr("logFile"))
+                simTime(simTime_),logger(getLoggerPtr("red0"))
     {
 
     goDirectToTarget=false;
@@ -1022,7 +1022,6 @@ Vector2D RRTPlanner::getRobotSpeed(){
     RotationMatrix rmY(robotRotation);
 
    // Pose nextRobotPose=this->resultState->;
-/*
     //pozycja celu w ukladzie wsp zwiazanych z robotem
     Pose targetRelPosition=rmY.Inverse()*(nextRobotPose.getPosition() - this->root->getMyRobotPos().getPosition());
     #ifdef DEBUG

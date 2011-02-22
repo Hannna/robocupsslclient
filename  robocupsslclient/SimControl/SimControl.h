@@ -9,6 +9,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_io.hpp>
 #include "../additional.h"
+#include <log4cxx/logger.h>
 /**
  * @author Maciej Gąbka,  poprawki Kamil Muszyński
  * @date 15.07.2008
@@ -83,6 +84,7 @@ private:
 	 ///instancja interfejsu symulacyjnego
      libgazebo::SimulationIface* simIface;
      #endif
+     const log4cxx::LoggerPtr log;
 };
 
 #endif

@@ -74,8 +74,7 @@ void Robot::setRelativeSpeed(Vector2D v, double w)
 	//posIface->data->cmdVelocity.yaw = 0;
 	posIface->Unlock();
 #endif
-	LOG_DEBUG(getLogger("path"),"set vel       name=%s\t vx=%lf\t vy=%lf\t,"
-				,this->robotName.c_str(),newVel.get<0>(),newVel.get<1>());
+	LOG_DEBUG(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<newVel.get<0>()<<"\t vy="<<newVel.get<1>()<<"\t" );
 }
 std::pair<Vector2D,double> Robot::getDesiredVel() const
 {
@@ -93,8 +92,9 @@ std::pair<Vector2D,double> Robot::getVelocity() const
 #endif
 
 	if(robotName.compare(Config::getInstance().getTestModelName())==0){
-		Logger::getInstance().LogToFile(PATH,"robot %s from gazebo vx=%lf\t vy=%lf\t w=%lf,"
-					,this->robotName.c_str(),vx,vy,w);
+		//LOG_DEBUG(getLoggerPtr("path"),"robot "<<this->robotName.c_str()<<" from gazebo vx"=%lf\t vy=%lf\t w=%lf,"
+		//			,,vx,vy,w);
+		;
 	}
 
 	return std::pair<Vector2D,double>(Vector2D(vx,vy),w);

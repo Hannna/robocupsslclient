@@ -8,7 +8,7 @@
 #include "../Logger/Logger.h"
 #include "../additional.h"
 
-SimControl::SimControl()
+SimControl::SimControl():log(getLoggerPtr("app_debug"))
 {
     #ifdef OLD
         this->client = new gazebo::Client();
@@ -252,7 +252,7 @@ void SimControl::getModelPos(std::string model_name_,Pose &position)
 void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 {
     //std::cout<<"getAllPos"<<std::endl;
-	Logger::getInstance().LogToFile(DBG,"start getALLPPos");
+	LOG_DEBUG(log,"start getALLPPos");
 	strvec names = Names::getNames();
 	strvec::iterator ii;
 	//this->wait();
@@ -305,9 +305,9 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 							 y= simIface->data->responses[i].modelPose.pos.y; //y
 							 rot= simIface->data->responses[i].modelPose.yaw; //rot
 							 positions[model_name_]=Pose(x,y,rot);
-							 std::ostringstream log;
-							 log<<"SimControl getAllPos model name "<<model_name_<<" x="<<positions[model_name_].get<0>()<<" y="<<positions[model_name_].get<1>()<<" rot="<<positions[model_name_].get<2>()<<std::endl;
-							 Logger::getInstance().LogToFile(DBG,log);
+							 std::ostringstream log_msg;
+							 log_msg<<"SimControl getAllPos model name "<<model_name_<<" x="<<positions[model_name_].get<0>()<<" y="<<positions[model_name_].get<1>()<<" rot="<<positions[model_name_].get<2>()<<std::endl;
+                             LOG_DEBUG(log,log_msg);
 
 						}
 						break;
