@@ -25,12 +25,12 @@ Vector2D::Vector2D(const Vector2D & v)
 double Vector2D::angleTo(const Vector2D & to) const
 {
 	double result;
-	
-	
+
+
 	result=acos( (to.x*this->x +to.y*this->y)/(to.length()*this->length()) );
 	double z=this->x*to.y-this->y*to.x;
-	
-	
+
+
 	if(z>=0)
 	return result;
 	else return -result;
@@ -38,7 +38,7 @@ double Vector2D::angleTo(const Vector2D & to) const
 
 int Vector2D::signOfangleTo(const Vector2D & to) const
 {
-	double z=this->x*to.y-this->y*to.x;	
+	double z=this->x*to.y-this->y*to.x;
 	if(z>=0)
 	return 1;
 	else return -1;
@@ -46,9 +46,9 @@ int Vector2D::signOfangleTo(const Vector2D & to) const
 double Vector2D::scalarProduct(const Vector2D &to)const
 {
 	double result;
-	
-	result=acos( (to.x*this->x +to.y*this->y)/(to.length()*this->length()) );
-	
+
+	result=acos( ( to.x*this->x +to.y*this->y ) /( to.length()*this->length()) );
+
 	return result;
 }
 
@@ -73,12 +73,12 @@ Vector2D Vector2D::projectionOn(double a,double b,double c) const
 		result=Vector2D(x,y);
 	}
 	return result;
-	
+
 }
 
 double Vector2D::length() const
 {
-	return sqrt( x*x+y*y);	
+	return sqrt( x*x+y*y);
 }
 
 double Vector2D::distance(Vector2D to)const
@@ -93,7 +93,7 @@ Vector2D Vector2D::rotate(double angle){
 		return Vector2D(0,0);
 	double curr_angle = atan2(y,x);
 	angle += curr_angle;
-	
+
 	Vector2D res(d * cos(angle), d * sin(angle) );
 	return res;
 }
@@ -102,7 +102,7 @@ Vector2D & Vector2D::operator =(const Vector2D & v)
 {
 	this->x = v.x;
 	this->y = v.y;
-	
+
 	return *this;
 }
 
@@ -121,7 +121,7 @@ Vector2D  Vector2D::operator-(const Vector2D & v)
 
 
 Vector2D Vector2D::operator +(const Vector2D & v) const
-{	
+{
 	return Vector2D(x+v.x,y+v.y);
 }
 
