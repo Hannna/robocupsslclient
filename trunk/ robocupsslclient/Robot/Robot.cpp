@@ -44,6 +44,7 @@ std::string Robot::getPosIfaceName() const
 {
 	return this->posIfaceName;
 }
+
 void Robot::setRelativeSpeed(Vector2D v, double w)
 {
 	boost::tuple<double,double,double> currPositions;
@@ -101,7 +102,7 @@ std::pair<Vector2D,double> Robot::getVelocity() const
 
 }
 
-bool Robot::kickerReady(){
+bool Robot::kickerReady()const{
 	bool ready = false;
 #ifdef GAZEBO
 	posIface->Lock(1);
@@ -111,7 +112,7 @@ bool Robot::kickerReady(){
 	return ready;
 }
 
-bool Robot::kick(){
+bool Robot::kick()const {
 	if (!kickerReady()) return false;
 #ifdef GAZEBO
 	posIface->Lock(1);

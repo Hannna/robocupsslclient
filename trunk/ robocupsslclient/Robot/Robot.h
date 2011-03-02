@@ -40,8 +40,8 @@ public:
 	std::pair<Vector2D,double> getDesiredVel() const;
 	/// zwraca aktualnie  predkosci z jakimi faktycznie porusza sie robot robota first = V  second = w
 	std::pair<Vector2D,double> getVelocity() const;
-	bool kick();
-	bool kickerReady();
+	bool kick() const ;
+	bool kickerReady()const;
 
 private :
 	PidRegulator pidRegulator;

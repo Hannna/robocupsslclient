@@ -6,12 +6,11 @@
  */
 
 #include "RefereeClient/RefereeClient.h"
+#include "EvaluationModule/EvaluationModule.h"
 #include "Test/Test.h"
 
 #ifdef TEST
     #define BOOST_TEST_DYN_LINK
-    //#define BOOST_TEST_MAIN
-    //#define BOOST_TEST_MODULE hhh
 
     #include <boost/test/unit_test.hpp>
     using namespace boost::unit_test_framework;
@@ -20,13 +19,14 @@
     bool init_unit_test(){
         boost::unit_test::test_suite* ts1 = BOOST_TEST_SUITE( "test_suite1" );
 
-        boost::shared_ptr<RefereeClient> instance( new RefereeClient( ) );
+        //boost::shared_ptr<RefereeClient> instance( new RefereeClient( ) );
         //framework::master_test_suite().add( BOOST_CLASS_TEST_CASE( &RefereeClient::testConnection, instance ) );
-        ts1->add( BOOST_CLASS_TEST_CASE( &RefereeClient::testConnection, instance ) );
+        //ts1->add( BOOST_CLASS_TEST_CASE( &RefereeClient::testConnection, instance ) );
+        // ts1->add( BOOST_CLASS_TEST_CASE( &Videoserver::testVideoserver, Videoserver::getInstance() ) );
 
-        ts1->add( BOOST_CLASS_TEST_CASE( &Videoserver::testVideoserver, Videoserver::getInstance() ) );
-
-
+        EvaluationModule m=EvaluationModule::getInstance();
+        boost::shared_ptr<EvaluationModule> instance( &m );
+        ts1->add( BOOST_CLASS_TEST_CASE(&EvaluationModule::test,  instance ) );
         boost::unit_test::framework::master_test_suite().add(ts1);
         return true;
     }
