@@ -49,6 +49,10 @@ Pose Pose::transform(const Vector2D& distance,const RotationMatrix & rm) const {
 	return rm.Inverse()*tmp;
 }
 
+Pose Pose::translation(const Vector2D& distance) const {
+	Pose tmp(this->get<0>()-distance.x,this->get<1>()-distance.y,this->get<2>() );
+	return tmp;
+}
 //*****************************************************
 
 double convertAnglePI(double angle){

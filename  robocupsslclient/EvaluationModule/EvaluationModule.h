@@ -28,7 +28,7 @@ class EvaluationModule
      Pose findBestDribbleTarget();
      bool haveBall_1( const Robot & robot);
      bool haveBall_2(const Robot & robot);
-     void test();
+     void test(Pose currRobotPose,Pose targetPosition);
     //private:
     public:
         static Mutex mutex;
@@ -36,7 +36,10 @@ class EvaluationModule
         virtual ~EvaluationModule();
         inline EvaluationModule(const EvaluationModule &):video(Videoserver::getInstance() ) {};
         inline EvaluationModule& operator=(const EvaluationModule &) { return *this; };
-
+        /*@brief dla zadanej przeszkody znajduje przedział katowy z nia zwiazany
+         *
+         */
+        std::pair<double, double> findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition);
 
         static EvaluationModule * ptr;
         const Videoserver& video;
