@@ -13,6 +13,7 @@
 #include "boost/tuple/tuple.hpp"
 #include "Vector2d/Vector2D.h"
 #include "RotationMatrix/RotationMatrix.h"
+#include <boost/math/special_functions/fpclassify.hpp>
 
 //dokladnosc polozenia robota
 //lub okreslania czy robot jest u celu itp
@@ -111,10 +112,9 @@ public:
 	/*@brief transformuje biezace polozenie robota do ukl obroconego o rm i przesunietego o distance
 	 *
 	 */
-	Pose transform(const Vector2D& distance,const RotationMatrix & rm) const ;//{
-//		Pose tmp(this->get<0>()-distance.x,this->get<1>()-distance.y,this->get<2>() );
-//		return rm.Inverse()*tmp;
-//	}
+	Pose transform(const Vector2D& distance,const RotationMatrix & rm) const ;
+	Pose translation(const Vector2D& distance) const ;
+
 	//odleglosc w sensie euklidesowym
 	double distance(const Pose &p) const {
 		return sqrt( pow(this->get<0>()-p.get<0>(),2) + pow(this->get<1>()-p.get<1>(),2) );

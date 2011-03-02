@@ -5,6 +5,7 @@
 
 EvaluationModule * EvaluationModule::ptr=NULL;
 Mutex EvaluationModule::mutex;
+//using namespace boost::math;
 
  EvaluationModule& EvaluationModule::getInstance(){
     if(ptr)
@@ -29,23 +30,39 @@ EvaluationModule::EvaluationModule():video(Videoserver::getInstance())
 /*
 *@ zwraca najwiekszy otwarty kat prowadzacy do celu
 */
-/*
+
 std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName){
-    GameStatePtr currGameState(new GameState());
+	GameStatePtr currGameState(new GameState());
     video.updateGameState(currGameState);
-    Pose pose=currGameState->getRobotPos(robotName);
+    Pose robotPose=currGameState->getRobotPos(robotName);
 
-    Vector2D v1 = BOTTOM_GOAL_MID_POSITION - GOAL_CORNER_LEFT_SHIFT - pose.getPosition();
-    Vector2D v2 = BOTTOM_GOAL_MID_POSITION - GOAL_CORNER_RIGHT_SHIFT - pose.getPosition();
+    std::vector< std::pair<double, double> > angles;
+    std::vector<Pose> positions=GameState::getEnemyRobotsPos(robotName);
 
-    //BOTTOM_GOAL_POSITION
-    //TOP_GOAL_POSITION
+    //TODO: zainicjowac katem do bramki
+    std::pair<double, double> maxOpenAngle;
 
-    evaluation::score score=v1.scalarProduct(v2);
+    std::pair<double, double> tmpAng;
+    for(ii = positions.begin(); ii!=positions.end(); ii++){
+    	//jesli odleglosc do bramki jest mniejsza
+    	//niz sterowano robota
+    	//ew mozna dodac to sprawdzanie w findObstacleCoverAngles i chyba tak bedzie rozsadniej
+    	if( (*ii).){
+			std::pair<double, double> ang = findObstacleCoverAngles(robotPose,*ii);
 
-    return score;
+			//jesli ang zawiera sie w maxOpenAngle
+			if(ang.first  >   maxOpenAngle.first ){
+
+
+			}
+    	}
+    }
+
+
+
+    return maxOpenAngle;
 }
-*/
+/*
 std::pair<double, double> EvaluationModule::aimAtGoal(const std::string &robotName){
     //Pose pose=gameState->getRobotPos(robotName);
     GameStatePtr currGameState(new GameState());
@@ -72,6 +89,8 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string &robotNa
     evaluation::score score = fabs(alfa1-alfa2);
     return std::pair<double, double>(fmin(alfa1,alfa2), fmax(alfa1,alfa2 ) );
 }
+*/
+
 /*@brief znajduje najbardziej atrakcyjny punkt na planszy
 *
 * implementacja naiwna, najbardziej atrakcyjny jest srodek planszy
@@ -141,64 +160,68 @@ bool EvaluationModule::haveBall_2(const Robot & robot){
 
     return ballIsOwned;
 }
-void EvaluationModule::test(){
 
-Pose robotPose=FIELD_MIDDLE_POSE;
+std::pair<double, double> EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition){
 
-//Vector2D v(1,0);
-//Vector2D u(0,1);
+	std::cout<<"currRobotPose "<<currRobotPose<<std::endl;
+	std::cout<<"targetPosition "<<targetPosition<<std::endl;
 
-//std::cout<<"v*u "<<v.scalarProduct(u)<<std::endl;
+	//pozycja celu w ukladzie wsp zwiazanych z robotem
+	Pose reltargetPose=targetPosition.translation(currRobotPose.getPosition());
+
+	double x=reltargetPose.getPosition().x;
+	double y=reltargetPose.getPosition().y;
+
+	assert(y>0);
+
+	//promien okregu opisujacego przeszkode
+	double obstacleRadious=Config::getInstance().getRRTRobotRadius();
+	double alfa1;
+	double alfa2;
+
+	double sgn= x>0 ? 0: M_PI;
+
+	if( fabs( fabs(x)-fabs(obstacleRadious) )< 0.001 ){
+
+		//styczna ma rownanie x=A
+		alfa1=M_PI/2.0;
+
+		double a2=(y*y-obstacleRadious*obstacleRadious)/(2*x*y);
+		//Vector2D v2(sgn, a2 );
+		alfa2=atan(a2)+sgn;
+
+	}else{
+
+		//wspolczynniki kierunkowe prostych stycznych do okregu opisujacego przeszkode
+		double a1= ( -x*y - obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
+		double a2= ( -x*y + obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
+
+		assert(boost::math::isnormal(a1) );
+		assert(boost::math::isnormal(a2) );
+
+		//std::cout<<"a1"<<a1<<std::endl;
+		//std::cout<<"a2"<<a2<<std::endl;
+
+		//Vector2D v1(sgn,fmin(a1,a2) );
+		//Vector2D v2(sgn,fmax(a1,a2) );
+
+		//double cosalfa=v1.angleTo(v2);
+
+		//kat
+		alfa1=atan(a1)+sgn;
+		alfa2=atan(a2)+sgn;
+	}
+	//katy pomiedzy ktorymi znajduje sie przeszkoda
+	double alfamin = fmin(alfa1, alfa2);
+	double alfamax = fmax(alfa1, alfa2);
+	std::cout<<"alfamin= "<<alfamin<<" alfamax="<<alfamax<<std::endl;
+	std::cout<<std::endl;
 
 
-RotationMatrix rmY(0);
-Pose currRobotPose=Pose(1,1,0);
-Pose targetPosition=Pose(3,3,0);
+}
+void EvaluationModule::test(Pose currRobotPose,Pose targetPosition){
+	findObstacleCoverAngles(currRobotPose,targetPosition);
 
-aimAtGoal("red0" );
-//pozycja celu w ukladzie wsp zwiazanych z robotem
-Pose reltargetPose=targetPosition.transform(currRobotPose.getPosition(),rmY);
-
-double x=reltargetPose.getPosition().x;
-double y=reltargetPose.getPosition().y;
-
-double r=1;
-
-double a1= ( -x*y - r*sqrt(y*y + x*x -r*r) )/ (r*r-x*x);
-double a2= ( -x*y + r*sqrt(y*y + x*x -r*r) )/ (r*r-x*x);
-
-Vector2D v1(1,fmin(a1,a2) );
-Vector2D v2(1,fmax(a1,a2) );
-
-double cosalfa=v1.angleTo(v2);
-
-double alfa1=atan(fmin(a1,a2));
-double alfa2=atan(fmax(a1,a2));
-
-std::cout<<"alfa1= "<<alfa1<<" alfa2="<<alfa2<<std::endl;
-
-std::cout<<"v1= "<<v1<<" v2="<<v2<<" cosalfa"<<cosalfa<<std::endl;
-
-/*
-std::cout<<"score from middle "<<EvaluationModule::aimAtGoal(robotPose)<<std::endl;
-std::cout<<"score from middle -(1,1,0) "<<EvaluationModule::aimAtGoal(robotPose-Pose(1.0,1.0,0))<<std::endl;
-std::cout<<"score from middle -(2,2,0) "<<EvaluationModule::aimAtGoal(robotPose-Pose(2.0,2.0,0))<<std::endl;
-
-std::cout<<"score from middle +(1,1,0) "<<EvaluationModule::aimAtGoal(robotPose-Pose(1.0,1.0,0))<<std::endl;
-std::cout<<"score from middle +(2,2,0) "<<EvaluationModule::aimAtGoal(robotPose-Pose(2.0,2.0,0))<<std::endl;
-
-std::cout<<"score from middle -(2,0,0) "<<EvaluationModule::aimAtGoal(robotPose-Pose(2.0,0.0,0))<<std::endl;
-std::cout<<"score from middle -(3,0,0) "<<EvaluationModule::aimAtGoal(robotPose-Pose(3.0,0.0,0))<<std::endl;
-
-std::cout<<"score from middle +(2,0,0) "<<EvaluationModule::aimAtGoal(robotPose+Pose(2.0,0.0,0))<<std::endl;
-std::cout<<"score from middle +(3,0,0) "<<EvaluationModule::aimAtGoal(robotPose+Pose(3.0,0.0,0))<<std::endl;
-
-std::cout<<"score from middle -(0,2.0,0) "<<EvaluationModule::aimAtGoal(robotPose-Pose(0.0,2.0,0))<<std::endl;
-std::cout<<"score from middle -(0,3.0,0) "<<EvaluationModule::aimAtGoal(robotPose-Pose(0.0,3.0,0))<<std::endl;
-
-std::cout<<"score from middle +(0,2.0,0) "<<EvaluationModule::aimAtGoal(robotPose+Pose(0.0,2.0,0))<<std::endl;
-std::cout<<"score from middle +(0,3.0,0) "<<EvaluationModule::aimAtGoal(robotPose+Pose(0.0,3.0,0))<<std::endl;
-*/
 }
 
 EvaluationModule::~EvaluationModule()

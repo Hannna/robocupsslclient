@@ -9,6 +9,7 @@
 
 #include "../RRT/RRTPlanner.h"
 #include "../RotationMatrix/RotationMatrix.h"
+#include "../SimControl/SimControl.h"
 #include "../Task/GoToPose.h"
 #include "../TestRRT/TestRRT.h"
 
@@ -318,6 +319,7 @@ void testMultiRRTThread(){
 
 void testDribbler(Robot& robot){
 
+#ifdef GAZEBO
 	GameStatePtr gameState(new GameState());
 	Videoserver::getInstance().start(NULL);
 	Videoserver::getInstance().updateGameState(gameState);
@@ -330,6 +332,7 @@ void testDribbler(Robot& robot){
             SimControl::getInstance().restart();
         Videoserver::getInstance().updateGameState(gameState);
     }
+#endif
 
 /*
     std::cout<<"try to correct robot rotation"<<std::endl;

@@ -9,6 +9,8 @@
 #include "EvaluationModule/EvaluationModule.h"
 #include "Test/Test.h"
 
+#define TEST
+
 #ifdef TEST
     #define BOOST_TEST_DYN_LINK
 
@@ -25,9 +27,23 @@
         // ts1->add( BOOST_CLASS_TEST_CASE( &Videoserver::testVideoserver, Videoserver::getInstance() ) );
 
         EvaluationModule m=EvaluationModule::getInstance();
-        boost::shared_ptr<EvaluationModule> instance( &m );
-        ts1->add( BOOST_CLASS_TEST_CASE(&EvaluationModule::test,  instance ) );
-        boost::unit_test::framework::master_test_suite().add(ts1);
+        Pose currRobotPose(1,1,0);
+        Pose targetPosition(3,3,0);
+
+        m.test(currRobotPose,targetPosition);
+
+        currRobotPose=Pose(0,0,0);
+		targetPosition=Pose(1.0,2,0);
+
+		m.test(currRobotPose,targetPosition);
+
+	    currRobotPose=Pose(0,0,0);
+		targetPosition=Pose(-1.0,2,0);
+
+		m.test(currRobotPose,targetPosition);
+        //boost::shared_ptr<EvaluationModule> instance( &m );
+        //ts1->add( BOOST_CLASS_TEST_CASE(&EvaluationModule::test,  instance ) );
+        //boost::unit_test::framework::master_test_suite().add(ts1);
         return true;
     }
 
