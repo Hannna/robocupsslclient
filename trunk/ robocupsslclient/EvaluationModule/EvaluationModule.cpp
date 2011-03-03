@@ -1,7 +1,9 @@
 #include "EvaluationModule.h"
 #include "../Lock/Lock.h"
 #include "../additional.h"
+#include "../Config/Config.h"
 #include <math.h>
+#include <limits>
 
 EvaluationModule * EvaluationModule::ptr=NULL;
 Mutex EvaluationModule::mutex;
@@ -23,7 +25,7 @@ Mutex EvaluationModule::mutex;
 
 }
 
-EvaluationModule::EvaluationModule():video(Videoserver::getInstance())
+EvaluationModule::EvaluationModule():video(Videoserver::getInstance()), appConfig(Config::getInstance())
 {
 
 }
@@ -36,32 +38,29 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     video.updateGameState(currGameState);
     Pose robotPose=currGameState->getRobotPos(robotName);
 
-    std::vector< std::pair<double, double> > angles;
-    std::vector<Pose> positions=GameState::getEnemyRobotsPos(robotName);
+    std::vector<Pose> positions=currGameState->getEnemyRobotsPos(robotName);
+    std::vector<Pose>::iterator ii=positions.begin();
 
     //TODO: zainicjowac katem do bramki
     std::pair<double, double> maxOpenAngle;
 
     std::pair<double, double> tmpAng;
+    std::vector< std::pair<double, double> > angles;
     for(ii = positions.begin(); ii!=positions.end(); ii++){
-    	//jesli odleglosc do bramki jest mniejsza
-    	//niz sterowano robota
-    	//ew mozna dodac to sprawdzanie w findObstacleCoverAngles i chyba tak bedzie rozsadniej
-    	if( (*ii).){
-			std::pair<double, double> ang = findObstacleCoverAngles(robotPose,*ii);
+		std::pair<double, double> ang = findObstacleCoverAngles(robotPose,*ii);
 
-			//jesli ang zawiera sie w maxOpenAngle
-			if(ang.first  >   maxOpenAngle.first ){
-
-
+		//jesli ang zawiera sie w maxOpenAngle
+		if(ang.first  >   maxOpenAngle.first ){
+			if(ang.second < maxOpenAngle.second){
+				//TODO:  wstawic kod z CVM ktory scala przedzialy
 			}
-    	}
+
+		}
     }
-
-
 
     return maxOpenAngle;
 }
+
 /*
 std::pair<double, double> EvaluationModule::aimAtGoal(const std::string &robotName){
     //Pose pose=gameState->getRobotPos(robotName);
@@ -97,7 +96,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string &robotNa
 */
 Pose EvaluationModule::findBestDribbleTarget(){
 
-    return FIELD_MIDDLE_POSE;
+    return appConfig.field.FIELD_MIDDLE_POSE;
 
 }
 
@@ -164,15 +163,18 @@ bool EvaluationModule::haveBall_2(const Robot & robot){
 std::pair<double, double> EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition){
 
 	std::cout<<"currRobotPose "<<currRobotPose<<std::endl;
-	std::cout<<"targetPosition "<<targetPosition<<std::endl;
+	std::cout<<"targetPosition "<<obstaclePosition<<std::endl;
 
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
-	Pose reltargetPose=targetPosition.translation(currRobotPose.getPosition());
+	Pose reltargetPose=obstaclePosition.translation(currRobotPose.getPosition());
 
 	double x=reltargetPose.getPosition().x;
 	double y=reltargetPose.getPosition().y;
 
-	assert(y>0);
+	if(y<=0){
+		return std::pair<double,double>(-std::numeric_limits<double>::infinity(),-std::numeric_limits<double>::infinity());
+	}
+	//assert(y>0);
 
 	//promien okregu opisujacego przeszkode
 	double obstacleRadious=Config::getInstance().getRRTRobotRadius();
