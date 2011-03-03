@@ -4,7 +4,7 @@
 #include "../additional.h"
 #include "../VideoServer/Videoserver.h"
 #include "../Robot/Robot.h"
-
+#include "../Config/Config.h"
 
 /*
     @brief Modul odpowiadajacy za ocene sytuacji na planszy
@@ -34,10 +34,10 @@ class EvaluationModule
         static Mutex mutex;
         EvaluationModule();
         virtual ~EvaluationModule();
-        inline EvaluationModule(const EvaluationModule &):video(Videoserver::getInstance() ) {};
+        inline EvaluationModule(const EvaluationModule &):video(Videoserver::getInstance()), appConfig(Config::getInstance()) {};
         inline EvaluationModule& operator=(const EvaluationModule &) { return *this; };
         /*@brief dla zadanej przeszkody znajduje przedział katowy z nia zwiazany
-         *
+         *  jesli przeszkoda znajduje sie za robotem zwraca std::pair(-INF, -INF)
          */
         std::pair<double, double> findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition);
 
@@ -45,6 +45,7 @@ class EvaluationModule
         const Videoserver& video;
     protected:
     private:
+        Config & appConfig;
 };
 
 #endif // EVALUATIONMODULE_H

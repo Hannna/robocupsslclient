@@ -15,11 +15,12 @@
 #include "RotationMatrix/RotationMatrix.h"
 #include <boost/math/special_functions/fpclassify.hpp>
 
+
 //dokladnosc polozenia robota
 //lub okreslania czy robot jest u celu itp
 #define LOCATION_PRECISION 0.01
 #define ROTATION_PRECISION 0.01
-
+/*
 //[m]
 #define FIELD_WIDTH 5.4
 //[m]
@@ -36,7 +37,7 @@
 #define GOAL_CORNER_LEFT_SHIFT Vector2D(-0.36, -0.1)
 
 #define GOAL_CORNER_RIGHT_SHIFT Vector2D(0.36, -0.1)
-
+*
 //parametry boiska
 
 /**
