@@ -4,6 +4,7 @@
 #include "../Config/Config.h"
 #include <math.h>
 #include <limits>
+#include "../Set/Set.h"
 
 EvaluationModule * EvaluationModule::ptr=NULL;
 Mutex EvaluationModule::mutex;
@@ -42,23 +43,74 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     std::vector<Pose>::iterator ii=positions.begin();
 
     //TODO: zainicjowac katem do bramki
-    std::pair<double, double> maxOpenAngle;
+    Set maxOpenAngle( -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity() , std::numeric_limits<double>::infinity());
+    Set tmpAng(maxOpenAngle);
 
-    std::pair<double, double> tmpAng;
-    std::vector< std::pair<double, double> > angles;
+    std::list< Set > angles;
+    angles.push_back(maxOpenAngle);
+
     for(ii = positions.begin(); ii!=positions.end(); ii++){
-		std::pair<double, double> ang = findObstacleCoverAngles(robotPose,*ii);
-
-		//jesli ang zawiera sie w maxOpenAngle
-		if(ang.first  >   maxOpenAngle.first ){
-			if(ang.second < maxOpenAngle.second){
-				//TODO:  wstawic kod z CVM ktory scala przedzialy
-			}
-
-		}
+		Set ang = findObstacleCoverAngles(robotPose,*ii);
+        addToList( ang , angles);
     }
 
-    return maxOpenAngle;
+    //znajdz najszerszy przedzial w kolekcji angles
+    std::list<Set>::iterator iii=
+        std::max_element(angles.begin(),angles.end(),
+			  boost::bind( &Set::width,_1) );
+
+    return std::pair<double,double>( (*iii).angmin, (*iii).angmax );
+}
+
+void EvaluationModule::addToList(Set &set, std::list<Set> &sets){
+	BOOST_ASSERT(sets.size()>0);
+	std::list<Set>::iterator i;
+	double min = 0.01;
+	for(i=sets.begin();i!=sets.end();i++){
+		//dodawany zbior i wskazywany przez i są rozłączne
+		if ((*i).areSeparated(set)){
+			continue;
+		}
+		//zbiór i zawiera zbiór dodawany set
+		if((*i).include(set)){
+			if ((*i).d < set.d) break;	//dodawany jest zasłonięty przez i, nie ma sensu go uwzględniać
+			//w przeciwnym razie trzeba podzielic *i
+			Set copy = *i;
+			if (fabs(copy.angmin - set.angmin) > min)
+				sets.insert(i, Set(copy.angmin, set.angmin, copy.d));
+			sets.insert(i, set);
+			if (fabs(set.angmax - copy.angmax) > min)
+				sets.insert(i, Set(set.angmax, copy.angmax, copy.d));
+			i=sets.erase(i); i--;
+			break;
+		}
+		//i zawiera się w dodawanym secie
+		if((*i).isIncluded(set)){
+			if ((*i).d > set.d)	//jesli set jest blizej, zmieniam wartosc d dla *i
+				(*i).d = set.d;
+			continue;
+		}
+		//czesciowe zawieranie
+		if((*i).partlyInclude(set)){
+			if ((*i).d < set.d) continue;	//i tak *i będzie przyslaniac set
+			//w przeciwnym wypadku set jest blizej
+			if ((*i).angmin < set.angmin){
+				if (fabs((*i).angmin - set.angmin) > min)
+					sets.insert(i,Set((*i).angmin,set.angmin,(*i).d));
+				if (fabs(set.angmin - (*i).angmax) > min)
+					sets.insert(i,Set(set.angmin,(*i).angmax,set.d));
+				i=sets.erase(i); i--;
+			}
+			else{
+				if (fabs((*i).angmin -set.angmax) > min)
+					sets.insert(i,Set((*i).angmin,set.angmax,set.d));
+				if (fabs(set.angmax - (*i).angmax) > min)
+					sets.insert(i,Set(set.angmax,(*i).angmax,(*i).d));
+				i=sets.erase(i); i--;
+			}
+			continue;
+		}
+	}
 }
 
 /*
@@ -160,7 +212,7 @@ bool EvaluationModule::haveBall_2(const Robot & robot){
     return ballIsOwned;
 }
 
-std::pair<double, double> EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition){
+Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition){
 
 	std::cout<<"currRobotPose "<<currRobotPose<<std::endl;
 	std::cout<<"targetPosition "<<obstaclePosition<<std::endl;
@@ -172,7 +224,8 @@ std::pair<double, double> EvaluationModule::findObstacleCoverAngles(Pose currRob
 	double y=reltargetPose.getPosition().y;
 
 	if(y<=0){
-		return std::pair<double,double>(-std::numeric_limits<double>::infinity(),-std::numeric_limits<double>::infinity());
+		return Set( -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity() , std::numeric_limits<double>::infinity());
+
 	}
 	//assert(y>0);
 
@@ -219,8 +272,9 @@ std::pair<double, double> EvaluationModule::findObstacleCoverAngles(Pose currRob
 	std::cout<<"alfamin= "<<alfamin<<" alfamax="<<alfamax<<std::endl;
 	std::cout<<std::endl;
 
-
+	return Set(alfamin,alfamax,currRobotPose.distance(obstaclePosition));
 }
+
 void EvaluationModule::test(Pose currRobotPose,Pose targetPosition){
 	findObstacleCoverAngles(currRobotPose,targetPosition);
 

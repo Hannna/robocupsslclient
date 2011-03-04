@@ -37,7 +37,7 @@
 #define GOAL_CORNER_LEFT_SHIFT Vector2D(-0.36, -0.1)
 
 #define GOAL_CORNER_RIGHT_SHIFT Vector2D(0.36, -0.1)
-*
+*/
 //parametry boiska
 
 /**
