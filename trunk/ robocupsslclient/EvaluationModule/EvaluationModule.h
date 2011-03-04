@@ -14,6 +14,8 @@ namespace evaluation{
 typedef double score;
 
 }
+class Set;
+
 using namespace evaluation;
 
 class EvaluationModule
@@ -29,8 +31,7 @@ class EvaluationModule
      bool haveBall_1( const Robot & robot);
      bool haveBall_2(const Robot & robot);
      void test(Pose currRobotPose,Pose targetPosition);
-    //private:
-    public:
+    private:
         static Mutex mutex;
         EvaluationModule();
         virtual ~EvaluationModule();
@@ -39,7 +40,8 @@ class EvaluationModule
         /*@brief dla zadanej przeszkody znajduje przedział katowy z nia zwiazany
          *  jesli przeszkoda znajduje sie za robotem zwraca std::pair(-INF, -INF)
          */
-        std::pair<double, double> findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition);
+        Set findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition);
+        void addToList(Set &set,std::list<Set> &sets);
 
         static EvaluationModule * ptr;
         const Videoserver& video;
