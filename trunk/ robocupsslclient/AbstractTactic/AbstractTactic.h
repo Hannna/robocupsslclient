@@ -22,25 +22,22 @@ do momentu zmiany planu gry calej druzyny. Przykładowe plany działań dla robo
 
 #include "../Task/Task.h"
 #include "../Robot/Robot.h"
-
+#include "../Thread/Thread.h"
 class EvaluationModule;
 
-class AbstractTactic
+class AbstractTactic : public Thread
 {
     public:
-        AbstractTactic(const Robot & robot_);
-        virtual void execute()=0;
+        AbstractTactic(Robot & robot_);
+        virtual void execute(void*) = 0;
         virtual bool isFinish()=0;
 
         virtual ~AbstractTactic();
     protected:
         EvaluationModule& evaluation;
-        const Robot& robot;
-        void setCommand(TaskPtr task);
-        //kolejne etapy wykonania zadania
-        //std::list<T> tasks;
-    private:
-    double bestScore;
+        Robot& robot;
+        TaskPtr currentTask;
+        double bestScore;
 
 
 };

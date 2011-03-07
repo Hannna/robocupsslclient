@@ -14,8 +14,6 @@ class Thread
         THREADID getThreadID(){ return this->threadId_;}
         void join(){pthread_join(threadId_,NULL);}
     protected:
-      int run(void * arg);
-      static void * entryPoint(void*);
       /*@brief ew funkcja do przedefiniowania
       * wywolywana przed uruchomieniem watku
       *
@@ -25,11 +23,15 @@ class Thread
       *
       */
       virtual void execute(void*) = 0;
-      inline void * arg() const {
-          return arg_;
-        }
-      void arg(void* a){arg_ = a;}
     private:
+      inline void * arg() const {
+            return arg_;
+          }
+      void arg(void* a){arg_ = a;}
+
+      int run(void * arg);
+      static void * entryPoint(void*);
+
       THREADID threadId_;
       pthread_attr_t attr;
       void * arg_;

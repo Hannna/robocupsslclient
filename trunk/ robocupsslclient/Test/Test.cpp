@@ -261,9 +261,9 @@ void * testTask(void * arg){
 	GameStatePtr gameState(new GameState());
 	Videoserver::getInstance().updateGameState(gameState);
 
-	GoToPose goToPose( (*gameState).getBallPos(),robot);
+	//GoToPose goToPose( (*gameState).getBallPos(),robot);
 	//GoToPose goToPose( Pose(6.0,4.0,0.0),robot);
-	goToPose.execute();
+	//goToPose.execute();
 	//std::cout<<"exit from task"<<std::endl;
 	return 0;
 }
@@ -382,6 +382,7 @@ void testShootTactics(){
 	Robot redRobot0(std::string("red0"),ifaceName);
     AbstractTactic * shootTactic= new ShootTactic(redRobot0);
     shootTactic->execute();
+    shootTactic->join();
 #endif
 
 }

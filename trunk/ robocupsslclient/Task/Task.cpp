@@ -17,7 +17,8 @@ void Task::stop(){
 	mutex_.unlock();
 }
 
-bool Task::execute(){
+
+bool Task::execute(void* arg, int steps){
 	bool stop=false;
 	bool res=false;
 	do{
@@ -25,12 +26,13 @@ bool Task::execute(){
 		if(!this->stopTask);
 			stop=true;
 		mutex_.unlock();
-		res=this->run();
+		res=this->run(arg, steps);
 	}
 	while( !stop || !(res) );
 
 	return res;
 }
+
 
 Task::~Task() {
 	// TODO Auto-generated destructor stub

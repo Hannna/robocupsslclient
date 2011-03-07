@@ -42,7 +42,7 @@ double calculateAngularVel(GameState & gameState,std::string robotName, Pose tar
     return angularVel;
 }
 
-bool GoToPose::run(){
+bool GoToPose::run(void* arg, int steps){
 	RRTPlanner * rrt;
 	std::list<Pose>  path;
 	GameStatePtr currGameState(new GameState());
@@ -70,7 +70,7 @@ bool GoToPose::run(){
 	/*
 	 * za pomoca algorytmu rrt pokieruj robota do celu
 	 */
-	while(!this->stopTask ){
+	while(!this->stopTask && (steps--)!=0 ){
 		if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
 			lastSimTime=currSimTime;
 			rrt = new RRTPlanner(Config::getInstance().getRRTGoalProb(),
@@ -84,6 +84,7 @@ bool GoToPose::run(){
 				if(nextState.get()==NULL){
 					robot->setRelativeSpeed(Vector2D(0.0,0.0),0);
 					std::cout<<"next state is null"<<std::endl;
+					return false;
 					break;
 				}
 				nextRobotPose=nextState->getRobotPos(robot->getRobotName());
@@ -118,7 +119,7 @@ bool GoToPose::run(){
 			else{
 				robot->setRelativeSpeed(Vector2D(0.0,0.0),0);
 				std::cout<<"Error nr"<<status<<std::endl;
-				//exit(0);
+				return false;
 				break;
 			}
 		}
@@ -172,7 +173,7 @@ bool GoToPose::run(){
 
 //	    robot->setSpeed(Vector2D(0.0,0.0),0.0);
 	//}
-	return false;
+	return true;
 }
 
 GoToPose::~GoToPose() {

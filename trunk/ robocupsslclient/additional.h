@@ -20,25 +20,11 @@
 //lub okreslania czy robot jest u celu itp
 #define LOCATION_PRECISION 0.01
 #define ROTATION_PRECISION 0.01
-/*
-//[m]
-#define FIELD_WIDTH 5.4
-//[m]
-#define FIELD_LENGTH 7.4
 
-#define FIELD_MIDDLE_POSE Pose(2.7, 3.7 ,0.0);
-
-#define FIELD_MIDDLE_VECTOR Vector2D(2.7,3.7);
-
-#define BOTTOM_GOAL_MID_POSITION Vector2D(2.7 , 0.675)
-
-#define TOP_GOAL_MID_POSITION Vector2D(2.7 , 6.725)
-
-#define GOAL_CORNER_LEFT_SHIFT Vector2D(-0.36, -0.1)
-
-#define GOAL_CORNER_RIGHT_SHIFT Vector2D(0.36, -0.1)
-*/
-//parametry boiska
+enum goalArea{
+	top,
+	bottom
+};
 
 /**
  * @mainpage

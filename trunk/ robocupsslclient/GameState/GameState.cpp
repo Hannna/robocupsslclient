@@ -9,11 +9,12 @@
 #include "../RotationMatrix/RotationMatrix.h"
 #include <boost/foreach.hpp>
 
-GameState::GameState() {
+GameState::GameState(): redGoal(top), blueGoal(bottom) {
 	// TODO Auto-generated constructor stub
 
 }
-GameState::GameState(const GameState& gameState){
+GameState::GameState(const GameState& gameState): redGoal(gameState.redGoal),
+													blueGoal(gameState.blueGoal){
 	this->ball=gameState.ball;
 	this->robots=gameState.robots;
 }

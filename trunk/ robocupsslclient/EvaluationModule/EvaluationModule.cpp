@@ -2,13 +2,16 @@
 #include "../Lock/Lock.h"
 #include "../additional.h"
 #include "../Config/Config.h"
+#include "../Set/Set.h"
 #include <math.h>
 #include <limits>
-#include "../Set/Set.h"
+
+#include <boost/bind.hpp>
+
 
 EvaluationModule * EvaluationModule::ptr=NULL;
 Mutex EvaluationModule::mutex;
-//using namespace boost::math;
+
 
  EvaluationModule& EvaluationModule::getInstance(){
     if(ptr)
@@ -42,29 +45,48 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     std::vector<Pose> positions=currGameState->getEnemyRobotsPos(robotName);
     std::vector<Pose>::iterator ii=positions.begin();
 
-    //TODO: zainicjowac katem do bramki
-    /*Set maxOpenAngle( -std::numeric_limits<double>::infinity(),
-                     std::numeric_limits<double>::infinity() ,
-                      std::numeric_limits<double>::infinity() );
-    */
+    /*Obliczam kat do bramki w zaleznosci od koloru druzyny i bramki na ktora gra
+     *
+     */
     //wersor osi ox
     Vector2D ox(1,0);
-    //TODO: sprawdzac kolor druzyny i w zaleznosci od tego dobierac bramke: TOP/BOTTOM
-//    std::cout<<"left "<<appConfig.field.BOTTOM_GOAL_LEFT_CORNER<<std::endl;
-//    std::cout<<"right "<<appConfig.field.BOTTOM_GOAL_RIGHT_CORNER<<std::endl;
+    double alfa1;
+    double alfa2;
+    double dist;
 
+    if(robotName.compare("red")==0){
+    	if(currGameState->redGoal==bottom){
+    	    alfa1 = appConfig.field.BOTTOM_GOAL_LEFT_CORNER.angleTo(ox);
+    	    alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
+    	    dist = appConfig.field.BOTTOM_GOAL_MID_POSITION.distance( robotPose.getPosition() );
 
-    double alfa1 = appConfig.field.BOTTOM_GOAL_LEFT_CORNER.angleTo(ox);
-    double alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
-    double dist = appConfig.field.BOTTOM_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+    	}
+    	else{
+    	    alfa1 = appConfig.field.TOP_GOAL_LEFT_CORNER.angleTo(ox);
+        	alfa2 = appConfig.field.TOP_GOAL_RIGHT_CORNER.angleTo(ox);
+        	dist = appConfig.field.TOP_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+
+    	}
+    }else{
+		if(currGameState->blueGoal==bottom){
+			alfa1 = appConfig.field.BOTTOM_GOAL_LEFT_CORNER.angleTo(ox);
+			alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
+			dist = appConfig.field.BOTTOM_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+
+		}
+		else{
+			alfa1 = appConfig.field.TOP_GOAL_LEFT_CORNER.angleTo(ox);
+			alfa2 = appConfig.field.TOP_GOAL_RIGHT_CORNER.angleTo(ox);
+			dist = appConfig.field.TOP_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+
+		}
+    }
 //    std::cout<<" open angle to the bottom goal min "<<alfa1<<" max "<<alfa2<<std::endl;
 
     double alfamin = alfa1 < alfa2 ? alfa1 : alfa2;
     double alfamax = alfa1 > alfa2 ? alfa1 : alfa2;
 
-    Set maxOpenAngle( alfamin,
-                      alfamax,
-                      dist );
+    Set maxOpenAngle( alfamin, alfamax, dist );
 
 //    std::cout<<" open angle to the bottom goal min "<<alfamin<<" max "<<alfamax<<std::endl;
 
@@ -78,7 +100,6 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 
 		if( ang.d > 0 ){
             addToList( ang , angles);
-           // std::cout<<"add to list for "<<*ii<<std::endl;
 		}
     }
 
@@ -86,6 +107,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     std::list<Set>::iterator iii=
         std::max_element(angles.begin(),angles.end(),
 			  boost::bind( &Set::width,_1) );
+
 
     return std::pair<double,double>( (*iii).angmin, (*iii).angmax );
 }
@@ -141,35 +163,6 @@ void EvaluationModule::addToList(Set &set, std::list<Set> &sets){
 	}
 }
 
-/*
-std::pair<double, double> EvaluationModule::aimAtGoal(const std::string &robotName){
-    //Pose pose=gameState->getRobotPos(robotName);
-    GameStatePtr currGameState(new GameState());
-    video.updateGameState(currGameState);
-
-    Pose robotPose=currGameState->getRobotPos(robotName);
-
-
-    Vector2D v1 = BOTTOM_GOAL_MID_POSITION - GOAL_CORNER_LEFT_SHIFT - robotPose.getPosition();
-    Vector2D v2 = BOTTOM_GOAL_MID_POSITION - GOAL_CORNER_RIGHT_SHIFT - robotPose.getPosition();
-
-    //BOTTOM_GOAL_POSITION
-    //TOP_GOAL_POSITION
-
-    Vector2D vox(1,0);
-
-    double alfa1=vox.angleTo(v1);
-    double alfa2=vox.angleTo(v2);
-
-    std::cout<<"alfa1 "<<alfa1<<"alfa2 "<<alfa2<<std::endl;
-
-
-    //evaluation::score score=v1.scalarProduct(v2);
-    evaluation::score score = fabs(alfa1-alfa2);
-    return std::pair<double, double>(fmin(alfa1,alfa2), fmax(alfa1,alfa2 ) );
-}
-*/
-
 /*@brief znajduje najbardziej atrakcyjny punkt na planszy
 *
 * implementacja naiwna, najbardziej atrakcyjny jest srodek planszy
@@ -222,8 +215,6 @@ bool EvaluationModule::haveBall_2(const Robot & robot){
 //|       |-------|       |   <- dribbler         |-
 //-----           -----                                   |0.075  distance from robot to dribbler center
 //x (robot center)                        |
-//LOG4CXX_DEBUG(logger, "Model "<<IdMgr::instance().getName(i->first));
-//LOG4CXX_DEBUG(logger, "Angle: "<<angle);
 
     if (fabs(angle) < 0.22){        //from robot dimensions - this means ball
         //is near the dribbler, in front

@@ -13,7 +13,7 @@
 class GoToPose: public Task {
 public:
 	GoToPose(const Pose & pose,Robot * robot);
-	bool run();
+	virtual bool run(void * arg, int steps=-1);
 	virtual ~GoToPose();
 private:
 	const Pose & goalPose;

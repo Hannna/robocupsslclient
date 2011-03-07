@@ -7,9 +7,14 @@
 
 #include "KickBall.h"
 
-KickBall::KickBall() {
+KickBall::KickBall(Robot * robot): Task(robot) {
 
 
+}
+
+bool KickBall::run(void * arg, int steps ){
+	this->robot->kick();
+	return true;
 }
 
 KickBall::~KickBall() {
