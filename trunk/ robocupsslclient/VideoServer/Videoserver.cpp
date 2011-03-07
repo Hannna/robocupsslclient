@@ -7,11 +7,17 @@ pthread_cond_t Videoserver::update_game_state_cv;
 struct timeval Videoserver::startTime;
 
 Videoserver * Videoserver::video;
+
+goalArea Videoserver::redGoal;
+goalArea Videoserver::blueGoal;
+
 Videoserver::Videoserver()
 {
     pthread_mutex_init (&Videoserver::mutex, NULL);
     pthread_cond_init (&Videoserver::update_game_state_cv, NULL);
 
+    redGoal = top;
+    blueGoal = bottom;
 
 	Videoserver::gameState=GameStatePtr(new GameState());
 #ifdef GAZEBO

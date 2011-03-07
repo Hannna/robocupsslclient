@@ -267,7 +267,6 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 		alfa2=atan(a2)+sgn;
 
 	}else{
-
 		//wspolczynniki kierunkowe prostych stycznych do okregu opisujacego przeszkode
 		double a1= ( -x*y - obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
 		double a2= ( -x*y + obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
@@ -287,6 +286,7 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 		alfa1=atan(a1)+sgn;
 		alfa2=atan(a2)+sgn;
 	}
+
 	//katy pomiedzy ktorymi znajduje sie przeszkoda
 	double alfamin = fmin(alfa1, alfa2);
 	double alfamax = fmax(alfa1, alfa2);

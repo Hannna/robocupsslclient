@@ -81,6 +81,9 @@ public:
 		delete video;
 	};
 	friend void update(int);
+
+	static goalArea redGoal;
+	static goalArea blueGoal;
 //czas co jaki videoserwer pobiera inf z symulatora
 	static const int updateDeltaTime=100000; //100[ms]
 private:
