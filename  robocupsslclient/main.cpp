@@ -9,7 +9,7 @@
 #include "EvaluationModule/EvaluationModule.h"
 #include "Test/Test.h"
 
-#define TEST
+//#define TEST
 
 #ifdef TEST
     #define BOOST_TEST_DYN_LINK
@@ -106,7 +106,8 @@ namespace Tests{
             motion,
             rotation,
             taskScheduling,
-            ballDribbling
+            ballDribbling,
+            testTactics
             } TestKind;
 }
 
@@ -158,8 +159,10 @@ int main(int argc, char*argv[],char *envp[]){
                 testKind=Tests::rotation;
             if(strncmp(argv[2],"task",4)==0)
                 testKind=Tests::taskScheduling;
-            if(strncmp(argv[2],"dribbler",4)==0)
+            if(strncmp(argv[2],"dribbler",8)==0)
                 testKind=Tests::ballDribbling;
+            if(strncmp(argv[2],"tactic",6)==0)
+                testKind=Tests::testTactics;
         }
         else{
             std::cout<<"missing param"<<std::endl;
@@ -256,6 +259,12 @@ int main(int argc, char*argv[],char *envp[]){
                 case ballDribbling :{
                     Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
                     testDribbler(testRobot);
+                }
+                break;
+                case testTactics :{
+                    testShootTactics();
+                    //Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
+                    //testDribbler(testRobot);
                 }
                 break;
                 default:

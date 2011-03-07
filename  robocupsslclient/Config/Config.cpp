@@ -190,6 +190,7 @@ bool Config::loadTestMode(xmlNodePtr node,xmlDocPtr config){
 	}
 	return status;
 }
+
 bool Config::loadSettings(xmlNodePtr node,xmlDocPtr config){
 	bool status=true;
 	xmlNodePtr current = node->xmlChildrenNode;
