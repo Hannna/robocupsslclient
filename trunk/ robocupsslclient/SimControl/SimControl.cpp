@@ -306,8 +306,8 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 							 rot= simIface->data->responses[i].modelPose.yaw; //rot
 							 positions[model_name_]=Pose(x,y,rot);
 							 std::ostringstream log_msg;
-							 log_msg<<"SimControl getAllPos model name "<<model_name_<<" x="<<positions[model_name_].get<0>()<<" y="<<positions[model_name_].get<1>()<<" rot="<<positions[model_name_].get<2>()<<std::endl;
-                             LOG_DEBUG(log,log_msg);
+							 log_msg<<"SimControl getAllPos model name "<<model_name_<<" x="<<positions[model_name_].get<0>()<<" y="<<positions[model_name_].get<1>()<<" rot="<<positions[model_name_].get<2>();
+                             LOG_DEBUG(log,log_msg.str());
 
 						}
 						break;

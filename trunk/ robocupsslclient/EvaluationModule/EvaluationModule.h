@@ -31,6 +31,7 @@ class EvaluationModule
      bool haveBall_1( const Robot & robot);
      bool haveBall_2(const Robot & robot);
      void test(Pose currRobotPose,Pose targetPosition);
+     static const double minOpenAngle=0.52; //30 stopni
     private:
         static Mutex mutex;
         EvaluationModule();

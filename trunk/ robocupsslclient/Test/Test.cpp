@@ -12,6 +12,10 @@
 #include "../SimControl/SimControl.h"
 #include "../Task/GoToPose.h"
 #include "../TestRRT/TestRRT.h"
+#include "../AbstractTactic/AbstractTactic.h"
+#include "../Tactics/ShootTactic.h"
+
+
 
 const std::string ifaceName="::position_iface";
 
@@ -331,7 +335,7 @@ void testDribbler(Robot& robot){
         if( goToPose.execute() == false)
             SimControl::getInstance().restart();
         Videoserver::getInstance().updateGameState(gameState);
-    }
+    };
 #endif
 
 /*
@@ -367,4 +371,17 @@ void testDribbler(Robot& robot){
     robot.setRelativeSpeed(Vector2D(0,0),0);
 	//sleep(1);
 	*/
+}
+
+void testShootTactics(){
+#ifdef GAZEBO
+    std::cout<<" start tactic test "<<std::endl;
+
+	Videoserver::getInstance().start(NULL);
+
+	Robot redRobot0(std::string("red0"),ifaceName);
+    AbstractTactic * shootTactic= new ShootTactic(redRobot0);
+    shootTactic->execute();
+#endif
+
 }

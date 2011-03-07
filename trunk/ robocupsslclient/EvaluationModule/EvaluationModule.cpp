@@ -35,15 +35,39 @@ EvaluationModule::EvaluationModule():video(Videoserver::getInstance()), appConfi
 */
 
 std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName){
-	GameStatePtr currGameState(new GameState());
-    video.updateGameState(currGameState);
-    Pose robotPose=currGameState->getRobotPos(robotName);
+	GameStatePtr currGameState( new GameState() );
+    video.updateGameState( currGameState );
+    Pose robotPose=currGameState->getRobotPos( robotName );
 
     std::vector<Pose> positions=currGameState->getEnemyRobotsPos(robotName);
     std::vector<Pose>::iterator ii=positions.begin();
 
     //TODO: zainicjowac katem do bramki
-    Set maxOpenAngle( -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity() , std::numeric_limits<double>::infinity());
+    /*Set maxOpenAngle( -std::numeric_limits<double>::infinity(),
+                     std::numeric_limits<double>::infinity() ,
+                      std::numeric_limits<double>::infinity() );
+    */
+    //wersor osi ox
+    Vector2D ox(1,0);
+    //TODO: sprawdzac kolor druzyny i w zaleznosci od tego dobierac bramke: TOP/BOTTOM
+//    std::cout<<"left "<<appConfig.field.BOTTOM_GOAL_LEFT_CORNER<<std::endl;
+//    std::cout<<"right "<<appConfig.field.BOTTOM_GOAL_RIGHT_CORNER<<std::endl;
+
+
+    double alfa1 = appConfig.field.BOTTOM_GOAL_LEFT_CORNER.angleTo(ox);
+    double alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
+    double dist = appConfig.field.BOTTOM_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+//    std::cout<<" open angle to the bottom goal min "<<alfa1<<" max "<<alfa2<<std::endl;
+
+    double alfamin = alfa1 < alfa2 ? alfa1 : alfa2;
+    double alfamax = alfa1 > alfa2 ? alfa1 : alfa2;
+
+    Set maxOpenAngle( alfamin,
+                      alfamax,
+                      dist );
+
+//    std::cout<<" open angle to the bottom goal min "<<alfamin<<" max "<<alfamax<<std::endl;
+
     Set tmpAng(maxOpenAngle);
 
     std::list< Set > angles;
@@ -51,7 +75,11 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 
     for(ii = positions.begin(); ii!=positions.end(); ii++){
 		Set ang = findObstacleCoverAngles(robotPose,*ii);
-        addToList( ang , angles);
+
+		if( ang.d > 0 ){
+            addToList( ang , angles);
+           // std::cout<<"add to list for "<<*ii<<std::endl;
+		}
     }
 
     //znajdz najszerszy przedzial w kolekcji angles
@@ -214,17 +242,19 @@ bool EvaluationModule::haveBall_2(const Robot & robot){
 
 Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition){
 
-	std::cout<<"currRobotPose "<<currRobotPose<<std::endl;
-	std::cout<<"targetPosition "<<obstaclePosition<<std::endl;
+	//std::cout<<"robotPose "<<currRobotPose<<std::endl;
+	//std::cout<<"obstaclePosition "<<obstaclePosition<<std::endl;
 
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
 	Pose reltargetPose=obstaclePosition.translation(currRobotPose.getPosition());
+
+	//std::cout<<"relTargetPose "<<reltargetPose<<std::endl;
 
 	double x=reltargetPose.getPosition().x;
 	double y=reltargetPose.getPosition().y;
 
 	if(y<=0){
-		return Set( -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity() , std::numeric_limits<double>::infinity());
+		return Set( -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity() , -std::numeric_limits<double>::infinity());
 
 	}
 	//assert(y>0);
@@ -269,14 +299,16 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 	//katy pomiedzy ktorymi znajduje sie przeszkoda
 	double alfamin = fmin(alfa1, alfa2);
 	double alfamax = fmax(alfa1, alfa2);
-	std::cout<<"alfamin= "<<alfamin<<" alfamax="<<alfamax<<std::endl;
-	std::cout<<std::endl;
+	//std::cout<<"alfamin= "<<alfamin<<" alfamax="<<alfamax<<std::endl;
+	//std::cout<<std::endl;
 
 	return Set(alfamin,alfamax,currRobotPose.distance(obstaclePosition));
 }
 
 void EvaluationModule::test(Pose currRobotPose,Pose targetPosition){
-	findObstacleCoverAngles(currRobotPose,targetPosition);
+	//findObstacleCoverAngles(currRobotPose,targetPosition);
+	const std::string robotName("red0");
+	aimAtGoal(robotName);
 
 }
 

@@ -61,4 +61,6 @@ void testTaskThread();
 
 void* testTask(void * arg);
 
+void testShootTactics();
+
 #endif /* TEST_H_ */
