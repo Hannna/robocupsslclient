@@ -19,10 +19,25 @@ void ShootTactic::execute(){
 
     std::cout<<"angmin "<<ang.first<<" angmax"<<ang.second<<std::endl;
 
+    Pose goalPose;
     //TODO: sprawdzic rotacje inna powinna byc w przypadku jazdy na bramke dolna
     //a inna w przypadku jazdy na gorna
-    Pose goalPose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
-    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0);
+    if(robot.getRobotName().compare(0,3,"red")==0){
+    	if(Videoserver::redGoal==bottom){
+    		goalPose = Pose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
+    		    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0.0 );
+    	}
+    }
+    else{
+    	if(Videoserver::blueGoal==bottom){
+    		goalPose = Pose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
+    		    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0);
+    	}
+    	else{
+    		goalPose = Pose(Config::getInstance().field.TOP_GOAL_MID_POSITION.x,
+    		    		Config::getInstance().field.TOP_GOAL_MID_POSITION.y, 0);
+    	}
+    }
 
 
     int steps=10;
@@ -45,7 +60,7 @@ void ShootTactic::execute(){
 
 	this->currentTask->stop();
 
-    /*
+/*
     //sprawdz czy dany robot ma pilke
     if(evaluation.haveBall_1(robot)){
         std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName());
