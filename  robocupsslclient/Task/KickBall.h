@@ -8,10 +8,16 @@
 #ifndef KICKBALL_H_
 #define KICKBALL_H_
 
-class KickBall {
+#include "Task.h"
+
+class Robot;
+
+class KickBall : public Task{
 public:
-	KickBall();
+	KickBall(Robot * robot);
 	virtual ~KickBall();
+protected:
+	virtual bool run(void*, int steps=-1);
 };
 
 #endif /* KICKBALL_H_ */

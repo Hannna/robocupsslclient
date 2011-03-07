@@ -17,6 +17,8 @@
 
 class GameState;
 typedef boost::shared_ptr <GameState>  GameStatePtr;
+
+
 /*@brief klasa zawierajaca dane na ktorych moga operowac planisci
  * zarowno stratedzy jak i niskopoziomowi od unikania kolizji
  *
@@ -83,6 +85,10 @@ public:
 	static	void FiniPrint(std::ofstream& file,std::string robotName);
 
 	virtual ~GameState();
+
+	const goalArea redGoal;
+	const goalArea blueGoal;
+
 private :
 	///dane dotyczace robotow
 	std::map<std::string,Robot> robots;

@@ -7,7 +7,7 @@ class Robot;
 class ShootTactic: public AbstractTactic
 {
     public:
-        ShootTactic(const Robot & robot);
+        ShootTactic(Robot & robot);
         virtual void execute();
         virtual bool isFinish();
         virtual ~ShootTactic();
