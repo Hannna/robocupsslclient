@@ -236,11 +236,11 @@ private:
 	//czas z sumulacji ktorego dotyczy drzewo
 	const double simTime;
 
-    static const double maxXvalue=4.5;//[m]
-    static const double minXvalue=0.5;//[m]
+    static const double maxXvalue=5.4;//4.5;//[m]
+    static const double minXvalue=0.0;//0.5;//[m]
 
-    static const double maxYvalue=6.5;//[m]
-    static const double minYvalue=0.5;//[m]
+    static const double maxYvalue=7.4;//6.5;//[m]
+    static const double minYvalue=0.0;//0.5;//[m]
 
     //margines bezp przy wyznaczaniu sciezki
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki

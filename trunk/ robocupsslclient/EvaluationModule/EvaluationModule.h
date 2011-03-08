@@ -22,18 +22,29 @@ class EvaluationModule
 {
     public:
      static EvaluationModule & getInstance();
+
      score aimAtGoal(const GameStatePtr & gameState, std::string robotName);
      /*@brief zwraca przedzial kata x=min;y=max
      */
      std::pair<double, double> aimAtGoal(const std::string& robotName);
      score aimAtTeamMate();
+
      Pose findBestDribbleTarget();
+
      bool haveBall_1( const Robot & robot);
+
      bool haveBall_2(const Robot & robot);
+
      void test(Pose currRobotPose,Pose targetPosition);
+
      static const double minOpenAngle=0.52; //30 stopni
     private:
+        static EvaluationModule * ptr;
+        const Videoserver& video;
+        Config & appConfig;
         static Mutex mutex;
+        const log4cxx::LoggerPtr log;
+
         EvaluationModule();
         virtual ~EvaluationModule();
         inline EvaluationModule(const EvaluationModule &):video(Videoserver::getInstance()), appConfig(Config::getInstance()) {};
@@ -43,12 +54,6 @@ class EvaluationModule
          */
         Set findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition);
         void addToList(Set &set,std::list<Set> &sets);
-
-        static EvaluationModule * ptr;
-        const Videoserver& video;
-    protected:
-    private:
-        Config & appConfig;
 };
 
 #endif // EVALUATIONMODULE_H

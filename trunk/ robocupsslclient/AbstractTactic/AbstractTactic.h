@@ -38,6 +38,7 @@ class AbstractTactic : public Thread
         Robot& robot;
         TaskPtr currentTask;
         double bestScore;
+        const log4cxx::LoggerPtr log;
 
 
 };
