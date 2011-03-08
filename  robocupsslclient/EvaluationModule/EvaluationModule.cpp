@@ -29,14 +29,14 @@ Mutex EvaluationModule::mutex;
 
 }
 
-EvaluationModule::EvaluationModule():video(Videoserver::getInstance()), appConfig(Config::getInstance())
+EvaluationModule::EvaluationModule():video(Videoserver::getInstance()), appConfig(Config::getInstance()),
+        log(getLoggerPtr ("app_debug"))
 {
 
 }
 /*
 *@ zwraca najwiekszy otwarty kat prowadzacy do celu
 */
-
 std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName){
 	GameStatePtr currGameState( new GameState() );
     video.updateGameState( currGameState );
@@ -49,39 +49,89 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
      *
      */
     //wersor osi ox
-    Vector2D ox(1,0);
+    Vector2D ox(0,1);
     double alfa1;
     double alfa2;
     double dist;
 
-    if(robotName.compare("red")==0){
+    if(robotName.compare(0,3,"red")==0){
     	if(currGameState->redGoal==bottom){
-    	    alfa1 = appConfig.field.BOTTOM_GOAL_LEFT_CORNER.angleTo(ox);
-    	    alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
+    	    Pose p1(appConfig.field.BOTTOM_GOAL_LEFT_CORNER.x, appConfig.field.BOTTOM_GOAL_LEFT_CORNER.y, 0);
+    	    p1.translation(robotPose.getPosition());
+
+    	    Pose p2(appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.x, appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.y, 0);
+    	    p2.translation(robotPose.getPosition());
+
+    	    //Vector2D v1=appConfig.field.BOTTOM_GOAL_LEFT_CORNER - robotPose.getPosition();
+    	    //Vector2D v2=appConfig.field.BOTTOM_GOAL_RIGHT_CORNER - robotPose.getPosition();
+    	    alfa1 = p1.getPosition().angleTo(ox);
+    	    alfa2 = p2.getPosition().angleTo(ox);
+
+    	    //alfa1 = appConfig.field.BOTTOM_GOAL_LEFT_CORNER.angleTo(ox);
+    	    //alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
+
     	    dist = appConfig.field.BOTTOM_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+
+            LOG_DEBUG( log,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!! open angle to the red  bottom goal min "<<alfa1<<" max "<<alfa2 );
 
     	}
     	else{
-    	    alfa1 = appConfig.field.TOP_GOAL_LEFT_CORNER.angleTo(ox);
-        	alfa2 = appConfig.field.TOP_GOAL_RIGHT_CORNER.angleTo(ox);
+    	    Pose p0l(appConfig.field.TOP_GOAL_LEFT_CORNER.x, appConfig.field.TOP_GOAL_LEFT_CORNER.y, 0);
+    	    Pose p1l = p0l.translation(robotPose.getPosition());
+
+    	    Pose p0r(appConfig.field.TOP_GOAL_RIGHT_CORNER.x, appConfig.field.TOP_GOAL_RIGHT_CORNER.y, 0);
+
+    	    Pose p1r = p0r.translation(robotPose.getPosition());
+
+    	    LOG_DEBUG( log,"robot position     " << robotPose.getPosition() );
+
+    	    //Vector2D v1=appConfig.field.TOP_GOAL_LEFT_CORNER - robotPose.getPosition();
+    	    //Vector2D v2=appConfig.field.TOP_GOAL_RIGHT_CORNER - robotPose.getPosition();
+
+    	    alfa1 = p1l.getPosition().angleTo(ox);
+    	    alfa2 = p1r.getPosition().angleTo(ox);
+
+    	    //alfa1 = appConfig.field.TOP_GOAL_LEFT_CORNER.angleTo(ox);
+        	//alfa2 = appConfig.field.TOP_GOAL_RIGHT_CORNER.angleTo(ox);
         	dist = appConfig.field.TOP_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+
+            LOG_DEBUG( log,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!! p1l"<<p0l<<" p1r "<<p0r );
+            LOG_DEBUG( log,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!! open angle to the red top goal min "<<alfa1<<" max "<<alfa2 );
 
     	}
     }else{
 		if(currGameState->blueGoal==bottom){
-			alfa1 = appConfig.field.BOTTOM_GOAL_LEFT_CORNER.angleTo(ox);
-			alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
+			Vector2D v1=appConfig.field.BOTTOM_GOAL_LEFT_CORNER - robotPose.getPosition();
+    	    Vector2D v2=appConfig.field.BOTTOM_GOAL_RIGHT_CORNER - robotPose.getPosition();
+    	    alfa1 = v1.angleTo(ox);
+    	    alfa2 = v2.angleTo(ox);
+
+			//alfa1 = appConfig.field.BOTTOM_GOAL_LEFT_CORNER.angleTo(ox);
+			//alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
 			dist = appConfig.field.BOTTOM_GOAL_MID_POSITION.distance( robotPose.getPosition() );
 
+            LOG_DEBUG( log,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!! open angle to the blue bottom goal min "<<alfa1<<" max "<<alfa2 );
 		}
 		else{
-			alfa1 = appConfig.field.TOP_GOAL_LEFT_CORNER.angleTo(ox);
-			alfa2 = appConfig.field.TOP_GOAL_RIGHT_CORNER.angleTo(ox);
+		    Vector2D v1=appConfig.field.TOP_GOAL_LEFT_CORNER - robotPose.getPosition();
+    	    Vector2D v2=appConfig.field.TOP_GOAL_RIGHT_CORNER - robotPose.getPosition();
+    	    alfa1 = v1.angleTo(ox);
+    	    alfa2 = v2.angleTo(ox);
+
+			//alfa1 = appConfig.field.TOP_GOAL_LEFT_CORNER.angleTo(ox);
+			//alfa2 = appConfig.field.TOP_GOAL_RIGHT_CORNER.angleTo(ox);
 			dist = appConfig.field.TOP_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+
+            LOG_DEBUG( log,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!! open angle to the blue top goal min "<<alfa1<<" max "<<alfa2 );
 
 		}
     }
-//    std::cout<<" open angle to the bottom goal min "<<alfa1<<" max "<<alfa2<<std::endl;
+
+    //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ open angle to the bottom goal min "<<std::endl;
+    //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ open angle to the bottom goal min "<<std::endl;
+    //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ open angle to the bottom goal min "<<std::endl;
+    //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ open angle to the bottom goal min "<<std::endl;
+    //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ open angle to the bottom goal min "<<std::endl;
 
     double alfamin = alfa1 < alfa2 ? alfa1 : alfa2;
     double alfamax = alfa1 > alfa2 ? alfa1 : alfa2;

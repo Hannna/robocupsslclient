@@ -332,7 +332,7 @@ void testDribbler(Robot& robot){
             ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
         std::cout<<"dist "<<dist<<std::endl;
         GoToPose goToPose( (*gameState).getBallPos(),&robot);
-        if( goToPose.execute() == false)
+        if( goToPose.execute(NULL) == false)
             SimControl::getInstance().restart();
         Videoserver::getInstance().updateGameState(gameState);
     };
@@ -380,8 +380,25 @@ void testShootTactics(){
 	Videoserver::getInstance().start(NULL);
 
 	Robot redRobot0(std::string("red0"),ifaceName);
+
+
+	//jedz do pilki
+	GameStatePtr gameState(new GameState());
+	Videoserver::getInstance().start(NULL);
+	Videoserver::getInstance().updateGameState(gameState);
+    double dist;
+    while( ( dist= (*gameState).getBallPos().distance(gameState->getRobotPos(redRobot0.getRobotName() ) ) ) >
+            ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
+        std::cout<<"dist "<<dist<<std::endl;
+        GoToPose goToPose( (*gameState).getBallPos(),&redRobot0);
+        if( goToPose.execute(NULL) == false)
+            SimControl::getInstance().restart();
+        Videoserver::getInstance().updateGameState(gameState);
+    };
+
+
     AbstractTactic * shootTactic= new ShootTactic(redRobot0);
-    shootTactic->execute();
+    shootTactic->execute(NULL);
     shootTactic->join();
 #endif
 

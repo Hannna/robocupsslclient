@@ -113,8 +113,6 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		return RRTPlanner::TargetInsideObstacle;
 	}
 
-
-
     double dist;
     //sprawdz czy robot jest u celu
 	if( (dist=goalPose.distance( startRobotPose  ) ) <= minDistance ){

@@ -14,9 +14,13 @@ class Robot;
 
 class KickBall : public Task{
 public:
-	KickBall(Robot * robot);
+    /*@brief kopnij pilke w zadanym kierunku
+    *
+    */
+	KickBall(Robot * robot, double rotation);
 	virtual ~KickBall();
 protected:
+    const double rotation;
 	virtual bool run(void*, int steps=-1);
 };
 

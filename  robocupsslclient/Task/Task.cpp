@@ -14,6 +14,7 @@ Task::Task(Robot* robot_):video(Videoserver::getInstance()), robot(robot_) {
 void Task::stop(){
 	mutex_.lock();
 	this->stopTask=true;
+	robot->setRelativeSpeed(Vector2D(0.0,0.0),0);
 	mutex_.unlock();
 }
 
