@@ -7,6 +7,7 @@
 
 #ifndef RRTPLANNER_H_
 #define RRTPLANNER_H_
+
 //#define DEBUG
 #include "../GameState/GameState.h"
 #include "../Config/Config.h"
@@ -23,8 +24,6 @@
 
 //czas o jaki przewidujemy ruch przeciwnika do przodu
 //#define PREDICTION_TIME 0.01 //[sek]
-
-
 
 class RRTPlanner {
 	friend class TestRRT;
@@ -48,10 +47,17 @@ enum ErrorCode{
 	 *
 	 * @param[in] goalProb prawdopodobienstwo wyboru punktu kierujacego na cel
 	 * @param[in] robotName nazwa robota dla ktorego planujemy sciezke
+	 * @param[in] withObsPrediction czy przewidujemy polozenie przeszkod
+	 * @param[in] currState biezacy stan gry na planszy
 	 * @param[in] goalPose pozycja docelowa(razem z rotacja)
+	 * @param[in] path sciezka z poprzedniego kroki algorytmu
+	 * @param[in] simTime_ biezacy czas symulacji
+	 * @param[in] timeMeasur -> czy mierzymy czas wykonania algorytmu rrt
+	 *
 	 * @return
 	 */
-	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,const Pose goalPose,std::list<Pose> * path, double simTime_);
+	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
+            const Pose goalPose,std::list<Pose> * path, double simTime_, bool timeMeasure);
 
 	GameStatePtr getNearestState();
 	/* zwraca wierzcholek docelowy dla robota
@@ -97,7 +103,7 @@ private:
 	 * @param[in] goalPose punkt docelowy
 	 * @return
 	 */
-	Pose choseTarget(Pose goalPose,Vector2D velocity,const Pose nearestPose , const double obstacleDist);
+private:	Pose choseTarget(Pose goalPose,Vector2D velocity,const Pose nearestPose , const double obstacleDist);
 	/**
 	 * @brief zwraca element poddrzewa(od currNode) znajdujacy sie najblizej celu.
 	 *
@@ -106,60 +112,64 @@ private:
 	 * @param[in] distance dotychczasowa najmniejsza odleglość
 	 * @return
 	 */
-	RRTNodePtr findNearest(const Pose & targetPose,RRTNodePtr currNode);
+private:	RRTNodePtr findNearest(const Pose & targetPose,RRTNodePtr currNode);
 	/**
 	 * @brief zwraca element drzewa znajdujacy sie najblizej celu.
 	 *
 	 * @param[in] punkt docelowy
 	 * @return
 	 */
-	RRTNodePtr findNearestState(const Pose & targetPose);
-	RRTNodePtr findNearestToTarget(RRTNodePtr currNode);
+private:	RRTNodePtr findNearestState(const Pose & targetPose);
+private:	RRTNodePtr findNearestToTarget(RRTNodePtr currNode);
 	/**
 	 * @brief zwraca element drzewa znajdujacy sie najblizej celu.
 	 *
 	 * @param[in] punkt docelowy
 	 * @return
 	 */
-	RRTNodePtr findNearestToTargetState();
+private:	RRTNodePtr findNearestToTargetState();
 	/**
 	 * @brief zwraca element drzewa znajdujacy sie najblizej celu ale aktualnie osiagalny.
 	 *
 	 * @param[in] punkt docelowy
 	 * @return
 	 */
-	RRTNodePtr findNearestAttainableState(const Pose & targetPose);
-	RRTNodePtr findNearestAttainableState(const Pose & targetPose,RRTNodePtr currNode);
+private:	RRTNodePtr findNearestAttainableState(const Pose & targetPose);
+private:	RRTNodePtr findNearestAttainableState(const Pose & targetPose,RRTNodePtr currNode);
 	/**
 	 * @brief zaczynajac od zadanego stanu zwraca stan losowy.
 	 *
 	 * @param[in]
 	 * @return
 	 */
-	Pose getRandomPose(Pose currentPose);
-	/*@brief zwraca odleglosc od najblizszej przeszkody
+private:	Pose getRandomPose(Pose currentPose);
+	/**@brief zwraca dystans pomiedzy currPose  a najblizszym robotem w currState
 	 *
 	 */
-	double distanceToNearestObstacle(const GameStatePtr & currState,const Pose &targetPose);
+private:	double distanceToNearestObstacle(const GameStatePtr & currState, const Pose &targetPose);
+	/**@brief zwraca dystans pomiedzy currPose  a najblizsza przeszkoda w kolekcji obstacles
+	 *
+	 */
+public:	    double distanceToNearestObstacle(const Pose &currPose);
 	/**
 	 * @brief tworzy kolekcje przeszkod w zaleznosci od odleglosci od robota
 	 *
 	 * @param[in] robotPose aktualna pozycja robota podczas gry
 	 * @return
 	 */
-	void initObstacles(const Pose& robotPose );
+private:	void initObstacles(const Pose& robotPose );
 	/*@brief zwraca losowa pozycje, uzalezniona od biezacej pozycji robota,
 	 * jego aktualnej predkosci i maxymalnego wychylenia
 	 *
 	 */
-	Pose getRandomPose(const Pose currentPose,Vector2D velocity, double deltaVel);	/**
+private:	Pose getRandomPose(const Pose currentPose,Vector2D velocity, double deltaVel);	/**
 	 * @brief dokonuje ekspansji stanu w kierunku celu, zwraca stan pusty jesli nastapi kolizja
 	 *
 	 * @param[in] currState aktualny stan planszy
 	 * @param[in] targetPose pozycja docelowa
 	 * @return empty pointer is there is a collision with obstacle or new gameState extended from currState
 	 */
-	GameStatePtr extendState(const GameStatePtr & currState,const Pose &targetPose,const double robotReach);
+private:	GameStatePtr extendState(const GameStatePtr & currState,const Pose &targetPose,const double robotReach);
 	/**
 	 * @brief dokonuje przewiduje polozenie przeszkod w nastepnym kroku algorytmu
 	 * przewidywane polozenie zapisyje w
@@ -167,7 +177,7 @@ private:
 	 * @param[in] currState aktualny stan planszy
 	 * @param[in] deltaSimTime szacowany czas pomiedzy uruchomieniami algorytmu
 	 */
-	void evaluateEnemyPositions(const GameStatePtr & currState,const double deltaSimTime);
+private:	void evaluateEnemyPositions(const GameStatePtr & currState,const double deltaSimTime);
 	/**
 	 * @brief sprawdza czy cel nie lezy w obrebie przeszkody
 	 *  zwraca true jesli nastapi kolizja
@@ -177,7 +187,7 @@ private:
 	 * @param[in] checkAddObstacles jesli true, to sprawdza tez kolizje z przewidywanymi polozeniami przeszkod
 	 * @return false if there is a collision with  an obstacle; true if everything is OK
 	 */
-	bool isTargetInsideObstacle(const Pose &targetPose,double safetyMarigin,bool checkAddObstacles = false);
+private:	bool isTargetInsideObstacle(const Pose &targetPose,double safetyMarigin,bool checkAddObstacles = false);
 	/**
 	 * @brief sprawdza czy targetPose jest bezposrednio osiagalna z currPose
 	 *
@@ -185,32 +195,17 @@ private:
 	 * @param[in] targetPose pozycja docelowa
 	 * @return false if there is a collision with  an obstacle; true if everything is OK
 	 */
-	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles = true);
+private:	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles = true);
 
  private:
 	//stan od ktorego zaczynamy budowac drzewo
 	RRTNodePtr root;
-	//nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
-	const std::string robotName;
-	//promień okręgu w jakim losujemy kolejny losowy stan
-	static const double randomStateReach;
-	//pozycja docelowa robota
-	const Pose goalPose;
-    //prawdopodobienstwo wyboru punktu kierujacego na cel
-	const double toTargetLikelihood;
 	//stan najblizej celu
 	RRTNodePtr nearest;
 	//czas ostatniego uruchomienia RRT
 	//mierzony w sekundach simTime
 	//static double lastSimTime;
 	double deltaSimTime;
-	//czy przewidujemy ruch przeszkody
-	const bool obsPredictionEnabled;
-
-	//maksymalna liuczba potomkow korzenia drzewa RRT
-	static const unsigned int maxRootChildren = 4;
-	//ograniczenie na maksymalna liczbe wezłów w drzewie
-	static const unsigned int maxNodeNumber=400;
 
 	Pose (*getGoalPose)();
 
@@ -233,21 +228,32 @@ private:
     //czy cel jest bezposrednio osiagalny
     bool goDirectToTarget;
 
-	//czas z sumulacji ktorego dotyczy drzewo
-	const double simTime;
-
-    static const double maxXvalue=5.4;//4.5;//[m]
-    static const double minXvalue=0.0;//0.5;//[m]
-
-    static const double maxYvalue=7.4;//6.5;//[m]
-    static const double minYvalue=0.0;//0.5;//[m]
-
+	//promień okręgu w jakim losujemy kolejny losowy stan
+	static const double randomStateReach;
+    //maksymalna liuczba potomkow korzenia drzewa RRT
+	static const unsigned int maxRootChildren = 4;
+	//ograniczenie na maksymalna liczbe wezłów w drzewie
+	static const unsigned int maxNodeNumber=400;
     //margines bezp przy wyznaczaniu sciezki
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
-    static const double SAFETY_MARGIN = 0.05;
+    static const double SAFETY_MARGIN = 0.1;
 
+    //nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
+	const std::string robotName;
+	//pozycja docelowa robota
+	const Pose goalPose;
+    //czy przewidujemy ruch przeszkody
+	const bool obsPredictionEnabled;
+    //prawdopodobienstwo wyboru punktu kierujacego na cel
+	const double toTargetLikelihood;
+	//czas z sumulacji ktorego dotyczy drzewo
+	const double simTime;
     const log4cxx::LoggerPtr logger;
-    //   log4cxx::LoggerPtr log;
+
+    static const double maxXvalue;
+    static const double minXvalue;
+    static const double maxYvalue;
+    static const double minYvalue;
 };
 
 

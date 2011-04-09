@@ -71,7 +71,10 @@ void Robot::setRelativeSpeed(Vector2D v, double w)
 	//posIface->data->cmdVelocity.pos.x = newVel.get<0>();
 	posIface->data->cmdVelocity.pos.x = newVel.get<0>();
 	posIface->data->cmdVelocity.pos.y = newVel.get<1>();
-	posIface->data->cmdVelocity.yaw = newVel.get<2>();
+    posIface->data->cmdVelocity.yaw = newVel.get<2>();
+
+//	posIface->data->cmdVelocity.yaw = (M_PI*newVel.get<2>())/180.0;
+
 	//posIface->data->cmdVelocity.yaw = 0;
 	posIface->Unlock();
 #endif
@@ -89,6 +92,7 @@ std::pair<Vector2D,double> Robot::getVelocity() const
 	vx = posIface->data->velocity.pos.x;
 	vy = posIface->data->velocity.pos.y;
 	w = posIface->data->cmdVelocity.yaw;
+	w = 180*w/M_PI;
 	posIface->Unlock();
 #endif
 

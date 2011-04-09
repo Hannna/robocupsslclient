@@ -7,7 +7,7 @@
 
 #include "Task.h"
 
-Task::Task(Robot* robot_):video(Videoserver::getInstance()), robot(robot_) {
+Task::Task(Robot* robot_):video(Videoserver::getInstance()), robot(robot_), log(getLoggerPtr (robot_->getRobotName().c_str() ) ) {
 	stopTask=false;
 }
 

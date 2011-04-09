@@ -59,6 +59,10 @@ private:
 		public:
 		const double FIELD_WIDTH;//[m]
 		const double FIELD_LENGTH;//[m]
+		//odleglosc miedzy linia koncowa boiska a koncem bandy
+		const double FIELD_MARIGIN;//[m]
+		const Vector2D FIELD_BOTTOM_LEFT_CORNER;
+		const Vector2D FIELD_TOP_RIGHT_CORNER;
 		const Pose FIELD_MIDDLE_POSE;
 		const Vector2D FIELD_MIDDLE_VECTOR;
         const Vector2D GOAL_CORNER_LEFT_SHIFT;
@@ -71,7 +75,8 @@ private:
 		const Vector2D TOP_GOAL_RIGHT_CORNER;
 
 
-		inline FieldParams():FIELD_WIDTH( 5.4 ), FIELD_LENGTH( 7.4 ),
+		inline FieldParams():FIELD_WIDTH( 5.4 ), FIELD_LENGTH( 7.4 ),FIELD_MARIGIN(0.675),
+                FIELD_BOTTOM_LEFT_CORNER(0,0), FIELD_TOP_RIGHT_CORNER(5.4, 7.4),
 				FIELD_MIDDLE_POSE ( 2.7, 3.7 ,0.0 ), FIELD_MIDDLE_VECTOR( 2.7,3.7 ),
 				GOAL_CORNER_LEFT_SHIFT(-0.36, -0.1), GOAL_CORNER_RIGHT_SHIFT(0.36, -0.1),
 

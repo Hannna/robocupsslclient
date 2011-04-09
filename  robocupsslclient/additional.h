@@ -150,5 +150,8 @@ bool from_string(T& t,
 
 enum what{start, stop};
 
-struct timeval measureTime(what what_,struct timeval * startTime);
+double measureTime(what what_,struct timespec * startTime);
+
+//struct timeval measureTime(what what_,struct timeval * startTime);
+
 #endif /*ADDITIONAL_H_*/
