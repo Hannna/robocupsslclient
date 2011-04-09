@@ -63,4 +63,6 @@ void* testTask(void * arg);
 
 void testShootTactics();
 
+void testKick();
+
 #endif /* TEST_H_ */
