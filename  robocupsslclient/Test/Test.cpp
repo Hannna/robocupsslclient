@@ -10,7 +10,11 @@
 #include "../RRT/RRTPlanner.h"
 #include "../RotationMatrix/RotationMatrix.h"
 #include "../SimControl/SimControl.h"
+
 #include "../Task/GoToPose.h"
+#include "../Task/Task.h"
+#include "../Task/KickBall.h"
+
 #include "../TestRRT/TestRRT.h"
 #include "../AbstractTactic/AbstractTactic.h"
 #include "../Tactics/ShootTactic.h"
@@ -402,4 +406,24 @@ void testShootTactics(){
     shootTactic->join();
 #endif
 
+}
+
+void testKick(){
+#ifdef GAZEBO
+    std::cout<<" start tactic test "<<std::endl;
+
+	Videoserver::getInstance().start(NULL);
+
+	Robot redRobot0(std::string("red0"),ifaceName);
+
+
+	//jedz do pilki
+	GameStatePtr gameState(new GameState());
+	Videoserver::getInstance().start(NULL);
+	Videoserver::getInstance().updateGameState(gameState);
+
+    TaskPtr task( new KickBall(&redRobot0, 0) );
+    task->execute( NULL );
+
+#endif
 }
