@@ -35,6 +35,7 @@ protected:
 	bool stopTask;
 	Robot * robot;
 	boost::mutex mutex_;
+	const log4cxx::LoggerPtr log;
 };
 
 #endif /* TASK_H_ */

@@ -13,29 +13,16 @@ KickBall::KickBall(Robot * robot, double rotation_): Task(robot), rotation(rotat
 }
 
 
-double calculateAngularVel2(GameState & gameState,std::string robotName, Pose targetPosition){
-    //static GameState oldGameState;
+double calculateAngularVel2(const Pose & currRobotPose, const double goalRotation){
+
     static double oldTetaCel;
-    double rotacjaDocelowa=atan2(targetPosition.get<0>(),targetPosition.get<2>());
+
     double Ker=0.5;
     double Ko=20;
-    double currGlobalRobotRot=gameState.getRobotPos( robotName ).get<2>();
-    //macierz obrotu os OY na wprost robota
-    RotationMatrix rmY(currGlobalRobotRot);
-    //macierz obrotu os OY nw wprost robota
-    //RotationMatrix rmY(-M_PI/2);
-    //pozycja robota w ukladzie wsp zw z plansza
-    //Vector2D currentPosition=Videoserver::data.getPosition(this->robotName);
-    Pose currRobotPose=gameState.getRobotPos( robotName );
-    //pozycja celu w ukladzie wsp zwiazanych z robotem
-    Pose reltargetPose=targetPosition.transform(currRobotPose.getPosition(),rmY);
-    //targetPosition=rmX.Inverse()*(goToPosition-currentPosition);
+
     //rotacja do celu
-    double currTetaCel=atan2( (reltargetPose.get<1>()) , (reltargetPose.get<0>()));
-
-    //double currTetaCel=atan( (-reltargetPose.get<1>()) / (reltargetPose.get<0>()));
-
-    double angularVel=Ko*(rotacjaDocelowa-currGlobalRobotRot)+ Ker*(oldTetaCel-currTetaCel);
+    double currTetaCel= goalRotation - currRobotPose.get<2>();
+    double angularVel=Ko*(currTetaCel) + Ker*(oldTetaCel-currTetaCel);
 
     oldTetaCel=currTetaCel;
 
@@ -44,18 +31,33 @@ double calculateAngularVel2(GameState & gameState,std::string robotName, Pose ta
 
 bool KickBall::run(void * arg, int steps ){
 
+    LOG_DEBUG(log,"starting KickBall task");
     GameStatePtr currGameState( new GameState() );
     double currSimTime=video.updateGameState(currGameState);
 	double lastSimTime=0;
 
-    Pose goalPose=(*currGameState).getRobotPos( robot->getRobotName() );
-    goalPose.get<2>()=rotation;
+    Pose currPose;
+    double w;
+    double error;
+
     while(!this->stopTask && (steps--)!=0 ){
     	if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
+			currPose = (*currGameState).getRobotPos( robot->getRobotName() );
 			lastSimTime=currSimTime;
-			robot->setRelativeSpeed( Vector2D(0.0,0.0),
-                            calculateAngularVel2(*currGameState,robot->getRobotName(), goalPose) );
+			double w = calculateAngularVel2( currPose , rotation);
+			robot->setRelativeSpeed( Vector2D(0.0,0.0), w );
+
+            LOG_DEBUG(log,"#####################################################");
+            LOG_DEBUG(log,"current error "<<error<<" set angular vel "<<w);
+
+            //Pose currRobotPose=(*currGameState).getRobotPos( robot->getRobotName() );
+            if(  ( error=pow( rotation - currPose.get<2>(),2 )  )   < ROTATION_PRECISION ){
+                this->stopTask=true;
+                robot->setRelativeSpeed( Vector2D(0.0,0.0), 0 );
+            }
     	}
+
+
 
     }
 	this->robot->kick();

@@ -108,6 +108,37 @@ std::ostream& operator<<(std::ostream& os,const Pose& pose){
 	return os;
 }
 
+//return time diff in ms
+double measureTime(what what_,struct timespec * startTime){
+	//static struct timeval startTime;
+	//struct timeval  diff;
+	//bzero(&diff, sizeof(struct timeval));
+	if(what_==start){
+	    clock_gettime(CLOCK_REALTIME, startTime);
+		return 0;
+	}
+	else if(what_==stop)	{
+	    struct timespec endTime;
+		//struct timespec diff;
+		//gettimeofday(&endTime, NULL);
+		clock_gettime(CLOCK_REALTIME, &endTime);
+
+		long nanosec = endTime.tv_nsec - startTime->tv_nsec;
+		long sec = endTime.tv_sec - startTime->tv_sec;
+
+		if( nanosec < 0 ){
+            sec--;
+            nanosec+=1E9;
+		}
+		double ms = 1000*sec;
+		return  ms + (double)(nanosec/1E6);
+
+	}
+
+	return -1;
+
+}
+/*
 struct timeval measureTime(what what_,struct timeval * startTime){
 	//static struct timeval startTime;
 	struct timeval  diff;
@@ -133,3 +164,4 @@ struct timeval measureTime(what what_,struct timeval * startTime){
 	return diff;
 
 }
+*/

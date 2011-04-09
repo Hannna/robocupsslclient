@@ -1,35 +1,33 @@
 #include "RefereeClient.h"
 
-#include <errno.h>
-#include <stdio.h>
-#include <sys/types.h>          /* See NOTES */
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <cstring>
 #include <iostream>
+#include <boost/interprocess/sync/scoped_lock.hpp>
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <resolv.h>
-#include <arpa/inet.h>
+using boost::asio::ip::udp;
 
+std::ostream& operator<<(std::ostream& os, const GameStatePacket& gsp){
+	os<<"command "<<gsp.cmd<<
+		" cmd_counter "<<(int)gsp.cmd_counter<<
+		" goals_blue "<<(int)gsp.goals_blue<<
+		" goals_yellow "<<(int)gsp.goals_yellow<<
+		" time_remaining "<<(int)gsp.time_remaining;
+	return os;
+}
 RefereeClient::RefereeClient()
 {
-    //ctor
+	bzero( &gameStatePacket, sizeof(gameStatePacket) );
+	gameStatePacket.cmd='H';
+	gameStatePacket.cmd_counter=-1;
 }
 
 void RefereeClient::execute(void* ){
 
-    if(createServer()<0)
-        return;
-    readFromBox();
+    readMsgFromBox();
 }
 
+/*
+ //działajacy kod
+ //
 int RefereeClient::createServer(){
 
     //PF_INET oraz AF_INET to jedno i to samo
@@ -52,6 +50,9 @@ int RefereeClient::createServer(){
 
     return socketfd;
 }
+*/
+
+
 /*
 int RefereeClient::connectToBox(){
     int portno=10001, n;
@@ -76,6 +77,37 @@ int RefereeClient::connectToBox(){
     std::cout<<"connect return "<<status<<std::endl;
 }
 */
+
+void RefereeClient::readMsgFromBox(){
+
+	udp::endpoint sender_endpoint;
+    GameStatePacket tmpGameStatePacket;
+
+    size_t bytes_read;
+    boost::asio::io_service io_service;
+    boost::asio::ip::udp::socket socket(io_service);
+    socket.open(udp::v4());
+
+    //gniazdo jest bindowane z INADDR_ANY 0.0.0.0
+    udp::endpoint local_endpoint = boost::asio::ip::udp::endpoint( udp::v4(), this->port );
+
+    socket.bind(local_endpoint);
+
+    do{
+    	bytes_read = socket.receive_from( boost::asio::buffer(&tmpGameStatePacket,
+    			sizeof(tmpGameStatePacket) ), sender_endpoint );
+
+		this->mutex_.lock();
+		if(this->gameStatePacket.cmd_counter!=tmpGameStatePacket.cmd_counter){
+			std::cout<<tmpGameStatePacket<<std::endl;
+		}
+		this->gameStatePacket=tmpGameStatePacket;
+		this->mutex_.unlock();
+
+    }while ( bytes_read > 0 );
+}
+
+/*
 void RefereeClient::readFromBox(){
 
     socklen_t addrsize;
@@ -85,7 +117,7 @@ void RefereeClient::readFromBox(){
 
     do
 	{
-		//std::cout<<"waiting before recv"<<std::endl;
+		std::cout<<"waiting before recv"<<std::endl;
 		bytes_read = recvfrom(socketfd, (void *)&tmpGameStatePacket, sizeof(tmpGameStatePacket), 0, (struct sockaddr*)&addr, &addrsize);
 		//bytes_read = recvfrom(sd, buffer, BUFSIZE, 0, (struct sockaddr*)&addr, &addrsize);
 		if ( bytes_read > 0 )
@@ -104,13 +136,49 @@ void RefereeClient::readFromBox(){
 
 	}while ( bytes_read > 0 );
 }
-
+*/
 void RefereeClient::testConnection(){
     this->start(0);
     getchar();
     return ;
 }
+
+RefereeCommands::Command RefereeClient::getCommand(){
+	boost::interprocess::scoped_lock<boost::mutex> guard(this->mutex_);
+	return castToCommand(this->gameStatePacket.cmd);
+}
+
+RefereeCommands::Command RefereeClient::castToCommand(const char c) {
+	using namespace RefereeCommands;
+	Command cmd;
+	switch(c){
+		case 'H': cmd=halt;break;
+		case 'S': cmd=stop;break;
+		case ' ': cmd=ready;break;
+		case 's': cmd=RefereeCommands::start;break;
+		case '1': cmd=first_half;break;
+		case 'h': cmd=half_time;break;
+		case '2': cmd=second_half;break;
+		case 'o': cmd=overtime_half_1;break;
+		case 'O': cmd=overtime_half_2;break;
+		case 'a': cmd=penalty_shootout;break;
+		case 'k': cmd=kick_off;break;
+		case 'p': cmd=penalty;break;
+		case 'f': cmd=direct_free_kick;break;
+		case 'i': cmd=indirect_free_kick;break;
+		case 't': cmd=timeout;break;
+		case 'z': cmd=timeout_end;break;
+		case 'g': cmd=goal_scored;break;
+		case 'd': cmd=decrease_goal_score;break;
+		case 'y': cmd=yellow_card;break;
+		case 'r': cmd=red_card;break;
+		case 'c': cmd=cancel;break;
+		default:
+			throw "unsupported conversion";
+	}
+	return cmd;
+}
 RefereeClient::~RefereeClient()
 {
-    close(socketfd);
+
 }

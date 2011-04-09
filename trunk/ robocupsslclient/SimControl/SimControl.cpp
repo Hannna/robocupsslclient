@@ -217,6 +217,8 @@ void SimControl::getModelPos(std::string model_name_,Pose &position)
 	#endif
 		if(simIface->data->responseCount > 0){
 				double x=0,y=0,rot=0;
+				double degrees = 0;
+
 				for(unsigned long i=0;i<simIface->data->responseCount;i++){
 					response = &simIface->data->responses[i];
 					switch(response->type){
@@ -229,6 +231,9 @@ void SimControl::getModelPos(std::string model_name_,Pose &position)
 							x= simIface->data->responses[i].modelPose.pos.x; //x
 							y= simIface->data->responses[i].modelPose.pos.y; //y
 							rot= simIface->data->responses[i].modelPose.yaw; //rot
+
+							rot = rot * 180.0 / M_PI;
+
 							position=Pose(x,y,rot);
 							std::ostringstream ois;
 							ois<<"SimControl getModelPos model name "<<model_name<<" x="<<x<<" y="<<y
@@ -304,6 +309,9 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 							 x= simIface->data->responses[i].modelPose.pos.x; //x
 							 y= simIface->data->responses[i].modelPose.pos.y; //y
 							 rot= simIface->data->responses[i].modelPose.yaw; //rot
+
+							// rot = rot * 180.0 / M_PI;
+
 							 positions[model_name_]=Pose(x,y,rot);
 							 std::ostringstream log_msg;
 							 log_msg<<"SimControl getAllPos model name "<<model_name_<<" x="<<positions[model_name_].get<0>()<<" y="<<positions[model_name_].get<1>()<<" rot="<<positions[model_name_].get<2>();

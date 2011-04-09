@@ -90,7 +90,7 @@ void TestRRT::execute(void *args){
 
         max=0;
         RRTPlanner::ErrorCode rrtStatus;
-
+        bool timeMeasure = false;
 		while(true){
 			//jesli videoserwer wykonal aktualizacje polozen robotow
 			if( currSimTime < video->updateGameState(currGameState) )
@@ -117,7 +117,8 @@ void TestRRT::execute(void *args){
 						currGameState,
 						goalPose,
 						&path,
-						currSimTime
+						currSimTime,
+						timeMeasure
 					);
 				if( (rrtStatus=rrt->run(video->getUpdateDeltaTime() ) )== RRTPlanner::Success ){
 

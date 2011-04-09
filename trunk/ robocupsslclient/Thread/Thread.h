@@ -10,8 +10,9 @@ class Thread
     public:
         Thread();
         virtual ~Thread();
-        int start(void * arg);
+        int start(void * arg = NULL);
         THREADID getThreadID(){ return this->threadId_;}
+        void killThread();
         void join(){pthread_join(threadId_,NULL);}
     protected:
       /*@brief ew funkcja do przedefiniowania
@@ -30,7 +31,7 @@ class Thread
       void arg(void* a){arg_ = a;}
 
       int run(void * arg);
-      static void * entryPoint(void*);
+      static void * threadFunction(void*);
 
       THREADID threadId_;
       pthread_attr_t attr;

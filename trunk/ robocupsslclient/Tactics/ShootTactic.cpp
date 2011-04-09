@@ -17,7 +17,7 @@ void ShootTactic::execute(void *){
     EvaluationModule& evaluation=EvaluationModule::getInstance();
     std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName());
 
-    LOG_DEBUG(log, "##########################################  angmin "<<ang.first<<" angmax"<<ang.second );
+//    LOG_DEBUG(log, "##########################################  angmin "<<ang.first<<" angmax"<<ang.second );
 
     Pose goalPose;
     //TODO: sprawdzic rotacje inna powinna byc w przypadku jazdy na bramke dolna
@@ -45,15 +45,16 @@ void ShootTactic::execute(void *){
 
     goalPose.get<2>() = ( ang.first + ang.second )/2 ;
     int steps=10;
-    bool result;
+    bool isTaskDone;
     double score_ ;
+
     //jesli kat do strzalu jest mniejszy niz 30 stopni
-    //rzez 10 krokow jedz do bramki
+    //przez 10 krokow jedz do bramki
     do{
        this->currentTask = TaskPtr( new GoToPose( goalPose,&robot) );
-       result = this->currentTask->execute(NULL, steps);
+       isTaskDone = this->currentTask->execute(NULL, steps);
 
-       if(!result)
+       if(!isTaskDone)
     	   return;
 
         ang=evaluation.aimAtGoal(robot.getRobotName());

@@ -17,6 +17,8 @@ GameState::GameState(const GameState& gameState): redGoal(gameState.redGoal),
 													blueGoal(gameState.blueGoal){
 	this->ball=gameState.ball;
 	this->robots=gameState.robots;
+	boost::shared_ptr<GameState> gg;
+
 }
 void GameState::updateRobotData(std::string name,Pose pos,Vector2D v,double w){
 	this->robots[name]=Robot(pos,v,w);

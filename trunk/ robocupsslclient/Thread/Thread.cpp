@@ -8,7 +8,7 @@ Thread::Thread() {
 int Thread::start(void * arg_)
 {
    arg(arg_); // store user data
-   int code = pthread_create(&threadId_,&attr,Thread::entryPoint, this);
+   int code = pthread_create(&threadId_,&attr,Thread::threadFunction, this);
 
    return code;
 }
@@ -20,7 +20,11 @@ int Thread::run(void * arg_)
     return 0;
 }
 
-void * Thread::entryPoint(void * pthis)
+void Thread::killThread(){
+	pthread_cancel(this->threadId_);
+}
+
+void * Thread::threadFunction(void * pthis)
 {
    Thread * pt = (Thread*)pthis;
    pt->run( pt->arg() );
