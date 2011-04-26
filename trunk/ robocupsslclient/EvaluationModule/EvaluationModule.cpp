@@ -40,9 +40,9 @@ EvaluationModule::EvaluationModule():video(Videoserver::getInstance()), appConfi
 std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName){
 	GameStatePtr currGameState( new GameState() );
     video.updateGameState( currGameState );
-    Pose robotPose=currGameState->getRobotPos( robotName );
+    Pose robotPose=currGameState->getRobotPos( Robot::getRobotID(robotName) );
 
-    std::vector<Pose> positions=currGameState->getEnemyRobotsPos(robotName);
+    std::vector<Pose> positions=currGameState->getEnemyRobotsPos(Robot::getRobotID(robotName));
     std::vector<Pose>::iterator ii=positions.begin();
 
     /*Obliczam kat do bramki w zaleznosci od koloru druzyny i bramki na ktora gra
@@ -232,7 +232,7 @@ bool EvaluationModule::haveBall_1(const Robot & robot){
     GameStatePtr currGameState(new GameState());
     video.updateGameState(currGameState);
 
-    Pose robotPose=currGameState->getRobotPos(robot.getRobotName());
+    Pose robotPose=currGameState->getRobotPos( robot.getRobotID() );
     Pose ballPose=currGameState->getBallPos();
 
 
@@ -246,35 +246,35 @@ bool EvaluationModule::haveBall_1(const Robot & robot){
     return fabs(toBallRot) < ROTATION_PRECISION ? true : false ;
 }
 
-bool EvaluationModule::haveBall_2(const Robot & robot){
+bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
+//dane od KAMILA
 //0.22 = kąt :) srodek robota - srodek tego grubszego elementu dribblera
-//0.075 (srodek robota - srodek dribblera) + 0.006 (promien dribblera) +
+//0.075 (srodek robota - srodek dribblera) +
+//0.006 (promien dribblera) +
 //0.022 (troche powiekszony promien pilki)
+
+//moje dane
+//0.33 = kąt :) srodek robota - srodek tego grubszego elementu dribblera
+//0.075 (srodek robota - srodek dribblera) +
+//0.012 (promien dribblera) +
+//0.022 (troche powiekszony promien pilki)
+
     GameStatePtr currGameState(new GameState());
     video.updateGameState(currGameState);
     bool ballIsOwned =  false;
-    Pose p = currGameState->getRobotPos(robot.getRobotName() );
+    Pose robotPos = currGameState->getRobotPos(robot.getRobotID() );
     Pose ballPos=currGameState->getBallPos();
 
-    Vector2D reference(cos(p.get<2>()+M_PI_2), sin(p.get<2>()+M_PI_2));
-    Vector2D toBall = ballPos.getPosition() - p.getPosition();
+    Vector2D reference( cos( robotPos.get<2>()+M_PI_2 ), sin( robotPos.get<2>()+M_PI_2 ) );
+    Vector2D toBall = ballPos.getPosition() - robotPos.getPosition();
     double angle = toBall.angleTo(reference);
-//<-0.02->
-//(ball)                                                          | 0.020 ball radius
-//-----           -----                                   |- 0.006 thicker dribbler bar radius
-//|       |-------|       |   <- dribbler         |-
-//-----           -----                                   |0.075  distance from robot to dribbler center
-//x (robot center)                        |
 
-    if (fabs(angle) < 0.22){        //from robot dimensions - this means ball
-        //is near the dribbler, in front
-        if (toBall.length() < (0.075+0.006+0.022) / cos(angle)){        //some
-        //additional margin added
+
+    //czy pilka jest przed dribblerem
+    if ( fabs(angle) < 0.33 ){
+        //czy pilka jest odpowienio blisko dribblera
+        if ( toBall.length() < ( 0.075+0.012+0.022 ) / cos(angle) ){
             ballIsOwned = true;
-            //info.isOwned = true;
-            //info.owner = i->first;
-            //info.team = AppConfig::instance().getTeamName(i->first);
-            //break;
         }
     }
 

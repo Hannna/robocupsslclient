@@ -256,15 +256,16 @@ void SimControl::getModelPos(std::string model_name_,Pose &position)
 
 void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 {
-    //std::cout<<"getAllPos"<<std::endl;
-	LOG_DEBUG(log,"start getALLPPos");
+
+	LOG_TRACE(log,"start getALLPPos");
 	strvec names = Names::getNames();
 	strvec::iterator ii;
 	//this->wait();
-	int i=0;
+
 	while(simIface->Lock(1)!=1){
-		std::cout<<i++<<std::endl;
+		usleep(100);
 	}
+	LOG_TRACE(log,"start getALLPPos, after Lock");
 	//simIface->Lock(1);
 	simIface->data->responseCount=0;
 	for(ii = names.begin(); ii!=names.end(); ii++){
@@ -283,7 +284,11 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 		}
 	}
 	simIface->Unlock();
-	this->wait();
+
+	if(!this->wait()){
+		LOG_FATAL(log,"after wait, wait failed");
+		exit(0);
+	}
 
 	//simIface->Lock(1);
 	while(simIface->Lock(1)!=1);
@@ -315,7 +320,7 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 							 positions[model_name_]=Pose(x,y,rot);
 							 std::ostringstream log_msg;
 							 log_msg<<"SimControl getAllPos model name "<<model_name_<<" x="<<positions[model_name_].get<0>()<<" y="<<positions[model_name_].get<1>()<<" rot="<<positions[model_name_].get<2>();
-                             LOG_DEBUG(log,log_msg.str());
+                             LOG_TRACE(log,log_msg.str());
 
 						}
 						break;
@@ -393,21 +398,31 @@ void SimControl::display(){
 	*/
 }
 
-void SimControl::wait(){
+bool SimControl::wait(){
 	bool ok=false;
-	int i=0;
+
+	struct timespec req;
+	req.tv_sec=0;
+	req.tv_nsec=1000000; //1ms
+	struct timespec rem;
+	bzero( &rem, sizeof(rem) );
+
+	struct timespec  startTime;
+	measureTime( start, &startTime );
+	double endTime;
 	while(!ok){
-		//while(simIface->Lock(1)!=1);
 		if(simIface->data->requestCount==0 ){
 			ok=true;
-			//std::cout<<"simIface->data->"<<simIface->data->responseCount<<std::endl;
 		}
-		//simIface->Unlock();
-		i++;
-		usleep(100);
+		nanosleep(&req,&rem);
+		endTime=measureTime( stop, &startTime );
+		if(endTime>500){
+			LOG_FATAL(log,"wait for request "<<endTime<<"ms");
+			return false;
+		}
 	}
-	//std::cout<<i<<std::endl;
-	return;
+
+	return true;
 }
 
 #endif

@@ -21,6 +21,12 @@
 #define LOCATION_PRECISION 0.01
 #define ROTATION_PRECISION 0.01
 
+
+#include <cmath>
+#include <limits>
+
+bool equealDouble(const double & a, const  double & b);
+
 enum goalArea{
 	top,
 	bottom
@@ -93,6 +99,16 @@ public:
 				this->get<1>()+a.get<1>(),
 				this->get<2>()+a.get<2>() );
 	}
+	bool operator==(const Pose a){
+		if( !equealDouble(this->get<0>() , a.get<0>() ) )
+			return false;
+		if( !equealDouble(this->get<1>() , a.get<1>() ) )
+			return false;
+		if( !equealDouble(this->get<2>() , a.get<2>() ) )
+			return false;
+
+		return true;
+	}
 	Vector2D getPosition()const {
 		return Vector2D(this->get<0>(),this->get<1>());
 	}
@@ -122,10 +138,12 @@ double convertAnglePI(double angle);
 ///@return kąt w radianach z przedziału 0..+2*M_PI
 double convertAngle2PI(double angle);
 
+
 /** @author Kamil Muszyński
  *
  * @brief klasa zawierająca nazwy wszystkich modeli gazebo znajdujących się na planszy
  * */
+
 class Names{
 public:
 	static strvec & getNames();

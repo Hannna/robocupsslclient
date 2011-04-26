@@ -1,6 +1,8 @@
 #include "Videoserver.h"
 #include "../Config/Config.h"
+#include "../Robot/Robot.h"
 #include <signal.h>
+
 pthread_mutex_t Videoserver::mutex;
 pthread_cond_t Videoserver::update_game_state_cv;
 
@@ -96,7 +98,8 @@ void Videoserver::update(){
 					posIface->second->Unlock();
 				}
 			}
-			Videoserver::gameState->updateRobotData(model_name,(*ii).second,Vector2D(vx,vy),w);
+			//Videoserver::gameState->updateRobotData(model_name,(*ii).second,Vector2D(vx,vy),w);
+			Videoserver::gameState->updateRobotData( Robot::getRobotID(model_name),(*ii).second,Vector2D(vx,vy),w );
 		}
 	}
 
@@ -122,7 +125,7 @@ void Videoserver::update(){
 void updateVideo(int){
     //std::cout<<"updateVideo"<<std::endl;
 	Videoserver::getInstance().update();
-	ualarm(Videoserver::updateDeltaTime, 0);
+	//ualarm(Videoserver::updateDeltaTime, 0);
 }
 
 void Videoserver::execute(void * arg){
@@ -137,11 +140,18 @@ void Videoserver::execute(void * arg){
 	sigaction(SIGALRM, &act,NULL);
 	Videoserver::getInstance().update();
 
-	ualarm(Videoserver::updateDeltaTime, 0);
+//	ualarm(Videoserver::updateDeltaTime, 0);
+	struct timespec req;
+	req.tv_sec=0;
+	req.tv_nsec=Videoserver::updateDeltaTime*1000;
+	struct timespec rem;
+	bzero( &rem, sizeof(rem) );
 
 	while(true){
-		usleep(Videoserver::updateDeltaTime);
+		nanosleep(&req,&rem);
+		Videoserver::getInstance().update();
 	}
+		//usleep(Videoserver::updateDeltaTime);
 }
 
 void Videoserver::testVideoserver(){
