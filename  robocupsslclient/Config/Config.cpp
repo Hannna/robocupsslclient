@@ -375,9 +375,11 @@ const double Config::getRRTGoalProb() const{
 const double Config::getRRTMinDistance() const{
 	return this->rrtCfg.minDistance;
 }
+
 const double Config::getRRTRobotReach() const{
 	return this->rrtCfg.robotReach;
 }
+
 const double Config::getRRTRobotRadius() const{
 	return this->rrtCfg.robotRadius;
 }

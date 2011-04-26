@@ -19,11 +19,13 @@ typedef boost::shared_ptr <RRTNode>  RRTNodePtr;
 
 class RRTNode {
 	friend class RRTPlanner;
+	friend std::ostream& operator<<(std::ostream& os,const RRTNode& node);
 public:
-	RRTNode(const GameStatePtr state_,const std::string robotName);
+	RRTNode(const GameStatePtr state_,const Robot::robotID & id);
 	//void addNode(const GameStatePtr & state);
 	void addNode(const RRTNodePtr & node);
-	Pose getRobotPos(std::string robotName);
+	Pose getRobotPos(const Robot::robotID & id) const;
+	const GameStatePtr getGameState();
 	const Pose getMyRobotPos() const ;
 	// pobierz pozycje docelowa do ktorej prowadzi dany wezel
 	const Pose getTargetPose() const;
@@ -46,14 +48,14 @@ private:
 	const GameStatePtr state;
 	//punkt docelowy do ktorego ma prowadzic dany wezel
 	Pose target;
-	//aktualna pozycja robota w danym wezle
+	//pozycja robota (dla którego wyznaczana jest sciezka), w kroku algorytmu
 	const Pose currRobotPose;
 	//odleglosc  calej sciezki do celu
 	//rozumiana jako minimalna odleglosc od celu jakiegokolwiek wezła potomnego
 	double shortestDistance;
-	//double shortestDstToTarget;
+
 	std::list<RRTNodePtr> children;
-	//wezel do ktorego ma podazac robot w danym kroku.
+	//czy jest to wezeł na ścieżce końcowej
 	bool final;
 };
 

@@ -33,7 +33,7 @@ class EvaluationModule
 
      bool haveBall_1( const Robot & robot);
 
-     bool haveBall_2(const Robot & robot);
+     bool isRobotOwnedBall(const Robot & robot);
 
      void test(Pose currRobotPose,Pose targetPosition);
 

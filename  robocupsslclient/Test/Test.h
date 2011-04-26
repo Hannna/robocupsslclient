@@ -20,8 +20,8 @@ typedef struct threadArg{
 } * threadArgPtr;
 
 //testuje zachowanie dribblera
-//1. podjazd do pilkiu
-//2. jazda do przud z pilka
+//1. podjazd do pilki
+//2. jazda do przodu z pilka
 //3. jazda do tylu z pilka
 void testDribbler(Robot& testRobot);
 
@@ -35,7 +35,7 @@ void testPose(Robot& robot,Pose newPose);
 void testRotation(Videoserver & video,Robot& robot);
 
 //testuje obliczanie przyspieszenia
-void checkAcceleration(Vector2D speed,Robot& robot);
+void checkAcceleration(const Vector2D & speed,Robot& robot);
 
 //testuje warstwe odpowiedzialna za sterowaniem robotem, wyhamowaniem przed celem itp
 void testMotion(Pose goalPose,Videoserver & video,Robot& robot);
@@ -61,7 +61,7 @@ void testTaskThread();
 
 void* testTask(void * arg);
 
-void testShootTactics();
+void testShootTactics(void * arg);
 
 void testKick();
 

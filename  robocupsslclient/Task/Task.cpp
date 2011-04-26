@@ -18,18 +18,19 @@ void Task::stop(){
 	mutex_.unlock();
 }
 
-
-bool Task::execute(void* arg, int steps){
+Task::status Task::execute(void* arg,const  int steps_){
+	int steps = steps_;
 	bool stop=false;
-	bool res=false;
-	do{
+	Task::status res = Task::ok;
+	//do{
 		mutex_.lock();
 		if(!this->stopTask);
 			stop=true;
 		mutex_.unlock();
 		res=this->run(arg, steps);
-	}
-	while( !stop || !(res) );
+
+	//}
+	//while( !stop  && steps-- !=0 );
 
 	return res;
 }

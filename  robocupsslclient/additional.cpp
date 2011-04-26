@@ -3,18 +3,11 @@
 #include <math.h>
 #include <boost/assert.hpp>
 #include <limits>
-/*namespace additional{
-	ObjectsID getRobotID(std::string name)
-	{
-		for (int i = 0; i < 6; i++)
-			if (name == robotNames[i])
-				return static_cast<ObjectsID>(i);
 
-		std::cout<<"[additional.h - getID] Błędna nazwa modelu! ["+name+"]\n";
-		exit(0);
-	}
+bool equealDouble(const double & a, const  double & b) {
+    return std::fabs(a - b) < std::numeric_limits<double>::epsilon();
 }
-*/
+
 strvec Names::names_list;
 
 strvec & Names::getNames()
@@ -40,6 +33,7 @@ Names::Names()
 
 Names::~Names()
 {
+
 }
 
 
@@ -138,6 +132,7 @@ double measureTime(what what_,struct timespec * startTime){
 	return -1;
 
 }
+
 /*
 struct timeval measureTime(what what_,struct timeval * startTime){
 	//static struct timeval startTime;

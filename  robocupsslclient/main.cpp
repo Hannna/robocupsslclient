@@ -145,22 +145,39 @@ int main(int argc, char*argv[],char *envp[]){
         }
     }
 
+    int sleep_status;
     if(Config::getInstance().isTestMode()){
         std::cout<<"starting test mode"<<std::endl;
-        RefereeClient referee;
-        referee.start();
+        //RefereeClient referee;
+        //referee.start();
 
-        while(referee.getCommand()!=RefereeCommands::start){
-        	usleep(1000);
-        };
+        //while(referee.getCommand()!=RefereeCommands::start){
+        //	usleep(1000);
+        //};
+
+        Videoserver::getInstance().start(NULL);
+
         TestManager testManager;
-        testManager.addTest(testKind);
-        testManager.startTests();
+        struct timespec req;
+        req.tv_sec=0;
+        req.tv_nsec=1000000;
+        struct timespec rem;
+        bzero( &rem, sizeof(rem) );
+
+        for(int i=30;i>0;i--){
+			testManager.addTest(testKind);
+			testManager.startTests();
+			while(!testManager.isTestFinished()){
+				sleep_status=nanosleep(&req,&rem);
+			};
+        }
+
+        Videoserver::getInstance().killThread();
     }
 
     xmlCleanupParser();
 
-    std::cout<<"exit from robocup ssl client bye bye"<<std::endl;
+    std::cout<<"exit from robocup ssl client bye bye sleep_status"<<sleep_status<<std::endl;
     return 0;
 }
 #endif

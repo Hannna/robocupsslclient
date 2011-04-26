@@ -25,6 +25,10 @@
 //czas o jaki przewidujemy ruch przeciwnika do przodu
 //#define PREDICTION_TIME 0.01 //[sek]
 
+#define GOALPOSE 1
+#define WAYPOINT 2
+#define RANDOMPOINT 3
+
 class RRTPlanner {
 	friend class TestRRT;
 public:
@@ -79,22 +83,10 @@ enum ErrorCode{
 	*/
 	int serializeTree(const char * fileName,int serializedTrees);
 
-	/**
-	* @brief zwraca predkosc robota w kolejny kroku algorytmu
-	*
-	*/
-	//Vector2D getRobotSpeed();
-
+	inline bool isNewPlanFound(){
+		return this->foundNewPlan;
+	}
 	virtual ~RRTPlanner();
-
-
-	/**
-	 * @brief zwraca stan losowy losowany z rozkladem rownomiernym z przestrzeni stanow.
-	 *
-	 * @return
-	 */
-static	Pose getRandomPose();
-
 
 private:
 	/**
@@ -103,7 +95,7 @@ private:
 	 * @param[in] goalPose punkt docelowy
 	 * @return
 	 */
-private:	Pose choseTarget(Pose goalPose,Vector2D velocity,const Pose nearestPose , const double obstacleDist);
+private:	Pose choseTarget( Pose goalPose, int * targetType , std::list<Pose>* wayPoints);
 	/**
 	 * @brief zwraca element poddrzewa(od currNode) znajdujacy sie najblizej celu.
 	 *
@@ -112,7 +104,7 @@ private:	Pose choseTarget(Pose goalPose,Vector2D velocity,const Pose nearestPose
 	 * @param[in] distance dotychczasowa najmniejsza odleglość
 	 * @return
 	 */
-private:	RRTNodePtr findNearest(const Pose & targetPose,RRTNodePtr currNode);
+private:	RRTNodePtr findNearest(const Pose & targetPose,RRTNodePtr& currNode);
 	/**
 	 * @brief zwraca element drzewa znajdujacy sie najblizej celu.
 	 *
@@ -120,7 +112,6 @@ private:	RRTNodePtr findNearest(const Pose & targetPose,RRTNodePtr currNode);
 	 * @return
 	 */
 private:	RRTNodePtr findNearestState(const Pose & targetPose);
-private:	RRTNodePtr findNearestToTarget(RRTNodePtr currNode);
 	/**
 	 * @brief zwraca element drzewa znajdujacy sie najblizej celu.
 	 *
@@ -135,6 +126,7 @@ private:	RRTNodePtr findNearestToTargetState();
 	 * @return
 	 */
 private:	RRTNodePtr findNearestAttainableState(const Pose & targetPose);
+
 private:	RRTNodePtr findNearestAttainableState(const Pose & targetPose,RRTNodePtr currNode);
 	/**
 	 * @brief zaczynajac od zadanego stanu zwraca stan losowy.
@@ -162,7 +154,15 @@ private:	void initObstacles(const Pose& robotPose );
 	 * jego aktualnej predkosci i maxymalnego wychylenia
 	 *
 	 */
-private:	Pose getRandomPose(const Pose currentPose,Vector2D velocity, double deltaVel);	/**
+private:	Pose getRandomPose(const Pose currentPose,Vector2D velocity, double deltaVel);
+	/**
+ 	 * @brief zwraca stan losowy losowany z rozkladem rownomiernym z przestrzeni stanow.
+ 	 *
+ 	 * @return
+ 	 */
+public: Pose getRandomPose();
+
+/**
 	 * @brief dokonuje ekspansji stanu w kierunku celu, zwraca stan pusty jesli nastapi kolizja
 	 *
 	 * @param[in] currState aktualny stan planszy
@@ -197,7 +197,10 @@ private:	bool isTargetInsideObstacle(const Pose &targetPose,double safetyMarigin
 	 */
 private:	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPose,bool checkAddObstacles = true);
 
- private:
+private:
+	//nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
+	const std::string robotName;
+	const Robot::robotID robotId;
 	//stan od ktorego zaczynamy budowac drzewo
 	RRTNodePtr root;
 	//stan najblizej celu
@@ -206,8 +209,11 @@ private:	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPo
 	//mierzony w sekundach simTime
 	//static double lastSimTime;
 	double deltaSimTime;
+	//czy znaleziono nowy plan
+	//znalezienie nowego planu to znalezienie
+	//stanu odleglego od celu o max simTime_
+	bool foundNewPlan;
 
-	Pose (*getGoalPose)();
 
 	//roboty przeszkody posortowane wzgledem odleglosci od sterowanego robota
 	std::vector<Pose> obstacles;
@@ -221,6 +227,8 @@ private:	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPo
 
 	//sciezka wybrana w poprzednim kroku
 	std::list<Pose> * path;
+	//4 wybrane punkty ze sciezki path
+	std::list<Pose> wayPoints;
 	//odleglosc najblizszego wezla drzewa rrt od celu
 	double shortestDist;
     //wewnetrzna flaga okreslajaca czy juz dojechano do celu
@@ -230,16 +238,14 @@ private:	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPo
 
 	//promień okręgu w jakim losujemy kolejny losowy stan
 	static const double randomStateReach;
-    //maksymalna liuczba potomkow korzenia drzewa RRT
+    //maksymalna liczba potomkow korzenia drzewa RRT
 	static const unsigned int maxRootChildren = 4;
 	//ograniczenie na maksymalna liczbe wezłów w drzewie
-	static const unsigned int maxNodeNumber=400;
+	static const unsigned int maxNodeNumber=150;
     //margines bezp przy wyznaczaniu sciezki
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
-    static const double SAFETY_MARGIN = 0.1;
+    static const double SAFETY_MARGIN = 0.05;
 
-    //nazwa modelu robota dla ktorego wyznaczamy punkt docelowy
-	const std::string robotName;
 	//pozycja docelowa robota
 	const Pose goalPose;
     //czy przewidujemy ruch przeszkody
@@ -250,10 +256,11 @@ private:	bool checkTargetAttainability(const Pose &currPose,const Pose &targetPo
 	const double simTime;
     const log4cxx::LoggerPtr logger;
 
-    static const double maxXvalue;
-    static const double minXvalue;
-    static const double maxYvalue;
-    static const double minYvalue;
+    bool blockedGoalPose;
+    const double maxXvalue;
+    const double minXvalue;
+    const double maxYvalue;
+    const double minYvalue;
 };
 
 

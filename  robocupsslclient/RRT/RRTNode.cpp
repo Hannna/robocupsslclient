@@ -12,8 +12,14 @@
 #include <boost/foreach.hpp>
 #include "../Config/Config.h"
 
-RRTNode::RRTNode(const GameStatePtr state_,const std::string robotName):
-                        state(state_),  currRobotPose( (*state).getRobotPos(robotName ) ){
+std::ostream& operator<<(std::ostream& os,const RRTNode& node){
+	os<<"robot pose"<<node.currRobotPose;
+	return os;
+}
+
+
+RRTNode::RRTNode(const GameStatePtr state_,const Robot::robotID & id):
+                        state(state_),  currRobotPose( (*state).getRobotPos( id ) ){
 	this->final=false;
 	shortestDistance=std::numeric_limits<double>::infinity();
 //	this->shortestDstToTarget=std::numeric_limits<double>::infinity();
@@ -21,15 +27,12 @@ RRTNode::RRTNode(const GameStatePtr state_,const std::string robotName):
 void RRTNode::setFinal(){
 	this->final=true;
 }
-/*
-void RRTNode::addNode(const GameStatePtr & state){
-	children.push_back(RRTNodePtr(new RRTNode(state)));
-}*/
+
 void RRTNode::addNode(const RRTNodePtr & node){
 	children.push_back(node);
 }
-Pose RRTNode::getRobotPos(std::string robotName){
-	return state.get()->getRobotPos(robotName);
+Pose RRTNode::getRobotPos( const Robot::robotID & id ) const {
+	return state.get()->getRobotPos( id );
 }
 const Pose RRTNode::getMyRobotPos()const{
 	return currRobotPose;
@@ -129,7 +132,7 @@ int RRTNode::serializeTeamToXml(xmlTextWriterPtr & writer,const std::vector<std:
 	int playerNr=0;
 	std::ostringstream ois;
 	BOOST_FOREACH(std::string modelName,team){
-		Pose robotPose=this->state->getRobotPos(modelName);
+		Pose robotPose=this->state->getRobotPos(Robot::getRobotID(modelName));
 		serializeRobotToXml(writer,color,robotPose,playerNr++);
 		//std::cout<<"node name Node"<<std::endl;
 		/*
@@ -187,7 +190,7 @@ int RRTNode::serializeTeamToXml(xmlTextWriterPtr & writer,const std::vector<std:
 int RRTNode::serializeRecursiveToXml( xmlTextWriterPtr & writer,const std::string & modelName){
 	int status;
 	std::ostringstream ois;
-	Pose robotPose=this->state->getRobotPos(modelName);
+	Pose robotPose=this->state->getRobotPos( Robot::getRobotID(modelName) );
 	//std::cout<<"node name Node"<<std::endl;
 
 	status = xmlTextWriterStartElement(writer, BAD_CAST "Node");
@@ -228,7 +231,7 @@ int RRTNode::serializeRecursiveToXml( xmlTextWriterPtr & writer,const std::strin
 	//zapisywanie predkosci robota w danym wezle
 
 	ois.str("");
-	ois<<state->getRobotVelocity(modelName).x;
+	ois<<state->getRobotVelocity( Robot::getRobotID(modelName) ).x;
 	/* Add an attribute with name "xml:lang" and value "de" to ORDER. */
 	status = xmlTextWriterWriteAttribute(writer, BAD_CAST "vx",
 									 BAD_CAST ois.str().c_str());
@@ -239,8 +242,8 @@ int RRTNode::serializeRecursiveToXml( xmlTextWriterPtr & writer,const std::strin
 
 
 	ois.str("");
-	state->getRobotVelocity(modelName);
-	ois<<state->getRobotVelocity(modelName).y;
+	state->getRobotVelocity( Robot::getRobotID(modelName) );
+	ois<<state->getRobotVelocity( Robot::getRobotID(modelName) ).y;
 	/* Add an attribute with name "xml:lang" and value "de" to ORDER. */
 	status = xmlTextWriterWriteAttribute(writer, BAD_CAST "vy",
 									 BAD_CAST ois.str().c_str());
@@ -304,6 +307,9 @@ const Pose RRTNode::getTargetPose() const{
 // ustaw pozycje docelowa do ktorej prowadzi dany wezel
 void RRTNode::setTargetPose(const Pose & p){
 	this->target=p;
+}
+const GameStatePtr RRTNode::getGameState(){
+	return this->state;
 }
 RRTNode::~RRTNode() {
 	// TODO Auto-generated destructor stub

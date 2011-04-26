@@ -36,7 +36,7 @@ class AbstractTactic : public Thread
     protected:
         EvaluationModule& evaluation;
         Robot& robot;
-        TaskPtr currentTask;
+        TaskSharedPtr currentTask;
         double bestScore;
         const log4cxx::LoggerPtr log;
 

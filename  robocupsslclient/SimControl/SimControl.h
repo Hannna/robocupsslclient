@@ -73,7 +73,7 @@ private:
 //	void getResponseSimIface(double &x,double &y,double & rot,const char * name);
 
 	///Funkcja blokująca (do czasu, kiedy gazebo wykona rządanie)
-	void wait();
+	bool wait();
 
 	 #ifdef OLD
         gazebo::Client* client;

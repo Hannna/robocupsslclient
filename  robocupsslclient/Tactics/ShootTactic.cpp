@@ -45,16 +45,16 @@ void ShootTactic::execute(void *){
 
     goalPose.get<2>() = ( ang.first + ang.second )/2 ;
     int steps=10;
-    bool isTaskDone;
+    Task::status taskStatus = Task::not_completed;
     double score_ ;
 
     //jesli kat do strzalu jest mniejszy niz 30 stopni
     //przez 10 krokow jedz do bramki
     do{
-       this->currentTask = TaskPtr( new GoToPose( goalPose,&robot) );
-       isTaskDone = this->currentTask->execute(NULL, steps);
+       this->currentTask = TaskSharedPtr( new GoToPose( goalPose,&robot) );
+       taskStatus = this->currentTask->execute(NULL, steps);
 
-       if(!isTaskDone)
+       if( taskStatus == Task::error || taskStatus == Task::collision)
     	   return;
 
         ang=evaluation.aimAtGoal(robot.getRobotName());
@@ -71,7 +71,7 @@ void ShootTactic::execute(void *){
 	this->currentTask->stop();
 
 
-	this->currentTask = TaskPtr( new KickBall(&robot, goalPose.get<2>() ) );
+	this->currentTask = TaskSharedPtr( new KickBall(&robot, goalPose.get<2>() ) );
 	this->currentTask->execute(NULL);
 
 	this->currentTask->stop();

@@ -12,7 +12,15 @@ KickBall::KickBall(Robot * robot, double rotation_): Task(robot), rotation(rotat
 
 }
 
+Task* KickBall::nextTask(){
+	return this;
+}
 
+/*
+TaskSharedPtr& KickBall::nextTask(){
+	return TaskWeakPtr(this);
+}
+*/
 double calculateAngularVel2(const Pose & currRobotPose, const double goalRotation){
 
     static double oldTetaCel;
@@ -29,7 +37,7 @@ double calculateAngularVel2(const Pose & currRobotPose, const double goalRotatio
     return angularVel;
 }
 
-bool KickBall::run(void * arg, int steps ){
+Task::status KickBall::run(void * arg, int steps ){
 
     LOG_DEBUG(log,"starting KickBall task");
     GameStatePtr currGameState( new GameState() );
@@ -37,12 +45,12 @@ bool KickBall::run(void * arg, int steps ){
 	double lastSimTime=0;
 
     Pose currPose;
-    double w;
+    //double w;
     double error;
 
     while(!this->stopTask && (steps--)!=0 ){
     	if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
-			currPose = (*currGameState).getRobotPos( robot->getRobotName() );
+			currPose = (*currGameState).getRobotPos( robot->getRobotID() );
 			lastSimTime=currSimTime;
 			double w = calculateAngularVel2( currPose , rotation);
 			robot->setRelativeSpeed( Vector2D(0.0,0.0), w );
@@ -56,12 +64,10 @@ bool KickBall::run(void * arg, int steps ){
                 robot->setRelativeSpeed( Vector2D(0.0,0.0), 0 );
             }
     	}
-
-
-
     }
+    LOG_DEBUG(log,"Have good position. Try to kick ball.");
 	this->robot->kick();
-	return true;
+	return Task::ok;
 }
 
 KickBall::~KickBall() {

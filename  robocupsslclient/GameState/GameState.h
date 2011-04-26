@@ -14,20 +14,21 @@
 #include "../Vector2d/Vector2D.h"
 #include "../additional.h"
 
+#include "../Robot/Robot.h"
 
 class GameState;
 typedef boost::shared_ptr <GameState>  GameStatePtr;
-
 
 /*@brief klasa zawierajaca dane na ktorych moga operowac planisci
  * zarowno stratedzy jak i niskopoziomowi od unikania kolizji
  *
  */
 class GameState {
-public: class Robot{
+public: class RobotState{
+
 public:
-	Robot(Pose pos_=Pose(0.0,0.0,0.0),Vector2D v_=Vector2D(0,0),double w_=0): pos(pos_),v(v_),w(w_){;};
-	friend std::ostream& operator<<(std::ostream& os,const Robot& r);
+	RobotState(Pose pos_=Pose(0.0,0.0,0.0),Vector2D v_=Vector2D(0,0),double w_=0): pos(pos_),v(v_),w(w_){;};
+	friend std::ostream& operator<<(std::ostream& os,const RobotState& r);
 	Pose pos;
 	Vector2D v;
 	double w;
@@ -41,18 +42,32 @@ public:	Ball(Vector2D pos_=Vector2D(0,0),Vector2D v_=Vector2D(0,0)): pos(pos_),v
 public:
 	GameState();
 	GameState(const GameState& gameState);
+
+	static Robot::robotID getRobotID(const std::string& robot_name);
+
 	void updateRobotData(std::string name,Pose pose,Vector2D v=Vector2D(0,0),double w=0);
 	void updateRobotVel(std::string name,std::pair<Vector2D ,double> vel);
+
+	void updateRobotData(Robot::robotID id,Pose pose,Vector2D v=Vector2D(0,0),double w=0);
+	void updateRobotVel(Robot::robotID id,std::pair<Vector2D ,double> vel);
+
+
 	void updateBallData(Vector2D pos,Vector2D v);
 	void updateSimTime(double simTime);
+
 	Pose getRobotPos(std::string name);
+	Pose getRobotPos(Robot::robotID id);
+
 	double getSimTime();
 	void setSimTime(double simTime_){this->simTime=simTime_;};
 	/*@brief zwraca pozycje wszystkich robotwo poza podanym jako argument
 	 *
 	 */
-	std::vector<Pose> getEnemyRobotsPos(std::string robotName);
+	std::vector<Pose> getEnemyRobotsPos(const Robot::robotID & id);
+
 	Vector2D getRobotVelocity(std::string name);
+	Vector2D getRobotVelocity(Robot::robotID id);
+
 	Pose getBallPos();
 	GameState & operator=(const GameState &gameState);
 	friend std::ostream& operator<<(std::ostream& os,const GameState& gs);
@@ -91,7 +106,8 @@ public:
 
 private :
 	///dane dotyczace robotow
-	std::map<std::string,Robot> robots;
+	std::map<Robot::robotID,RobotState> robots;
+	typedef std::map<Robot::robotID,RobotState>::iterator RobotsPoseIt;
 	///dane dotyczace pilki
 	Ball ball;
 	//czas pomiaru stanu gry
