@@ -55,7 +55,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     double dist;
 
     if(robotName.compare(0,3,"red")==0){
-    	if(currGameState->redGoal==bottom){
+    	if(currGameState->getRedGoalArea()==bottom){
     	    Pose p1(appConfig.field.BOTTOM_GOAL_LEFT_CORNER.x, appConfig.field.BOTTOM_GOAL_LEFT_CORNER.y, 0);
     	    p1.translation(robotPose.getPosition());
 
@@ -100,7 +100,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 
     	}
     }else{
-		if(currGameState->blueGoal==bottom){
+		if(currGameState->getBlueGoalArea()==bottom){
 			Vector2D v1=appConfig.field.BOTTOM_GOAL_LEFT_CORNER - robotPose.getPosition();
     	    Vector2D v2=appConfig.field.BOTTOM_GOAL_RIGHT_CORNER - robotPose.getPosition();
     	    alfa1 = v1.angleTo(ox);
@@ -160,6 +160,18 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 
 
     return std::pair<double,double>( (*iii).angmin, (*iii).angmax );
+}
+
+EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID){
+
+	//sprawdz czy pilka jest w obrebie boiska
+	return EvaluationModule::free;
+	//sprawdz czy nie jest w bramce
+
+	//dla kazdego robota z naszej druzyny sprawdz czy nie jest posiadaczem pilki
+
+	//dla kazdego robota z druzyny przeciwnej sprawdz czy nie jest posiadaczem pilki
+
 }
 
 void EvaluationModule::addToList(Set &set, std::list<Set> &sets){
@@ -246,6 +258,9 @@ bool EvaluationModule::haveBall_1(const Robot & robot){
     return fabs(toBallRot) < ROTATION_PRECISION ? true : false ;
 }
 
+bool EvaluationModule::isRobotOwnedBall(const Robot * robot){
+	return isRobotOwnedBall( *robot );
+}
 bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
 //dane od KAMILA
 //0.22 = kąt :) srodek robota - srodek tego grubszego elementu dribblera
