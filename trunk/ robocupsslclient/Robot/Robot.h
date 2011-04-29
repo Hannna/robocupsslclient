@@ -29,12 +29,12 @@ class Robot
 public:
 
 	enum robotID{
-		unknown = -1,
-		red0,
-		red1,
-		red2,
-		red3,
-		blue0,
+		red0 = -4,
+		red1 = -3,
+		red2 = -2,
+		red3 = -1,
+		unknown = 0,
+		blue0 = 1,
 		blue1,
 		blue2,
 		blue3

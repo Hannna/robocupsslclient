@@ -24,6 +24,7 @@ typedef boost::shared_ptr <GameState>  GameStatePtr;
  *
  */
 class GameState {
+
 public: class RobotState{
 
 public:
@@ -101,16 +102,21 @@ public:
 
 	virtual ~GameState();
 
+	inline const goalArea getRedGoalArea(){
+		return redGoal;
+	}
+	inline const goalArea getBlueGoalArea(){
+		return blueGoal;
+	}
+private :
 	const goalArea redGoal;
 	const goalArea blueGoal;
-
-private :
 	///dane dotyczace robotow
 	std::map<Robot::robotID,RobotState> robots;
 	typedef std::map<Robot::robotID,RobotState>::iterator RobotsPoseIt;
 	///dane dotyczace pilki
 	Ball ball;
-	//czas pomiaru stanu gry
+	//czas pomiaru(z symulatora) stanu gry
 	double simTime;
 	//do zapisu do pliku w formacie tex
 	static 	std::ofstream file;
