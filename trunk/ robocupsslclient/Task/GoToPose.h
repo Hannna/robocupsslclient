@@ -15,7 +15,6 @@ class GoToPose: public Task {
 public:
 	GoToPose(const Pose & pose,Robot * robot);
 	virtual Task* nextTask();
-	//virtual TaskSharedPtr& nextTask();
 	virtual ~GoToPose();
 protected:
 	virtual Task::status run(void * arg, int steps=-1);
@@ -31,8 +30,6 @@ private:
 
 	double currSimTime;
 	double lastSimTime;
-	GameStatePtr currGameState;
-
 };
 
 #endif /* GOTOPOSE_H_ */

@@ -7,8 +7,12 @@
 
 #include "Task.h"
 
-Task::Task(Robot* robot_):video(Videoserver::getInstance()), robot(robot_), log(getLoggerPtr (robot_->getRobotName().c_str() ) ) {
+
+Task::Task(Robot* robot_):video(Videoserver::getInstance()), robot(robot_),
+							log(getLoggerPtr (robot_->getRobotName().c_str() ) ),
+							evaluationModule( EvaluationModule::getInstance() ){
 	stopTask=false;
+	this->currGameState=GameStatePtr( new GameState() );
 }
 
 void Task::stop(){
@@ -35,6 +39,16 @@ Task::status Task::execute(void* arg,const  int steps_){
 	return res;
 }
 
+void Task::markParam(predicate p){
+	this->predicates |=p;
+
+}
+
+void Task::unmarkParam(predicate p){
+
+	this->predicates &= ~p;
+
+}
 
 Task::~Task() {
 	// TODO Auto-generated destructor stub
