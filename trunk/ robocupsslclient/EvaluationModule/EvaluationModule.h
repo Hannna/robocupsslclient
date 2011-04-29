@@ -20,6 +20,19 @@ using namespace evaluation;
 
 class EvaluationModule
 {
+public:
+	enum ballState{
+		//pilka jest wolna
+		free,
+		//pilka na aucie
+		out,
+		//pilka w bramce
+		in_goal,
+		//pilka zajmowana przez naszych
+		occupied_our,
+		//pilka zajmowana przez przeciwnika
+		occupied_theirs
+	};
     public:
      static EvaluationModule & getInstance();
 
@@ -29,11 +42,14 @@ class EvaluationModule
      std::pair<double, double> aimAtGoal(const std::string& robotName);
      score aimAtTeamMate();
 
+     ballState getBallState(Robot::robotID);
+
      Pose findBestDribbleTarget();
 
      bool haveBall_1( const Robot & robot);
 
      bool isRobotOwnedBall(const Robot & robot);
+     bool isRobotOwnedBall(const Robot * robot);
 
      void test(Pose currRobotPose,Pose targetPosition);
 
