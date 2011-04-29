@@ -3,6 +3,9 @@
 #include "../Task/Task.h"
 #include "../Task/GoToPose.h"
 #include "../Task/KickBall.h"
+#include "../Task/GoToBall.h"
+#include "../Task/MoveBall.h"
+
 
 
 
@@ -17,7 +20,6 @@ void ShootTactic::execute(void *){
     EvaluationModule& evaluation=EvaluationModule::getInstance();
     std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName());
 
-//    LOG_DEBUG(log, "##########################################  angmin "<<ang.first<<" angmax"<<ang.second );
 
     Pose goalPose;
     //TODO: sprawdzic rotacje inna powinna byc w przypadku jazdy na bramke dolna
@@ -44,14 +46,38 @@ void ShootTactic::execute(void *){
     }
 
     goalPose.get<2>() = ( ang.first + ang.second )/2 ;
-    int steps=10;
-    Task::status taskStatus = Task::not_completed;
-    double score_ ;
 
-    //jesli kat do strzalu jest mniejszy niz 30 stopni
-    //przez 10 krokow jedz do bramki
+    Task::status taskStatus = Task::not_completed;
+    double score =0;
+    double bestScore = 0;
+
+    //(score, target) ← evaluation.aimAtGoal()
+    //if (was kicking at goal) then
+    //score ← score + HYSTERESIS
+
+    // SParami ← setCommand(MoveBall, target, KICK IF WE CAN)
+    while(true){
+		this->currentTask = TaskSharedPtr( new MoveBall( goalPose, &robot ) );
+		bestScore = score;
+		Task* newTask;
+		while(taskStatus!=Task::ok){
+			newTask = this->currentTask->nextTask();
+
+			if(newTask){
+				this->currentTask = TaskSharedPtr( newTask );
+			}
+			int steps=1;
+			taskStatus = this->currentTask->execute(NULL,steps);
+
+			if( taskStatus == Task::error){
+				robot.stop();
+				return;
+			}
+		}
+    }
+/*
     do{
-       this->currentTask = TaskSharedPtr( new GoToPose( goalPose,&robot) );
+
        taskStatus = this->currentTask->execute(NULL, steps);
 
        if( taskStatus == Task::error || taskStatus == Task::collision)
@@ -75,19 +101,6 @@ void ShootTactic::execute(void *){
 	this->currentTask->execute(NULL);
 
 	this->currentTask->stop();
-
-/*
-    //sprawdz czy dany robot ma pilke
-    if(evaluation.haveBall_1(robot)){
-        std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName());
-        if( fabs(ang.first - ang.second ) > M_PI/6.0 ){
-            robot.kick();
-        }
-    }
-    else{
-    //gotoballTask
-    ;
-    }
 */
 
 }
