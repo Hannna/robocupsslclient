@@ -12,7 +12,6 @@ GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose),s
 	this->rrt=NULL;
 	currSimTime=0;
 	lastSimTime=0;
-	currGameState = GameStatePtr( new GameState() );
 	currSimTime=video.updateGameState(currGameState);
 }
 
