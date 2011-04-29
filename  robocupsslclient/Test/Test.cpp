@@ -436,7 +436,7 @@ void testShootTactics(void * arg){
 	//jedz do pilki
 	GameStatePtr gameState(new GameState());
 	Videoserver::getInstance().updateGameState(gameState);
-
+/*
     Task::status taskStatus = Task::not_completed;
     Task* task = ( new GoToPose( (*gameState).getBallPos(), redRobot0 )  );
     Task* newTask;
@@ -465,7 +465,7 @@ void testShootTactics(void * arg){
     std::cout<<" robot have ball "<<EvaluationModule::getInstance().isRobotOwnedBall(*redRobot0)<<std::endl;
 
     exit(0);
-
+*/
     AbstractTactic * shootTactic= new ShootTactic(*redRobot0);
     shootTactic->execute(NULL);
     shootTactic->join();
