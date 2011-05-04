@@ -46,6 +46,8 @@ public:
 	std::string getRobotName() const ;
 	robotID getRobotID() const;
 	static robotID getRobotID(const std::string & robotName);
+	static bool isRed(robotID id);
+	static bool isBlue(robotID id);
 	std::string getPosIfaceName() const;
 	/*@brief metoda ustalajaca predkosci liniowa oraz katowa
 	 *
@@ -74,6 +76,7 @@ private :
 	const Robot::robotID id;
 	///nazwa interfejsu do pobierania pozycji
 	std::string posIfaceName;
+	const log4cxx::LoggerPtr log;
 	///pozycje dlugofalowe ustalane przez stratega
 	//Vector2D goTo;
 #ifdef GAZEBO

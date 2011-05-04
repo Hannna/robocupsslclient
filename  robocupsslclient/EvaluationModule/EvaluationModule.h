@@ -72,4 +72,6 @@ public:
         void addToList(Set &set,std::list<Set> &sets);
 };
 
+std::ostream & operator<<(std::ostream & os, const EvaluationModule::ballState & bState );
+
 #endif // EVALUATIONMODULE_H

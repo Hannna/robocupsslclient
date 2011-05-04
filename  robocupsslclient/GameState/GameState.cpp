@@ -74,6 +74,9 @@ Vector2D GameState::getRobotVelocity(Robot::robotID id){
 	return this->robots[id].v;
 }
 
+double GameState::getRobotAngularVelocity(Robot::robotID id){
+	return this->robots[id].w;
+}
 Pose GameState::getBallPos(){
 	return Pose(this->ball.pos.x,this->ball.pos.y,0.0);
 }

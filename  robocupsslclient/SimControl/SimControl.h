@@ -3,13 +3,15 @@
 
 #ifdef GAZEBO
 
+#include "../additional.h"
+#include "../Lock/Lock.h"
+
 #include <gazebo/gazebo.h>
 #include <gazebo/GazeboError.hh>
-
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_io.hpp>
-#include "../additional.h"
 #include <log4cxx/logger.h>
+
 /**
  * @author Maciej Gąbka,  poprawki Kamil Muszyński
  * @date 15.07.2008
@@ -25,8 +27,13 @@ private:
 public:
 	///wzorzec singletonu
 	 static   SimControl& getInstance(){
-		static SimControl sc;
-		return sc;
+		 if(!SimControl::simControl){
+		 	LockGuard lock(mutex);
+ 			if(!SimControl::simControl){
+ 				SimControl::simControl=new SimControl();
+		 	}
+		 }
+		 return *SimControl::simControl;
 	}
 	///restartuje symulator Gazebo
 	void restart();
@@ -46,7 +53,7 @@ public:
 	void setSimPos(const char* name, Pose &position);
 	/// wypelnia x,y,rot odpowiednio do polozenia modelu o nazwie name na planszy
 //	void getSimPos(const char* name, double &x,double &y,double  &rot);
-	void getModelPos(std::string modelName,Pose &positions);
+	double getModelPos(std::string modelName,Pose &position);
 	///powoduje zapisanie przez gazebo pozycji zadanych obiektów do /tmp/gazebo_poses.txt
 	void getAllPos(std::map<std::string,Pose> &positions);
 	///do komunikacji z plikiem gazebo_poses.txt, umożliwia zablokowanie zapisu
@@ -67,6 +74,8 @@ public:
 
 	virtual ~SimControl();
 private:
+	static SimControl * simControl;
+	static pthread_mutex_t  mutex;
 	/// wysyla komende do symulatora np "get_pose"
 //	void sendRequestSimIface(const char *name,gazebo::SimulationRequestData::Type type);
 	/// oczekuje az symulator odpowie na komende "get_pose"

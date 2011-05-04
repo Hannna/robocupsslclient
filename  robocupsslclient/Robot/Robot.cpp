@@ -27,7 +27,8 @@ std::ostream& operator<<(std::ostream& os,const Robot::robotID& id){
 	return os<<"unknown";
 }
 
-Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robotName( robotName_ ), id( Robot::getRobotID(robotName_) )
+Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robotName( robotName_ ), id( Robot::getRobotID(robotName_) ),
+		log( getLoggerPtr ( robotName.c_str() ) )
 {
 	this->posIfaceName=posIfaceName;
 	this->v=Vector2D(0,0);
@@ -114,7 +115,7 @@ std::pair<Vector2D,double> Robot::getVelocity() const
 	vx = posIface->data->velocity.pos.x;
 	vy = posIface->data->velocity.pos.y;
 	w = posIface->data->cmdVelocity.yaw;
-	w = 180*w/M_PI;
+	//w = 180*w/M_PI;
 	posIface->Unlock();
 #endif
 
@@ -149,6 +150,20 @@ bool Robot::kick()const {
 	return true;
 }
 
+bool Robot::isRed(Robot::robotID id_){
+	if(id_ < 0){
+		return true;
+	}
+	else
+		return false;
+}
+bool Robot::isBlue(Robot::robotID id_){
+	if(id_ > 0){
+		return true;
+	}
+	else
+		return false;
+}
 Robot::robotID Robot::getRobotID() const {
 	return this->id;
 }
@@ -196,11 +211,52 @@ void Robot::stop(  ){
 	this->setRelativeSpeed( Vector2D(0,0),0 );
 
 }
+double Robot::calculateAngularVel(GameState & gameState,Robot::robotID robotID, Pose globalTargetPosition){
 
+	//Pose globalTargetPosition = globalTargetPosition_*100;
+	//obrot jaki trzeba było wykonac w poprzednim kroku
+	static double oldAlfaToCel;
+
+    double Ker=0.5;
+    double Ko=20;
+    double currGlobalRobotRot=gameState.getRobotPos( robotID ).get<2>();
+    //pozycja robota w ukladzie wsp zw z plansza
+    Pose currRobotPose=gameState.getRobotPos( robotID );
+
+
+    RotationMatrix rm0(0);
+    Pose reltargetPose_ = globalTargetPosition.transform(currRobotPose.getPosition(),rm0);
+    Pose reltargetPose = reltargetPose_*100;
+    double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;// (M_PI/2);
+    //double rotacjaDocelowa=-atan2(reltargetPose.get<1>(),reltargetPose.get<0>()) ;// (M_PI/2);
+    //macierz obrotu os OY na wprost robota
+    //RotationMatrix rmY(currGlobalRobotRot);
+    //macierz obrotu os OY nw wprost robota
+    //RotationMatrix rmY(-M_PI/2);
+    //pozycja celu w ukladzie wsp zwiazanych z robotem
+    //Pose reltargetPose=globalTargetPosition.transform(currRobotPose.getPosition(),rmY);
+    //targetPosition=rmX.Inverse()*(goToPosition-currentPosition);
+
+    //obrot jaki trzeba wykonac w biezacym kroku
+    double currAlfaToCel = rotacjaDocelowa - currGlobalRobotRot;
+
+    //double currTetaCel=atan( (-reltargetPose.get<1>()) / (reltargetPose.get<0>()));
+    // double angularVel= Ko*(blad rotacji) + Ker(obrotdo celu jaki trzeba bylo wykonac w poprzednm kroku - obrot do celu jaki trzeba wykonac w tymkroku)
+    double angularVel=Ko*(rotacjaDocelowa-currGlobalRobotRot)+ Ker*(oldAlfaToCel - currAlfaToCel);
+
+    oldAlfaToCel=currAlfaToCel;
+
+    double w = fabs(angularVel) > 2*M_PI ? 2*M_PI * sgn(angularVel) : angularVel;
+    LOG_INFO( log,"relative target pose "<<reltargetPose<<std::endl );
+    LOG_INFO(log,"potrzebny obrot do celu "<<currAlfaToCel<<" rotacjaDocelowa "<<rotacjaDocelowa<<" currGlobalRobotRot "<<currGlobalRobotRot<<" calculate angular vel w="<< w);
+    return  w;
+}
+
+/*
 double Robot::calculateAngularVel(GameState & gameState,Robot::robotID robotID, Pose targetPosition){
-    //static GameState oldGameState;
     static double oldTetaCel;
-    double rotacjaDocelowa=atan2(targetPosition.get<0>(),targetPosition.get<2>());
+    //double rotacjaDocelowa=atan2(targetPosition.get<0>(),targetPosition.get<2>());
+    double rotacjaDocelowa=atan2(targetPosition.get<1>(),targetPosition.get<0>());
     double Ker=0.5;
     double Ko=20;
     double currGlobalRobotRot=gameState.getRobotPos( robotID ).get<2>();
@@ -223,9 +279,11 @@ double Robot::calculateAngularVel(GameState & gameState,Robot::robotID robotID, 
 
     oldTetaCel=currTetaCel;
 
-    return angularVel;
+    double w = fabs(angularVel) > 4*M_PI ? 4*M_PI * sgn(angularVel) : angularVel;
+    LOG_INFO(log,"rotacjaDocelowa "<<currTetaCel<<" calculate angular vel w="<< w);
+    return  w;
 }
-
+*/
 Robot::~Robot()
 {
 	std::cout<<"~Robot "<<this->robotName<<std::endl;
@@ -311,7 +369,8 @@ Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & targetPose){
 
 Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose){
 
-	RotationMatrix rmY(currGlobalPose.get<2>());
+	RotationMatrix rmY( currGlobalPose.get<2>() );
+	//RotationMatrix rmY( (M_PI/2) - currGlobalPose.get<2>()   );
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
 	Vector2D targetRelPosition=rmY.Inverse()*(targetGlobalPose.getPosition()-currGlobalPose.getPosition());
 	return calculateVelocity( currVel, Pose(targetRelPosition.x,targetRelPosition.y,0));

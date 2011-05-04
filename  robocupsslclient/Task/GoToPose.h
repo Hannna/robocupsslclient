@@ -25,7 +25,7 @@ private:
 
 	RRTPlanner * rrt;
 	std::list<Pose>  path;
-	const Pose & goalPose;
+	const Pose goalPose;
 	bool serialize;
 
 	double currSimTime;

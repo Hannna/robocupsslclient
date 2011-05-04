@@ -14,13 +14,12 @@
 #include "../Thread/Thread.h"
 #include <boost/thread/mutex.hpp>
 
-
-//class Videoserver;
 class Task;
 typedef boost::weak_ptr <Task> TaskWeakPtr;
 typedef boost::shared_ptr <Task> TaskSharedPtr;
 //typedef Task* TaskPtr;
 //typedef boost::scoped_ptr <Task> TaskPtr;
+
 
 
 class Task {
@@ -79,5 +78,7 @@ private:
 	Task& operator=(const Task&);
 
 };
+
+std::ostream & operator<<(std::ostream & os, const Task::status & status );
 
 #endif /* TASK_H_ */

@@ -148,14 +148,15 @@ int main(int argc, char*argv[],char *envp[]){
     int sleep_status;
     if(Config::getInstance().isTestMode()){
         std::cout<<"starting test mode"<<std::endl;
-        //RefereeClient referee;
-        //referee.start();
+
+        Videoserver::getInstance().start(NULL);
+
+        RefereeClient referee;
+        referee.start();
 
         //while(referee.getCommand()!=RefereeCommands::start){
         //	usleep(1000);
         //};
-
-        Videoserver::getInstance().start(NULL);
 
         TestManager testManager;
         struct timespec req;

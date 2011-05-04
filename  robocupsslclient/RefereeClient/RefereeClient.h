@@ -3,6 +3,7 @@
 
 #include "../Thread/Thread.h"
 #include "../queue.h"
+#include "../Logger/Logger.h"
 
 #include <boost/thread/mutex.hpp>
 #include <boost/asio.hpp>
@@ -27,7 +28,7 @@ namespace RefereeCommands{
 	typedef enum Command_{
 		//Control commands
 			halt,// 	                        H
-			stop,// 	                        S
+			stopGame,// 	                        S
 			ready,// 	                        ' '
 			start,// 	                        s
 		//Game Notifications
@@ -90,6 +91,8 @@ public:
         GameStatePacket gameStatePacket;
         const static int port = 10001;
         boost::mutex mutex_;
+
+        const log4cxx::LoggerPtr log;
 
 };
 
