@@ -50,28 +50,28 @@ void TestManager::addTest(Tests::TestKind testKind){
 	funcPtr test;
     switch(testKind){
     	case velocity: {
-    		LOG_DEBUG(logger,"not supported test");
-        /*    Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
+    		//LOG_DEBUG(logger,"not supported test");
+            Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
             std::vector<boost::tuple<double,double,double> > tests=Config::getInstance().getVelTests();
             std::vector<boost::tuple<double,double,double> >::const_iterator ii=tests.begin();
             for(;ii!=tests.end();ii++){
             	Vector2D vel(ii->get<0>(),ii->get<1>());
-                sleep(0);
+                sleep(1);
                 testVel(vel,ii->get<2>(),testRobot,Config::getInstance().getTestEstimatedTime());
             }
-            */
+
     	}
         break;
         case position: {
-        	LOG_DEBUG(logger,"not supported test");
-        /*	Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
+        	//LOG_DEBUG(logger,"not supported test");
+        	Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
             std::vector<Pose> tests=Config::getInstance().getPoseTests();
             std::vector<Pose>::const_iterator ii = tests.begin();
             for(;ii!=tests.end();ii++){
             	Vector2D vel(ii->get<0>(),ii->get<1>());
                 testPose(testRobot,*ii);
             }
-            */
+
        }
        break;
        case acceleration: {
@@ -103,13 +103,19 @@ void TestManager::addTest(Tests::TestKind testKind){
 		break;
 		case motion: {
 			LOG_DEBUG(logger,"not supported test");
-			/*Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
+			Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
 
-			testMotion(Config::getInstance().getRRTGoalPose(),Videoserver::getInstance(),testRobot);
-			testMotion(Pose (1,0,0),Videoserver::getInstance(),testRobot);
-			testMotion(Pose (1,1,0),Videoserver::getInstance(),testRobot);
-			testMotion(Pose (-1,-1,0),Videoserver::getInstance(),testRobot);
-			*/
+			//testMotion(Config::getInstance().getRRTGoalPose(),Videoserver::getInstance(),testRobot);
+			Pose tmp(0.5,0.5,0);
+			testMotion( Config::getInstance().field.FIELD_MIDDLE_POSE + tmp ,Videoserver::getInstance(),testRobot);
+			testMotion( Config::getInstance().field.FIELD_MIDDLE_POSE - tmp,Videoserver::getInstance(),testRobot);
+			tmp = Pose(0.5,0,0);
+			testMotion( Config::getInstance().field.FIELD_MIDDLE_POSE + tmp ,Videoserver::getInstance(),testRobot);
+			testMotion( Config::getInstance().field.FIELD_MIDDLE_POSE - tmp,Videoserver::getInstance(),testRobot);
+			tmp = Pose(0,0.5,0);
+			testMotion( Config::getInstance().field.FIELD_MIDDLE_POSE + tmp ,Videoserver::getInstance(),testRobot);
+			testMotion( Config::getInstance().field.FIELD_MIDDLE_POSE - tmp,Videoserver::getInstance(),testRobot);
+
 		}
 		break;
 		case rotation: {

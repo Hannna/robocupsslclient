@@ -6,6 +6,7 @@
  */
 
 #include "GoToPose.h"
+#include "KickBall.h"
 #include "../RRT/RRTPlanner.h"
 
 GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose),serialize( Config::getInstance().isDebugMode() ) {
@@ -13,9 +14,30 @@ GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose),s
 	currSimTime=0;
 	lastSimTime=0;
 	currSimTime=video.updateGameState(currGameState);
+	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose );
 }
 
 Task* GoToPose::nextTask(){
+
+	//jesli robot ma pilke i warto oddac strzal to strzel
+	if( this->evaluationModule.isRobotOwnedBall( this->robot ) ){
+		//jesli ustawiono flage zezwalajaca na strzal
+		if( (this->predicates & Task::kick_if_we_can) > 0){
+			//oblicz czy wato strzelic na bramke
+			std::pair<double,double> ang=evaluationModule.aimAtGoal( robot->getRobotName() );
+
+			double score =
+			( (ang.first * ang.second) > 0 ) ? fabs( ang.first + ang.second ) : fabs( ang.first) + fabs(ang.second );
+			LOG_INFO(log, "current position score = "<<score );
+
+			//jesli warto strzelic na bramke
+			if( score > EvaluationModule::minOpenAngle ){
+				LOG_INFO(this->log," GoToPose -> KickBall ");
+				return new KickBall( robot, ( ang.first + ang.second )/2  ) ;
+			}
+		}
+	}
+
 	return NULL;
 }
 
@@ -37,7 +59,7 @@ Task::status GoToPose::run(void* arg, int steps){
 	//rotacja robota
 	double robotRotation=0;
 
-	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose <<"from "<< currRobotPose);
+	LOG_DEBUG(log, "robot "<<robot->getRobotName()<<" run GoToPose Task, goto "<<this->goalPose <<"from "<< currRobotPose);
 
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
 	Vector2D targetRelPosition;
@@ -117,7 +139,7 @@ Task::status GoToPose::run(void* arg, int steps){
 			}
 			else{
 				robot->setRelativeSpeed(Vector2D(0.0,0.0),0);
-				LOG_WARN(log,"RRT to "<<goalPose<<" Error: "<<status);
+				LOG_WARN(log,"RRT to "<<this->goalPose<<" Error: "<<status);
 				delete rrt;
 				rrt = NULL;
 				if(status==RRTPlanner::RobotCollision)

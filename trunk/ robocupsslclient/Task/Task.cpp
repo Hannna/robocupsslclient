@@ -7,12 +7,34 @@
 
 #include "Task.h"
 
+std::ostream & operator<<(std::ostream & os, const Task::status & status ){
+
+	switch(status){
+		case Task::collision:
+			os<<"Task::collision";
+			break;
+		case Task::error:
+			os<<"Task::error";
+			break;
+		case Task::not_completed:
+			os<<"Task::not_completed";
+			break;
+		case Task::ok:
+			os<<"Task::ok";
+			break;
+		default:
+			os<<"Task:: unknown";
+			break;
+	}
+	return os;
+}
 
 Task::Task(Robot* robot_):video(Videoserver::getInstance()), robot(robot_),
 							log(getLoggerPtr (robot_->getRobotName().c_str() ) ),
 							evaluationModule( EvaluationModule::getInstance() ){
 	stopTask=false;
 	this->currGameState=GameStatePtr( new GameState() );
+	this->predicates = 0;
 }
 
 void Task::stop(){

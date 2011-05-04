@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <boost/interprocess/sync/scoped_lock.hpp>
+#include "../GameState/GameState.h"
+#include "../VideoServer/Videoserver.h"
+#include "../EvaluationModule/EvaluationModule.h"
 
 using boost::asio::ip::udp;
 
@@ -13,7 +16,7 @@ std::ostream& operator<<(std::ostream& os, const GameStatePacket& gsp){
 		" time_remaining "<<(int)gsp.time_remaining;
 	return os;
 }
-RefereeClient::RefereeClient()
+RefereeClient::RefereeClient():Thread(), log(getLoggerPtr ("app_debug"))
 {
 	bzero( &gameStatePacket, sizeof(gameStatePacket) );
 	gameStatePacket.cmd='H';
@@ -22,7 +25,26 @@ RefereeClient::RefereeClient()
 
 void RefereeClient::execute(void* ){
 
-    readMsgFromBox();
+	GameStatePtr gameState( new GameState() );
+	double lastSimTime = 0,currSimTime = 0;
+	EvaluationModule & evaluationModule = EvaluationModule::getInstance();
+	Videoserver & video = Videoserver::getInstance();
+	while(true){
+		if( lastSimTime < ( currSimTime=video.updateGameState( gameState ) ) ){
+			lastSimTime = currSimTime;
+
+			EvaluationModule::ballState bState = evaluationModule.getBallState(Robot::red0);
+			LOG_INFO(log," ballPose "<<gameState->getBallPos()<<" ballState "<<bState);
+			//sprawdz czy pilka jest w boisku
+			if( bState == EvaluationModule::occupied_theirs || bState == EvaluationModule::out || bState == EvaluationModule::in_goal ){
+				//
+				//LOG_INFO(log," ballPose "<<gameState->getBallPos()<<" ballState "<<bState);
+				SimControl::getInstance().restart();
+			}
+		}
+
+	}
+    //readMsgFromBox();
 }
 
 /*
@@ -153,7 +175,7 @@ RefereeCommands::Command RefereeClient::castToCommand(const char c) {
 	Command cmd;
 	switch(c){
 		case 'H': cmd=halt;break;
-		case 'S': cmd=stop;break;
+		case 'S': cmd=stopGame;break;
 		case ' ': cmd=ready;break;
 		case 's': cmd=RefereeCommands::start;break;
 		case '1': cmd=first_half;break;

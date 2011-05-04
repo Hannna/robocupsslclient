@@ -71,7 +71,10 @@ public:
 	Pose(double x,double y,double rot):boost::tuple<double,double,double>(x,y,rot){
 		;
 	}
-	const Pose operator-(const Pose & pose){
+	Pose(Vector2D v,double rot):boost::tuple<double,double,double>(v.x,v.y,rot){
+		;
+	}
+	const Pose operator-(const Pose & pose) const {
 		Pose p(this->get<0>()-pose.get<0>(),
 				this->get<1>()-pose.get<1>(),
 				this->get<2>()-pose.get<2>() );
@@ -94,7 +97,7 @@ public:
 				this->get<1>()*a,
 				this->get<2>()*a );
 	}
-	const Pose operator+(const Pose a){
+	const Pose operator+(const Pose a) const{
 		return Pose( this->get<0>()+a.get<0>(),
 				this->get<1>()+a.get<1>(),
 				this->get<2>()+a.get<2>() );

@@ -87,7 +87,7 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
 		}
 	}
 
-    LOG_DEBUG( logger," starting rrt nr "<<rrtNr++<<" simTime "<<simTime<<"  goal Pose "<<goalPose
+    LOG_DEBUG( logger," creating rrt nr "<<rrtNr++<<" simTime "<<simTime<<"  goal Pose "<<goalPose
     		<<" and currPose "<<currState->getRobotPos(robotId)
     		<<" use "<<i<<" way points" );
 
@@ -200,6 +200,10 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	while( (goalPose.distance( nextRobotPose ) > minDistance ) && nodeNr< RRTPlanner::maxNodeNumber ) {
 		//wybieram tymczasowy pkt docelowy w zaleznosci od odleglosci robota do najblizszej przeszkody
 
+		if( measureTime(stop, &startTime) > 200 ){
+			LOG_FATAL(logger," FATAL RRT take over than 200 ms");
+			break;
+		}
 
 		/*jesli poszerzenie najblizszego wezla w kierunku goalPose jest niemozliwe (przeszkoda)
 		 * to chose target nie bieze goalPose nie jest brane pod uwage
@@ -344,8 +348,9 @@ GameStatePtr RRTPlanner::getNextState(){
     }
 
 	if(this->root->children.empty()){
-		assert(false);
-        return GameStatePtr();
+		return this->root->getGameState();
+		//assert(false);
+        //return GameStatePtr();
 	}
 
 	if(this->resultNode.get()!=NULL)

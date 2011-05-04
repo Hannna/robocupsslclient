@@ -68,6 +68,7 @@ public:
 
 	Vector2D getRobotVelocity(std::string name);
 	Vector2D getRobotVelocity(Robot::robotID id);
+	double getRobotAngularVelocity(Robot::robotID id);
 
 	Pose getBallPos();
 	GameState & operator=(const GameState &gameState);
