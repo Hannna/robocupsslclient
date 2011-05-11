@@ -29,6 +29,7 @@ void * Thread::threadFunction(void * pthis)
    Thread * pt = (Thread*)pthis;
    pt->run( pt->arg() );
 
+   std::cout<<"exit from thread"<<std::endl;
    return 0;
 }
 

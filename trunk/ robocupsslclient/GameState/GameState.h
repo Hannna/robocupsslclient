@@ -56,21 +56,21 @@ public:
 	void updateBallData(Vector2D pos,Vector2D v);
 	void updateSimTime(double simTime);
 
-	Pose getRobotPos(std::string name);
-	Pose getRobotPos(Robot::robotID id);
+	Pose getRobotPos(std::string name) const ;
+	Pose getRobotPos(const Robot::robotID id) const ;
 
-	double getSimTime();
+	double getSimTime() const ;
 	void setSimTime(double simTime_){this->simTime=simTime_;};
 	/*@brief zwraca pozycje wszystkich robotwo poza podanym jako argument
 	 *
 	 */
-	std::vector<Pose> getEnemyRobotsPos(const Robot::robotID & id);
+	std::vector<Pose> getEnemyRobotsPos(const Robot::robotID & id) const ;
 
-	Vector2D getRobotVelocity(std::string name);
-	Vector2D getRobotVelocity(Robot::robotID id);
-	double getRobotAngularVelocity(Robot::robotID id);
+	Vector2D getRobotVelocity(const std::string name) const ;
+	Vector2D getRobotVelocity(const Robot::robotID id) const ;
+	double getRobotAngularVelocity(const Robot::robotID id) const ;
 
-	Pose getBallPos();
+	Pose getBallPos() const ;
 	GameState & operator=(const GameState &gameState);
 	friend std::ostream& operator<<(std::ostream& os,const GameState& gs);
 
@@ -115,6 +115,7 @@ private :
 	///dane dotyczace robotow
 	std::map<Robot::robotID,RobotState> robots;
 	typedef std::map<Robot::robotID,RobotState>::iterator RobotsPoseIt;
+	typedef std::map<Robot::robotID,RobotState>::const_iterator RobotsPoseConstIt;
 	///dane dotyczace pilki
 	Ball ball;
 	//czas pomiaru(z symulatora) stanu gry

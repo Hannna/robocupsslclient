@@ -13,7 +13,7 @@ Videoserver * Videoserver::video;
 goalArea Videoserver::redGoal;
 goalArea Videoserver::blueGoal;
 
-Videoserver::Videoserver()
+Videoserver::Videoserver():log( getLoggerPtr ("app_debug") )
 {
     pthread_mutex_init (&Videoserver::mutex, NULL);
     pthread_cond_init (&Videoserver::update_game_state_cv, NULL);
@@ -25,7 +25,7 @@ Videoserver::Videoserver()
 #ifdef GAZEBO
 	lastUpdateTime = 0;
 #endif
-    std::cout<<"create VIDEOSERVER"<<std::endl;
+    LOG_INFO(log,"create VIDEOSERVER");
 }
 
 double Videoserver::updateGameState(GameStatePtr gameState_) const{
@@ -129,7 +129,7 @@ void updateVideo(int){
 }
 
 void Videoserver::execute(void * arg){
-    std::cout<<"Start videoserver"<<std::endl;
+	LOG_INFO(log,"Start videoserver");
 
 	sigset_t set;
 	sigemptyset (&set);
@@ -161,7 +161,8 @@ void Videoserver::testVideoserver(){
 
     for(int i=0;i< 100;i++){
         double currSimTime=video->updateGameState(currGameState);
-        std::cout<<"data from "<<currSimTime<<"[s] sim time"<<(*currGameState)<<std::endl;
+    	LOG_INFO(log,"data from "<<currSimTime<<"[s] sim time"<<(*currGameState) );
+        //std::cout<<"data from "<<currSimTime<<"[s] sim time"<<(*currGameState)<<std::endl;
         sleep(1);
     }
 

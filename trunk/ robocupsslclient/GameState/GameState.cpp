@@ -48,9 +48,9 @@ void GameState::updateBallData(Vector2D pos,Vector2D v){
 void GameState::updateSimTime(double simTime){
 	this->simTime=simTime;
 }
-std::vector<Pose> GameState::getEnemyRobotsPos(const Robot::robotID & id){
+std::vector<Pose> GameState::getEnemyRobotsPos(const Robot::robotID & id) const {
 	std::vector<Pose> result;
-	RobotsPoseIt ii=this->robots.begin();
+	RobotsPoseConstIt ii=this->robots.begin();
 	for(;ii!=this->robots.end();ii++){
 		if( ii->first != id)
 			result.push_back(ii->second.pos);
@@ -66,21 +66,30 @@ Vector2D GameState::getRobotVelocity(std::string name){
 	return this->robots[name].v;
 }
 */
-Pose GameState::getRobotPos(Robot::robotID id){
-	return this->robots[id].pos;
+Pose GameState::getRobotPos(const Robot::robotID id) const {
+	RobotsPoseConstIt  r = robots.find(id);
+	assert( r != robots.end() );
+	return r->second.pos;
+	// return robots[id].pos;
 }
 
-Vector2D GameState::getRobotVelocity(Robot::robotID id){
-	return this->robots[id].v;
+Vector2D GameState::getRobotVelocity(const Robot::robotID id) const {
+	RobotsPoseConstIt  r = robots.find(id);
+	assert( r != robots.end() );
+	return r->second.v;
+	//return this->robots[id].v;
 }
 
-double GameState::getRobotAngularVelocity(Robot::robotID id){
-	return this->robots[id].w;
+double GameState::getRobotAngularVelocity(const  Robot::robotID id) const {
+	RobotsPoseConstIt  r = robots.find(id);
+	assert( r != robots.end() );
+	return r->second.w;
+	//return this->robots[id].w;
 }
-Pose GameState::getBallPos(){
+Pose GameState::getBallPos() const {
 	return Pose(this->ball.pos.x,this->ball.pos.y,0.0);
 }
-double GameState::getSimTime(){
+double GameState::getSimTime() const {
 	return this->simTime;
 }
 

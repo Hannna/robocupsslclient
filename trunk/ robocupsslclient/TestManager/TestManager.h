@@ -28,7 +28,8 @@ namespace Tests{
             taskScheduling,
             ballDribbling,
             kick,
-            testTactics,
+            testShootTactic,
+            testPassTactic,
             refereeBox
 
             } TestKind;

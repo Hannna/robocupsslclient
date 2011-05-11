@@ -197,7 +197,7 @@ double SimControl::getModelPos(std::string model_name_,Pose &position)
 	LockGuard lock(mutex);
 	//this->wait();
 	std::string model_name=std::string("noname::") + model_name_;
-	int i=0;
+	//int i=0;
 	libgazebo::Pose pose;
 	bool result = simIface->GetPose2d(model_name.c_str(),pose );
 	if(!result)

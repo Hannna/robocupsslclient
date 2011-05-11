@@ -18,10 +18,12 @@ public:
     *
     */
 	KickBall(Robot * robot, double rotation);
+	KickBall( Robot * robot );
 	Task* nextTask();
 	//TaskSharedPtr& nextTask();
 	virtual ~KickBall();
 protected:
+	const bool kickNow;
     const double rotation;
 	virtual Task::status run(void*, int steps=-1);
 };

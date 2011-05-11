@@ -150,11 +150,17 @@ void TestManager::addTest(Tests::TestKind testKind){
 			this->tests_fun.push_back( std::pair<funcPtr,void*>(test,NULL) );
 		}
 		break;
-		case testTactics:{
+		case testShootTactic:{
 			static Robot red0(std::string("red0"),ifaceName);
-			test=reinterpret_cast<funcPtr>(&testShootTactics);
+			test=reinterpret_cast<funcPtr>(&testShootTacticFunc);
 			this->tests_fun.push_back( std::pair<funcPtr,void*>(test,reinterpret_cast<void*>(&red0) ) );
 		}
+		break;
+		case testPassTactic:{
+				static Robot red0(std::string("red0"),ifaceName);
+				test=reinterpret_cast<funcPtr>(&testPassTacticFunc);
+				this->tests_fun.push_back( std::pair<funcPtr,void*>(test,reinterpret_cast<void*>(&red0) ) );
+			}
 		break;
 		case refereeBox :{
 			LOG_DEBUG(logger,"not supported test");

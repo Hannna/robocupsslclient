@@ -27,6 +27,34 @@ std::ostream& operator<<(std::ostream& os,const Robot::robotID& id){
 	return os<<"unknown";
 }
 
+std::list<Robot::robotID> Robot::getAllRobots(){
+	std::list<Robot::robotID> robots;
+	robots.push_back( Robot::red0 );
+	robots.push_back( Robot::red1 );
+	robots.push_back( Robot::red2 );
+	robots.push_back( Robot::blue0);
+	robots.push_back( Robot::blue1);
+	robots.push_back( Robot::blue2);
+	return robots;
+}
+
+std::list<Robot::robotID> Robot::getBlueTeam(){
+	std::list<Robot::robotID> robots;
+	robots.push_back( Robot::blue0);
+	robots.push_back( Robot::blue1);
+	robots.push_back( Robot::blue2);
+	return robots;
+
+}
+
+std::list<Robot::robotID> Robot::getRedTeam(){
+	std::list<Robot::robotID> robots;
+	robots.push_back( Robot::red0 );
+	robots.push_back( Robot::red1 );
+	robots.push_back( Robot::red2 );
+	return robots;
+}
+
 Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robotName( robotName_ ), id( Robot::getRobotID(robotName_) ),
 		log( getLoggerPtr ( robotName.c_str() ) )
 {
@@ -211,7 +239,12 @@ void Robot::stop(  ){
 	this->setRelativeSpeed( Vector2D(0,0),0 );
 
 }
-double Robot::calculateAngularVel(GameState & gameState,Robot::robotID robotID, Pose globalTargetPosition){
+
+double Robot::calculateAngularVel(const GameState & gameState,const Robot::robotID robotID,const  Vector2D & globalTargetPosition){
+	Pose p(globalTargetPosition,0.0);
+	return calculateAngularVel( gameState, robotID, p);
+}
+double Robot::calculateAngularVel(const GameState & gameState,const Robot::robotID robotID,const  Pose & globalTargetPosition){
 
 	//Pose globalTargetPosition = globalTargetPosition_*100;
 	//obrot jaki trzeba było wykonac w poprzednim kroku
@@ -225,7 +258,7 @@ double Robot::calculateAngularVel(GameState & gameState,Robot::robotID robotID, 
 
 
     RotationMatrix rm0(0);
-    Pose reltargetPose_ = globalTargetPosition.transform(currRobotPose.getPosition(),rm0);
+    Pose reltargetPose_ = globalTargetPosition.transform( currRobotPose.getPosition(),rm0 );
     Pose reltargetPose = reltargetPose_*100;
     double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;// (M_PI/2);
     //double rotacjaDocelowa=-atan2(reltargetPose.get<1>(),reltargetPose.get<0>()) ;// (M_PI/2);
@@ -247,8 +280,9 @@ double Robot::calculateAngularVel(GameState & gameState,Robot::robotID robotID, 
     oldAlfaToCel=currAlfaToCel;
 
     double w = fabs(angularVel) > 2*M_PI ? 2*M_PI * sgn(angularVel) : angularVel;
-    LOG_INFO( log,"relative target pose "<<reltargetPose<<std::endl );
-    LOG_INFO(log,"potrzebny obrot do celu "<<currAlfaToCel<<" rotacjaDocelowa "<<rotacjaDocelowa<<" currGlobalRobotRot "<<currGlobalRobotRot<<" calculate angular vel w="<< w);
+//    LOG_INFO( log,"relative target pose "<<reltargetPose<<std::endl );
+//    LOG_INFO(log,"potrzebny obrot do celu "<<currAlfaToCel<<" rotacjaDocelowa "<<rotacjaDocelowa<<" currGlobalRobotRot "<<currGlobalRobotRot<<" calculate angular vel w="<< w);
+
     return  w;
 }
 

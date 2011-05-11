@@ -36,6 +36,105 @@ EvaluationModule::EvaluationModule():video(Videoserver::getInstance()), appConfi
 {
 
 }
+
+score EvaluationModule::aimAtTeamMate(Robot::robotID shootingRobotID, Robot::robotID goalRobotID){
+	GameStatePtr gameState( new GameState() );
+	video.updateGameState( gameState );
+
+	score score_ = 0;
+
+	Pose shootingRobotPose=gameState->getRobotPos( shootingRobotID );
+	Pose goalRobotPose=gameState->getRobotPos( goalRobotID );
+
+	//obliczam wspolrzedna srodka robota do ktorego kierowane jest podanie w ukladzie wsp zw z robotem strzelajacym
+	RotationMatrix rm( shootingRobotPose.get<2>() );
+
+	Pose recvPassRelPos = goalRobotPose.transform( shootingRobotPose.getPosition() , rm );
+
+	//jesli wsp x jest bliska 0 i roboty maja przeciwna rotace to mozna zrealizowac podanie
+	if( pow(recvPassRelPos.get<0>(),2) < 0.05 ){
+		//roboty maja rotacje odpowiednia do siebie gdy roznica jest rowna -M_PI
+		double deviation = pow(  shootingRobotPose.get<2>() - goalRobotPose.get<2>()  + M_PI, 2 );
+		if( deviation < 0.05   ){
+			LOG_DEBUG( log," mozna podac deviation="<<deviation );
+			//std::cout<<" mozna podac deviation="<<deviation<<std::endl;
+			score_ = 1.0 -deviation;
+		}
+	}
+
+	return score_;
+}
+
+
+/*
+std::pair<double, double> EvaluationModule::aimAtTeamMate(Robot::robotID shootingRobotID, Robot::robotID goalRobotID){
+	GameStatePtr gameState( new GameState() );
+	video.updateGameState( gameState );
+	Pose shootingRobotPose=gameState->getRobotPos( shootingRobotID );
+	Pose goalRobotPose=gameState->getRobotPos( goalRobotID );
+
+	//Obliczam kat do robota bedacego celem
+	//wersor osi ox
+	Vector2D ox(0,1);
+	double alfa1;
+	double alfa2;
+	double dist;
+
+	Pose goalPose = gameState->getRobotPos(goalRobotID);
+
+	RotationMatrix rm( goalRobotPose.get<2>() );
+	//wspolrzedna kranca driblerra w ukladzie wspolrzednych zwiazanym z robotem
+	Pose p1( -0.035,0.06, 0 );
+
+	Pose p1global = p1.transform( goalRobotPose.getPosition(), rm );
+	Pose p1l = p1global.translation( shootingRobotPose.getPosition() );
+
+	Pose p2(0.035,0.06, 0);
+	Pose p2global = p2.transform( goalRobotPose.getPosition(), rm );
+
+	Pose p2r = p2global.translation( shootingRobotPose.getPosition() );
+
+	alfa1 = p1l.getPosition().angleTo(ox);
+	alfa2 = p2r.getPosition().angleTo(ox);
+
+	dist = shootingRobotPose.getPosition().distance( goalRobotPose.getPosition() );
+	//dist = appConfig.field.TOP_GOAL_MID_POSITION.distance( robotPose.getPosition() );
+
+
+    LOG_DEBUG( log," open angle to the red top goal min "<<alfa1<<" max "<<alfa2 );
+
+
+	double alfamin = alfa1 < alfa2 ? alfa1 : alfa2;
+	double alfamax = alfa1 > alfa2 ? alfa1 : alfa2;
+
+	Set maxOpenAngle( alfamin, alfamax, dist );
+
+	Set tmpAng(maxOpenAngle);
+
+	std::list< Set > angles;
+	angles.push_back(maxOpenAngle);
+
+	std::vector<Pose> positions=gameState->getEnemyRobotsPos( shootingRobotID );
+	std::vector<Pose>::iterator ii=positions.begin();
+	for(ii = positions.begin(); ii!=positions.end(); ii++){
+		Set ang = findObstacleCoverAngles( shootingRobotPose,*ii);
+
+		if( ang.d > 0 ){
+			addToList( ang , angles);
+		}
+	}
+
+	//znajdz najszerszy przedzial w kolekcji angles
+	std::list<Set>::iterator iii=
+		std::max_element(angles.begin(),angles.end(),
+			  boost::bind( &Set::width,_1) );
+
+
+	return std::pair<double,double>( (*iii).angmin, (*iii).angmax );
+
+}
+*/
+
 /*
 *@ zwraca najwiekszy otwarty kat prowadzacy do celu
 */
@@ -59,10 +158,10 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     if(robotName.compare(0,3,"red")==0){
     	if(currGameState->getRedGoalArea()==bottom){
     	    Pose p1(appConfig.field.BOTTOM_GOAL_LEFT_CORNER.x, appConfig.field.BOTTOM_GOAL_LEFT_CORNER.y, 0);
-    	    p1.translation(robotPose.getPosition());
+    	    p1 = p1.translation(robotPose.getPosition());
 
     	    Pose p2(appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.x, appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.y, 0);
-    	    p2.translation(robotPose.getPosition());
+    	    p2 = p2.translation(robotPose.getPosition());
 
     	    //Vector2D v1=appConfig.field.BOTTOM_GOAL_LEFT_CORNER - robotPose.getPosition();
     	    //Vector2D v2=appConfig.field.BOTTOM_GOAL_RIGHT_CORNER - robotPose.getPosition();
@@ -157,6 +256,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 }
 
 EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
+
 	GameStatePtr gameState( new GameState() );
     video.updateGameState( gameState );
 
@@ -450,4 +550,6 @@ std::ostream & operator<<(std::ostream & os, const EvaluationModule::ballState &
 	default:
 		break;
 	};
+
+	return os;
 }

@@ -10,7 +10,8 @@
     @brief Modul odpowiadajacy za ocene sytuacji na planszy
 */
 namespace evaluation{
-
+//okresla szanse powodzenia dango ruchu/akcji
+//score zawiera się w [0,1] gdzie 0 oznacza brak powodzenia 1 pewny sukces
 typedef double score;
 
 }
@@ -40,7 +41,11 @@ public:
      /*@brief zwraca przedzial kata x=min;y=max
      */
      std::pair<double, double> aimAtGoal(const std::string& robotName);
-     score aimAtTeamMate();
+
+     /*@brief zwraca przedzial kata x=min;y=max
+      *
+      */
+     score aimAtTeamMate(Robot::robotID myRobotID, Robot::robotID goalRobotID);
 
      ballState getBallState(Robot::robotID);
 

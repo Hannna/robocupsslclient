@@ -16,6 +16,7 @@
 #include "../Logger/Logger.h"
 #include "../Thread/Thread.h"
 #include "../Lock/Lock.h"
+#include "../Logger/Logger.h"
 
 /**
  *  @author Kamil Muszynski i Maciej Gąbka
@@ -87,6 +88,8 @@ public:
 //czas co jaki videoserwer pobiera inf z symulatora
 	static const int updateDeltaTime=100000; //100[ms]
 private:
+	log4cxx::LoggerPtr log;
+
 	virtual void execute(void*) ;
 	/*@brief pobiera z symulatora pozycje wszytskich robotow na planszy oraz pilki
 	 *

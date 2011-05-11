@@ -8,10 +8,12 @@ class ShootTactic: public AbstractTactic
 {
     public:
         ShootTactic(Robot & robot);
-        virtual void execute(void *);
+
         virtual bool isFinish();
         virtual ~ShootTactic();
     protected:
+        virtual void execute(void *);
+
     private:
 };
 

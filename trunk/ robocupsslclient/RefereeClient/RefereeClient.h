@@ -4,7 +4,10 @@
 #include "../Thread/Thread.h"
 #include "../queue.h"
 #include "../Logger/Logger.h"
+#include "../Lock/Lock.h"
 
+#include <queue>
+#include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/asio.hpp>
 
@@ -53,29 +56,31 @@ namespace RefereeCommands{
 			decrease_goal_score,// 	        d 	                D
 			yellow_card,// 	                y 	                Y
 			red_card,// 	                r 	                R
-			cancel//							c
+			cancel,//							c
+			unknown
 	}Command;
 }
 class RefereeClient : public Thread
 {
 public:
 
+	static RefereeClient& getInstance(){
+		static RefereeClient* refereeClient;
 
-
-    public:
-        RefereeClient();
-
-    /*@brief funkcja testujaca do test unit
-    * sprawdza polaczenie z refereebox oraz odbiera komendy
-    */
-        void testConnection();
+		if(!refereeClient){
+			boost::interprocess::scoped_lock<boost::mutex> guard(RefereeClient::mutex_);
+			//LockGuard guard(RefereeClient::mutex_);
+			if(!refereeClient)
+				refereeClient = new RefereeClient();
+		}
+		return *refereeClient;
+	}
 
 	/*@brief zwraca biezacy stan meczu
 	*
 	*/
-        RefereeCommands::Command getCommand();
+     RefereeCommands::Command getCommand()  ;
 
-        virtual ~RefereeClient();
     protected:
         virtual void execute(void*);
 
@@ -85,12 +90,27 @@ public:
         void readMsgFromBox();
 
     private:
-        RefereeCommands::Command castToCommand(const char c);
-    private:
+        //static Mutex mutex_;
+        RefereeCommands::Command castToCommand(const char c) const;
+
+        RefereeClient();
+        RefereeClient(const RefereeClient &);
+        RefereeClient& operator=(const RefereeClient &);
+
+        std::queue<RefereeCommands::Command> newCommands;
+
+    /*@brief funkcja testujaca do test unit
+    * sprawdza polaczenie z refereebox oraz odbiera komendy
+    */
+        void testConnection();
+
+
+        virtual ~RefereeClient();
+
 
         GameStatePacket gameStatePacket;
         const static int port = 10001;
-        boost::mutex mutex_;
+        static boost::mutex mutex_;
 
         const log4cxx::LoggerPtr log;
 

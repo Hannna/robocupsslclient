@@ -16,6 +16,7 @@
 #include "../additional.h"
 #include "../PidRegulator/PidRegulator.h"
 
+#include <list>
 /**
  * @author Maciej Gąbka
  *
@@ -48,6 +49,11 @@ public:
 	static robotID getRobotID(const std::string & robotName);
 	static bool isRed(robotID id);
 	static bool isBlue(robotID id);
+
+	static std::list<robotID> getAllRobots();
+	static std::list<robotID> getBlueTeam();
+	static std::list<robotID> getRedTeam();
+
 	std::string getPosIfaceName() const;
 	/*@brief metoda ustalajaca predkosci liniowa oraz katowa
 	 *
@@ -61,7 +67,8 @@ public:
 	std::pair<Vector2D,double> getVelocity() const;
 	bool kick() const ;
 	bool kickerReady()const;
-	double calculateAngularVel(GameState & gameState,Robot::robotID robotID, Pose targetPosition);
+	double calculateAngularVel(const GameState & gameState,const Robot::robotID robotID, const Pose & targetPosition);
+	double calculateAngularVel(const GameState & gameState,const Robot::robotID robotID, const Vector2D & targetPosition);
 	void stop( );
 
 private :

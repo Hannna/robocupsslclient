@@ -29,11 +29,14 @@ class AbstractTactic : public Thread
 {
     public:
         AbstractTactic(Robot & robot_);
-        virtual void execute(void*) = 0;
         virtual bool isFinish()=0;
-
+        void stopTactic(){
+        	this->stop = true;
+        }
         virtual ~AbstractTactic();
     protected:
+        bool stop;
+        virtual void execute(void*) = 0;
         EvaluationModule& evaluation;
         Robot& robot;
         TaskSharedPtr currentTask;
