@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<gazebo:world 
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" 
+	xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" 
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" 
+	xmlns:window="http://playerstage.sourceforge.net/gazebo/xmlschema/#window" 
+	xmlns:param="http://playerstage.sourceforge.net/gazebo/xmlschema/#param" 
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" 
+	xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom" 
+	xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint" 
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" 
+	xmlns:ui="http://playerstage.sourceforge.net/gazebo/xmlschema/#ui"
+	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering" 
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+ 	xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics" >
+ 	
+ 	
+ 	<verbosity>10</verbosity>
+ 	
+	<physics:ode>
+		<stepTime>0.001</stepTime>
+		<gravity>0 0 -9.8</gravity>		
+		<erp>0.9</erp>
+		<cfm>0.01</cfm>
+		<updateRate>-1</updateRate>
+		<contactSurfaceLayer>0.005</contactSurfaceLayer>
+		<contactMaxCorrectingVel>0.2</contactMaxCorrectingVel>
+	 </physics:ode>
+
+	<rendering:gui>
+    <size>800 600</size>
+    <pos>0 0</pos>
+    <frames>
+        <camera width="550" height="485" x="250" y="60">
+   <!--       <xyz>1.88 3.67912 6.0484</xyz>
+          <rpy>6.15679e-08 82.7 -0.200004</rpy>-->
+          <xyz>-0.55 1.84 0.92</xyz>
+          <rpy>0 23.30 -18.90</rpy>
+        </camera>
+    </frames>
+  </rendering:gui>
+
+<!--
+	<model:physical name="cam1_model">
+		<xyz>-0.44 1.22 0.64</xyz>
+		<rpy>0 21.20 -16.10</rpy>
+
+		<body:empty name="cam1_body">
+			<sensor:camera name="cam1_sensor">
+			<imageSize>640 480</imageSize>
+			<hfov>90</hfov>
+			<nearClip>0.1</nearClip>
+			<farClip>20</farClip>
+			<saveFrames>true</saveFrames>
+			<saveFramePath>/home/kamil/frames-gazebo/</saveFramePath>
+			<updateRate>1.0</updateRate>
+			<controller:generic_camera name="cam1_controller">
+				<updateRate>1.0</updateRate>
+				<interface:camera name="cam1_iface_0" />
+			</controller:generic_camera>
+			</sensor:camera>
+		</body:empty>
+	</model:physical>
+	-->
+
+
+	<rendering:ogre>
+		<shadowTechnique>none</shadowTechnique>
+		<ambient>1.0 1.0 1.0 1.0</ambient>
+		<sky>
+			<material>Gazebo/CloudySky</material>
+		</sky>	
+	</rendering:ogre>
+	
+	<!-- White Directional light -->
+	<model:renderable name="point_white">
+	    <xyz>2.7 3.7 10</xyz>
+	    <light>
+	      <type>point</type>
+	      <diffuseColor>0.8 0.8 0.8</diffuseColor>
+	      <specularColor>0.1 0.1 0.1</specularColor>
+	      <attenuation>10 0.8 0.1 0.0</attenuation>
+		<range>20.0</range>
+	    </light>
+	</model:renderable>
+	
+
+	 <!-- Ground Plane -->
+	<model:physical name="plane1_model">
+		<xyz>0 0 0</xyz>
+		<rpy>0 0 0</rpy>
+		<static>true</static>
+		
+		<body:plane name="plane1_body">
+			<geom:plane name="plane1_geom">
+				
+				<mu1>100.0</mu1>					
+				<kp>2e3</kp>
+				<kd>1</kd>			
+				
+				<normal>0 0 1</normal>
+				<size>1000 1000</size>
+				<segments>10 10</segments>
+				<uvTile>100 100</uvTile>
+				<material>Gazebo/Robocup_green_plane</material>
+			</geom:plane>
+		</body:plane>
+	</model:physical>	
+	
+	<model:physical name="ball">
+		<!--<xyz>0.706 0.6  1.4 </xyz>		-->
+		<!--<xyz>0.7 0.5 0.3</xyz>-->
+		<!--<xyz>1.6 1.5 0.1</xyz>-->
+		<xyz>2.7 3.7 0.05</xyz>
+		<rpy>0.0 0.0 0.0</rpy>	
+		<include embedded="true">
+			<xi:include href="./models/ball.model" />
+		</include>
+	</model:physical>
+	
+	<!--
+
+	<model:physical name="box1_model">
+		<xyz>0.9 0.55 0.05</xyz>
+		<rpy>-45 0 0</rpy>
+		<canonicalBody>box1_body</canonicalBody>
+		<static>true</static>
+
+		<body:box name="box1_body">
+		  <geom:box name="box1_geom">
+			<size>.051 .051 .1</size>
+			<mass>0.1</mass>
+			<kp>2e6</kp>
+			<kd>0</kd>
+			<visual>
+			  <scale>.1 .1 .1</scale>
+			  <mesh>unit_box</mesh>
+			  <material>Gazebo/Rocky</material>
+			</visual>
+		  </geom:box>
+		</body:box>
+	</model:physical> 
+-->
+	
+	<!--Model boiska -->
+	
+	
+	<model:physical name="field_model">
+		<xyz>0.0 0.0 0.0</xyz>
+		<rpy>0.0 0.0 0.0</rpy>
+		<include embedded="true">
+			<xi:include href="./models/field.model" />
+		</include>
+	</model:physical> 
+	
+	
+	<!-- _______________	 modele robotow     ________________________ -->
+
+	<model:physical name="red0">
+		<xyz>2.6 1.3 0.15</xyz>
+		<rpy>0 0.0 0.0</rpy>	
+		
+		<include embedded="true">
+			<xi:include href="models/mgr3.model" />
+		</include>
+	</model:physical> 
+	
+	<model:physical name="red1">		
+		<xyz>3.5 2.0 0.15</xyz>
+		<rpy>0 0.0 0.0</rpy>	
+		
+		<include embedded="true">
+			<xi:include href="models/mgr3.model" />
+		</include>
+	</model:physical>
+	
+	
+	<model:physical name="red2">
+		<xyz>1.8 3.0 0.15</xyz>
+		<rpy>0 0.0 0.0</rpy>	
+		
+		<include embedded="true">
+			<xi:include href="models/mgr3.model" />
+		</include>
+	</model:physical> 
+	
+
+	<model:physical name="red3">
+		<xyz>0.5 2.5 0.3</xyz>
+		<rpy>0 0.0 0.0</rpy>	
+		
+		<include embedded="true">
+			<xi:include href="models/mgr3.model" />
+		</include>
+	</model:physical>
+	
+	<model:physical name="blue0">
+		<xyz>2.0 4.3 0.15</xyz>
+		<rpy>0 0.0 180.0</rpy>	
+		
+		<include embedded="true">
+			<xi:include href="models/mgr3.model" />
+		</include>
+	</model:physical> 
+	
+	<model:physical name="blue1">
+		<xyz>3.2 4.2 0.15</xyz>
+		<rpy>0 0.0 180.0</rpy>	
+		
+		<include embedded="true">
+			<xi:include href="models/mgr3.model" />
+		</include>
+	</model:physical> 
+	
+	<model:physical name="blue2">
+		<xyz>2.8 5.1 0.15</xyz>
+		<rpy>0 0.0 180.0</rpy>	
+		
+		<include embedded="true">
+			<xi:include href="models/mgr3.model" />
+		</include>
+	</model:physical> 
+	
+	<model:physical name="blue3">
+		<xyz>0.6 4 0.3</xyz>
+		<rpy>0 0.0 0.0</rpy>	
+		
+		<include embedded="true">
+			<xi:include href="models/mgr3.model" />
+		</include>
+	</model:physical> 
+	
+
+</gazebo:world>
