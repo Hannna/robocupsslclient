@@ -26,7 +26,8 @@ class Task {
 public:
 	typedef
 	enum predicate_{
-		kick_if_we_can = 0x01
+		kick_if_we_can = 0x01,
+		pass = 0x02
 	} predicate;
 
 	enum status{

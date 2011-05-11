@@ -21,6 +21,8 @@
 #include "../AbstractTactic/AbstractTactic.h"
 #include "../Tactics/ShootTactic.h"
 #include "../Tactics/DefendLine.h"
+#include "../Tactics/Receive_pass.h"
+#include "../Tactics/Pass.h"
 
 
 
@@ -364,7 +366,6 @@ void testMultiRRTThread(){
 
     Videoserver::getInstance().start(NULL);
 
-
     bool serialize=Config::getInstance().isDebugMode();
 	TestRRT testRRTred0(&redRobot0,Pose(5.5,2.5,0),serialize);
 
@@ -438,10 +439,37 @@ void testDribbler(Robot& robot){
 	//sleep(1);
 	*/
 }
-
-void testShootTactics(void * arg){
+void testPassTacticFunc(void * arg){
 #ifdef GAZEBO
-    std::cout<<" start tactic test "<<std::endl;
+    std::cout<<" start pass test "<<std::endl;
+    //warunek na sprawdzenie czy pilka jest w posiadaniu robota
+    //    while( ( dist = ballPose.distance( gameState->getRobotPos( redRobot0.getRobotID() ) ) ) >
+    //               ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
+	Robot* robot = reinterpret_cast<Robot*>(arg);//(std::string("red0"),ifaceName);
+
+	//jedz do pilki
+	GameStatePtr gameState(new GameState());
+	Videoserver::getInstance().updateGameState(gameState);
+
+    //score pass_score = EvaluationModule::getInstance().aimAtTeamMate(Robot::red0,Robot::red1);
+	AbstractTactic * receive_pass= new Receive_pass(*robot);
+	//receive_pass->execute(NULL);
+	receive_pass->start(NULL);
+	//receive_pass->join();
+	//sleep(1);
+	//robot->stop();
+
+	static Robot red1(std::string("red1"),ifaceName);
+	AbstractTactic * pass= new Pass(red1,Robot::red0);
+	//receive_pass->execute(NULL);
+	pass->start(NULL);
+	pass->join();
+#endif //GAZEBO
+}
+
+void testShootTacticFunc(void * arg){
+#ifdef GAZEBO
+    std::cout<<" start shoot tactic test "<<std::endl;
     //warunek na sprawdzenie czy pilka jest w posiadaniu robota
     //    while( ( dist = ballPose.distance( gameState->getRobotPos( redRobot0.getRobotID() ) ) ) >
     //               ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
@@ -452,18 +480,12 @@ void testShootTactics(void * arg){
 	Videoserver::getInstance().updateGameState(gameState);
 
 	static Robot blue0(std::string("blue0"),ifaceName);
-	//Vector2D p1(Config::getInstance().field.TOP_GOAL_LEFT_CORNER.x,Config::getInstance().field.TOP_GOAL_LEFT_CORNER.y -
-	//Pose p1 = gameState->getRobotPos( blue0.getRobotID() );
 	Pose p1 = Pose( Config::getInstance().field.TOP_GOAL_LEFT_CORNER, 0 );
-	//p1=p1+Pose(1.0,1.0,0);
-	//Pose p2 = gameState->getRobotPos( blue0.getRobotID() );
 	Pose p2 = Pose( Config::getInstance().field.TOP_GOAL_RIGHT_CORNER, 0 );
-	//p2=p2-Pose(1.0,1.0,0);
 	double maxDist = 1.0;
 
 	AbstractTactic * defendLine= new DefendLine( blue0, p1.getPosition(),p2.getPosition(), maxDist);
 	defendLine->start();
-	//defendLine->execute(NULL);
 
 	static Robot blue1(std::string("blue1"),ifaceName);
 	//Vector2D p1(Config::getInstance().field.TOP_GOAL_LEFT_CORNER.x,Config::getInstance().field.TOP_GOAL_LEFT_CORNER.y -
@@ -489,7 +511,8 @@ void testShootTactics(void * arg){
 	defendLine2->start();
 
     AbstractTactic * shootTactic= new ShootTactic(*robot);
-    shootTactic->execute(NULL);
+    //shootTactic->execute(NULL);
+    shootTactic->start(NULL);
     shootTactic->join();
     sleep(1);
     robot->stop();

@@ -17,6 +17,7 @@ ShootTactic::ShootTactic(Robot & robot): AbstractTactic(robot)
 
 void ShootTactic::execute(void *){
 
+	LOG_INFO(log,"Start Shoot tactic " );
     EvaluationModule& evaluation=EvaluationModule::getInstance();
     std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName());
 

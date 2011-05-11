@@ -117,20 +117,20 @@ int sys_catch_signals()
 	sigaddset(&signalMask,SIGTTOU); // tty output for background process
 
 	//odblokowuje obsluge sygnalow
-	int status=pthread_sigmask(SIG_UNBLOCK, &signalMask,NULL);
- 	if(status<0){
- 		return -1;
- 	}
+//	int status=pthread_sigmask(SIG_UNBLOCK, &signalMask,NULL);
+// 	if(status<0){
+// 		return -1;
+// 	}
 
- 	struct sigaction signalAction,old;
- 	bzero (&signalAction, sizeof(signalAction));
- 	signalAction.sa_handler=NULL;
-	signalAction.sa_sigaction=sys_signalHandler;
- 	signalAction.sa_flags=SA_SIGINFO;
- 	signalAction.sa_restorer = NULL;
+// 	struct sigaction signalAction,old;
+// 	bzero (&signalAction, sizeof(signalAction));
+// 	signalAction.sa_handler=NULL;
+//	signalAction.sa_sigaction=sys_signalHandler;
+// 	signalAction.sa_flags=SA_SIGINFO;
+// 	signalAction.sa_restorer = NULL;
 
- 	signalAction.sa_mask=signalMask;
-	sigaction(SIGINT, &signalAction,&old);
+// 	signalAction.sa_mask=signalMask;
+//	sigaction(SIGINT, &signalAction,&old);
 
 	return 1;
 }

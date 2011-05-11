@@ -244,7 +244,7 @@ private:
 	static const unsigned int maxNodeNumber=150;
     //margines bezp przy wyznaczaniu sciezki
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
-    static const double SAFETY_MARGIN = 0.05;
+    static const double SAFETY_MARGIN = 0.06;
 
 	//pozycja docelowa robota
 	const Pose goalPose;

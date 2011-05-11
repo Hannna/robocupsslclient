@@ -7,8 +7,13 @@
 
 #include "KickBall.h"
 
-KickBall::KickBall(Robot * robot_, double rotation_): Task(robot_), rotation(rotation_) {
+KickBall::KickBall(Robot * robot_, double rotation_): Task(robot_), kickNow(false), rotation(rotation_) {
 	LOG_INFO(log," Create KickBall task. Angle to shoot "<<rotation_);
+
+}
+
+KickBall::KickBall(Robot * robot_): Task(robot_), kickNow(true),rotation(0) {
+	LOG_INFO(log," Create KickBall task. Shoot now");
 
 }
 
@@ -84,7 +89,8 @@ Task::status KickBall::run(void * arg, int steps ){
     //double w;
     double error;
     Task::status task_status = Task::not_completed;
-    while(!this->stopTask && (steps--)!=0 ){
+
+    while( !this->kickNow &&  !this->stopTask && (steps--)!=0 ){
     	if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
 			currPose = (*currGameState).getRobotPos( robot->getRobotID() );
 			lastSimTime=currSimTime;
@@ -104,8 +110,7 @@ Task::status KickBall::run(void * arg, int steps ){
     }
     LOG_DEBUG(log,"Have good position. Try to kick ball.");
 
-    ///if()
-    if(task_status == Task::ok){
+    if( task_status == Task::ok || this->kickNow ){
     	this->robot->kick();
 		return Task::ok;
     }

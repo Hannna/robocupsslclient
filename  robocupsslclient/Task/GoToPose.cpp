@@ -108,6 +108,7 @@ Task::status GoToPose::run(void* arg, int steps){
 					LOG_DEBUG(log,"From rrtPlanner: next state is null. We arrive target");
 					delete rrt;
 					rrt = NULL;
+					robot->stop();
 					return Task::ok;
 				}
 				nextRobotPose=nextState->getRobotPos( robot->getRobotID() );

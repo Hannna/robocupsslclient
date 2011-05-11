@@ -9,6 +9,8 @@
 #include "EvaluationModule/EvaluationModule.h"
 #include "Test/Test.h"
 
+#include "STP_algorithm/STP.h"
+
 //#define TEST
 
 #ifdef TEST
@@ -66,6 +68,9 @@
 
 #include "TestManager/TestManager.h"
 #include "RefereeClient/RefereeClient.h"
+#include "STP_algorithm/STP.h"
+
+
 
 using namespace Tests;
 
@@ -136,8 +141,10 @@ int main(int argc, char*argv[],char *envp[]){
                 testKind=Tests::ballDribbling;
             if(strncmp(argv[2],"kick",4)==0)
                 testKind=Tests::kick;
-            if(strncmp(argv[2],"tactic",6)==0)
-                testKind=Tests::testTactics;
+            if(strncmp(argv[2],"shoot",5)==0)
+                testKind=Tests::testShootTactic;
+            if(strncmp(argv[2],"pass",4)==0)
+                testKind=Tests::testPassTactic;
         }
         else{
             std::cout<<"missing param"<<std::endl;
@@ -151,20 +158,26 @@ int main(int argc, char*argv[],char *envp[]){
 
         Videoserver::getInstance().start(NULL);
 
-        RefereeClient referee;
-        referee.start();
-
-        //while(referee.getCommand()!=RefereeCommands::start){
-        //	usleep(1000);
-        //};
-
-        TestManager testManager;
         struct timespec req;
         req.tv_sec=0;
         req.tv_nsec=1000000;
         struct timespec rem;
         bzero( &rem, sizeof(rem) );
 
+        //poczekaj az videoserwer pobierze pozycje robotow z symulatora
+        GameStatePtr gameState( new GameState() );
+        while( Videoserver::getInstance().updateGameState( gameState ) < 0.001 ){
+        	nanosleep(&req,&rem);
+        }
+
+        //uruchom klienta sslbox
+        RefereeClient::getInstance().start();
+
+        //uruchom glowny algorytm sterujacy
+        run_stp();
+
+/*		//DO testow algorytmu
+        TestManager testManager;
         for(int i=30;i>0;i--){
 			testManager.addTest(testKind);
 			testManager.startTests();
@@ -172,13 +185,12 @@ int main(int argc, char*argv[],char *envp[]){
 				sleep_status=nanosleep(&req,&rem);
 			};
         }
-
+*/
         Videoserver::getInstance().killThread();
     }
 
     xmlCleanupParser();
 
-    std::cout<<"exit from robocup ssl client bye bye sleep_status"<<sleep_status<<std::endl;
     return 0;
 }
 #endif

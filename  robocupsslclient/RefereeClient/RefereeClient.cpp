@@ -8,6 +8,9 @@
 
 using boost::asio::ip::udp;
 
+//Mutex RefereeClient::mutex_;
+boost::mutex RefereeClient::mutex_;
+
 std::ostream& operator<<(std::ostream& os, const GameStatePacket& gsp){
 	os<<"command "<<gsp.cmd<<
 		" cmd_counter "<<(int)gsp.cmd_counter<<
@@ -29,12 +32,20 @@ void RefereeClient::execute(void* ){
 	double lastSimTime = 0,currSimTime = 0;
 	EvaluationModule & evaluationModule = EvaluationModule::getInstance();
 	Videoserver & video = Videoserver::getInstance();
+
+	int sleep_status;
+	struct timespec req;
+	req.tv_sec=0;
+	req.tv_nsec=10000000;//10ms
+	struct timespec rem;
+	bzero( &rem, sizeof(rem) );
+
 	while(true){
 		if( lastSimTime < ( currSimTime=video.updateGameState( gameState ) ) ){
 			lastSimTime = currSimTime;
 
 			EvaluationModule::ballState bState = evaluationModule.getBallState(Robot::red0);
-			LOG_INFO(log," ballPose "<<gameState->getBallPos()<<" ballState "<<bState);
+			//LOG_INFO(log," ballPose "<<gameState->getBallPos()<<" ballState "<<bState);
 			//sprawdz czy pilka jest w boisku
 			if( bState == EvaluationModule::occupied_theirs || bState == EvaluationModule::out || bState == EvaluationModule::in_goal ){
 				//
@@ -43,8 +54,15 @@ void RefereeClient::execute(void* ){
 			}
 		}
 
+
+		readMsgFromBox();
+
+		sleep_status=nanosleep(&req,&rem);
+
 	}
-    //readMsgFromBox();
+
+
+
 }
 
 /*
@@ -121,6 +139,8 @@ void RefereeClient::readMsgFromBox(){
 
 		this->mutex_.lock();
 		if(this->gameStatePacket.cmd_counter!=tmpGameStatePacket.cmd_counter){
+			if( tmpGameStatePacket.cmd != gameStatePacket.cmd)
+				newCommands.push( castToCommand( tmpGameStatePacket.cmd ) );
 			std::cout<<tmpGameStatePacket<<std::endl;
 		}
 		this->gameStatePacket=tmpGameStatePacket;
@@ -165,12 +185,20 @@ void RefereeClient::testConnection(){
     return ;
 }
 
-RefereeCommands::Command RefereeClient::getCommand(){
+RefereeCommands::Command RefereeClient::getCommand() {
 	boost::interprocess::scoped_lock<boost::mutex> guard(this->mutex_);
-	return castToCommand(this->gameStatePacket.cmd);
+
+	if(!newCommands.empty()){
+		RefereeCommands::Command cmd = newCommands.front();
+		newCommands.pop();
+		return cmd;//castToCommand(this->gameStatePacket.cmd);
+	}
+	else
+		return RefereeCommands::unknown;
+
 }
 
-RefereeCommands::Command RefereeClient::castToCommand(const char c) {
+RefereeCommands::Command RefereeClient::castToCommand(const char c) const {
 	using namespace RefereeCommands;
 	Command cmd;
 	switch(c){
