@@ -17,7 +17,7 @@
 #include "../Tactics/ShootTactic.h"
 
 #include "../Plays/Play.h"
-#include "../Plays/SimplePlay.h"
+#include "../Plays/NaivePlay.h"
 #include "../Plays/StartPlay.h"
 
 #include "../RefereeClient/RefereeClient.h"
@@ -92,8 +92,8 @@ void run_stp(){
 				//delete redPlay;
 				//delete bluePlay;
 
-				redPlay = boost::shared_ptr<Play>( new SimplePlay("red") );
-				bluePlay = boost::shared_ptr<Play>( new SimplePlay("blue") );
+				redPlay = boost::shared_ptr<Play>( new NaivePlay("red") );
+				bluePlay = boost::shared_ptr<Play>( new NaivePlay("blue") );
 				bluePlay->execute();
 				redPlay->execute();
 			}
