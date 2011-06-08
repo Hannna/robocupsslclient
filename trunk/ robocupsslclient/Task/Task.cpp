@@ -22,6 +22,9 @@ std::ostream & operator<<(std::ostream & os, const Task::status & status ){
 		case Task::ok:
 			os<<"Task::ok";
 			break;
+		case Task::kick_ok:
+			os<<"Task::kick_ok";
+			break;
 		default:
 			os<<"Task:: unknown";
 			break;

@@ -7,12 +7,17 @@
 
 #include "../Logger/Logger.h"
 #include "../additional.h"
+#include "../Plays/Play.h"
+
+#include "../SimControl/SimControl.h"
+#include "../Exceptions/SimulationException.h"
 
 SimControl * SimControl::simControl = NULL;
 pthread_mutex_t  SimControl::mutex = PTHREAD_MUTEX_INITIALIZER;
 
 SimControl::SimControl():log(getLoggerPtr("app_debug"))
 {
+
     #ifdef OLD
         this->client = new gazebo::Client();
         this->simIface = new gazebo::SimulationIface();
@@ -53,6 +58,7 @@ SimControl::SimControl():log(getLoggerPtr("app_debug"))
     }
 
     this->simIface->Unpause();
+
 }
 
 void SimControl::restart()
@@ -124,9 +130,7 @@ double SimControl::getSimTime()
 {
 	//LockGuard lock(mutex);
 	double result;
-	//simIface->Lock(1);
-	while(simIface->Lock(1)!=1);
-	simIface->data->responseCount=0;
+	simIface->Lock(1);
 	result=simIface->data->simTime;
 	simIface->Unlock();
 
@@ -188,8 +192,13 @@ void SimControl::setSimPos(const char* name, Pose &pose)
 }
 SimControl::~SimControl()
 {
+	//LOG_INFO(log,"try to destroy SimControl");
+	//Play::free();
 	client->Disconnect();
 	delete client;
+
+	this->simIface->Close();
+	delete this->simIface;
 }
 
 double SimControl::getModelPos(std::string model_name_,Pose &position)
@@ -199,9 +208,18 @@ double SimControl::getModelPos(std::string model_name_,Pose &position)
 	std::string model_name=std::string("noname::") + model_name_;
 	//int i=0;
 	libgazebo::Pose pose;
-	bool result = simIface->GetPose2d(model_name.c_str(),pose );
-	if(!result)
-		std::cout<<"simIface->GetPose2d faild"<<std::endl;
+
+	bool result = false;
+	do{
+		result = simIface->GetPose2d(model_name.c_str(),pose );
+		if(!result)
+			std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!simIface->GetPose2d faild"<<std::endl;
+
+	}while(!result);
+
+	//bool result = simIface->GetPose2d(model_name.c_str(),pose );
+	//if(!result)
+	//	std::cout<<"simIface->GetPose2d faild"<<std::endl;
 	position = Pose( pose.pos.x, pose.pos.y, pose.yaw );
 	/*
 	while(simIface->Lock(1)!=1){
@@ -275,8 +293,10 @@ double SimControl::getModelPos(std::string model_name_,Pose &position)
 	return this->getSimTime();
 }
 
-void SimControl::getAllPos(std::map<std::string,Pose > &positions)
+int SimControl::getAllPos(std::map<std::string,Pose > &positions)
 {
+
+	bool result=true;
 	LockGuard lock(mutex);
 	//wzor pobierania pozycji z symulatora gazebo
 /*	 this->Lock(1);
@@ -296,22 +316,27 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 
 	 return true;
 */
-
-
 	LOG_TRACE(log,"start getALLPPos");
 	strvec names = Names::getNames();
 	strvec::iterator ii;
+
 	//this->wait();
 
 	while(simIface->Lock(1)!=1){
 		usleep(100);
 	}
-	LOG_TRACE(log,"start getALLPPos, after Lock");
+
+	bzero( simIface->data->responses, sizeof( &simIface->data->responses ) );
+	bzero( simIface->data->requests, sizeof( &simIface->data->requests ) );
+
+	int requestCount=0;
+	simIface->data->requestCount = 0;
 	simIface->data->responseCount=0;
+
 	for(ii = names.begin(); ii!=names.end(); ii++){
 		std::string model_name_ = *ii;
 		std::string model_name=std::string("noname::") + model_name_;
-		if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
+		if( simIface->data->requestCount < GAZEBO_SIMULATION_MAX_REQUESTS ){
 			#ifdef OLD
 				gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
 				request->type = gazebo::SimulationRequestData::GET_POSE2D;
@@ -320,30 +345,42 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 				request->type = libgazebo::SimulationRequestData::GET_POSE2D;
 			#endif
 			bzero(request->name,512);
-			memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
+			memcpy(request->name, model_name.c_str(), model_name.length() );
+			assert( strlen(request->name)==model_name.length() );
 			request->name[511] = '\0';
 		}
 	}
+	requestCount = simIface->data->requestCount;
 	simIface->Unlock();
 
-	if(!this->wait()){
+	if( !this->wait(requestCount) ){
 		LOG_FATAL(log,"after wait, wait failed");
-		exit(0);
+		std::ostringstream s;
+		s<<__FILE__<<":"<<__LINE__;
+		//throw SimulationException(s.str());
+		//exit(0);
+		return -1;
 	}
 
+//teraz metoda wait blokuje simIface jesli znajdzie odpowiedz
 	//simIface->Lock(1);
-	while(simIface->Lock(1)!=1);
+
+	int responseCount=0;
+	unsigned int respCount = simIface->data->responseCount;
+
 	#ifdef OLD
 		gazebo::SimulationRequestData *response = NULL;
 	#else
 		libgazebo::SimulationRequestData *response = NULL;
 	#endif
+		LOG_TRACE(log,"  simIface->data->responseCount "<<simIface->data->responseCount);
+
 		if(simIface->data->responseCount > 0){
 			for(ii = names.begin(); ii!=names.end(); ii++){
 				std::string model_name_ = *ii;
                 std::string model_name=std::string("noname::") + model_name_;
 				double x=0,y=0,rot=0;
-				for(unsigned long i=0;i<simIface->data->responseCount;i++){
+				for(unsigned long i=0;i < respCount ;i++){
 					response = &simIface->data->responses[i];
 					switch(response->type){
                     #ifdef OLD
@@ -356,7 +393,8 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 							 y= simIface->data->responses[i].modelPose.pos.y; //y
 							 rot= simIface->data->responses[i].modelPose.yaw; //rot
 
-							 bzero( simIface->data->responses, sizeof(libgazebo::SimulationRequestData) );
+							 bzero( simIface->data->responses[i].name, 512 );
+							 //bzero( &simIface->data->responses[i], sizeof(libgazebo::SimulationRequestData) );
 							 //rot = rot * 180.0 / M_PI;
 							 //rot = rot * M_PI/180.0;
 
@@ -364,7 +402,7 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 							 std::ostringstream log_msg;
 							 log_msg<<"SimControl getAllPos model name "<<model_name_<<" x="<<positions[model_name_].get<0>()<<" y="<<positions[model_name_].get<1>()<<" rot="<<positions[model_name_].get<2>();
                              LOG_TRACE(log,log_msg.str());
-
+                             responseCount++;
 						}
 						break;
 						}
@@ -374,9 +412,20 @@ void SimControl::getAllPos(std::map<std::string,Pose > &positions)
 				}
 			}
 		}
+		else{
+			result=false;
+		}
+
 	simIface->data->responseCount=0;
 	simIface->Unlock();
-	return;
+
+	if( responseCount != requestCount ){
+		return 0;
+	}
+
+	assert(responseCount == requestCount);
+
+	return 1;
 }
 
 void SimControl::lock()
@@ -389,6 +438,87 @@ void SimControl::unlock()
 	simIface->Unlock();
 }
 
+void SimControl::moveBall(Pose pose){
+
+	LockGuard lock(mutex);
+
+	LOG_FATAL(log,"@@@@@@@@@@@@@@@@@@move ball to "<<pose);
+
+//	while(simIface->Lock(1)!=1);
+//	simIface->data->responseCount=0;
+	std::string model_name("noname::ball");
+
+	//void SimulationIface::SetState(const std::string &name, Pose &modelPose,
+	//    Vec3 &linearVel, Vec3 &angularVel, Vec3 &linearAccel,
+	//    Vec3 &angularAccel )
+	libgazebo::Vec3 p(pose.get<0>(),pose.get<1>(), 0.1);
+	libgazebo::Pose pose_(p,pose.get<0>(),pose.get<1>(), 0.1 );
+	libgazebo::Vec3 v(0,0,0);
+
+	simIface->SetState(model_name, pose_, v,v,v,v);
+			//libgazebo::Vec3(0,0,0),libgazebo::Vec3(0,0,0),
+			//slibgazebo::Vec3(0,0,0),libgazebo::Vec3(0,0,0));
+
+	/*if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
+		#ifdef OLD
+		gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
+		request->type = gazebo::SimulationRequestData::SET_POSE3D;
+		#else
+		libgazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
+		request->type = libgazebo::SimulationRequestData::SET_POSE3D;
+		#endif
+		bzero(request->name,512);
+		memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
+
+		request->modelPose.pos.x = pose.get<0>();
+		request->modelPose.pos.y = pose.get<1>();
+		request->modelPose.pos.z = 0.1;//pose.get<2>();
+
+		request->modelPose.yaw = 0;
+		request->modelPose.roll = 0;
+		request->modelPose.pitch = 0;
+	}
+*/
+//	simIface->Unlock();
+	//this->wait();
+	LOG_FATAL(log,"@@@@@@@@@@@@@@@@@@ EXIT from move ball to ");
+}
+
+/*
+void SimControl::stopBall( ){
+	LockGuard lock(mutex);
+
+	while(simIface->Lock(1)!=1);
+	simIface->data->responseCount=0;
+
+
+	std::string model_name("noname::ball");
+	if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
+		#ifdef OLD
+		gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
+		request->type = gazebo::SimulationRequestData::SET_POSE3D;
+		#else
+		simIface->SetState()
+		libgazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
+		request->type = libgazebo::SimulationRequestData;
+		#endif
+		bzero(request->name,512);
+		memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
+
+		request->modelPose.pos.x = pose.get<0>();
+		request->modelPose.pos.y = pose.get<1>();
+		request->modelPose.pos.z = 0.1;//pose.get<2>();
+
+		request->modelPose.yaw = 0;
+		request->modelPose.roll = 0;
+		request->modelPose.pitch = 0;
+	}
+
+	simIface->Unlock();
+	this->wait();
+
+}
+*/
 void SimControl::moveAwayModels(){
 
 	LockGuard lock(mutex);
@@ -469,6 +599,8 @@ bool SimulationIface::WaitForResponse()
 */
 
 bool SimControl::wait(){
+	LOG_FATAL(log,"start waiting ");
+
 	bool ok=false;
 
 	struct timespec req;
@@ -482,16 +614,64 @@ bool SimControl::wait(){
 	double endTime;
 
 	while(!ok){
-		if( simIface->data->requestCount==0 ){
+//		if( simIface->data->requestCount==0 && simIface->data->responseCount > 0){
+		if( ( this->simIface->data->requestCount == 0 ) && ( this->simIface->data->responseCount > 0 ) ){
+			LOG_TRACE(log," wait simIface->data->responseCount "<<this->simIface->data->responseCount);
 			ok=true;
+			continue;
 		}
 		nanosleep(&req,&rem);
 		endTime=measureTime( stop, &startTime );
 		//3 sek jest ustawiony timeout w symulatorze gazebo
-		if(endTime>3000){
+		if(endTime>5000){
 			LOG_FATAL(log,"wait for request "<<endTime<<"ms");
 			return false;
 		}
+	}
+
+	return true;
+}
+
+bool SimControl::wait(int resp){
+	LOG_TRACE(log,"start waiting for "<<resp<<" responses");
+	bool ok=false;
+
+	struct timespec req;
+	req.tv_sec=0;
+	req.tv_nsec=4000000; //4ms
+	struct timespec rem;
+	bzero( &rem, sizeof(rem) );
+
+	struct timespec  startTime;
+	measureTime( start, &startTime );
+	double endTime;
+
+	while(!ok){
+		this->simIface->Lock(1);
+		if( ( this->simIface->data->requestCount == 0 ) || ( this->simIface->data->responseCount == resp ) ){
+			LOG_TRACE(log,"return from wait. simIface->data->responseCount "<<this->simIface->data->responseCount);
+			ok=true;
+
+			//jesli mamy rezultat to nie odblokowujemy
+			//this->simIface->Unlock();
+			continue;
+		}
+		else{
+			LOG_TRACE( log,"when waiting for resp simIface->data->responseCount "<<this->simIface->data->responseCount );
+			LOG_TRACE( log,"when waiting for resp simIface->data->requestCount "<<this->simIface->data->requestCount );
+		}
+		this->simIface->Unlock();
+
+		nanosleep(&req,&rem);
+		endTime=measureTime( stop, &startTime );
+		//3 sek jest ustawiony timeout w symulatorze gazebo
+		if(endTime>5000){
+			//LOG_FATAL( log," wait simIface->data->requestCount "<<this->simIface->data->requestCount );
+			//LOG_FATAL( log," wait simIface->data->responseCount "<<this->simIface->data->responseCount );
+			LOG_FATAL( log,"wait for request "<<endTime<<"ms" );
+			return false;
+		}
+
 	}
 
 	return true;

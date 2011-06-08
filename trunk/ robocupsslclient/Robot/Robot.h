@@ -30,6 +30,7 @@ class Robot
 public:
 
 	enum robotID{
+		red = -5,
 		red0 = -4,
 		red1 = -3,
 		red2 = -2,
@@ -38,7 +39,8 @@ public:
 		blue0 = 1,
 		blue1,
 		blue2,
-		blue3
+		blue3,
+		blue
 	};
 
 	Robot(const std::string robotName,const std::string posIfaceName);
@@ -55,23 +57,35 @@ public:
 	static std::list<robotID> getRedTeam();
 
 	std::string getPosIfaceName() const;
-	/*@brief metoda ustalajaca predkosci liniowa oraz katowa
+	/*@brief metoda ustalajaca predkosci liniowa oraz katowa w ukladzie wspo zw z robotem
 	 *
      * @param v [in] predkosc liniowa robota w ukl wspolrzednych zw z robotem
      * @param w [in] predkosci katowa robota w ukladzei wsp zw z robotem
 	 */
 	void setRelativeSpeed(const Vector2D & v,const double & w);
+	/*@brief metoda ustalajaca globalna predkosc liniowa oraz katowa
+	*
+	* @param v [in] predkosc liniowa robota w globalnym ukl wspolrzednch
+	* @param w [in] predkosci katowa robota w globalnym ukl wspolrzednch
+	*/
+	void setGlobalSpeed(const Vector2D & v,const double & w, const double& rot);
 	/// zwraca aktualnie zadane predkosci robota first = V  second = w
 	std::pair<Vector2D,double> getDesiredVel() const;
 	/// zwraca aktualnie  predkosci z jakimi faktycznie porusza sie robot robota first = V  second = w
-	std::pair<Vector2D,double> getVelocity() const;
+	std::pair<Vector2D,double> getRelativeVelocity() const;
 	bool kick() const ;
 	bool kickerReady()const;
-	double calculateAngularVel(const GameState & gameState,const Robot::robotID robotID, const Pose & targetPosition);
-	double calculateAngularVel(const GameState & gameState,const Robot::robotID robotID, const Vector2D & targetPosition);
+	//double calculateAngularVel(const Pose & robotPosition, const Pose & targetPosition);
+	//double calculateAngularVel(const Pose & robotPosition, const Vector2D & targetPosition);
+
+	double calculateAngularVel( const  Pose & globalRobotPose, const Vector2D & globalTargetPosition );
+	double calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose );
 	void stop( );
 
+
 private :
+
+
 	PidRegulator pidRegulator;
 	///zadana predkosc liniowa
 	Vector2D v;
@@ -100,22 +114,18 @@ private :
 	 double rot;
 	 //czas pomiaru
 	 double time;
+	 //do wyznaczania predkosci obrotowej
+	 double oldAlfaToCel;
 
 
 };
 
-//oblicza zadane sterowanie
-//Vector2D calculateVelocity(Vector2D currVel, Pose currPose, Pose targetPose, double deltaTime);
-//oblicza zadane sterowanie
-//Vector2D calculateVelocity(const Vector2D &currVel, const Pose& currPose,const  Pose & targetPose);
 /*@brief oblicza predkosci konieczne do przemieszczenia sie do zadanego celu
  *
  * @param [in] currVel predkosci robota w ukladzie odniesienia zwiazanym z robotem
  * @param [in] targetPose polozenie celu w ukladzie odniesienia zwiazanym z robotem
  */
-//Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & targetPose);
 Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose);
-//double calculateVelocity(const double vel, const double curr,const  double target);
 
 std::ostream& operator<<(std::ostream& os,const Robot::robotID& id);
 

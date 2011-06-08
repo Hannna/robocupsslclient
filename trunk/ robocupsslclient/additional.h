@@ -150,10 +150,11 @@ double convertAngle2PI(double angle);
 class Names{
 public:
 	static strvec & getNames();
+	~Names();
 private:
 	static strvec names_list;
 	Names();
-	~Names();
+
 };
 
 /**

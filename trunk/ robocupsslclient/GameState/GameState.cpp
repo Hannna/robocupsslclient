@@ -10,24 +10,26 @@
 #include <boost/foreach.hpp>
 
 GameState::GameState(): redGoal(top), blueGoal(bottom) {
-	// TODO Auto-generated constructor stub
-
+//	updated=false;
+	this->simTime = 0;
 }
+
 GameState::GameState(const GameState& gameState): redGoal(gameState.redGoal),
-													blueGoal(gameState.blueGoal){
+			blueGoal(gameState.blueGoal){
+
+//	this->updated=false;
 	this->ball=gameState.ball;
 	this->robots=gameState.robots;
-	boost::shared_ptr<GameState> gg;
-
+	this->simTime=gameState.simTime;
 }
 
 void GameState::updateRobotData(std::string name,Pose pos,Vector2D v,double w){
 	this->robots[ Robot::getRobotID(name) ]=RobotState(pos,v,w);
 }
 
-void GameState::updateRobotData(Robot::robotID id,Pose pos,Vector2D v,double w){
+void GameState::updateRobotData(Robot::robotID id,Pose pos,Vector2D relRobotVel,double w){
 
-	this->robots[id]=RobotState(pos,v,w);
+	this->robots[id]=RobotState(pos,relRobotVel,w);
 }
 
 void GameState::updateRobotVel(std::string name,std::pair<Vector2D,double> vel){
@@ -68,16 +70,23 @@ Vector2D GameState::getRobotVelocity(std::string name){
 */
 Pose GameState::getRobotPos(const Robot::robotID id) const {
 	RobotsPoseConstIt  r = robots.find(id);
+	if(r == robots.end()){
+		std::cout<<"looking for "<<id<<" game state "<<this<<std::endl;
+	}
 	assert( r != robots.end() );
 	return r->second.pos;
 	// return robots[id].pos;
 }
 
-Vector2D GameState::getRobotVelocity(const Robot::robotID id) const {
+Vector2D GameState::getRobotGlobalVelocity(const Robot::robotID id) const {
 	RobotsPoseConstIt  r = robots.find(id);
 	assert( r != robots.end() );
 	return r->second.v;
 	//return this->robots[id].v;
+}
+
+Vector2D GameState::getBallGlobalVelocity( ) const {
+	return this->ball.v;
 }
 
 double GameState::getRobotAngularVelocity(const  Robot::robotID id) const {
@@ -96,6 +105,10 @@ double GameState::getSimTime() const {
 GameState & GameState::operator=(const GameState &gameState){
 	///dane dotyczace robotow
 	this->robots=gameState.robots;
+	if( this->robots.size() != 6 ){
+		std::cout<<"warning this->robots.size() != 6 gameState "<<*this<<std::endl;
+	}
+	assert( this->robots.size() == 6 );
 	///dane dotyczace pilki
 	this->ball=gameState.ball;
 	this->simTime=gameState.simTime;
@@ -107,6 +120,17 @@ std::ostream& operator<<(std::ostream& os,const GameState& gs){
 	std::pair<Robot::robotID,GameState::RobotState> robot;
 	os<<"simTime "<<gs.simTime<<" ";
 	BOOST_FOREACH(robot, gs.robots){
+		//os<<robot.second<<"\n";
+		os<<robot.first<<" "<<robot.second<<"\n";
+	}
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os,const GameState* const gs) {
+
+	std::pair<Robot::robotID,GameState::RobotState> robot;
+	os<<"simTime "<<gs->simTime<<" ";
+	BOOST_FOREACH(robot, gs->robots){
 		//os<<robot.second<<"\n";
 		os<<robot.first<<" "<<robot.second<<"\n";
 	}

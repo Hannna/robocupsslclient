@@ -14,6 +14,7 @@ class RRTPlanner;
 class GoToPose: public Task {
 public:
 	GoToPose(const Pose & pose,Robot * robot);
+	GoToPose(const Pose & pose,Robot * robot, bool force);
 	virtual Task* nextTask();
 	virtual ~GoToPose();
 protected:
@@ -30,6 +31,7 @@ private:
 
 	double currSimTime;
 	double lastSimTime;
+	bool force;
 };
 
 #endif /* GOTOPOSE_H_ */

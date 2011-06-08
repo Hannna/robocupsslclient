@@ -1,7 +1,6 @@
 #ifndef VIDEOSERVER_H_
 #define VIDEOSERVER_H_
 
-
 #include <boost/shared_ptr.hpp>
 #include <boost/regex.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -27,21 +26,20 @@
 
 class Videoserver : public Thread
 {
-friend void updateVideo(int);
-public:
-	static Videoserver& getInstance(){
-        //pthread_mutexattr_t mutexAttribute;
-        //pthread_mutexattr_init (&mutexAttribute);
-        //pthread_mutexattr_settype(&mutexAttribute,
-        //PTHREAD_MUTEX_RECURSIVE);
-        //pthread_mutex_init (&Videoserver::mutex, &mutexAttribute);
 
-       // pthread_mutex_init (&Videoserver::mutex, NULL);
+friend void updateVideo(int);
+friend void update(int);
+
+public:
+
+	static Videoserver& getInstance(){
 
 		if(!Videoserver::video){
 			LockGuard lock(mutex);
 			if(!Videoserver::video){
-				Videoserver::video=new Videoserver();
+				static Videoserver v;
+				//Videoserver::video=new Videoserver();
+				Videoserver::video = &v;
 			}
 		}
 		return *Videoserver::video;
@@ -53,7 +51,7 @@ public:
 	 *
 	 * @return zwraca czas symulatora z jakiego pochodza te pozycje
 	 */
-	double updateGameState(GameStatePtr gameState) const;
+	double updateGameState(GameStatePtr& gameState) const;
 
 
 	/**
@@ -78,20 +76,33 @@ public:
     */
     void testVideoserver();
 
-	~Videoserver(){
-		delete video;
-	};
-	friend void update(int);
+    void stop();
 
 	static goalArea redGoal;
 	static goalArea blueGoal;
+
+	static const Vector2D  getRedGoalMidPosition();
+	static const Vector2D  getRedGoalLeftCornerPosition();
+	static const Vector2D  getRedGoalRightCornerPosition();
+
+	static const Vector2D  getBlueGoalMidPosition();
+	static const Vector2D  getBlueGoalLeftCornerPosition();
+	static const Vector2D  getBlueGoalRightCornerPosition();
+
+//	static void setRedGoalMidPosition( const Vector2D & );
+//	static void setRedGoalLeftCornerPosition( const Vector2D & );
+//	static void setRedGoalRightCornerPosition( const Vector2D & );
+
+//	static void setBlueGoalMidPosition( const Vector2D & );
+//	static void setBlueGoalLeftCornerPosition( const Vector2D &);
+//b	static void setBlueGoalRightCornerPosition( const Vector2D & );
+
+
 //czas co jaki videoserwer pobiera inf z symulatora
 	static const int updateDeltaTime=100000; //100[ms]
 private:
-	log4cxx::LoggerPtr log;
-
 	virtual void execute(void*) ;
-	/*@brief pobiera z symulatora pozycje wszytskich robotow na planszy oraz pilki
+	/*@brief pobiera z symulatora pozycje wszystkich robotow na planszy oraz pilki
 	 *
 	 */
 	void update();
@@ -99,6 +110,19 @@ private:
 	static Videoserver * video;
 	Videoserver();
 	Videoserver(const Videoserver& v);
+	~Videoserver(){
+		LOG_INFO(log," try to destroy videoserver");
+		pthread_mutex_lock (&Videoserver::mutex);
+		//delete video;
+		Videoserver::video = NULL;
+		pthread_mutex_unlock (&Videoserver::mutex);
+
+//		log4cxx::LogManager::getLoggerRepository()->shutdown();
+		LOG_INFO(log,"destroy videoserver");
+	};
+	Videoserver& operator=(const Videoserver&);
+
+	log4cxx::LoggerPtr log;
 	///czas symulatora podczas wykonania ostatniej aktualizacji
 	double lastUpdateTime; //[s]
 	//odstep pomiedzy ostatnimi aktualizacjami
@@ -119,6 +143,17 @@ private:
 	#endif
 	static struct timeval startTime;
 
+	static Vector2D redGoalMidPosition;
+	static Vector2D redGoalLeftCornerPosition;
+	static Vector2D redGoalRightCornerPosition;
+
+	static Vector2D blueGoalMidPosition;
+	static Vector2D blueGoalLeftCornerPosition;
+	static Vector2D blueGoalRightCornerPosition;
+
+	bool stopFlag;
+
+	bool simError;
 };
 
 

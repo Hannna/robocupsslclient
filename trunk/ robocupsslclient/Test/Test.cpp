@@ -18,7 +18,7 @@
 #include "../Task/KickBall.h"
 
 #include "../TestRRT/TestRRT.h"
-#include "../AbstractTactic/AbstractTactic.h"
+#include "../Tactics/Tactic.h"
 #include "../Tactics/ShootTactic.h"
 #include "../Tactics/DefendLine.h"
 #include "../Tactics/Receive_pass.h"
@@ -46,38 +46,86 @@ void testRotation(Videoserver & video,Robot& robot){
 
 	std::vector<Vector2D> goalPositions;
 	goalPositions.push_back(Vector2D(1,0));
-	goalPositions.push_back(Vector2D(-1,0));
-	goalPositions.push_back(Vector2D(0,1));
-	goalPositions.push_back(Vector2D(0,-1));
+	//goalPositions.push_back(Vector2D(-1,0));
+	//goalPositions.push_back(Vector2D(0,1));
+	//goalPositions.push_back(Vector2D(0,-1));
 	video.updateGameState(gameState);
 
 	std::vector<Vector2D>::iterator ii=goalPositions.begin();
+
+	Vector2D v(0,0);
+	double oldAlfaToCel = 0;
+
+	double currSimTime = 0;
+	double prevSimTime = 0;
+
+	const double ROTATION_HYSTERESIS = 0.01;//0.02 radiana
+	Pose currRobotPose = gameState->getRobotPos( robot.getRobotID() );
 	for(;ii!=goalPositions.end();ii++){
-		Vector2D goToPosition=*ii;
-		std::cout<<"go to position "<<goToPosition<<std::endl;
-		(*gameState).updateRobotVel(robot.getRobotID(),robot.getVelocity() );
-		deltaTime=video.getUpdateDeltaTime();
+		double w =1;
+		Vector2D goToPosition = currRobotPose.getPosition() + *ii;
+		Pose globalTargetPose( goToPosition,0 );
 
-		double rot=(*gameState).getRobotPos( robot.getRobotID() ).get<2>() ;
-		std::cout<<"rotacja robota "<<rot<<std::endl;
-		//macierz obrotu os OY na wprost robota
-		RotationMatrix rmY(rot);
+		Vector2D goToPosition2 = currRobotPose.getPosition() + (*ii) + Vector2D(0.01,0.01);
+		Pose globalTargetPose2( goToPosition2,0 );
 
-		Pose currRobotPose=(*gameState).getRobotPos( robot.getRobotID() );
-		//pozycja robota w ukladzie wsp zw z plansza
-		Vector2D currentPosition( currRobotPose.get<0>(),currRobotPose.get<1>() );
+		bool globalTargetPose1 = true;
 
-		//pozycja celu w ukladzie wsp zwiazanych z robotem
-		Vector2D targetPosition=rmY.Inverse()*(goToPosition-currentPosition);
+		while( fabs(w) > 0.01 ){
 
-		//rotacja do celu
-		double teta_cel=atan2( (targetPosition.y) , (targetPosition.x));
-		//macierz obrotu cel na wprost robota
-		//RotationMatrix rm(teta_cel);
-		//targetPosition = rmY.Inverse() * targetPosition;
+			currSimTime = video.updateGameState( gameState );
 
-		std::cout<<"rotacja do celu"<<teta_cel<<"pozycja celu w ukl wsp zw z robotem "<<targetPosition<<std::endl;
+			if( currSimTime > prevSimTime ){
+				currRobotPose = gameState->getRobotPos( robot.getRobotID() );
+				prevSimTime = currSimTime;
 
+
+				std::cout<<"rotate to position to position "<<*ii<<std::endl;
+				(*gameState).updateRobotVel(robot.getRobotID(),robot.getRelativeVelocity() );
+				deltaTime=video.getUpdateDeltaTime();
+
+				double rot=(*gameState).getRobotPos( robot.getRobotID() ).get<2>() ;
+				{
+					double Ker=0.5;
+					double Ko=20;
+					double currGlobalRobotRot = currRobotPose.get<2>();
+
+					// ten kawalek kodu wyznacza kat o jaki robot musi sie obrocic zeby byc skierowanym na cel
+					RotationMatrix rm0(0);
+					Pose reltargetPose_;
+					if(globalTargetPose1){
+						reltargetPose_ = globalTargetPose.transform( currRobotPose.getPosition(),rm0 );
+						globalTargetPose1 = false;
+					}
+					else{
+						reltargetPose_ = globalTargetPose2.transform( currRobotPose.getPosition(),rm0 );
+						globalTargetPose1 = true;
+					}
+
+					Pose reltargetPose = reltargetPose_*100;
+					double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;
+					std::cout<<" rotacjaDocelowa "<< rotacjaDocelowa <<std::endl;
+					assert( fabs(rotacjaDocelowa) < M_PI);
+
+					//obrot jaki trzeba wykonac w biezacym kroku
+					double currAlfaToCel = convertAnglePI( rotacjaDocelowa - currGlobalRobotRot );///convertAnglePI( currGlobalRobotRot - rotacjaDocelowa  );
+					std::cout<<"obrot jaki trzeba wykonac w biezacym kroku "<<currAlfaToCel<<std::endl;
+					double angularVel=Ko*(  currAlfaToCel  )+ Ker*( convertAnglePI( oldAlfaToCel - currAlfaToCel) );
+
+					w = fabs(angularVel) > M_PI ? M_PI * sgn(angularVel) : angularVel;
+
+					oldAlfaToCel=currAlfaToCel;
+
+				}
+				//w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), Pose( goToPosition,0 ) );
+
+				std::cout<<"rotacja robota "<<rot <<" angular velocity"<< w <<std::endl;
+				robot.setGlobalSpeed(v,w,rot);
+				usleep(10000);//10ms
+			}
+		}
+		std::cout<<"####################### FINISH ############################### " <<std::endl;
+		sleep(1);
 	}
 }
 void testMotion(const Pose goalPose,Videoserver & video,Robot& robot){
@@ -92,11 +140,11 @@ void testMotion(const Pose goalPose,Videoserver & video,Robot& robot){
 
 	do {
 		video.updateGameState(gameState);
-		(*gameState).updateRobotVel(robot.getRobotID() ,robot.getVelocity() );
+		(*gameState).updateRobotVel(robot.getRobotID() ,robot.getRelativeVelocity() );
 		deltaTime=video.getUpdateDeltaTime();
 
 		//double rot=(*gameState).getRobotPos( robot.getRobotID() ).get<2>() ;
-		std::cout<<"robot speed from gazebo"<<(*gameState).getRobotVelocity( robot.getRobotID() )
+		std::cout<<"robot speed from gazebo"<<(*gameState).getRobotGlobalVelocity( robot.getRobotID() )
 				<<" w "<<(*gameState).getRobotAngularVelocity( robot.getRobotID() )<<std::endl;
 		//macierz obrotu os OY na wprost robota
 		//RotationMatrix rmY(rot);
@@ -109,19 +157,26 @@ void testMotion(const Pose goalPose,Videoserver & video,Robot& robot){
 		//pozycja celu w ukladzie wsp zwiazanych z robotem
 		//Vector2D targetRelPosition=rmY.Inverse()*(goToAbsPosition-currentAbsPosition);
 
-		Vector2D robotVel=(*gameState).getRobotVelocity( robot.getRobotID() );
-		double w = robot.calculateAngularVel(*gameState, robot.getRobotID(), goalPose );
+		Vector2D robotVel=(*gameState).getRobotGlobalVelocity( robot.getRobotID() );
+		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose );
 		//speed=calculateVelocity( robotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
 		speed=calculateVelocity( robotVel,currRobotPose, goalPose);
 
 		std::cout<<"set speed "<<speed<<" w "<<w<<std::endl;
-		robot.setRelativeSpeed(speed,w);
+
+		//robot.setRelativeSpeed(speed,w);
+		robot.setGlobalSpeed(speed,w, currRobotPose.get<2>());
 	}while( sqrt( pow( ( goalPose.get<0>()-currRobotPose.get<0>() ),2) + pow( ( goalPose.get<1>() - currRobotPose.get<1>() ),2) ) > 0.001 );
 
 }
 void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 #ifdef GAZEBO
-//	time_t startTime=time(NULL);
+
+	Videoserver::getInstance().stop();
+	Videoserver::getInstance().join();
+
+
+	sleep(1);
 	speed=speed*Config::getInstance().getSpeedFactor();
 	std::cout<<"start test with vx="<<speed.x<<" vy="<<speed.y<<" w="<<yaw<<"test time "<<testTime<<std::endl;
 	Pose startPosition;
@@ -135,20 +190,16 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 	//sprawdz czy robot przejechal 1 metr
 	//while(time(NULL)-startTime<5){
 
+
 	while( startPosition.distance(currPosition) < 1.0 ){
-
-		//currSimTime=SimControl::getInstance().getSimTime();
-
-		robot.setRelativeSpeed(speed,yaw);
-		//Pose position;
-		//std::map<std::string,Pose > positions;
 		currSimTime=SimControl::getInstance().getModelPos(robot.getRobotName(),currPosition);
-		//currSimTime=SimControl::getInstance().getSimTime();
+
+		robot.setGlobalSpeed(speed,yaw, currPosition.get<2>());
+
 		std::cout<<"current robot position "<<currPosition<<std::endl;
 		vx=(currPosition.get<0>()-prevPosition.get<0>())/(currSimTime-prevSimTime);
 		vy=(currPosition.get<1>()-prevPosition.get<1>())/(currSimTime-prevSimTime);
 		double rot_radians = ( currPosition.get<2>() * 180.0 ) /M_PI;
-		//if( currPosition.get<2>()*prevPosition.get<2>()  >0 ){
 		double deltaAlfa = convertAnglePI( currPosition.get<2>() - prevPosition.get<2>() );
 		std::cout<<"current rot in radians"<< currPosition.get<2>()<<" in degrees "<<rot_radians<<" currSimTime "<<currSimTime <<" deltaAlfa "<<deltaAlfa<<" deltaSimTime"<<currSimTime-prevSimTime<<std::endl;
 		w=( deltaAlfa  )/( currSimTime-prevSimTime );
@@ -156,17 +207,22 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 		double rot=currPosition.get<2>();
 		//macierz obrotu os OY na wprost robota
 		RotationMatrix rm(rot);
-		Vector2D tmp1(robot.getVelocity().first);
-		double ang_vel = robot.getVelocity().second;
+		Vector2D relSpeed(robot.getRelativeVelocity().first);
+		double ang_vel = robot.getRelativeVelocity().second;
 
 		Vector2D tmp2(vx,vy);
 
 		Vector2D t=rm.Inverse()*tmp2;
 		//Vector2D tmp2=rmY.Inverse()*tmp1;
 		///Vector2D targetPosition=rmX.Inverse()*(goToPosition-currentPosition);
-		std::cout<<"calculated robotVelocity in robot coordinates"<<t<<std::endl;
-		std::cout<<"calculated robotVelocity in global coordinates"<<tmp2<<" angular velocity "<<w<<std::endl;
-		std::cout<<"robotVelocity from gazebo in global coordinates"<<tmp1<<" angular velocity "<<ang_vel<<std::endl;
+		std::cout<<"calculated relative robot velocity "<<t<<std::endl;
+		std::cout<<"calculated global robot velocity "<<tmp2<<" angular velocity "<<w<<std::endl;
+
+		std::cout<<"relative robot velocity from gazebo"<<relSpeed<<" angular velocity "<<ang_vel<<std::endl;
+		//RotationMatrix rm2(-rot);
+		//Vector2D rel = relSpeed.rotate(rot);
+		//std::cout<<"global robot velocity from gazebo"<<relSpeed.rotate(rot)<<" angular velocity "<<ang_vel<<std::endl;
+
 		prevSimTime=currSimTime;
 		prevPosition=currPosition;
 
@@ -175,9 +231,10 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 		usleep(100000);//100ms
 	}
     std::cout<<"HAMOWANIE"<<std::endl;
-	robot.setRelativeSpeed(Vector2D(0.0,0.0),0);
-	sleep(10);
-	getchar();
+    robot.stop();
+	//robot.setRelativeSpeed(Vector2D(0.0,0.0),0);
+	sleep(1);
+	//getchar();
 	//SimControl::getInstance().restart();
 	//usleep(1000000);
 #endif
@@ -226,17 +283,19 @@ void checkAcceleration(const Vector2D& speed_,Robot& robot){
 
 	double maxLength = speed.length()*0.9;
 
-	robot.setRelativeSpeed(speed,0);
+	//robot.setRelativeSpeed(speed,0);
 	while(true){
 	    currSimTime=Videoserver::getInstance().updateGameState(gameState);
 
         if( prevSimTime <  currSimTime ){
         	Pose currPose = gameState->getRobotPos( robot.getRobotID() );
         	Pose targetPosition(currPose.get<0>()+speed.x,currPose.get<1>()+speed.y,0);
-        	Vector2D currspeed = (*gameState).getRobotVelocity( robot.getRobotID() );
+        	Vector2D currspeed = (*gameState).getRobotGlobalVelocity( robot.getRobotID() );
 
-        	if(!brake)
-        		robot.setRelativeSpeed(speed,0);
+        	if(!brake){
+        		//robot.setRelativeSpeed(speed,0);
+        		robot.setGlobalSpeed( speed,0, currPose.get<2>() );
+        	}
         	else
         		robot.stop();
         	//robot.setRelativeSpeed(speed,
@@ -261,14 +320,15 @@ void checkAcceleration(const Vector2D& speed_,Robot& robot){
                     //exit(0);
                 }
                 else{
-                    std::cout<<"############ velocity "<<(*gameState).getRobotVelocity( robot.getRobotID() )<<" delta Time "<<deltaTime<<" dcc="
+                    std::cout<<"############ velocity "<<(*gameState).getRobotGlobalVelocity( robot.getRobotID() )<<" delta Time "<<deltaTime<<" dcc="
                                 <<maxSpeed.length()/deltaTime<<std::endl;
                 }
                 //speed=Vector2D(0,0);
                 speed.x = -speed_.x;
                 speed.y = -speed_.y;
                 deltaTime=0;
-                robot.setRelativeSpeed(speed,0);
+                robot.setGlobalSpeed( speed,0, currPose.get<2>() );
+                //robot.setRelativeSpeed(speed,0);
                 if(exit_)
                     break;
                 exit_=true;
@@ -276,7 +336,8 @@ void checkAcceleration(const Vector2D& speed_,Robot& robot){
             }
         }
 	}
-	robot.setRelativeSpeed(Vector2D(0,0),0);
+	robot.stop();
+	//robot.setRelativeSpeed(Vector2D(0,0),0);
 
 }
 void testTaskThread(){
@@ -315,7 +376,7 @@ void testTaskThread(){
         //pthread_join(blue2,NULL);
 
         #ifdef GAZEBO
-			SimControl::getInstance().restart();
+			//SimControl::getInstance().restart();
 			//TODO: poczekaj az swiat sie zrestartuje!!!!!
 		#endif
 
@@ -325,13 +386,13 @@ void testTaskThread(){
 void * testTask(void * arg){
     //std::cout<<"start testTask"<<std::endl;
 
-	//Robot * robot=reinterpret_cast<Robot *>(arg);
+	Robot * robot=reinterpret_cast<Robot *>(arg);
 	GameStatePtr gameState(new GameState());
 	Videoserver::getInstance().updateGameState(gameState);
 
-	//GoToPose goToPose( (*gameState).getBallPos(),robot);
+	GoToPose goToPose( (*gameState).getBallPos(),robot);
 	//GoToPose goToPose( Pose(6.0,4.0,0.0),robot);
-	//goToPose.execute();
+	goToPose.execute(NULL,-1);
 	//std::cout<<"exit from task"<<std::endl;
 	return 0;
 }
@@ -441,29 +502,47 @@ void testDribbler(Robot& robot){
 }
 void testPassTacticFunc(void * arg){
 #ifdef GAZEBO
+
     std::cout<<" start pass test "<<std::endl;
     //warunek na sprawdzenie czy pilka jest w posiadaniu robota
     //    while( ( dist = ballPose.distance( gameState->getRobotPos( redRobot0.getRobotID() ) ) ) >
     //               ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
-	Robot* robot = reinterpret_cast<Robot*>(arg);//(std::string("red0"),ifaceName);
-
-	//jedz do pilki
-	GameStatePtr gameState(new GameState());
-	Videoserver::getInstance().updateGameState(gameState);
-
-    //score pass_score = EvaluationModule::getInstance().aimAtTeamMate(Robot::red0,Robot::red1);
-	AbstractTactic * receive_pass= new Receive_pass(*robot);
-	//receive_pass->execute(NULL);
-	receive_pass->start(NULL);
-	//receive_pass->join();
-	//sleep(1);
-	//robot->stop();
+	Robot* red0 = reinterpret_cast<Robot*>(arg);//(std::string("red0"),ifaceName);
 
 	static Robot red1(std::string("red1"),ifaceName);
-	AbstractTactic * pass= new Pass(red1,Robot::red0);
-	//receive_pass->execute(NULL);
-	pass->start(NULL);
-	pass->join();
+	//jedz do pilki
+	//GameStatePtr gameState(new GameState());
+	//Videoserver::getInstance().updateGameState(gameState);
+
+	Robot *pass = &red1;
+	Robot *recv = red0;
+
+	while(true){
+
+		Tactic * receive_pass= new Receive_pass(*recv);
+		receive_pass->start(NULL);
+
+
+
+		Tactic * pass_tactic= new Pass(*pass, recv->getRobotID());
+
+		pass_tactic->start(NULL);
+
+		pass_tactic->join();
+//		receive_pass->join();
+
+		receive_pass->stopTactic();
+		receive_pass->join();
+
+		delete receive_pass;
+		delete pass_tactic;
+
+		std::cout<<" AAAAAAAAAAAA "<<std::endl;
+		Robot * tmp = pass;
+		pass = recv;
+		recv = tmp;
+	}
+
 #endif //GAZEBO
 }
 
@@ -480,11 +559,15 @@ void testShootTacticFunc(void * arg){
 	Videoserver::getInstance().updateGameState(gameState);
 
 	static Robot blue0(std::string("blue0"),ifaceName);
-	Pose p1 = Pose( Config::getInstance().field.TOP_GOAL_LEFT_CORNER, 0 );
-	Pose p2 = Pose( Config::getInstance().field.TOP_GOAL_RIGHT_CORNER, 0 );
+	//Pose p1 = Pose( *Config::getInstance().field.BLUE_GOAL_LEFT_CORNER, 0 );
+	//Pose p2 = Pose( *Config::getInstance().field.BLUE_GOAL_RIGHT_CORNER, 0 );
+
+	Pose p1 = Pose( Videoserver::getBlueGoalLeftCornerPosition(), 0 );
+	Pose p2 = Pose( Videoserver::getBlueGoalRightCornerPosition(), 0 );
+
 	double maxDist = 1.0;
 
-	AbstractTactic * defendLine= new DefendLine( blue0, p1.getPosition(),p2.getPosition(), maxDist);
+	Tactic * defendLine= new DefendLine( blue0, p1.getPosition(),p2.getPosition(), maxDist);
 	defendLine->start();
 
 	static Robot blue1(std::string("blue1"),ifaceName);
@@ -495,10 +578,10 @@ void testShootTacticFunc(void * arg){
 	p2=p2-Pose(1.0,1.0,0);
 	maxDist = 1.0;
 
-	AbstractTactic * defendLine1= new DefendLine( blue1, p1.getPosition(),p2.getPosition(), maxDist);
+	Tactic * defendLine1= new DefendLine( blue1, p1.getPosition(),p2.getPosition(), maxDist);
 	defendLine1->start();
 
-
+/*
 	static Robot blue2(std::string("blue2"),ifaceName);
 	//Vector2D p1(Config::getInstance().field.TOP_GOAL_LEFT_CORNER.x,Config::getInstance().field.TOP_GOAL_LEFT_CORNER.y -
 	p1 = gameState->getRobotPos( blue2.getRobotID() );
@@ -507,10 +590,10 @@ void testShootTacticFunc(void * arg){
 	p2=p2-Pose(1.0,1.0,0);
 	maxDist = 1.0;
 
-	AbstractTactic * defendLine2= new DefendLine( blue2, p1.getPosition(),p2.getPosition(), maxDist);
+	Tactic * defendLine2= new DefendLine( blue2, p1.getPosition(),p2.getPosition(), maxDist);
 	defendLine2->start();
-
-    AbstractTactic * shootTactic= new ShootTactic(*robot);
+*/
+    Tactic * shootTactic= new ShootTactic(*robot);
     //shootTactic->execute(NULL);
     shootTactic->start(NULL);
     shootTactic->join();

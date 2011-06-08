@@ -64,6 +64,8 @@
 
 #include "Logger/Logger.h"
 #include "Config/Config.h"
+#include "Plays/Play.h"
+
 #include "my_signal.h"
 
 #include "TestManager/TestManager.h"
@@ -100,7 +102,6 @@ int daemonInit ( void )	{
 	return 0;
 }
 
-
 using namespace Tests;
 
 int main(int argc, char*argv[],char *envp[]){
@@ -111,11 +112,12 @@ int main(int argc, char*argv[],char *envp[]){
     //Init libxml
     xmlInitParser();
 
-    log4cxx::PropertyConfigurator::configure("log4cxx.properties");
+//    log4cxx::PropertyConfigurator::configure("log4cxx.properties");
     Config::getInstance().load("/home/maciek/codeblocks/magisterka/bin/Debug/config.xml");
     Config::getInstance().setTestMode(true);
 
     Tests::TestKind testKind=Tests::none;
+
 
     if(argc>1){
         if(strncmp(argv[1],"test",4)==0)
@@ -133,7 +135,7 @@ int main(int argc, char*argv[],char *envp[]){
                 testKind=Tests::acceleration;
             if(strncmp(argv[2],"motion",6)==0)
                 testKind=Tests::motion;
-            if(strncmp(argv[2],"rot",3)==0)
+            if(strncmp(argv[2],"rotation",3)==0)
                 testKind=Tests::rotation;
             if(strncmp(argv[2],"task",4)==0)
                 testKind=Tests::taskScheduling;
@@ -145,19 +147,31 @@ int main(int argc, char*argv[],char *envp[]){
                 testKind=Tests::testShootTactic;
             if(strncmp(argv[2],"pass",4)==0)
                 testKind=Tests::testPassTactic;
+            if(strncmp(argv[2],"play",4)==0)
+                testKind=Tests::play;
         }
         else{
             std::cout<<"missing param"<<std::endl;
+
+            xmlCleanupParser();
             exit(0);
         }
     }
+    LOG_DEBUG(getLoggerPtr ("app_debug"), "test");
 
-    int sleep_status;
+    LOG_DEBUG(getLoggerPtr ("red0"), "test");
+    LOG_DEBUG(getLoggerPtr ("red1"), "test");
+    LOG_DEBUG(getLoggerPtr ("red2"), "test");
+
+    LOG_DEBUG(getLoggerPtr ("blue0"), "test");
+    LOG_DEBUG(getLoggerPtr ("blue1"), "test");
+    LOG_DEBUG(getLoggerPtr ("blue2"), "test");
+
+    Play::init();
+    Videoserver::getInstance().start(NULL);
+
     if(Config::getInstance().isTestMode()){
-        std::cout<<"starting test mode"<<std::endl;
-
-        Videoserver::getInstance().start(NULL);
-
+    	int sleep_status = 0;
         struct timespec req;
         req.tv_sec=0;
         req.tv_nsec=1000000;
@@ -170,25 +184,30 @@ int main(int argc, char*argv[],char *envp[]){
         	nanosleep(&req,&rem);
         }
 
-        //uruchom klienta sslbox
-        RefereeClient::getInstance().start();
-
-        //uruchom glowny algorytm sterujacy
-        run_stp();
-
-/*		//DO testow algorytmu
-        TestManager testManager;
-        for(int i=30;i>0;i--){
-			testManager.addTest(testKind);
-			testManager.startTests();
-			while(!testManager.isTestFinished()){
-				sleep_status=nanosleep(&req,&rem);
-			};
+        if( testKind == Tests::play ){
+        	//uruchom klienta sslbox
+        	RefereeClient::getInstance().start();
+        	//sleep(1000);
+        	//uruchom glowny algorytm sterujacy
+        	run_stp();
         }
-*/
+        else{
+			//DO testow algorytmu
+			TestManager testManager;
+			for(int i=30;i>0;i--){
+				testManager.addTest(testKind);
+				testManager.startTests();
+				while(!testManager.isTestFinished()){
+					sleep_status=nanosleep(&req,&rem);
+				};
+			}
+        }
+        RefereeClient::getInstance().stop();//killThread();
+        RefereeClient::getInstance().join();
         Videoserver::getInstance().killThread();
     }
 
+    Play::free();
     xmlCleanupParser();
 
     return 0;

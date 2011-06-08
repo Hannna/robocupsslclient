@@ -37,7 +37,7 @@
 
 using namespace std;
 
-log4cxx::LoggerPtr getLoggerPtr (const char *const name);
+log4cxx::LoggerPtr getLoggerPtr (const char * name);
 #define LOG_TRACE(l, m) \
 {LOG4CXX_TRACE(l, m);} \
 //else {LOG4CXX_TRACE(getLogger("log"), m); LOG4CXX_FATAL(getLogger(SM_ID), "loggerPtr was NULL");};

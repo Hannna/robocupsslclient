@@ -8,14 +8,26 @@
 #include "GoToPose.h"
 #include "KickBall.h"
 #include "../RRT/RRTPlanner.h"
+#include "../Exceptions/SimulationException.h"
 
 GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose),serialize( Config::getInstance().isDebugMode() ) {
 	this->rrt=NULL;
 	currSimTime=0;
 	lastSimTime=0;
 	currSimTime=video.updateGameState(currGameState);
-	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose );
+	force = false;
+	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force );
 }
+
+GoToPose::GoToPose(const Pose & pose,Robot * robot, bool force_):Task(robot),goalPose(pose),serialize( Config::getInstance().isDebugMode() ) {
+	this->rrt=NULL;
+	currSimTime=0;
+	lastSimTime=0;
+	currSimTime=video.updateGameState(currGameState);
+	force = force_;
+	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force );
+}
+
 
 Task* GoToPose::nextTask(){
 
@@ -28,7 +40,7 @@ Task* GoToPose::nextTask(){
 
 			double score =
 			( (ang.first * ang.second) > 0 ) ? fabs( ang.first + ang.second ) : fabs( ang.first) + fabs(ang.second );
-			LOG_INFO(log, "current position score = "<<score );
+			LOG_INFO(log, "current position score = "<<score<<" ang.first "<<ang.first<<" ang.second "<<ang.second );
 
 			//jesli warto strzelic na bramke
 			if( score > EvaluationModule::minOpenAngle ){
@@ -37,6 +49,8 @@ Task* GoToPose::nextTask(){
 			}
 		}
 	}
+
+	LOG_TRACE(log, "next TASK is null= " );
 
 	return NULL;
 }
@@ -63,8 +77,8 @@ Task::status GoToPose::run(void* arg, int steps){
 
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
 	Vector2D targetRelPosition;
-	Vector2D robotCurrentVel;
-	Vector2D robotNewVel;
+	Vector2D robotCurrentGlobalVel;
+	Vector2D robotNewGlobalVel;
 	bool timeMeasure = false;
 
 	static int serializedTrees = 0;
@@ -74,7 +88,14 @@ Task::status GoToPose::run(void* arg, int steps){
 	 */
 	while( !this->stopTask && (steps--)!=0 ){
 
-		if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
+		currSimTime = video.updateGameState(currGameState) ;
+		if( currSimTime <0 ){
+			std::ostringstream s;
+			s<<__FILE__<<":"<<__LINE__;
+			throw SimulationException(s.str());
+		}
+
+		if( lastSimTime <  currSimTime ){
 			lastSimTime = currSimTime;
 
             currRobotPose=(*currGameState).getRobotPos( robot->getRobotID() );
@@ -82,14 +103,26 @@ Task::status GoToPose::run(void* arg, int steps){
 
             if(rrt){
 				delete rrt;
-				rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
+				if( this->force ){
+					rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
+							robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path,currSimTime, timeMeasure, true );
+				}
+				else{
+					rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
 							robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path,currSimTime, timeMeasure );
+				}
 				status=rrt->run( video.getUpdateDeltaTime() );
             }
             else{
-            	rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
+            	if( this->force ){
+            		rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
+            							robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path,currSimTime, timeMeasure, true );
+            	}
+            	else{
+            		rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
                     						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path,currSimTime, timeMeasure );
-                status=rrt->run( video.getUpdateDeltaTime() );
+            	}
+            	status=rrt->run( video.getUpdateDeltaTime() );
             }
 
             if(serialize){
@@ -120,16 +153,31 @@ Task::status GoToPose::run(void* arg, int steps){
 				//pozycja celu w ukladzie wsp zwiazanych z robotem
 				//targetRelPosition=rmY.Inverse()*(nextRobotPose.getPosition()-currRobotPose.getPosition());
 
-				robotCurrentVel=(*currGameState).getRobotVelocity( robot->getRobotID() );
+				robotCurrentGlobalVel=(*currGameState).getRobotGlobalVelocity( robot->getRobotID() );
 
 				//robotNewVel=calculateVelocity( robotCurrentVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
 
-				robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, nextRobotPose);
-				double w = robot->calculateAngularVel(*currGameState,robot->getRobotID(), goalPose);
-				LOG_TRACE(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" setVel "<<robotNewVel <<" w"<<w);
+				robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
+				//double w = robot->calculateAngularVel(*currGameState,robot->getRobotID(), goalPose);
+				double w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), goalPose);
+				//LOG_INFO(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+				//		" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
 
 				//robot->setRelativeSpeed( robotNewVel, 0);
-				robot->setRelativeSpeed( robotNewVel, w );
+				//robot->setRelativeSpeed( robotNewVel, w );
+				if( rrt->getDistToNearestObs() > 0.02 ){
+					LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+											" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
+
+					robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
+
+				}
+				else{
+					LOG_INFO(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+											" setVel global vel "<<robotNewGlobalVel <<" w"<<0);
+
+					robot->setGlobalSpeed(robotNewGlobalVel,0,robotRotation);
+				}
 				//robot->
 			}
 			else if(status==RRTPlanner::RobotReachGoalPose){

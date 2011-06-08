@@ -23,8 +23,11 @@ public:
 	//TaskSharedPtr& nextTask();
 	virtual ~KickBall();
 protected:
+	//czy strzal ma zostac oddany natychmiast
 	const bool kickNow;
-    const double rotation;
+
+	// rotacja robota ktora ma osiagnac, podczas oddawania strzalu
+	const double rotation;
 	virtual Task::status run(void*, int steps=-1);
 };
 
