@@ -27,14 +27,17 @@ public:
 	typedef
 	enum predicate_{
 		kick_if_we_can = 0x01,
-		pass = 0x02
+		pass = 0x02,
+		should_have_ball = 0x04,
+		analyse_all_field = 0x08
 	} predicate;
 
 	enum status{
 		not_completed = - 99,
 		collision,
 		error,
-		ok = 0
+		ok = 0,
+		kick_ok
 	};
 
 public:

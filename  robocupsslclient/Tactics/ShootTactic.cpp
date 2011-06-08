@@ -9,7 +9,7 @@
 
 
 
-ShootTactic::ShootTactic(Robot & robot): AbstractTactic(robot)
+ShootTactic::ShootTactic(Robot & robot): Tactic(robot)
 {
 
 }
@@ -25,24 +25,30 @@ void ShootTactic::execute(void *){
     //TODO: sprawdzic rotacje inna powinna byc w przypadku jazdy na bramke dolna
     //a inna w przypadku jazdy na gorna
     if(robot.getRobotName().compare(0,3,"red")==0){
-    	if(Videoserver::redGoal==bottom){
-    		goalPose = Pose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
-    		    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0.0 );
-    	}
-    	else{
-            goalPose = Pose(Config::getInstance().field.TOP_GOAL_MID_POSITION.x,
-    		    		Config::getInstance().field.TOP_GOAL_MID_POSITION.y - 0.01, 0);
-    	}
+    	goalPose = Pose( Videoserver::getBlueGoalMidPosition().x,
+    						Videoserver::getBlueGoalMidPosition().y, 0.0 );
+
+    	//if(Videoserver::redGoal==bottom){
+    	//	goalPose = Pose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
+    	//	    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0.0 );
+    	//}
+    	//else{
+         //   goalPose = Pose(Config::getInstance().field.TOP_GOAL_MID_POSITION.x,
+    	//	    		Config::getInstance().field.TOP_GOAL_MID_POSITION.y - 0.01, 0);
+    	//}
     }
     else{
-    	if(Videoserver::blueGoal==bottom){
-    		goalPose = Pose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
-    		    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0);
-    	}
-    	else{
-    		goalPose = Pose(Config::getInstance().field.TOP_GOAL_MID_POSITION.x,
-    		    		Config::getInstance().field.TOP_GOAL_MID_POSITION.y, 0);
-    	}
+    	goalPose = Pose( Videoserver::getRedGoalMidPosition().x,
+    	    		Videoserver::getRedGoalMidPosition().y, 0.0 );
+
+    	//if(Videoserver::blueGoal==bottom){
+    	//	goalPose = Pose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
+    	//	    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0);
+    	//}
+    	//else{
+    	//	goalPose = Pose(Config::getInstance().field.TOP_GOAL_MID_POSITION.x,
+    	//	    		Config::getInstance().field.TOP_GOAL_MID_POSITION.y, 0);
+    	//}
     }
 
     goalPose.get<2>() = ( ang.first + ang.second )/2 ;
@@ -56,23 +62,25 @@ void ShootTactic::execute(void *){
     //score ← score + HYSTERESIS
     // SParami ← setCommand(MoveBall, target, KICK IF WE CAN)
 
-    while(true){
+    while( !this->stop ){
     	taskStatus = Task::not_completed;
 		this->currentTask = TaskSharedPtr( new MoveBall( goalPose, &robot ) );
 		this->currentTask->markParam(Task::kick_if_we_can);
 		bestScore = score;
 		Task* newTask;
-		while(taskStatus!=Task::ok){
+		int steps=1;
+		while( taskStatus!=Task::ok && !this->stop ){
 			newTask = this->currentTask->nextTask();
 
 			if(newTask){
 				this->currentTask = TaskSharedPtr( newTask );
 			}
-			int steps=1;
+
 			taskStatus = this->currentTask->execute(NULL,steps);
 
 			if( taskStatus == Task::error ){
 				LOG_ERROR(log,"Shoot tactic Task::error " <<taskStatus );
+				robot.stop();
 				break;
 			}
 

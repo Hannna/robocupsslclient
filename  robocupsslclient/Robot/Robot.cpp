@@ -56,12 +56,14 @@ std::list<Robot::robotID> Robot::getRedTeam(){
 }
 
 Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robotName( robotName_ ), id( Robot::getRobotID(robotName_) ),
-		log( getLoggerPtr ( robotName.c_str() ) )
+		log( getLoggerPtr( robotName_.c_str() ) )
 {
+
 	this->posIfaceName=posIfaceName;
 	this->v=Vector2D(0,0);
 	this->w=0;
 	this->time=0;
+	this->oldAlfaToCel = 0;
 
 	//alokowanie interfejsu do zmiany pozycji
 #ifdef GAZEBO
@@ -75,6 +77,7 @@ Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robo
 	std::cout<<"try connect to "<<positionIfaceName<<std::endl;
 	SimControl::getInstance().connectGazeboPosIface(posIface,positionIfaceName.c_str());
 	std::cout<<"connected to "<<positionIfaceName<<std::endl;
+
 	//Enable the motor
 	posIface->Lock(1);
 	posIface->data->cmdEnableMotors = 1;
@@ -85,6 +88,7 @@ Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robo
 
 	posIface->Unlock();
 	Videoserver::getInstance().registerRobot(posIface,this->robotName);
+
 #endif
 
 }
@@ -99,8 +103,8 @@ std::string Robot::getPosIfaceName() const
 
 void Robot::setRelativeSpeed(const Vector2D & v, const double & w)
 {
-	boost::tuple<double,double,double> currPositions;
-	boost::tuple<double,double,double> newVel=boost::tuple<double,double,double> (v.x,v.y,w);
+	//boost::tuple<double,double,double> currPositions;
+	//boost::tuple<double,double,double> newVel=boost::tuple<double,double,double> (v.x,v.y,w);
 	//SimControl::getInstance().getModelPos(robotName,currPositions);
 	/*
 	if(this->time!=0){
@@ -120,22 +124,41 @@ void Robot::setRelativeSpeed(const Vector2D & v, const double & w)
 #ifdef GAZEBO
 	posIface->Lock(1);
 	posIface->data->cmdEnableMotors = 1;
-	posIface->data->cmdVelocity.pos.x = newVel.get<0>();
-	posIface->data->cmdVelocity.pos.y = newVel.get<1>();
-    posIface->data->cmdVelocity.yaw = newVel.get<2>();
+	posIface->data->cmdVelocity.pos.x = v.x;//newVel.get<0>();
+	posIface->data->cmdVelocity.pos.y = v.y;//newVel.get<1>();
+    posIface->data->cmdVelocity.yaw = w;//newVel.get<2>();
 
 //	posIface->data->cmdVelocity.yaw = (M_PI*newVel.get<2>())/180.0;
 //  posIface->data->cmdVelocity.yaw = 0;
 
     posIface->Unlock();
 #endif
-	LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<newVel.get<0>()<<"\t vy="<<newVel.get<1>()<<"\t" );
+	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<v.x<<"\t vy="<<v.y<<"\t" );
+
+    LOG_TRACE( log, "set vel       name="<<this->robotName.c_str()<<" vx="<<v.x<<" vy="<<v.y<<" w "<<w );
 }
+
+void Robot::setGlobalSpeed(const Vector2D & v,const double & w, const double& rot){
+
+	Vector2D speed =v.rotate(-rot);
+#ifdef GAZEBO
+	posIface->Lock(1);
+	posIface->data->cmdEnableMotors = 1;
+	posIface->data->cmdVelocity.pos.x = speed.x;
+	posIface->data->cmdVelocity.pos.y = speed.y;
+    posIface->data->cmdVelocity.yaw = w;
+    posIface->Unlock();
+#endif
+    LOG_TRACE(log,"set vel  "<<" vx="<<speed.x<<" vy="<<speed.y<<" w "<<w );
+	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<speed.x<<"\t vy="<<speed.y<<"\t" );
+
+}
+
 std::pair<Vector2D,double> Robot::getDesiredVel() const
 {
 	return std::pair<Vector2D,double>(this->v,this->w);
 }
-std::pair<Vector2D,double> Robot::getVelocity() const
+std::pair<Vector2D,double> Robot::getRelativeVelocity() const
 {
 	double vx=0,vy=0,w=0;
 #ifdef GAZEBO
@@ -147,11 +170,11 @@ std::pair<Vector2D,double> Robot::getVelocity() const
 	posIface->Unlock();
 #endif
 
-	if(robotName.compare(Config::getInstance().getTestModelName())==0){
+//	if(robotName.compare(Config::getInstance().getTestModelName())==0){
 		//LOG_DEBUG(getLoggerPtr("path"),"robot "<<this->robotName.c_str()<<" from gazebo vx"=%lf\t vy=%lf\t w=%lf,"
 		//			,,vx,vy,w);
-		;
-	}
+//		;
+//	}
 
 	return std::pair<Vector2D,double>(Vector2D(vx,vy),w);
 
@@ -237,30 +260,45 @@ void Robot::stop(  ){
 	}
 */
 	this->setRelativeSpeed( Vector2D(0,0),0 );
+	//bool finish=false;
+	double err=1;
+	while( err > 0.01 ){
+		#ifdef GAZEBO
+			posIface->Lock(1);
+			err=( pow( posIface->data->velocity.pos.x, 2 ) + pow( posIface->data->velocity.pos.y, 2 ) );
+			posIface->Unlock();
+		#endif
+			usleep(10000);
+	}
 
 }
 
-double Robot::calculateAngularVel(const GameState & gameState,const Robot::robotID robotID,const  Vector2D & globalTargetPosition){
-	Pose p(globalTargetPosition,0.0);
-	return calculateAngularVel( gameState, robotID, p);
+double Robot::calculateAngularVel(const  Pose & globalRobotPose, const  Vector2D & globalTargetPosition){
+	Pose p( globalTargetPosition,0.0 );
+	return calculateAngularVel( globalRobotPose, p);
 }
-double Robot::calculateAngularVel(const GameState & gameState,const Robot::robotID robotID,const  Pose & globalTargetPosition){
+double Robot::calculateAngularVel(const  Pose & globalRobotPose, const  Pose & globalTargetPose){
 
 	//Pose globalTargetPosition = globalTargetPosition_*100;
 	//obrot jaki trzeba było wykonac w poprzednim kroku
-	static double oldAlfaToCel;
+	//static double oldAlfaToCel;
 
     double Ker=0.5;
     double Ko=20;
-    double currGlobalRobotRot=gameState.getRobotPos( robotID ).get<2>();
+    //double currGlobalRobotRot=gameState.getRobotPos( robotID ).get<2>();
+    double currGlobalRobotRot = globalRobotPose.get<2>();
     //pozycja robota w ukladzie wsp zw z plansza
-    Pose currRobotPose=gameState.getRobotPos( robotID );
+    //Pose currRobotPose=gameState.getRobotPos( robotID );
 
-
+    // ten kawalek kodu wyznacza kat o jaki robot musi sie obrocic zeby byc skierowanym na cel
     RotationMatrix rm0(0);
-    Pose reltargetPose_ = globalTargetPosition.transform( currRobotPose.getPosition(),rm0 );
+    Pose reltargetPose_ = globalTargetPose.transform( globalRobotPose.getPosition(),rm0 );
     Pose reltargetPose = reltargetPose_*100;
-    double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;// (M_PI/2);
+    double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;
+
+
+    assert( fabs(rotacjaDocelowa) < M_PI);
+
     //double rotacjaDocelowa=-atan2(reltargetPose.get<1>(),reltargetPose.get<0>()) ;// (M_PI/2);
     //macierz obrotu os OY na wprost robota
     //RotationMatrix rmY(currGlobalRobotRot);
@@ -271,17 +309,34 @@ double Robot::calculateAngularVel(const GameState & gameState,const Robot::robot
     //targetPosition=rmX.Inverse()*(goToPosition-currentPosition);
 
     //obrot jaki trzeba wykonac w biezacym kroku
-    double currAlfaToCel = rotacjaDocelowa - currGlobalRobotRot;
+    double currAlfaToCel = convertAnglePI( rotacjaDocelowa - currGlobalRobotRot );///convertAnglePI( currGlobalRobotRot - rotacjaDocelowa  );
+
+
+    if( fabs( currAlfaToCel )  < 0.01 )
+    	return 0;
+    //kierunek obrotu
+    //iotacjaDocelowa * currGlobalRobotRot < 0 ){
+    //	currAlfaToCel=currAlfaToCel*(-1);
+    //}
 
     //double currTetaCel=atan( (-reltargetPose.get<1>()) / (reltargetPose.get<0>()));
     // double angularVel= Ko*(blad rotacji) + Ker(obrotdo celu jaki trzeba bylo wykonac w poprzednm kroku - obrot do celu jaki trzeba wykonac w tymkroku)
-    double angularVel=Ko*(rotacjaDocelowa-currGlobalRobotRot)+ Ker*(oldAlfaToCel - currAlfaToCel);
 
-    oldAlfaToCel=currAlfaToCel;
+    //double angularVel=Ko*(rotacjaDocelowa-currGlobalRobotRot)+ Ker*(oldAlfaToCel - currAlfaToCel);
+    double angularVel=Ko*(  currAlfaToCel  )+ Ker*( convertAnglePI( this->oldAlfaToCel - currAlfaToCel) );
 
-    double w = fabs(angularVel) > 2*M_PI ? 2*M_PI * sgn(angularVel) : angularVel;
+    double w = fabs(angularVel) > M_PI/2 ? M_PI/2 * sgn(angularVel) : angularVel;
+
+//    if( this->oldAlfaToCel*currAlfaToCel < 0 ){
+//    	if( pow( this->oldAlfaToCel - currAlfaToCel ,2 ) )
+//    		w=-1*w;
+//    }
+
+    this->oldAlfaToCel=currAlfaToCel;
+
+
 //    LOG_INFO( log,"relative target pose "<<reltargetPose<<std::endl );
-//    LOG_INFO(log,"potrzebny obrot do celu "<<currAlfaToCel<<" rotacjaDocelowa "<<rotacjaDocelowa<<" currGlobalRobotRot "<<currGlobalRobotRot<<" calculate angular vel w="<< w);
+    LOG_TRACE(log,"potrzebny obrot do celu "<<currAlfaToCel<<" rotacjaDocelowa "<<rotacjaDocelowa<<" currGlobalRobotRot "<<currGlobalRobotRot<<" calculate angular vel w="<< w);
 
     return  w;
 }
@@ -320,6 +375,8 @@ double Robot::calculateAngularVel(GameState & gameState,Robot::robotID robotID, 
 */
 Robot::~Robot()
 {
+	this->posIface->Close();
+	delete this->posIface;
 	std::cout<<"~Robot "<<this->robotName<<std::endl;
 }
 /*
@@ -332,7 +389,6 @@ Vector2D calculateVelocity(const Vector2D &currVel, const Pose& currPose,const  
 */
 
 
-
 double calculateVelocity(const double vel, const double currPosition,const  double targetPosition){
 	double newV;
 	//przyspieszenie
@@ -340,11 +396,19 @@ double calculateVelocity(const double vel, const double currPosition,const  doub
 	//hamowanie
 	double dec=0.5;//9;//[m/s2]
 	//jesli predkosc powoduje powiekszanie sie odleglosci miedzy cuur.x oraz target.x to zatrzymaj
-		if( vel*targetPosition < -0.01){
-			newV=0;
-		}
+	/*Uwaga
+	 *
+	 * przy duzych odleglosiach fabs( targetPosition-currPosition )* vel jest < 0.01
+	 *
+	 * co wiecej gdy zadamy robotowi max predkosc w jednym kierunku,
+	 * to zawsze ma sladowa w kierunku prostopadlym
+	 *
+	 */
+		//if( vel*( targetPosition-currPosition ) < -0.01){
+		//	newV=0;
+		//}
 		//jesli poruszajac sie z aktualna predkoscia przekroczymy cel
-		else if( fabs(targetPosition-currPosition)<= pow(vel,2)/(2*dec)  ){
+		/*else*/ if( fabs(targetPosition-currPosition)<= pow(vel,2)/(2*dec)  ){
 			newV=0;
 		}
 		//jesli aktualna predkosci jest wieksza niz max
@@ -359,7 +423,7 @@ double calculateVelocity(const double vel, const double currPosition,const  doub
 			double s=fabs(targetPosition - currPosition);
 			double v=sqrt( (3*dec*pow(vel,2)+2*acc*dec*s)/(acc+dec));
 
-			v=fmin(v,Config::getInstance().getRRTMaxVel());
+			//v=fmin(v,Config::getInstance().getRRTMaxVel());
 			double signum=-1;
 			if( targetPosition - currPosition > 0 )
 				signum=1;
@@ -387,6 +451,7 @@ double calculateVelocity(const double vel, const double currPosition,const  doub
 		}
 		return newV;
 }
+/*
 Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & targetPose){
 	Vector2D newVel;
 	//std::cout<<"#####################################"<<std::endl;
@@ -400,15 +465,40 @@ Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & targetPose){
 	//std::cout<<"#####################################"<<std::endl;
 	return newVel;
 }
-
+*/
+/*
 Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose){
 
 	RotationMatrix rmY( currGlobalPose.get<2>() );
-	//RotationMatrix rmY( (M_PI/2) - currGlobalPose.get<2>()   );
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
 	Vector2D targetRelPosition=rmY.Inverse()*(targetGlobalPose.getPosition()-currGlobalPose.getPosition());
-	return calculateVelocity( currVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
+
+	Vector2D newVel;
+	newVel.x=calculateVelocity(currVel.x, 0,targetRelPosition.get<0>() );
+	newVel.y=calculateVelocity(currVel.y, 0,targetRelPosition.get<1>() );
+
+	return newVel;//calculateVelocity( currVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
 }
+*/
+
+Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose){
+
+	//RotationMatrix rmY( currGlobalPose.get<2>() );
+	//pozycja celu w ukladzie wsp zwiazanych z robotem
+	//Vector2D targetRelPosition=rmY.Inverse()*(targetGlobalPose.getPosition()-currGlobalPose.getPosition());
+
+	Vector2D newVel;
+	newVel.x=calculateVelocity(currVel.x, currGlobalPose.get<0>(),targetGlobalPose.get<0>() );
+	newVel.y=calculateVelocity(currVel.y, currGlobalPose.get<1>(),targetGlobalPose.get<1>() );
+
+	double scale = fabs(newVel.x) > fabs(newVel.y) ? fabs(newVel.x) : fabs(newVel.y) ;
+	if( scale > Config::getInstance().getRRTMaxVel() )
+		scale=Config::getInstance().getRRTMaxVel()/scale;
+	//Vector2D v=newVel*scale;
+	return newVel*scale;
+
+}
+
 /*
 Vector2D calculateVelocity(Vector2D currVel, Pose currPose, Pose targetPose, double deltaTime){
 	//przyspieszenie

@@ -30,11 +30,14 @@ Task* MoveBall::nextTask(){
 			//oblicz czy wato strzelic na bramke
 			std::pair<double,double> ang=evaluationModule.aimAtGoal( robot->getRobotName() );
 
-			double score = fabs( ang.first - ang.second );
-			LOG_INFO(log, "current position score = "<<score );
+			//double score = fabs( ang.first - ang.second );
+			double score =
+			( (ang.first * ang.second) > 0 ) ? fabs( ang.first + ang.second ) : fabs( ang.first) + fabs(ang.second );
+
+			//LOG_INFO(log, "current position score = "<<score<<" ang.first "<<ang.first<<" ang.second "<<ang.second );
 
 			//jesli warto strzelic na bramke
-			if( score > EvaluationModule::minOpenAngle ){
+			if( score > EvaluationModule::minOpenAngle   ){
 				LOG_INFO(this->log,"MoveBall -> KickBall");
 				return new KickBall( robot, ( ang.first + ang.second )/2  ) ;
 			}

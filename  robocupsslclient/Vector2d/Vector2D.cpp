@@ -86,15 +86,16 @@ double Vector2D::distance(Vector2D to)const
 	return sqrt(pow(to.x-this->x,2)+pow(to.y-this->y,2));
 }
 
-Vector2D Vector2D::rotate(double angle){
+Vector2D Vector2D::rotate(const double & angle) const {
 	double d = this->length();
 
 	if( std::isnan(d) ||  d< 0.001)
 		return Vector2D(0,0);
 	double curr_angle = atan2(y,x);
-	angle += curr_angle;
+	curr_angle += angle;
+	//angle += curr_angle;
 
-	Vector2D res(d * cos(angle), d * sin(angle) );
+	Vector2D res(d * cos(curr_angle), d * sin(curr_angle) );
 	return res;
 }
 

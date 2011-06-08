@@ -13,7 +13,11 @@ class Thread
         int start(void * arg = NULL);
         THREADID getThreadID(){ return this->threadId_;}
         void killThread();
-        void join(){pthread_join(threadId_,NULL);}
+        void join(){
+        	if( !joined )
+        		pthread_join(threadId_,NULL);
+        	joined = true;
+        }
     protected:
       /*@brief ew funkcja do przedefiniowania
       * wywolywana przed uruchomieniem watku
@@ -35,6 +39,7 @@ class Thread
 
       THREADID threadId_;
       pthread_attr_t attr;
+      bool joined;
       void * arg_;
 };
 

@@ -231,7 +231,7 @@ int RRTNode::serializeRecursiveToXml( xmlTextWriterPtr & writer,const std::strin
 	//zapisywanie predkosci robota w danym wezle
 
 	ois.str("");
-	ois<<state->getRobotVelocity( Robot::getRobotID(modelName) ).x;
+	ois<<state->getRobotGlobalVelocity( Robot::getRobotID(modelName) ).x;
 	/* Add an attribute with name "xml:lang" and value "de" to ORDER. */
 	status = xmlTextWriterWriteAttribute(writer, BAD_CAST "vx",
 									 BAD_CAST ois.str().c_str());
@@ -242,8 +242,8 @@ int RRTNode::serializeRecursiveToXml( xmlTextWriterPtr & writer,const std::strin
 
 
 	ois.str("");
-	state->getRobotVelocity( Robot::getRobotID(modelName) );
-	ois<<state->getRobotVelocity( Robot::getRobotID(modelName) ).y;
+	state->getRobotGlobalVelocity( Robot::getRobotID(modelName) );
+	ois<<state->getRobotGlobalVelocity( Robot::getRobotID(modelName) ).y;
 	/* Add an attribute with name "xml:lang" and value "de" to ORDER. */
 	status = xmlTextWriterWriteAttribute(writer, BAD_CAST "vy",
 									 BAD_CAST ois.str().c_str());

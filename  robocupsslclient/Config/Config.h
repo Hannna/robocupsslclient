@@ -20,6 +20,8 @@
 
 #include <log4cxx/logger.h>
 #include "../additional.h"
+#include "../Lock/Lock.h"
+
 
 class Config {
 private:
@@ -56,6 +58,7 @@ private:
 	};
 
 	class FieldParams{
+		friend class Videoserver;
 		public:
 		const double FIELD_WIDTH;//[m]
 		const double FIELD_LENGTH;//[m]
@@ -67,6 +70,7 @@ private:
 		const Vector2D FIELD_MIDDLE_VECTOR;
         const Vector2D GOAL_CORNER_LEFT_SHIFT;
 		const Vector2D GOAL_CORNER_RIGHT_SHIFT;
+
 		const Vector2D BOTTOM_GOAL_MID_POSITION;
 		const Vector2D BOTTOM_GOAL_LEFT_CORNER;
 		const Vector2D BOTTOM_GOAL_RIGHT_CORNER;
@@ -75,6 +79,9 @@ private:
 		const Vector2D TOP_GOAL_RIGHT_CORNER;
 
 
+
+
+		public:
 		inline FieldParams():FIELD_WIDTH( 5.4 ), FIELD_LENGTH( 7.4 ),FIELD_MARIGIN(0.675),
                 FIELD_BOTTOM_LEFT_CORNER(0,0), FIELD_TOP_RIGHT_CORNER(5.4, 7.4),
 				FIELD_MIDDLE_POSE ( 2.7, 3.7 ,0.0 ), FIELD_MIDDLE_VECTOR( 2.7,3.7 ),
@@ -87,7 +94,6 @@ private:
 				TOP_GOAL_MID_POSITION( 2.7 , 6.725 ),
 				TOP_GOAL_LEFT_CORNER( TOP_GOAL_MID_POSITION + GOAL_CORNER_LEFT_SHIFT ),
 				TOP_GOAL_RIGHT_CORNER( TOP_GOAL_MID_POSITION + GOAL_CORNER_RIGHT_SHIFT ){
-
 		}
 
 	};
@@ -96,10 +102,12 @@ private:
 	public:
         double mainCylinderRadious;
 	};
+	static Config* config;
+	static pthread_mutex_t  mutex;
 public:
 	//wymiary boiska
 	FieldParams field;
-
+	static bool end;
 	bool load(std::string configFileName);
     double getRobotMainCylinderRadious() const ;
 	const std::vector<std::string> getBlueTeam()const;
@@ -119,10 +127,24 @@ public:
 	const bool goToBall() const;
 	bool isTestMode();
 	void setTestMode(bool );
+
+//	static Config& getInstance(){
+//		static Config Config_;
+//		return Config_;
+//	}
+
 	static Config& getInstance(){
-		static Config Config_;
-		return Config_;
+		if(!Config::config){
+			LockGuard lock(Config::mutex);
+			if(!Config::config){
+				static Config c;
+				//Videoserver::video=new Videoserver();
+				Config::config = &c;
+			}
+		}
+		return *Config::config;
 	}
+
 	virtual ~Config();
 
 private:

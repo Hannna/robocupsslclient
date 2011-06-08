@@ -49,6 +49,10 @@ public:
 
      ballState getBallState(Robot::robotID);
 
+     Pose getPositionForThrowIn(){
+    	 return Pose(this->positionForThrowIn,0);
+     }
+
      Pose findBestDribbleTarget();
 
      bool haveBall_1( const Robot & robot);
@@ -65,6 +69,8 @@ public:
         Config & appConfig;
         static Mutex mutex;
         const log4cxx::LoggerPtr log;
+        Vector2D positionForThrowIn;
+        ballState ballState_;
 
         EvaluationModule();
         virtual ~EvaluationModule();

@@ -30,7 +30,8 @@ namespace Tests{
             kick,
             testShootTactic,
             testPassTactic,
-            refereeBox
+            refereeBox,
+            play
 
             } TestKind;
 

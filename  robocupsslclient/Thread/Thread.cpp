@@ -1,14 +1,17 @@
 #include "Thread.h"
 #include <iostream>
+#include "../Exceptions/SimulationException.h"
 
 Thread::Thread() {
- pthread_attr_init(&attr);
+	joined = false;
+	pthread_attr_init(&attr);
 }
 
 int Thread::start(void * arg_)
 {
    arg(arg_); // store user data
    int code = pthread_create(&threadId_,&attr,Thread::threadFunction, this);
+   joined = false;
 
    return code;
 }
@@ -27,9 +30,12 @@ void Thread::killThread(){
 void * Thread::threadFunction(void * pthis)
 {
    Thread * pt = (Thread*)pthis;
-   pt->run( pt->arg() );
-
-   std::cout<<"exit from thread"<<std::endl;
+   try{
+	   pt->run( pt->arg() );
+   }
+   catch(SimulationException e){
+	   std::cout<<"exit from thread " << e.what()<<std::endl;
+   }
    return 0;
 }
 

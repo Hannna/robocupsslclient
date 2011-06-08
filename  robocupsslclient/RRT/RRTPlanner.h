@@ -63,6 +63,9 @@ enum ErrorCode{
 	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
             const Pose goalPose,std::list<Pose> * path, double simTime_, bool timeMeasure);
 
+	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
+	            const Pose goalPose,std::list<Pose> * path, double simTime_, bool timeMeasure, bool analyseAllField);
+
 	GameStatePtr getNearestState();
 	/* zwraca wierzcholek docelowy dla robota
 	 * wierzcholek spelnia nastepujace warunki
@@ -85,6 +88,10 @@ enum ErrorCode{
 
 	inline bool isNewPlanFound(){
 		return this->foundNewPlan;
+	}
+
+	inline bool getDistToNearestObs(){
+		return this->distToNearestObs;
 	}
 	virtual ~RRTPlanner();
 
@@ -214,6 +221,8 @@ private:
 	//stanu odleglego od celu o max simTime_
 	bool foundNewPlan;
 
+	double distToNearestObs;
+
 
 	//roboty przeszkody posortowane wzgledem odleglosci od sterowanego robota
 	std::vector<Pose> obstacles;
@@ -244,7 +253,7 @@ private:
 	static const unsigned int maxNodeNumber=150;
     //margines bezp przy wyznaczaniu sciezki
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
-    static const double SAFETY_MARGIN = 0.06;
+    static const double SAFETY_MARGIN = 0.09;
 
 	//pozycja docelowa robota
 	const Pose goalPose;

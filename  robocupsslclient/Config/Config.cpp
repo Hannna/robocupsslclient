@@ -11,7 +11,12 @@
 #include <boost/regex.hpp>	//wyrażenia regularne - do interpretacji plików, -lboost_regex!!
 #include <boost/lexical_cast.hpp>
 
-Config::Config(): configFileName("config.xml"),log(getLoggerPtr("app_debug")) {
+Config* Config::config;
+pthread_mutex_t Config::mutex=PTHREAD_MUTEX_INITIALIZER;
+bool Config::end = false;
+
+
+Config::Config(): configFileName("config.xml"),log(getLoggerPtr("app_debug") ) {
 	testMode=false;
 	debug=false;
 }
@@ -151,12 +156,12 @@ bool Config::loadTestMode(xmlNodePtr node,xmlDocPtr config){
 				v[1] = boost::lexical_cast<double>(what[5]);
 				v[2] = boost::lexical_cast<double>(what[8]);
 			}
-			LOG_DEBUG(log,"**********");
+			LOG_TRACE(log,"**********");
 			std::ostringstream ois;
 			for(int i=0;i<3;i++){
 				ois<<"v["<<i<<"]="<<v[i]<<"\t";
 			}
-			LOG_DEBUG(log,ois.str().c_str());
+			LOG_TRACE(log,ois.str().c_str());
 			this->testCfg.velocities.push_back(boost::tuple<double,double,double>(v[0],v[1],v[2]));
 			xmlFree(str);
 		}
@@ -226,6 +231,7 @@ bool Config::loadRobotParams(xmlNodePtr node,xmlDocPtr config){
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			from_string<double>(this->robotParams.mainCylinderRadious,data,std::dec);
+			xmlFree(str);
 			//this->redTeam.push_back(data);
 		}
 		current = current->next;
@@ -243,6 +249,7 @@ bool Config::loadRedTeam(xmlNodePtr node,xmlDocPtr config){
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			this->redTeam.push_back(data);
+			xmlFree(str);
 		}
 		current = current->next;
 	}
@@ -258,6 +265,7 @@ bool Config::loadBlueTeam(xmlNodePtr node,xmlDocPtr config){
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			this->blueTeam.push_back(data);
+			xmlFree(str);
 		}
 		current = current->next;
 	}
@@ -273,25 +281,28 @@ bool Config::loadRRTCfg(xmlNodePtr node,xmlDocPtr config){
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			from_string<double>(this->rrtCfg.goalProb,data,std::dec);
+			xmlFree(str);
 		}
 		else if(!xmlStrcmp(current->name,(const xmlChar *) "minDistance")){
 			xmlChar * str;
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			from_string<double>(this->rrtCfg.minDistance,data,std::dec);
+			xmlFree(str);
 		}
 		else if(!xmlStrcmp(current->name,(const xmlChar *) "robotReach")){
 			xmlChar * str;
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			from_string<double>(this->rrtCfg.robotReach,data,std::dec);
+			xmlFree(str);
 		}
 		else if(!xmlStrcmp(current->name,(const xmlChar *) "robotRadius")){
 			xmlChar * str;
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			from_string<double>(this->rrtCfg.robotRadius,data,std::dec);
-
+			xmlFree(str);
 			//std::cout<<"robotRadius"<<data<<std::endl;
 
 			//exit(0);
@@ -301,6 +312,7 @@ bool Config::loadRRTCfg(xmlNodePtr node,xmlDocPtr config){
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			from_string<double>(this->rrtCfg.maxVel,data,std::dec);
+			xmlFree(str);
 		}
 		else if(!xmlStrcmp(current->name,(const xmlChar *) "goalPosition")){
 			xmlChar * str;
@@ -390,5 +402,5 @@ const bool Config::goToBall() const{
 	return this->rrtCfg.goToBall;
 }
 Config::~Config() {
-	// TODO Auto-generated destructor stub
+	//LOG_INFO(log,"destroy Config");
 }

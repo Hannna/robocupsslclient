@@ -43,7 +43,7 @@ public:
 	Vector2D operator*(double ) const;
 		
 	///@brief Metoda zwracająca wektor bazowy obrócony o kąt angle (w radianach).
-	Vector2D rotate(double angle);
+	Vector2D rotate(const double& angle) const;
 	
 	///@brief zapisuje wektor do strumienia
 	friend std::ostream & operator<<(std::ostream & os, const Vector2D & v );

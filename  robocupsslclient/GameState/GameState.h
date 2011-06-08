@@ -52,8 +52,10 @@ public:
 	void updateRobotData(Robot::robotID id,Pose pose,Vector2D v=Vector2D(0,0),double w=0);
 	void updateRobotVel(Robot::robotID id,std::pair<Vector2D ,double> vel);
 
-
+	Vector2D getBallGlobalVelocity( ) const ;
+	Pose getBallPos() const ;
 	void updateBallData(Vector2D pos,Vector2D v);
+
 	void updateSimTime(double simTime);
 
 	Pose getRobotPos(std::string name) const ;
@@ -66,13 +68,15 @@ public:
 	 */
 	std::vector<Pose> getEnemyRobotsPos(const Robot::robotID & id) const ;
 
-	Vector2D getRobotVelocity(const std::string name) const ;
-	Vector2D getRobotVelocity(const Robot::robotID id) const ;
+	Vector2D getRobotGlobalVelocity(const std::string name) const ;
+	Vector2D getRobotGlobalVelocity(const Robot::robotID id) const ;
 	double getRobotAngularVelocity(const Robot::robotID id) const ;
 
-	Pose getBallPos() const ;
 	GameState & operator=(const GameState &gameState);
-	friend std::ostream& operator<<(std::ostream& os,const GameState& gs);
+	friend std::ostream& operator<<(std::ostream& os,const GameState& gs) ;
+	friend std::ostream& operator<<(std::ostream& os,const GameState* const gs) ;
+
+
 
 	/** funkcje sluzace do zapisu trajektorii robota**/
 
@@ -120,6 +124,7 @@ private :
 	Ball ball;
 	//czas pomiaru(z symulatora) stanu gry
 	double simTime;
+//	bool updated;
 	//do zapisu do pliku w formacie tex
 	static 	std::ofstream file;
 	static	std::string fileName;

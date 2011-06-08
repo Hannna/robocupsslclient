@@ -120,8 +120,8 @@ void TestManager::addTest(Tests::TestKind testKind){
 		break;
 		case rotation: {
 			LOG_DEBUG(logger,"not supported test");
-			//Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
-			//testRotation(Videoserver::getInstance(),testRobot);
+			Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
+			testRotation(Videoserver::getInstance(),testRobot);
 		}
 		break;
 		case RRTPlanner: {
@@ -151,7 +151,7 @@ void TestManager::addTest(Tests::TestKind testKind){
 		}
 		break;
 		case testShootTactic:{
-			static Robot red0(std::string("red0"),ifaceName);
+			static Robot red0(std::string("blue2"),ifaceName);
 			test=reinterpret_cast<funcPtr>(&testShootTacticFunc);
 			this->tests_fun.push_back( std::pair<funcPtr,void*>(test,reinterpret_cast<void*>(&red0) ) );
 		}

@@ -1,10 +1,10 @@
 #ifndef SHOOTTACTIC_H
 #define SHOOTTACTIC_H
 
-#include "../AbstractTactic/AbstractTactic.h"
+#include "Tactic.h"
 class Robot;
 
-class ShootTactic: public AbstractTactic
+class ShootTactic: public Tactic
 {
     public:
         ShootTactic(Robot & robot);

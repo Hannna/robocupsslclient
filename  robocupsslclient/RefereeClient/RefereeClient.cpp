@@ -5,6 +5,7 @@
 #include "../GameState/GameState.h"
 #include "../VideoServer/Videoserver.h"
 #include "../EvaluationModule/EvaluationModule.h"
+#include "../Exceptions/SimulationException.h"
 
 using boost::asio::ip::udp;
 
@@ -19,11 +20,19 @@ std::ostream& operator<<(std::ostream& os, const GameStatePacket& gsp){
 		" time_remaining "<<(int)gsp.time_remaining;
 	return os;
 }
-RefereeClient::RefereeClient():Thread(), log(getLoggerPtr ("app_debug"))
+
+RefereeClient::RefereeClient():Thread(), socket(io_service), log(getLoggerPtr ("app_debug") )
 {
 	bzero( &gameStatePacket, sizeof(gameStatePacket) );
 	gameStatePacket.cmd='H';
 	gameStatePacket.cmd_counter=-1;
+	stopTh = false;
+    //socket = boost::asio::ip::udp::socket(io_service);
+    socket.open(udp::v4());
+    local_endpoint = boost::asio::ip::udp::endpoint( udp::v4(), this->port );
+    socket.bind(local_endpoint);
+
+    this->teamID = Robot::unknown;
 }
 
 void RefereeClient::execute(void* ){
@@ -39,30 +48,37 @@ void RefereeClient::execute(void* ){
 	req.tv_nsec=10000000;//10ms
 	struct timespec rem;
 	bzero( &rem, sizeof(rem) );
+	bool readyForThrowIn = false;
 
-	while(true){
-		if( lastSimTime < ( currSimTime=video.updateGameState( gameState ) ) ){
-			lastSimTime = currSimTime;
-
-			EvaluationModule::ballState bState = evaluationModule.getBallState(Robot::red0);
-			//LOG_INFO(log," ballPose "<<gameState->getBallPos()<<" ballState "<<bState);
-			//sprawdz czy pilka jest w boisku
-			if( bState == EvaluationModule::occupied_theirs || bState == EvaluationModule::out || bState == EvaluationModule::in_goal ){
-				//
-				//LOG_INFO(log," ballPose "<<gameState->getBallPos()<<" ballState "<<bState);
-				SimControl::getInstance().restart();
-			}
+	EvaluationModule::ballState bState;
+	while( !Config::end || !this->stopTh ){
+		if( (currSimTime=video.updateGameState( gameState ) ) < 0 ){
+			std::ostringstream s;
+			s<<__FILE__<<":"<<__LINE__;
+			throw SimulationException( s.str() );
 		}
 
+		if( lastSimTime <  currSimTime ){
+			lastSimTime = currSimTime;
+			bState = evaluationModule.getBallState( Robot::red0 );
 
+			//sprawdz czy pilka jest w boisku
+			//if( bState == EvaluationModule::occupied_theirs || bState == EvaluationModule::out || bState == EvaluationModule::in_goal ){
+			//if( this->gameStatePacket.cmd == RefereeCommands::start)
+			{
+				if( bState == EvaluationModule::out ){
+					if( (!readyForThrowIn)  ){
+						readyForThrowIn = true;
+						SimControl::getInstance().moveBall( EvaluationModule::getInstance().getPositionForThrowIn() );
+					}
+				}
+				else
+					readyForThrowIn = true;
+			}
+		}
 		readMsgFromBox();
-
 		sleep_status=nanosleep(&req,&rem);
-
 	}
-
-
-
 }
 
 /*
@@ -124,29 +140,32 @@ void RefereeClient::readMsgFromBox(){
     GameStatePacket tmpGameStatePacket;
 
     size_t bytes_read;
-    boost::asio::io_service io_service;
-    boost::asio::ip::udp::socket socket(io_service);
-    socket.open(udp::v4());
+    //boost::asio::io_service io_service;
+    //boost::asio::ip::udp::socket socket(io_service);
+    //socket.open(udp::v4());
 
     //gniazdo jest bindowane z INADDR_ANY 0.0.0.0
-    udp::endpoint local_endpoint = boost::asio::ip::udp::endpoint( udp::v4(), this->port );
+    //udp::endpoint local_endpoint = boost::asio::ip::udp::endpoint( udp::v4(), this->port );
 
-    socket.bind(local_endpoint);
+    //socket.bind(local_endpoint);
 
-    do{
+    //do{
     	bytes_read = socket.receive_from( boost::asio::buffer(&tmpGameStatePacket,
     			sizeof(tmpGameStatePacket) ), sender_endpoint );
 
 		this->mutex_.lock();
+		std::cout<<tmpGameStatePacket<<std::endl;
 		if(this->gameStatePacket.cmd_counter!=tmpGameStatePacket.cmd_counter){
 			if( tmpGameStatePacket.cmd != gameStatePacket.cmd)
 				newCommands.push( castToCommand( tmpGameStatePacket.cmd ) );
 			std::cout<<tmpGameStatePacket<<std::endl;
 		}
 		this->gameStatePacket=tmpGameStatePacket;
+		this->cmd = castToCommand( tmpGameStatePacket.cmd );
 		this->mutex_.unlock();
+		//std::cout<<"read "<< bytes_read <<std::endl;
+   // }while ( bytes_read > 0 );
 
-    }while ( bytes_read > 0 );
 }
 
 /*
@@ -198,7 +217,7 @@ RefereeCommands::Command RefereeClient::getCommand() {
 
 }
 
-RefereeCommands::Command RefereeClient::castToCommand(const char c) const {
+RefereeCommands::Command RefereeClient::castToCommand(const char c) {
 	using namespace RefereeCommands;
 	Command cmd;
 	switch(c){
@@ -212,13 +231,17 @@ RefereeCommands::Command RefereeClient::castToCommand(const char c) const {
 		case 'o': cmd=overtime_half_1;break;
 		case 'O': cmd=overtime_half_2;break;
 		case 'a': cmd=penalty_shootout;break;
-		case 'k': cmd=kick_off;break;
+		case 'k': {cmd=kick_off;teamID = Robot::red;} break;
+		case 'K': {cmd=kick_off;teamID = Robot::blue;} break;
 		case 'p': cmd=penalty;break;
 		case 'f': cmd=direct_free_kick;break;
 		case 'i': cmd=indirect_free_kick;break;
 		case 't': cmd=timeout;break;
 		case 'z': cmd=timeout_end;break;
+
 		case 'g': cmd=goal_scored;break;
+		case 'G': cmd=goal_scored;break;
+
 		case 'd': cmd=decrease_goal_score;break;
 		case 'y': cmd=yellow_card;break;
 		case 'r': cmd=red_card;break;
@@ -228,7 +251,41 @@ RefereeCommands::Command RefereeClient::castToCommand(const char c) const {
 	}
 	return cmd;
 }
+
+std::ostream& operator<<(std::ostream& os, const RefereeCommands::Command& c){
+
+	switch(c){
+		case RefereeCommands::halt: os<<"halt";break;
+		case RefereeCommands::stopGame: os<<"stopGame";break;
+		case RefereeCommands::ready: os<<"ready";break;
+		case RefereeCommands::start: os<<"start";break;
+		case RefereeCommands::first_half: os<<"first_half";break;
+		case RefereeCommands::half_time: os<<"half_time";break;
+		case RefereeCommands::second_half: os<<"second_half";break;
+		case RefereeCommands::overtime_half_1: os<<"overtime_half_1";break;
+		case RefereeCommands::overtime_half_2: os<<"overtime_half_2";break;
+		case RefereeCommands::penalty_shootout: os<<"penalty_shootout";break;
+		case RefereeCommands::kick_off: {os<<"kick_off";} break;
+		//case 'K': {os<<"kick_off";} break;
+		case RefereeCommands::penalty: os<<"penalty";break;
+		case RefereeCommands::direct_free_kick: os<<"direct_free_kick";break;
+		case RefereeCommands::indirect_free_kick: os<<"indirect_free_kick";break;
+		case RefereeCommands::timeout: os<<"timeout";break;
+		case RefereeCommands::timeout_end: os<<"timeout_end";break;
+
+		case RefereeCommands::goal_scored: os<<"goal_scored";break;
+		//case RefereeCommands::goal_scored: os<<"goal_scored";break;
+
+		case RefereeCommands::decrease_goal_score: os<<"decrease_goal_score";break;
+		case RefereeCommands::yellow_card: os<<"yellow_card";break;
+		case RefereeCommands::red_card: os<<"red_card";break;
+		case RefereeCommands::cancel: os<<"cancel";break;
+		default:
+			throw "unsupported conversion";
+	}
+	return os;
+}
 RefereeClient::~RefereeClient()
 {
-
+	LOG_INFO(log,"exit from RefereeClient");
 }

@@ -30,7 +30,10 @@ public:
 		 if(!SimControl::simControl){
 		 	LockGuard lock(mutex);
  			if(!SimControl::simControl){
- 				SimControl::simControl=new SimControl();
+ 				//SimControl::simControl=new SimControl();
+ 				static SimControl sm;
+ 				SimControl::simControl = &sm;
+
 		 	}
 		 }
 		 return *SimControl::simControl;
@@ -55,7 +58,10 @@ public:
 //	void getSimPos(const char* name, double &x,double &y,double  &rot);
 	double getModelPos(std::string modelName,Pose &position);
 	///powoduje zapisanie przez gazebo pozycji zadanych obiektów do /tmp/gazebo_poses.txt
-	void getAllPos(std::map<std::string,Pose> &positions);
+	//zwraca 0 gdy f-cje trzeba wywolac ponownie
+	//zwraca -1 gdy gazebo zostalo odlaczone
+
+	int getAllPos(std::map<std::string,Pose> &positions);
 	///do komunikacji z plikiem gazebo_poses.txt, umożliwia zablokowanie zapisu
 	void lock();
 	///do komunikacji z plikiem gazebo_poses.txt
@@ -67,6 +73,10 @@ public:
 	 * w których modele wpadają na siebie przy rozstawianiu (o ile rozstawienie jest prawidłowe).
 	 */
 	void moveAwayModels();
+
+	void moveBall(Pose pose);
+
+	void stopBall( );
 
 	///Do debugowania - wypisuje simulationData
 	void display();
@@ -83,6 +93,8 @@ private:
 
 	///Funkcja blokująca (do czasu, kiedy gazebo wykona rządanie)
 	bool wait();
+
+	bool wait(int resp);
 
 	 #ifdef OLD
         gazebo::Client* client;
