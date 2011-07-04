@@ -51,7 +51,7 @@ bool NaivePlay::isFinished(){
 
 void NaivePlay::execute(){
 
-	LOG_INFO(log,"STARTING SIMPLEPLAY");
+	LOG_INFO(log,"STARTING NaivePlay");
 
 	this->role0.execute();
 

@@ -128,6 +128,20 @@ public:
 	friend std::ostream& operator<<(std::ostream& os,const Pose& pose);
 };
 
+class Region{
+	public:
+		friend std::ostream& operator<<(std::ostream& os,const Region& region);
+		Region(const Vector2D lbc,const  Vector2D ruc);
+
+		Vector2D getMiddle();
+
+		virtual ~Region();
+	private:
+		Region();
+		const Vector2D lbc;
+		const Vector2D ruc;
+};
+
 typedef std::vector<std::string> strvec;
 
 ///@brief Funkcja signum

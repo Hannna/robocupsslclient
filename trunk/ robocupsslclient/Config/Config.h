@@ -78,6 +78,16 @@ private:
 		const Vector2D TOP_GOAL_LEFT_CORNER;
 		const Vector2D TOP_GOAL_RIGHT_CORNER;
 
+		const Region upperMiddleRegion;
+		const Region upperLeftCornerRegion;
+		const Region upperRightCornerRegion;
+		const Region upperGoalFieldRegion;
+
+		const Region bottomMiddleRegion;
+		const Region bottomLeftCornerRegion;
+		const Region bottomRightCornerRegion;
+		const Region bottomGoalFieldRegion;
+
 
 
 
@@ -93,7 +103,43 @@ private:
 
 				TOP_GOAL_MID_POSITION( 2.7 , 6.725 ),
 				TOP_GOAL_LEFT_CORNER( TOP_GOAL_MID_POSITION + GOAL_CORNER_LEFT_SHIFT ),
-				TOP_GOAL_RIGHT_CORNER( TOP_GOAL_MID_POSITION + GOAL_CORNER_RIGHT_SHIFT ){
+				TOP_GOAL_RIGHT_CORNER( TOP_GOAL_MID_POSITION + GOAL_CORNER_RIGHT_SHIFT ),
+
+				upperMiddleRegion( Vector2D( FIELD_MARIGIN, FIELD_MIDDLE_VECTOR.y ),
+						Vector2D( FIELD_MARIGIN + FIELD_WIDTH, 0.75*FIELD_LENGTH ) ),
+
+				upperLeftCornerRegion( Vector2D( FIELD_MARIGIN, 0.75*FIELD_LENGTH + FIELD_MARIGIN ),
+								Vector2D( FIELD_MARIGIN + FIELD_WIDTH/3.0 ,FIELD_TOP_RIGHT_CORNER.y  ) ),
+
+				upperRightCornerRegion( Vector2D( 0.5*FIELD_WIDTH + FIELD_MARIGIN , 0.75*FIELD_LENGTH + FIELD_MARIGIN ),
+								FIELD_TOP_RIGHT_CORNER ),
+
+				upperGoalFieldRegion( Vector2D( FIELD_MARIGIN + FIELD_WIDTH/3.0 , FIELD_MIDDLE_VECTOR.y  + FIELD_LENGTH/4.0),
+								Vector2D( 0.66*FIELD_WIDTH + FIELD_MARIGIN , FIELD_LENGTH + FIELD_MARIGIN ) ),
+
+				bottomMiddleRegion( Vector2D( FIELD_MARIGIN , FIELD_MARIGIN + 0.25*FIELD_LENGTH ),
+						Vector2D( FIELD_MARIGIN + FIELD_WIDTH, FIELD_MARIGIN +  0.5*FIELD_LENGTH ) ),
+
+				bottomLeftCornerRegion(  Vector2D( FIELD_MARIGIN,FIELD_MARIGIN ),
+						Vector2D( FIELD_MARIGIN + 0.33*FIELD_WIDTH , FIELD_MARIGIN + 0.25* FIELD_LENGTH ) ),
+
+				bottomRightCornerRegion( Vector2D( FIELD_MARIGIN + 0.66*FIELD_WIDTH, FIELD_MARIGIN ),
+						Vector2D( FIELD_MARIGIN + FIELD_WIDTH, FIELD_MARIGIN + 0.25 * FIELD_LENGTH ) ),
+
+				bottomGoalFieldRegion(Vector2D( FIELD_MARIGIN + 0.33*FIELD_WIDTH  , FIELD_MARIGIN ),
+						Vector2D( FIELD_MARIGIN + 0.66*FIELD_WIDTH, FIELD_MARIGIN + 0.25*FIELD_LENGTH  ) )
+				{
+			/*
+					std::cout<<"upperLeftCornerRegion "<<upperLeftCornerRegion<<std::endl;
+					std::cout<<"upperRightCornerRegion "<<upperRightCornerRegion<<std::endl;
+					std::cout<<"upperGoalFieldRegion "<<upperGoalFieldRegion<<std::endl;
+					std::cout<<"upperMiddleRegion "<<upperMiddleRegion<<std::endl;
+
+					std::cout<<"bottomLeftCornerRegion "<<bottomLeftCornerRegion<<std::endl;
+					std::cout<<"bottomRightCornerRegion "<<bottomRightCornerRegion<<std::endl;
+					std::cout<<"bottomGoalFieldRegion "<<bottomGoalFieldRegion<<std::endl;
+					std::cout<<"bottomMiddleRegion "<<bottomMiddleRegion<<std::endl;
+			*/
 		}
 
 	};
@@ -104,6 +150,7 @@ private:
 	};
 	static Config* config;
 	static pthread_mutex_t  mutex;
+
 public:
 	//wymiary boiska
 	FieldParams field;

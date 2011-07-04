@@ -47,6 +47,26 @@ Pose Pose::translation(const Vector2D& distance) const {
 	Pose tmp(this->get<0>()-distance.x,this->get<1>()-distance.y,this->get<2>() );
 	return tmp;
 }
+
+//*****************************************************
+
+Region::Region(const Vector2D lbc_, const Vector2D ruc_): lbc(lbc_),ruc(ruc_) {
+	;
+}
+
+Vector2D Region::getMiddle(){
+	return Vector2D( (ruc.x + lbc.x)/2 , (ruc.y + lbc.y)/2 );
+}
+
+Region::~Region(){
+
+};
+
+
+std::ostream& operator<<(std::ostream& os,const Region& region){
+	os<<"left bottom corner "<<region.lbc <<" right upper corner "<<region.ruc;
+	return os;
+}
 //*****************************************************
 
 double convertAnglePI(double angle){

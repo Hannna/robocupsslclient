@@ -38,7 +38,7 @@ Task* MoveBall::nextTask(){
 
 			//jesli warto strzelic na bramke
 			if( score > EvaluationModule::minOpenAngle   ){
-				LOG_INFO(this->log,"MoveBall -> KickBall");
+				LOG_INFO(this->log,"MoveBall -> KickBall  ang.first"<<ang.first<<" ang.second "<<ang.second );
 				return new KickBall( robot, ( ang.first + ang.second )/2  ) ;
 			}
 		}

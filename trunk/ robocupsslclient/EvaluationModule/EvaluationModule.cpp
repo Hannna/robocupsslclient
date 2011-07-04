@@ -187,6 +187,11 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 	    dist = Videoserver::getBlueGoalMidPosition().distance( robotPose.getPosition() );
         LOG_DEBUG( log," open angle to the red  bottom goal min "<<alfa1<<" max "<<alfa2 );
 
+
+    	if( dist > Config::getInstance().FieldParams.FIELD_LENGTH / 2  ){
+    		return std::pair<double,double>( 0, 0 );
+    	}
+
   /*  	if(currGameState->getRedGoalArea()==bottom){
     	    Pose p1(appConfig.field.BOTTOM_GOAL_LEFT_CORNER.x, appConfig.field.BOTTOM_GOAL_LEFT_CORNER.y, 0);
     	    p1 = p1.translation(robotPose.getPosition());
