@@ -13,6 +13,13 @@
 
 class Tactic;
 
+/*Plan gry oparty na prostym schemacie,
+ *
+ * kazdy z robotow probuje zdobyc pilke,
+ * gdy ja zdobedzie podaza w kierunku bramki i oddaje strzal
+ *
+ */
+
 class NaivePlay: public Play {
 public:
 	NaivePlay( std::string teamColor );

@@ -94,7 +94,7 @@ void run_stp(){
 
 				redPlay = boost::shared_ptr<Play>( new NaivePlay("red") );
 				bluePlay = boost::shared_ptr<Play>( new NaivePlay("blue") );
-				bluePlay->execute();
+				//bluePlay->execute();
 				redPlay->execute();
 			}
 			// zatrzymaj roboty

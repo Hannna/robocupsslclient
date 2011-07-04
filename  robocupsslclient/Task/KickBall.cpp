@@ -98,7 +98,6 @@ Task::status KickBall::run(void * arg, int steps ){
 	double lastSimTime=0;
 
     Pose currPose;
-    //double w;
     double error;
     Task::status task_status = Task::not_completed;
 
@@ -107,14 +106,13 @@ Task::status KickBall::run(void * arg, int steps ){
 			currPose = (*currGameState).getRobotPos( robot->getRobotID() );
 			lastSimTime=currSimTime;
 
-			if( task_status == Task::ok){
+			if( task_status == Task::ok) {
 				if( fabs( currGameState->getRobotAngularVelocity( robot->getRobotID() ) )  < 0.1 ){
 					this->stopTask=true;
 				}
 			}
 
             if(  ( error=pow( rotation - currPose.get<2>(),2 )  )   < ROTATION_PRECISION ){
-                //this->stopTask=true;
                 robot->setRelativeSpeed( Vector2D(0.0,0.0), 0 );
                 task_status = Task::ok;
             }
@@ -122,12 +120,19 @@ Task::status KickBall::run(void * arg, int steps ){
     			double w = calculateAngularVel2( currPose , rotation);
     			LOG_INFO(log,"shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>()<<"set speed w "<< w);
     			robot->setRelativeSpeed( Vector2D(0.0,0.0), w );
+    			task_status = Task::not_completed;
             }
     	}
     }
-    LOG_INFO(log,"Have good position. Try to kick ball.");
 
     if( task_status == Task::ok || this->kickNow ){
+    	if(task_status == Task::ok){
+    		LOG_INFO(log,"shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>());
+    		LOG_INFO(log,"Have good position. Try to kick ball.");
+    	}
+    	else if( this->kickNow ){
+    		LOG_INFO(log,"kick now set. Try to kick ball.");
+    	}
     	this->robot->kick();
 		return Task::kick_ok;
     }

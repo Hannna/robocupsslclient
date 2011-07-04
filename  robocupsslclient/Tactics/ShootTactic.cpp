@@ -72,7 +72,7 @@ void ShootTactic::execute(void *){
 		while( taskStatus!=Task::ok && !this->stop ){
 			newTask = this->currentTask->nextTask();
 
-			if(newTask){
+			if( newTask ){
 				this->currentTask = TaskSharedPtr( newTask );
 			}
 
@@ -86,9 +86,16 @@ void ShootTactic::execute(void *){
 
 			if( taskStatus == Task::collision ){
 				robot.stop();
-				LOG_FATAL(log,"Shoot tactic Task::error " <<taskStatus );
+				LOG_FATAL(log,"Shoot tactic Task::collision " );
 				return;
 			}
+
+			if( taskStatus == Task::kick_ok ){
+				robot.stop();
+				LOG_FATAL(log," Shoot tactic Task::kick_ok " );
+				return;
+			}
+
 		}
 		//Nie jest potrzebne bo wskaznik jest przechowywany w smartPtr currentTask
 		//if(newTask)
