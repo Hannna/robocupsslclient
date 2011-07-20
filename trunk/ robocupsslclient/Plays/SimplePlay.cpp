@@ -1,11 +1,11 @@
 /*
- * NaivePlay.cpp
+ * SimplePlay.cpp
  *
- *  Created on: 08-05-2011
+ *  Created on: 08-06-2011
  *      Author: maciek
  */
 
-#include "NaivePlay.h"
+#include "SimplePlay.h"
 
 #include "../Tactics/Tactic.h"
 #include "../Tactics/ShootTactic.h"
@@ -16,7 +16,7 @@
 #include "../Role/Role.h"
 
 /*
-PLAY Naive Offense
+PLAY SimplePlay
 APPLICABLE offense
 DONE aborted !offense
 ROLE 1
@@ -34,40 +34,40 @@ ROLE 4
 */
 
 
-NaivePlay::NaivePlay(std::string teamColor): Play(teamColor) {
+SimplePlay::SimplePlay(std::string teamColor): Play(teamColor) {
 
 	this->role0.addTactic( new ShootTactic( role0.getRobot() ) );
 
-	//this->role1.addTactic( new ShootTactic( role1.getRobot() ) );
+	this->role1.addTactic( new ShootTactic( role1.getRobot() ) );
 
-	//this->role2.addTactic( new ShootTactic( role2.getRobot() ) );
+	this->role2.addTactic( new ShootTactic( role2.getRobot() ) );
 
 }
 
-bool NaivePlay::isFinished(){
+bool SimplePlay::isFinished(){
 
 	return true;
 }
 
-void NaivePlay::execute(){
+void SimplePlay::execute(){
 
-	LOG_INFO(log,"STARTING NaivePlay");
+	LOG_INFO(log,"STARTING SIMPLEPLAY");
 
 	this->role0.execute();
 
-	//this->role1.execute();
+	this->role1.execute();
 
-	//this->role2.execute();
+	this->role2.execute();
 
 
 }
 
-void NaivePlay::reset(){
+void SimplePlay::reset(){
 
 }
 
 
-void NaivePlay::waitForFinish( ){
+void SimplePlay::waitForFinish( ){
 //	std::list<AbstractTactic *>::iterator tactic = tactics.begin();
 
 //	for( ; tactic!= tactics.end();tactic++  ){
@@ -95,7 +95,7 @@ void NaivePlay::waitForFinish( ){
 /*wszystkie roboty zatrzymuja sie co najmniej 30 cm od pilki
  *
  */
-void NaivePlay::stop(){
+void SimplePlay::stop(){
 
 	LOG_INFO(log,"STOP PLAY for "<<this->teamColor);
 
@@ -106,6 +106,6 @@ void NaivePlay::stop(){
 }
 
 
-NaivePlay::~NaivePlay() {
+SimplePlay::~SimplePlay() {
 
 }
