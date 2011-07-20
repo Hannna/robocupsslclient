@@ -31,6 +31,7 @@ RefereeClient::RefereeClient():Thread(), socket(io_service), log(getLoggerPtr ("
     socket.open(udp::v4());
     local_endpoint = boost::asio::ip::udp::endpoint( udp::v4(), this->port );
     socket.bind(local_endpoint);
+    LOG_INFO(log, "create referee client");
 
     this->teamID = Robot::unknown;
 }
@@ -51,10 +52,15 @@ void RefereeClient::execute(void* ){
 	bool readyForThrowIn = false;
 
 	EvaluationModule::ballState bState;
+
+    LOG_INFO(log, "startig referee client");
+
 	while( !Config::end || !this->stopTh ){
 		if( (currSimTime=video.updateGameState( gameState ) ) < 0 ){
 			std::ostringstream s;
 			s<<__FILE__<<":"<<__LINE__;
+			LOG_INFO(log, " exit from referee client");
+			exit(0);
 			throw SimulationException( s.str() );
 		}
 
@@ -140,6 +146,7 @@ void RefereeClient::readMsgFromBox(){
     GameStatePacket tmpGameStatePacket;
 
     size_t bytes_read;
+    LOG_TRACE(log, " readMsgFromBox referee client");
     //boost::asio::io_service io_service;
     //boost::asio::ip::udp::socket socket(io_service);
     //socket.open(udp::v4());
@@ -154,11 +161,17 @@ void RefereeClient::readMsgFromBox(){
     			sizeof(tmpGameStatePacket) ), sender_endpoint );
 
 		this->mutex_.lock();
-		std::cout<<tmpGameStatePacket<<std::endl;
+		std::ostringstream ois;
+		ois<<tmpGameStatePacket;
+		LOG_TRACE(log,ois.str());
 		if(this->gameStatePacket.cmd_counter!=tmpGameStatePacket.cmd_counter){
-			if( tmpGameStatePacket.cmd != gameStatePacket.cmd)
+			if( tmpGameStatePacket.cmd != gameStatePacket.cmd){
 				newCommands.push( castToCommand( tmpGameStatePacket.cmd ) );
-			std::cout<<tmpGameStatePacket<<std::endl;
+				ois.str("");
+				ois<<tmpGameStatePacket;
+				LOG_TRACE(log,ois.str());
+				//std::cout<<tmpGameStatePacket<<std::endl;
+			}
 		}
 		this->gameStatePacket=tmpGameStatePacket;
 		this->cmd = castToCommand( tmpGameStatePacket.cmd );
