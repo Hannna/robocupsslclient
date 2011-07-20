@@ -28,7 +28,8 @@ Videoserver::Videoserver():log( getLoggerPtr ("app_debug") )
 {
    // pthread_mutex_init (&Videoserver::mutex, NULL);
     pthread_cond_init (&Videoserver::update_game_state_cv, NULL);
-    LOG_INFO(log,"create videoserver");
+    LOG_TRACE(log,"create videoserver");
+    this->lastUpdateTime = 0;
     stopFlag = false;
     simError = true;
     redGoal = bottom ;
@@ -46,14 +47,14 @@ Videoserver::Videoserver():log( getLoggerPtr ("app_debug") )
 	Videoserver::gameState=GameStatePtr(new GameState());
 #ifdef GAZEBO
 	lastUpdateTime = 0;
+	updateT = 0;
 #endif
-    LOG_INFO(log,"VIDEOSERVER has been created");
+    LOG_TRACE(log,"VIDEOSERVER has been created");
 }
 
 double Videoserver::updateGameState(GameStatePtr& gameState_) const{
 	double currTime=0;
 	pthread_mutex_lock (&Videoserver::mutex);
-
 	if(this->simError){
 		pthread_cond_broadcast(&Videoserver::update_game_state_cv);
 		pthread_mutex_unlock (&Videoserver::mutex);
@@ -92,11 +93,11 @@ void Videoserver::update(){
 	//std::cout<<"after lock "<<std::endl;
 
 	double currSimTime = SimControl::getInstance().getSimTime();
-	if( fabs( currSimTime - this->lastUpdateTime ) < 0.001 ){
-		simError= true;
-		pthread_mutex_unlock (&Videoserver::mutex);
-		return;
-	}
+//	if( fabs( currSimTime - this->lastUpdateTime ) < 0.001 ){
+//		simError= true;
+//		pthread_mutex_unlock (&Videoserver::mutex);
+//		return;
+//	}
 
 	this->updateT=currSimTime-this->lastUpdateTime;
 	this->lastUpdateTime=currSimTime;
@@ -182,7 +183,7 @@ void Videoserver::stop(){
 }
 
 void Videoserver::execute(void * arg){
-	LOG_INFO(log,"Start videoserver");
+	LOG_TRACE(log,"Start videoserver");
 	simError = false;
 	sigset_t set;
 	sigemptyset (&set);
@@ -205,7 +206,7 @@ void Videoserver::execute(void * arg){
 		nanosleep(&req,&rem);
 		Videoserver::getInstance().update();
 	}
-	LOG_INFO(log,"Exit from videoserver thread");
+	LOG_TRACE(log,"Exit from videoserver thread");
 		//usleep(Videoserver::updateDeltaTime);
 }
 

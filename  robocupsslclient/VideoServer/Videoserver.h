@@ -110,7 +110,7 @@ private:
 	static Videoserver * video;
 	Videoserver();
 	Videoserver(const Videoserver& v);
-	~Videoserver(){
+	virtual ~Videoserver(){
 		LOG_INFO(log," try to destroy videoserver");
 		pthread_mutex_lock (&Videoserver::mutex);
 		//delete video;
