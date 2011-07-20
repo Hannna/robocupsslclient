@@ -32,7 +32,7 @@ SimControl::SimControl():log(getLoggerPtr("app_debug"))
     {
       this->client->ConnectWait(serverId, GZ_CLIENT_ID_USER_FIRST);
     }
-    catch (std::string e)
+    catch (std::string& e)
     {
       std::cout << "Gazebo error: Unable to connect to client \n" << e << "\n";
       exit(0);
@@ -51,7 +51,7 @@ SimControl::SimControl():log(getLoggerPtr("app_debug"))
             this->simIface->Unlock();
         }
     }
-    catch (std::string e)
+    catch (std::string& e)
     {
       std::cout << "Gazebo error: Unable to connect to the sim interface\n" << e << "\n";
       exit(0);
@@ -148,7 +148,7 @@ void SimControl::connectGazeboPosIface(libgazebo::PositionIface *posIface,const 
     {
       posIface->Open(client, name);
     }
-    catch (std::string e)
+    catch (std::string& e)
     {
       std::cout << "Gazebo error: Unable to connect to the position interface\n"
       << e << "\n";
