@@ -75,9 +75,9 @@ void TestRRT::execute(void *args){
 		video->updateGameState(gameState);
 		double distanceToTarget;
 
-//		Pose goalPose = getRandomPose();
+		Pose goalPose = getRandomPose();
 
-		Pose goalPose;
+		//Pose goalPose;
 
 		while( ( distanceToTarget = goalPose.distance(gameState->getRobotPos( robot->getRobotID() ) ) ) >
 				   ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
