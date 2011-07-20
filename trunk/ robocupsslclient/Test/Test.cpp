@@ -425,7 +425,7 @@ void testMultiRRTThread(){
 	Robot blueRobot2(std::string("blue2"),ifaceName);
 
 
-    Videoserver::getInstance().start(NULL);
+ //   Videoserver::getInstance().start(NULL);
 
     bool serialize=Config::getInstance().isDebugMode();
 	TestRRT testRRTred0(&redRobot0,Pose(5.5,2.5,0),serialize);
