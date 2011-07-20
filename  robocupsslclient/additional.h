@@ -102,6 +102,10 @@ public:
 				this->get<1>()+a.get<1>(),
 				this->get<2>()+a.get<2>() );
 	}
+	const Pose operator+(const Vector2D v) const{
+		return Pose( this->get<0>()+v.x,
+				this->get<1>()+v.y, this->get<2>() );
+	}
 	bool operator==(const Pose a){
 		if( !equealDouble(this->get<0>() , a.get<0>() ) )
 			return false;
