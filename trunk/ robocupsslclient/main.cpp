@@ -78,7 +78,7 @@ using namespace Tests;
 
 bool run=true;
 
-extern const std::string ifaceName;
+//extern const std::string ifaceName;
 
 int daemonInit ( void )	{
 	pid_t pid;
@@ -113,11 +113,10 @@ int main(int argc, char*argv[],char *envp[]){
     xmlInitParser();
 
 //    log4cxx::PropertyConfigurator::configure("log4cxx.properties");
-    Config::getInstance().load("/home/maciek/codeblocks/magisterka/bin/Debug/config.xml");
+    Config::getInstance().load("/home/maciek/workspace/mgr2/Debug/config.xml");
     Config::getInstance().setTestMode(true);
 
     Tests::TestKind testKind=Tests::none;
-
 
     if(argc>1){
         if(strncmp(argv[1],"test",4)==0)
@@ -157,7 +156,7 @@ int main(int argc, char*argv[],char *envp[]){
             exit(0);
         }
     }
-    LOG_DEBUG(getLoggerPtr ("app_debug"), "test");
+    LOG_ERROR(getLoggerPtr ("app_debug"), "AAAAAAAAAAAAAAAAAAAAAAAAAAAAtest");
 
     LOG_DEBUG(getLoggerPtr ("red0"), "test");
     LOG_DEBUG(getLoggerPtr ("red1"), "test");
@@ -170,6 +169,29 @@ int main(int argc, char*argv[],char *envp[]){
     Play::init();
     Videoserver::getInstance().start(NULL);
 
+    //poczekaj az videoserwer pobierze pozycje robotow z symulatora
+    GameStatePtr gameState( new GameState() );
+
+	int sleep_status = 0;
+    struct timespec req;
+    req.tv_sec=0;
+    req.tv_nsec=1000000;
+    struct timespec rem;
+    bzero( &rem, sizeof(rem) );
+
+    while( Videoserver::getInstance().getUpdateDeltaTime() < 0.001 ){
+    	nanosleep(&req,&rem);
+    }
+
+    while( Videoserver::getInstance().updateGameState( gameState ) < 0.001 ){
+    	nanosleep(&req,&rem);
+    }
+
+
+
+    //RefereeClient::getInstance().start();
+
+
     if(Config::getInstance().isTestMode()){
     	int sleep_status = 0;
         struct timespec req;
@@ -179,17 +201,23 @@ int main(int argc, char*argv[],char *envp[]){
         bzero( &rem, sizeof(rem) );
 
         //poczekaj az videoserwer pobierze pozycje robotow z symulatora
-        GameStatePtr gameState( new GameState() );
-        while( Videoserver::getInstance().updateGameState( gameState ) < 0.001 ){
+    /*    GameStatePtr gameState( new GameState() );
+
+        while( Videoserver::getInstance().getUpdateDeltaTime() < 0.001 ){
         	nanosleep(&req,&rem);
         }
 
+        while( Videoserver::getInstance().updateGameState( gameState ) < 0.001 ){
+        	nanosleep(&req,&rem);
+        }
+	*/
         if( testKind == Tests::play ){
         	//uruchom klienta sslbox
         	RefereeClient::getInstance().start();
         	//sleep(1000);
         	//uruchom glowny algorytm sterujacy
         	run_stp();
+        	sleep(100);
         }
         else{
 			//DO testow algorytmu
@@ -205,6 +233,8 @@ int main(int argc, char*argv[],char *envp[]){
         RefereeClient::getInstance().stop();//killThread();
         RefereeClient::getInstance().join();
         Videoserver::getInstance().killThread();
+
+        //Videoserver::getInstance().join();
     }
 
     Play::free();
