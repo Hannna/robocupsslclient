@@ -112,20 +112,28 @@ Task::status KickBall::run(void * arg, int steps ){
 				}
 			}
 
-            if(  ( error=pow( rotation - currPose.get<2>(),2 )  )   < ROTATION_PRECISION ){
+			//oblicz blad wzgledny
+			error= fabs( rotation - currPose.get<2>() )/ rotation;
+
+            //if(  ( error=pow( rotation - currPose.get<2>(),2 )  )   < ROTATION_PRECISION ){
+			if( error < ROTATION_PRECISION ){
                 robot->setRelativeSpeed( Vector2D(0.0,0.0), 0 );
                 task_status = Task::ok;
+                LOG_INFO(log,"Task::ok shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>() );
+
+
             }
             else{
     			double w = calculateAngularVel2( currPose , rotation);
     			LOG_INFO(log,"shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>()<<"set speed w "<< w);
+    			LOG_INFO(log,"current robot ang speed "<<currGameState->getRobotAngularVelocity( robot->getRobotID() )<<" linear vel "<<currGameState->getRobotGlobalVelocity(robot->getRobotID() )  );
     			robot->setRelativeSpeed( Vector2D(0.0,0.0), w );
     			task_status = Task::not_completed;
             }
     	}
     }
 
-    if( task_status == Task::ok || this->kickNow ){
+    if( task_status == Task::ok /*|| this->kickNow */ ){
     	if(task_status == Task::ok){
     		LOG_INFO(log,"shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>());
     		LOG_INFO(log,"Have good position. Try to kick ball.");
