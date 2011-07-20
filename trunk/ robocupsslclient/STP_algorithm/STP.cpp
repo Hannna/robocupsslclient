@@ -61,7 +61,7 @@ void run_stp(){
 	RefereeCommands::Command command = RefereeCommands::unknown;
 	EvaluationModule::ballState ballState_;
 
-	bluePlay->execute();
+	//bluePlay->execute();
 	redPlay->execute();
 
 	bluePlay->waitForFinish();
@@ -99,12 +99,12 @@ void run_stp(){
 			}
 			// zatrzymaj roboty
 			else if( command == RefereeCommands::halt ){
-				bluePlay->halt();
+				//bluePlay->halt();
 				redPlay->halt();
 			}
 			//zatrzymaj roboty 30cm od pilki
 			else  if( command == RefereeCommands::stopGame ){
-				bluePlay->stop();
+				//bluePlay->stop();
 				redPlay->stop();
 
 				if( ballState_== EvaluationModule::out ){
