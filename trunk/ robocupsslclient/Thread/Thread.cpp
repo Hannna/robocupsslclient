@@ -33,7 +33,7 @@ void * Thread::threadFunction(void * pthis)
    try{
 	   pt->run( pt->arg() );
    }
-   catch(SimulationException e){
+   catch(SimulationException& e){
 	   std::cout<<"exit from thread " << e.what()<<std::endl;
    }
    return 0;
