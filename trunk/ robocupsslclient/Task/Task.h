@@ -33,9 +33,13 @@ public:
 	} predicate;
 
 	enum status{
-		not_completed = - 99,
+		not_completed = - 90,
+		//sterowany robot jest w stanie kolizji
 		collision,
+		//kazdy inny blad
 		error,
+		//cel jest przesloniety, lub wew przeszkody
+		target_blocked,
 		ok = 0,
 		kick_ok
 	};

@@ -126,7 +126,7 @@ Task::status GoToPose::run(void* arg, int steps){
             }
 
             if(serialize){
-                std::string fileName("/home/maciek/codeblocks/magisterka/bin/Debug/");
+                std::string fileName("");
                 fileName.append(robot->getRobotName());
                 fileName.append("_rrtTree.xml");
                 rrt->serializeTree(fileName.c_str(),serializedTrees++);
