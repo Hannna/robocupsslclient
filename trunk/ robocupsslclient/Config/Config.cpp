@@ -10,6 +10,7 @@
 #include "../Logger/Logger.h"
 #include <boost/regex.hpp>	//wyrażenia regularne - do interpretacji plików, -lboost_regex!!
 #include <boost/lexical_cast.hpp>
+#include <boost/tuple/tuple.hpp>
 
 Config* Config::config;
 pthread_mutex_t Config::mutex=PTHREAD_MUTEX_INITIALIZER;
@@ -101,7 +102,7 @@ bool Config::load(std::string filename){
 			current = current->next;
 		}
 	}
-	catch(std::string err){
+	catch(std::string& err){
 		std::cout<<err<<std::endl;
 	//	xmlCleanupParser();
 		xmlFreeDoc(config);
@@ -162,7 +163,8 @@ bool Config::loadTestMode(xmlNodePtr node,xmlDocPtr config){
 				ois<<"v["<<i<<"]="<<v[i]<<"\t";
 			}
 			LOG_TRACE(log,ois.str().c_str());
-			this->testCfg.velocities.push_back(boost::tuple<double,double,double>(v[0],v[1],v[2]));
+			boost::tuple<double,double,double> p(v[0],v[1],v[2]);
+			this->testCfg.velocities.push_back(p);
 			xmlFree(str);
 		}
 

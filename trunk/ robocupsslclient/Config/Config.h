@@ -56,7 +56,7 @@ private:
 		//wspo skalujacy predkosci;
 		double speedFactor;
 	};
-
+public:
 	class FieldParams{
 		friend class Videoserver;
 		public:
