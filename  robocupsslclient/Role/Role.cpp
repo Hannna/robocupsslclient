@@ -19,7 +19,7 @@ void Role::stop( ) {
 	if(this->robot)
 		this->robot->stop();
 
-	LOG_INFO(log,"stop role for robot"<<this->robot->getRobotName());
+	LOG_INFO(log,"stop role for robot "<<this->robot->getRobotName());
 }
 
 void Role::addTactic( Tactic * tactic){
