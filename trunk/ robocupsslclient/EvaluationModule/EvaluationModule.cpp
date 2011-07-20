@@ -152,6 +152,8 @@ std::pair<double, double> EvaluationModule::aimAtTeamMate(Robot::robotID shootin
 *@ zwraca najwiekszy otwarty kat prowadzacy do celu
 */
 std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName){
+	//SimControl::getInstance().pause();
+
 	GameStatePtr currGameState( new GameState() );
 
     if( video.updateGameState( currGameState ) < 0){
@@ -159,11 +161,13 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 		s<<__FILE__<<":"<<__LINE__;
     	throw SimulationException( s.str() );
     }
-
     Pose robotPose=currGameState->getRobotPos( Robot::getRobotID(robotName) );
+    LOG_DEBUG(log, "pozycja strzalu " << robotPose );
 
-    std::vector<Pose> positions=currGameState->getEnemyRobotsPos(Robot::getRobotID(robotName));
-    std::vector<Pose>::iterator ii=positions.begin();
+    //pozycje wszystkich robotow poza zadanym
+    std::vector<Pose> enemyPositions=currGameState->getEnemyRobotsPos(Robot::getRobotID(robotName));
+
+    std::vector<Pose>::iterator ii=enemyPositions.begin();
 
     /*Obliczam kat do bramki w zaleznosci od koloru druzyny i bramki na ktora gra
      *
@@ -175,20 +179,37 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     double dist;
 
     if(robotName.compare(0,3,"red")==0){
-    	Pose p1(Videoserver::getBlueGoalLeftCornerPosition(),0 );
-    	Pose p2(Videoserver::getBlueGoalRightCornerPosition(),0 );
+    	//Pose p1(Videoserver::getBlueGoalLeftCornerPosition(),0 );
+    	//Pose p2(Videoserver::getBlueGoalRightCornerPosition(),0 );
 
+    	Vector2D v1 = Videoserver::getBlueGoalLeftCornerPosition() - robotPose.getPosition();
+    	Vector2D v2 = Videoserver::getBlueGoalRightCornerPosition() - robotPose.getPosition();
+
+    	LOG_INFO( log," for robot "<<robotName<<" v1 "<<v1<<" v2 "<<v2 );
+
+    	/*
     	alfa1 = p1.getPosition().angleTo(oy);
     	alfa1 = convertAnglePI(alfa1);
 
 	    alfa2 = p2.getPosition().angleTo(oy);
 	    alfa2 = convertAnglePI(alfa2);
+*/
+    	alfa1 = v1.angleTo(oy);
+    	alfa1 = convertAnglePI(alfa1);
+
+	    alfa2 = v2.angleTo(oy);
+	    alfa2 = convertAnglePI(alfa2);
 
 	    dist = Videoserver::getBlueGoalMidPosition().distance( robotPose.getPosition() );
-        LOG_DEBUG( log," open angle to the red  bottom goal min "<<alfa1<<" max "<<alfa2 );
+        LOG_DEBUG( log," open angle to the blue goal min "<<alfa1<<" max "<<alfa2 );
+
+        double halfFieldLen = Config::getInstance().field.FIELD_LENGTH / 2.0;
 
 
-    	if( dist > Config::getInstance().FieldParams.FIELD_LENGTH / 2  ){
+    	if( dist > halfFieldLen  ){
+
+    		//SimControl::getInstance().resume();
+    		LOG_DEBUG(log, "blue goal is to far");
     		return std::pair<double,double>( 0, 0 );
     	}
 
@@ -252,8 +273,10 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 		//alfa2 = appConfig.field.BOTTOM_GOAL_RIGHT_CORNER.angleTo(ox);
 		dist = Videoserver::getRedGoalMidPosition().distance( robotPose.getPosition() );
 
-		if( dist > 1.0)
+		if( dist > 1.0){
+			//SimControl::getInstance().resume();
 			return std::pair<double,double>( 0, 0 );
+		}
         LOG_DEBUG( log,"open angle to the blue bottom goal min "<<alfa1<<" max "<<alfa2 );
 
     	/*
@@ -294,12 +317,26 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     std::list< Set > angles;
     angles.push_back(maxOpenAngle);
 
-    for(ii = positions.begin(); ii!=positions.end(); ii++){
-		Set ang = findObstacleCoverAngles(robotPose,*ii);
+    LOG_DEBUG(log,"maksymalny kat do celu  "<<maxOpenAngle);
 
+    for(ii = enemyPositions.begin(); ii!=enemyPositions.end(); ii++){
+		Set ang = findObstacleCoverAngles(robotPose,*ii);
+		LOG_DEBUG(log, "obs pose "<<*ii<<" angles "<<ang);
 		if( ang.d > 0 ){
             addToList( ang , angles);
 		}
+    }
+
+    LOG_DEBUG(log,"angles.size()  "<<angles.size());
+
+    assert( angles.size() > 0 );
+
+    LOG_DEBUG(log,"angles.size()  "<<angles.size());
+
+    std::list<Set>::iterator ss;
+    for(ss = angles.begin(); ss!=angles.end(); ss++){
+		//Set ang = findObstacleCoverAngles(robotPose,*ii);
+    	LOG_DEBUG(log,"set  "<<*ss);
     }
 
     //znajdz najszerszy przedzial w kolekcji angles
@@ -307,7 +344,10 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
         std::max_element(angles.begin(),angles.end(),
 			  boost::bind( &Set::width,_1) );
 
+    double min = (*iii).angmin;
+    double max = (*iii).angmax;
 
+    //SimControl::getInstance().resume();
     return std::pair<double,double>( (*iii).angmin, (*iii).angmax );
 }
 
@@ -412,6 +452,7 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
 
 void EvaluationModule::addToList(Set &set, std::list<Set> &sets){
 	BOOST_ASSERT(sets.size()>0);
+	LOG_DEBUG(log,"add set To list "<<set);
 	std::list<Set>::iterator i;
 	double min = 0.01;
 	for(i=sets.begin();i!=sets.end();i++){
@@ -588,14 +629,20 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 		double a1= ( -x*y - obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
 		double a2= ( -x*y + obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
 
+		LOG_DEBUG(log, "a1 "<<a1<<" reltargetPose"<<reltargetPose);
+
+		LOG_DEBUG(log, "a2 "<<a2<<" reltargetPose"<<reltargetPose);
+
 		if( !boost::math::isnormal(a1) ){
 			double a1= ( -x*y - obstacleRadious*sqrt( y*y + x*x -obstacleRadious*obstacleRadious ) )/ (obstacleRadious*obstacleRadious-x*x);
-			std::cout<<"a1"<<a1<<"reltargetPose"<<reltargetPose<<std::endl;
+			LOG_DEBUG(log, "a1"<<a1<<" reltargetPose"<<reltargetPose);
+			//std::cout<<<<std::endl;
 		}
 
 		if( !boost::math::isnormal(a2) ){
 			double a2= ( -x*y + obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
-			std::cout<<a2<<"reltargetPose"<<reltargetPose<<std::endl;
+			LOG_DEBUG(log, "a2 "<<a2<<" reltargetPose"<<reltargetPose);
+			//std::cout<<a2<<"reltargetPose"<<reltargetPose<<std::endl;
 		}
 
 		assert(boost::math::isnormal(a1) );
@@ -610,8 +657,21 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 		//double cosalfa=v1.angleTo(v2);
 
 		//kat
-		alfa1=atan(a1)+sgn;
-		alfa2=atan(a2)+sgn;
+		//alfa1=convertAnglePI( atan(a1)+sgn );
+		//alfa2=convertAnglePI( atan(a2)+sgn );
+
+		alfa1=convertAnglePI( atan(1/a1) );
+		alfa2=convertAnglePI( atan(1/a2) );
+
+
+		//double alfa3=convertAnglePI( atan(1/a1) );
+		//double alfa4=convertAnglePI( atan(1/a2) );
+		//LOG_DEBUG(log,"alfa3 "<<alfa3<<" alfa4 "<<alfa4);
+
+		double check1 = fabs(a1*x-y)/sqrt(a1*a1 +1);
+		double check2 = fabs(a2*x-y)/sqrt(a2*a2 +1);
+
+		LOG_DEBUG(log,"check1 "<<check1<<" check2 "<<check2);
 	}
 
 	//katy pomiedzy ktorymi znajduje sie przeszkoda
