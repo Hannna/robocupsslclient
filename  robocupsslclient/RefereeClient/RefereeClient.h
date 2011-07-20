@@ -70,10 +70,10 @@ class RefereeClient : public Thread
 public:
 
 	static RefereeClient& getInstance(){
-		static RefereeClient* refereeClient;
+		static RefereeClient* refereeClient = NULL;
 
 		if(!refereeClient){
-			boost::interprocess::scoped_lock<boost::mutex> guard(RefereeClient::mutex_);
+			//boost::interprocess::scoped_lock<boost::mutex> guard(RefereeClient::mutex_);
 			//LockGuard guard(RefereeClient::mutex_);
 			if(!refereeClient)
 				refereeClient = new RefereeClient();
