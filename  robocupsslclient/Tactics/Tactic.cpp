@@ -5,6 +5,7 @@ Tactic::Tactic(Robot& robot_): evaluation(EvaluationModule::getInstance() ) ,rob
         log( getLoggerPtr (robot_.getRobotName().c_str() ) )
 {
 	this->stop = false;
+	finished = false;
     bestScore=0;
     predicates = 0;
 }

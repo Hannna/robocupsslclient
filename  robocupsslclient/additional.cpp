@@ -117,6 +117,11 @@ double sgn(double d){
 	return -1.0;
 }
 
+template <>
+double euclideanNorm(Vector2D t1, Vector2D t2 ){
+	return sqrt( pow(t1.x-t2.x,2 )  + pow(t1.y-t2.y,2 ) );
+}
+
 std::ostream& operator<<(std::ostream& os,const Pose& pose){
 	os<<"x="<<pose.get<0>()<<" y="<<pose.get<1>()<<" yaw="<<pose.get<2>();
 	return os;

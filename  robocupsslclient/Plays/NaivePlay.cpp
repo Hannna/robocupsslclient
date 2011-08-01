@@ -38,9 +38,9 @@ NaivePlay::NaivePlay(std::string teamColor): Play(teamColor) {
 
 	this->role0.addTactic( new ShootTactic( role0.getRobot() ) );
 
-	//this->role1.addTactic( new ShootTactic( role1.getRobot() ) );
+	this->role1.addTactic( new ShootTactic( role1.getRobot() ) );
 
-	//this->role2.addTactic( new ShootTactic( role2.getRobot() ) );
+	this->role2.addTactic( new ShootTactic( role2.getRobot() ) );
 
 }
 
@@ -53,11 +53,20 @@ void NaivePlay::execute(){
 
 	LOG_INFO(log,"STARTING NaivePlay");
 
+	if( this->role0.getTacticsSize() == 0 )
+		this->role0.addTactic( new ShootTactic( role0.getRobot() ) );
+
 	this->role0.execute();
 
-	//this->role1.execute();
+	if( this->role1.getTacticsSize() == 0 )
+		this->role1.addTactic( new ShootTactic( role1.getRobot() ) );
 
-	//this->role2.execute();
+	this->role1.execute();
+
+	if( this->role2.getTacticsSize() == 0 )
+		this->role2.addTactic( new ShootTactic( role2.getRobot() ) );
+
+	this->role2.execute();
 
 
 }
@@ -103,6 +112,15 @@ void NaivePlay::stop(){
 	this->role1.stop();
 	this->role2.stop();
 
+}
+
+void NaivePlay::halt(){
+
+	LOG_INFO(log,"halt NaivePlay");
+	role0.getRobotPtr()->disperse(0.5);
+	role1.getRobotPtr()->disperse(0.5);
+	role2.getRobotPtr()->disperse(0.5);
+	//role3->getRobot()->stop();
 }
 
 

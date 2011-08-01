@@ -13,11 +13,8 @@ class Thread
         int start(void * arg = NULL);
         THREADID getThreadID(){ return this->threadId_;}
         void killThread();
-        void join(){
-        	if( !joined )
-        		pthread_join(threadId_,NULL);
-        	joined = true;
-        }
+        void join();
+
     protected:
       /*@brief ew funkcja do przedefiniowania
       * wywolywana przed uruchomieniem watku

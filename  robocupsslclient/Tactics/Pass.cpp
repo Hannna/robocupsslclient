@@ -73,6 +73,11 @@ void Pass::execute(void*){
 				LOG_FATAL(log,"Tactic error taskStatus " <<taskStatus );
 				return;
 			}
+
+			if( taskStatus == Task::get_ball ){
+				robot.stop();
+				break;
+			}
 		}
 	}
 }

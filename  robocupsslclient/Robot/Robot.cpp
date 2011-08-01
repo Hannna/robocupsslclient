@@ -4,6 +4,10 @@
 #include "../VideoServer/Videoserver.h"
 #include "../GameState/GameState.h"
 
+#include <boost/foreach.hpp>
+#include <boost/bind.hpp>
+//#include <boost\math\special_functions\fpclassify.hpp>
+
 std::ostream& operator<<(std::ostream& os,const Robot::robotID& id){
 	if( id==Robot::red0 ){
 		return os<<"red0";
@@ -200,6 +204,198 @@ bool Robot::kick()const {
 #endif
 	return true;
 }
+
+
+bool Robot::disperse( const double dist ){
+	//odsuwa robota od przeszkod za pomoca metody pol potencjalowych
+	//konstruuje pole ujemne
+	LOG_INFO(log,"start  disperse for robot "<<this->robotName<<" minimal distance from obstacle "<<dist );
+
+	//Vector2D Robot::repulsivePotentialField(Vector2D positionCoordinates, std::list< Vector2D > obstacles)
+	std::list< Vector2D >obstacles;
+	Pose currRobotPose;
+	Pose ballPose;
+	// bool obstaclesFree = false;
+	double distToObstacle = numeric_limits<double>::infinity();
+
+	double lastTime = 0;
+	double currTime = 0;
+
+	distToObstacle = numeric_limits<double>::infinity();
+
+	GameStatePtr gameState( new GameState() );
+	Videoserver::getInstance().updateGameState( gameState );
+
+	Vector2D goalPose;
+	if( strncmp( this->robotName.c_str(), "red", 3 ) == 0 ){
+		goalPose = Videoserver::getInstance().getRedGoalMidPosition();
+	}else
+		goalPose = Videoserver::getInstance().getBlueGoalMidPosition();
+
+
+	Vector2D oldGradient(0.0,0.0);
+	Vector2D gradient(0.0,0.0);
+
+	int cnt=0;
+	//odleglosc robota od pilki jest mniejsza niz 30 cm
+	do {
+
+		GameStatePtr gameState( new GameState() );
+		if( ( currTime = Videoserver::getInstance().updateGameState( gameState ) ) > lastTime  )
+		{
+			distToObstacle = numeric_limits<double>::infinity();
+			lastTime = currTime;
+			ballPose = gameState->getBallPos();
+
+			const std::vector<std::string> blueTeam=Config::getInstance().getBlueTeam();
+
+			currRobotPose = gameState->getRobotPos( this->getRobotID( ) );
+
+			Pose nearestObsPose;
+
+			BOOST_FOREACH(std::string modelName,blueTeam){
+				if(modelName.compare( this->getRobotName() )!=0){
+					obstacles.push_back( gameState->getRobotPos( Robot::getRobotID( modelName) ).getPosition() );
+
+					if( gameState->getRobotPos( Robot::getRobotID( modelName) ).distance( currRobotPose )  <  distToObstacle ){
+						distToObstacle =  gameState->getRobotPos( Robot::getRobotID( modelName) ).distance( currRobotPose );
+						nearestObsPose = gameState->getRobotPos( Robot::getRobotID( modelName) );
+					}
+
+				}
+				//else
+				//	currRobotPose = gameState->getRobotPos( Robot::getRobotID( modelName) );
+			}
+
+			const std::vector<std::string> redTeam=Config::getInstance().getRedTeam();
+			BOOST_FOREACH(std::string modelName,redTeam){
+				if(modelName.compare( this->getRobotName() )!=0){
+					obstacles.push_back( gameState->getRobotPos( Robot::getRobotID(modelName) ).getPosition() );
+
+					if( gameState->getRobotPos( Robot::getRobotID( modelName) ).distance( currRobotPose )  <  distToObstacle ){
+						distToObstacle =  gameState->getRobotPos( Robot::getRobotID( modelName) ).distance( currRobotPose );
+						nearestObsPose = gameState->getRobotPos( Robot::getRobotID( modelName) );
+					}
+				}
+				//else
+				//	currRobotPose = gameState->getRobotPos( Robot::getRobotID( modelName) );
+			}
+
+			//Vector2D oldGradient(0.0,0.0);
+			gradient = this->repulsivePotentialField(currRobotPose.getPosition(),goalPose,obstacles);
+
+			/*
+			if( gradient.x * oldGradient.x  < 0.0 ||  gradient.y * oldGradient.y  < 0.0 ){
+				cnt++;
+			}
+
+			if( cnt == 5 ){
+				gradient = this->repulsivePotentialField( currRobotPose.getPosition(), obstacles );
+			}
+			*/
+
+			oldGradient=gradient;
+
+			obstacles.clear();
+
+			Vector2D velocity = gradient;
+			double max = fabs( velocity.x ) > fabs( velocity.y ) ? fabs( velocity.x ) : fabs( velocity.y );
+
+			if( max > 0 )
+				velocity = velocity * ( 1.0/max );
+
+			LOG_INFO( log,"gradient "<< gradient <<"set speed "<<velocity<<" distTo nearest obs "<<distToObstacle<< " nearestObsPose"<<nearestObsPose << " dist to ball "<<ballPose.distance( currRobotPose ) );
+
+			this->setGlobalSpeed( velocity,0,currRobotPose.get<2>() );
+		}
+
+	}while( /*( ballPose.distance( currRobotPose )  < dist ) ||*/  distToObstacle < dist    );
+
+	this->stop();
+
+	LOG_INFO( log,"end  disperse for robot "<<this->robotName );
+
+	return true;
+}
+
+Vector2D Robot::repulsivePotentialField( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles){
+
+	//double result;
+
+	const double obstacleInfluence = 0.5;//kazda przeszkoda odddzalywuje na 1 metr
+	double fieldMagnitude = 0.01;
+
+	std::list< Vector2D >::iterator ii = obstacles.begin();
+	assert( obstacles.size() < 7 );
+	Vector2D gradient( 0.0, 0.0 );
+	Vector2D tmp( 0.0, 0.0 );
+	for(; ii != obstacles.end(); ii++ ){
+		if( ii->distance(positionCoordinates) > obstacleInfluence){
+			tmp = Vector2D(0.0,0.0);
+		}
+		else{
+
+			tmp.x = fieldMagnitude*( 1.0/( euclideanNorm(ii->x, positionCoordinates.x ) - Config::getInstance().getRRTRobotRadius() ) - ( 1.0/obstacleInfluence ) )  *
+					( 1.0/( pow( euclideanNorm(ii->x, positionCoordinates.x ) - Config::getInstance().getRRTRobotRadius(),2)  ) ) *
+					(positionCoordinates.x  - ii->x )/ ( euclideanNorm(ii->x, positionCoordinates.x )  - Config::getInstance().getRRTRobotRadius() )  ;
+
+			tmp.y = fieldMagnitude*( 1.0/( euclideanNorm(ii->y, positionCoordinates.y ) - Config::getInstance().getRRTRobotRadius() ) - ( 1.0/obstacleInfluence ) )  *
+								( 1.0/( pow( euclideanNorm(ii->y, positionCoordinates.y ) - Config::getInstance().getRRTRobotRadius() ,2)  ) ) *
+								(positionCoordinates.y  - ii->y )/ ( euclideanNorm(ii->y, positionCoordinates.y ) - Config::getInstance().getRRTRobotRadius() ) ;
+
+			//tmp.x =( 1.0/( euclideanNorm(ii->x, positionCoordinates.x ) - Config::getInstance().getRRTRobotRadius() ) ) b
+			//tmp.y =;
+		}
+		gradient = gradient + tmp;
+	}
+
+	double eps = -10000.0;
+	//sila przyciagania
+	gradient.x += eps*( positionCoordinates.x -  goal.x);
+	gradient.y += eps*( positionCoordinates.y -  goal.y);
+
+	return gradient;
+}
+
+Vector2D Robot::repulsivePotentialField( const Vector2D positionCoordinates, std::list< Vector2D > obstacles){
+
+	//double result;
+
+	const double obstacleInfluence = 0.5;//kazda przeszkoda odddzalywuje na 1 metr
+	double fieldMagnitude = 0.01;
+
+	std::list< Vector2D >::iterator ii = obstacles.begin();
+	assert( obstacles.size() < 7 );
+	Vector2D gradient( 0.0, 0.0 );
+	Vector2D tmp( 0.0, 0.0 );
+	for(; ii != obstacles.end(); ii++ ){
+		if( ii->distance(positionCoordinates) > obstacleInfluence){
+			tmp = Vector2D(0.0,0.0);
+		}
+		else{
+
+			tmp.x = fieldMagnitude*( 1.0/( euclideanNorm(ii->x, positionCoordinates.x ) - Config::getInstance().getRRTRobotRadius() ) - ( 1.0/obstacleInfluence ) )  *
+					( 1.0/( pow( euclideanNorm(ii->x, positionCoordinates.x ) - Config::getInstance().getRRTRobotRadius(),2)  ) ) *
+					(positionCoordinates.x  - ii->x )/ ( euclideanNorm(ii->x, positionCoordinates.x )  - Config::getInstance().getRRTRobotRadius() )  ;
+
+			tmp.y = fieldMagnitude*( 1.0/( euclideanNorm(ii->y, positionCoordinates.y ) - Config::getInstance().getRRTRobotRadius() ) - ( 1.0/obstacleInfluence ) )  *
+								( 1.0/( pow( euclideanNorm(ii->y, positionCoordinates.y ) - Config::getInstance().getRRTRobotRadius() ,2)  ) ) *
+								(positionCoordinates.y  - ii->y )/ ( euclideanNorm(ii->y, positionCoordinates.y ) - Config::getInstance().getRRTRobotRadius() ) ;
+
+			//tmp.x =( 1.0/( euclideanNorm(ii->x, positionCoordinates.x ) - Config::getInstance().getRRTRobotRadius() ) ) b
+			//tmp.y =;
+		}
+		gradient = gradient + tmp;
+	}
+
+	//double eps = -100;
+	//sila przyciagania
+	//gradient.x += eps*( positionCoordinates.x -  goal.x);
+	//gradient.y += eps*( positionCoordinates.y -  goal.y);
+
+	return gradient;
+}
+
 
 bool Robot::isRed(Robot::robotID id_){
 	if(id_ < 0){

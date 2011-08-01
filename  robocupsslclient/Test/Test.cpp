@@ -522,8 +522,6 @@ void testPassTacticFunc(void * arg){
 		Tactic * receive_pass= new Receive_pass(*recv);
 		receive_pass->start(NULL);
 
-
-
 		Tactic * pass_tactic= new Pass(*pass, recv->getRobotID());
 
 		pass_tactic->start(NULL);

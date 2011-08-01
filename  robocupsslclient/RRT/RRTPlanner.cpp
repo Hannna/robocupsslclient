@@ -215,9 +215,6 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		return RRTPlanner::Success;
 	}
 
-
-
-
 	//pozycja robota w kolejnym kroku algorytmu
     Pose nextRobotPose=nearest->getRobotPos(this->robotId);
 

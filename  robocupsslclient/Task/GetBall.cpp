@@ -83,7 +83,7 @@ Task::status GetBall::run(void * arg, int steps){
 				//0.006 promien dribblera
 				if ( toBall.length() < ( 0.075+0.006+0.020 ) / cos(angle) ){
 					LOG_INFO(log, "GetBall Task::ok  toBall.length()"<<toBall.length() );
-					return Task::ok;
+					return Task::get_ball;
 				}//podjedz do pilki
 				else{
 					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, Pose( ballPos,0 ) );

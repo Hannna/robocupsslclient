@@ -22,11 +22,14 @@ void Receive_pass::execute(void*){
     GameStatePtr gameState ( new GameState() );
     Pose goalPose;
 
-    while(true){
+    while( !this->stop ){
     	//jesli pilke maja nasi
-    	if( evaluation.getBallState( robot.getRobotID() ) == EvaluationModule::occupied_our ){
+    	EvaluationModule::ballState bs = evaluation.getBallState( robot.getRobotID() );
+
+    	if(  bs == EvaluationModule::occupied_our || bs == EvaluationModule::mine ){
     		//jesli pilke mam ja
-    		if( evaluation.isRobotOwnedBall(robot) ){
+    		//if( evaluation.isRobotOwnedBall(robot) ){
+    		if( bs == EvaluationModule::mine ){
     			robot.stop();
     			break;
     		}
@@ -45,7 +48,7 @@ void Receive_pass::execute(void*){
     		this->currentTask = TaskSharedPtr( new Rotate( goalPose.getPosition(), &robot  ) );
 
 			Task* newTask;
-			while(taskStatus!=Task::ok){
+			while(taskStatus!=Task::ok && !this->stop){
 				newTask = this->currentTask->nextTask();
 
 				if(newTask){
@@ -69,6 +72,8 @@ void Receive_pass::execute(void*){
 			//if(newTask)
 			//	delete newTask;
 		}
+    	//else
+    	//	LOG_FATAL(log,"Nasz zawodnik nie ma pilki" );
     }
 }
 

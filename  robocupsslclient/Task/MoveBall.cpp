@@ -31,15 +31,32 @@ Task* MoveBall::nextTask(){
 			std::pair<double,double> ang=evaluationModule.aimAtGoal( robot->getRobotName() );
 
 			//double score = fabs( ang.first - ang.second );
-			double score =
-			( (ang.first * ang.second) > 0 ) ? fabs( ang.first + ang.second ) : fabs( ang.first) + fabs(ang.second );
+			double score;
+			double sign = 1.0;
+
+			if( ang.first * ang.second > 0.0  ){
+				score = ang.second - ang.first;
+			}
+			else{
+				if( fabs(ang.second )  + fabs( ang.first) > M_PI ){
+					score = fabs( M_PI - fabs(ang.second )  + M_PI- fabs( ang.first) );
+					sign = -1;
+				}
+				else{
+					score = fabs(ang.second )  + fabs( ang.first);
+				}
+			}
+			//( (ang.first * ang.second) > 0.0 ) ?  ang.second - ang.first   : fabs( fabs(ang.second )  + M_PI- fabs( ang.first)   );
 
 			//LOG_INFO(log, "current position score = "<<score<<" ang.first "<<ang.first<<" ang.second "<<ang.second );
 
 			//jesli warto strzelic na bramke
-			if( score > EvaluationModule::minOpenAngle   ){
-				LOG_INFO(this->log,"MoveBall -> KickBall  ang.first"<<ang.first<<" ang.second "<<ang.second );
-				return new KickBall( robot, ( ang.first + ang.second )/2  ) ;
+			if( fabs(score) > EvaluationModule::minOpenAngle   ){
+				LOG_INFO(this->log,"MoveBall -> KickBall score "<<score<<"  ang.first"<<ang.first<<" ang.second "<<ang.second );
+				return new KickBall( robot,  convertAnglePI( ang.first + sign*score/2.0 )  ) ;
+			}
+			else{
+				LOG_INFO(this->log,"MoveBall, change to KickBall not permitted. Score "<<score);
 			}
 		}
 		//LOG_INFO(this->log,"MoveBall -> GoToPose");

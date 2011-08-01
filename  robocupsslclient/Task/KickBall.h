@@ -29,6 +29,9 @@ protected:
 	// rotacja robota ktora ma osiagnac, podczas oddawania strzalu
 	const double rotation;
 	virtual Task::status run(void*, int steps=-1);
+	double calculateAngularVel2(const Pose & currRobotPose, const double goalRotation);
+
+
 };
 
 #endif /* KICKBALL_H_ */

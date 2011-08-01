@@ -5,6 +5,7 @@
 Thread::Thread() {
 	joined = false;
 	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 }
 
 int Thread::start(void * arg_)
@@ -14,6 +15,12 @@ int Thread::start(void * arg_)
    joined = false;
 
    return code;
+}
+
+void Thread::join(){
+	if( !joined )
+		pthread_join(threadId_,NULL);
+	joined = true;
 }
 
 int Thread::run(void * arg_)

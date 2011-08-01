@@ -61,7 +61,7 @@ void run_stp(){
 	RefereeCommands::Command command = RefereeCommands::unknown;
 	EvaluationModule::ballState ballState_;
 
-	//bluePlay->execute();
+	bluePlay->execute();
 	redPlay->execute();
 
 	bluePlay->waitForFinish();
@@ -89,27 +89,56 @@ void run_stp(){
 			//rozpocznij gre
 			if( command == RefereeCommands::start ){
 				SimControl::getInstance().moveBall( Config::getInstance().field.FIELD_MIDDLE_POSE );
-				//delete redPlay;
-				//delete bluePlay;
 
 				redPlay = boost::shared_ptr<Play>( new NaivePlay("red") );
 				bluePlay = boost::shared_ptr<Play>( new NaivePlay("blue") );
-				//bluePlay->execute();
+				bluePlay->execute();
 				redPlay->execute();
 			}
 			// zatrzymaj roboty
 			else if( command == RefereeCommands::halt ){
-				//bluePlay->halt();
-				redPlay->halt();
+
+				if( bluePlay.get() )
+					bluePlay->stop();
+
+				if( redPlay.get() )
+					redPlay->stop();
+
+				if( bluePlay.get() )
+					bluePlay->halt();
+
+				if( redPlay.get() )
+					redPlay->halt();
+
+				if( redPlay.get() )
+					redPlay.reset();
+
+				if( bluePlay.get() )
+					bluePlay.reset();
+
 			}
 			//zatrzymaj roboty 30cm od pilki
 			else  if( command == RefereeCommands::stopGame ){
-				//bluePlay->stop();
-				redPlay->stop();
+
+				if( bluePlay.get() )
+					bluePlay->stop();
+
+				if( redPlay.get() )
+					redPlay->stop();
 
 				if( ballState_== EvaluationModule::out ){
 					;
 				}
+
+				if( redPlay.get() )
+					redPlay.reset();
+
+				if( bluePlay.get() )
+					bluePlay.reset();
+
+
+				//delete redPlay.get();
+				//delete bluePlay.get();
 			}
 			else if( command == RefereeCommands::second_half ){
 			//	bluePlay->prepareForStart();

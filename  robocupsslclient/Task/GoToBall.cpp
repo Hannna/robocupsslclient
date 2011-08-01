@@ -28,6 +28,20 @@ Task* GoToBall::nextTask(){
 		LOG_INFO(log,"occupied_our change GoToBall -> NULL");
 		return NULL;
 	}
+
+	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::mine ){
+		LOG_INFO(log,"i've got the ball. GoToBall -> kickBall");
+		//Pose nextBallPose = ballPose + ( this->currGameState->getBallGlobalVelocity()*10.0*this->video.getUpdateDeltaTime() );
+		//double dist = ballPose.distance( this->currGameState->getRobotPos( robot->getRobotID()) );
+		//jesli pilka jest bliska to chwyc ja
+		//if( dist  <= GetBall::maxDistanceToBall ){
+		LOG_INFO(log,"change GoToBall -> GetBall");
+		return new GetBall(robot);
+		//}
+
+		//return NULL;
+	}
+
 	//jesli pilka jest zajeta przez przeciwnika
 	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::occupied_theirs){
 		LOG_INFO(log,"occupied_theirs change GoToBall -> NULL");
@@ -36,7 +50,7 @@ Task* GoToBall::nextTask(){
 
 	//jesli pilka jest wolna jedz do niej
 	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::free){
-		Pose nextBallPose = ballPose + ( this->currGameState->getBallGlobalVelocity()*this->video.getUpdateDeltaTime() );
+		Pose nextBallPose = ballPose + ( this->currGameState->getBallGlobalVelocity()*10.0*this->video.getUpdateDeltaTime() );
 		double dist = ballPose.distance( this->currGameState->getRobotPos( robot->getRobotID()) );
 		//jesli pilka jest bliska to chwyc ja
 		if( dist  <= GetBall::maxDistanceToBall ){
@@ -63,11 +77,13 @@ Task::status GoToBall::run(void * arg, int steps){
 		}
 	}
 
-	if( ballPose.distance(this->currGameState->getBallPos()) > GetBall::maxDistanceToBall){
+	double dist = ballPose.distance(this->currGameState->getBallPos());
+	if( dist > GetBall::maxDistanceToBall){
+		LOG_DEBUG(log, "go to ball distance to ball = "<<dist);
 		ballPose = this->currGameState->getBallPos();
 		delete this->goToPose;
 		Vector2D ballPos = this->currGameState->getBallPos().getPosition();
-		ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * Videoserver::getInstance().getUpdateDeltaTime( ) );
+		ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
 
 		if( (this->predicates & Task::analyse_all_field ) > 0){
 			this->goToPose =  new GoToPose( Pose(ballPos,0), robot, true);

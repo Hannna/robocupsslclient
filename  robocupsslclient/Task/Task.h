@@ -26,10 +26,12 @@ class Task {
 public:
 	typedef
 	enum predicate_{
+		null = 0x00,
 		kick_if_we_can = 0x01,
 		pass = 0x02,
 		should_have_ball = 0x04,
-		analyse_all_field = 0x08
+		analyse_all_field = 0x08,
+		got_ball
 	} predicate;
 
 	enum status{
@@ -41,7 +43,8 @@ public:
 		//cel jest przesloniety, lub wew przeszkody
 		target_blocked,
 		ok = 0,
-		kick_ok
+		kick_ok,
+		get_ball
 	};
 
 public:
