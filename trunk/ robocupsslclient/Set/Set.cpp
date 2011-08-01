@@ -14,7 +14,7 @@ Set::Set(double angmin_,double angmax_,double d_):angmin(angmin_),angmax(angmax_
 
 std::ostream & operator<<(std::ostream & o, const Set &s)
 {
-	return o<< "SET ("<<s.angmin<<","<<s.angmax<<")"<<std::endl;
+	return o<< "SET ("<<s.angmin<<","<<s.angmax<<") d= "<<s.d<<std::endl;
 }
 
 Set::Set(const Set& set)
@@ -36,9 +36,19 @@ bool Set::areSeparated(Set& set)
 {
 	if( set.angmax <= this->angmin ||  set.angmin >= this->angmax)
 		return true;
+	//dla katow przechodzacych przez 0
+	if( set.angmax * set.angmin  < 0 &&  this->angmax * this->angmin > 0){
+		if( set.angmin <  this->angmin  ||  set.angmin > this->angmin ){
+		return true;
+		}
+	}
+
+	if( set.angmax * set.angmin  < 0 &&  this->angmax * this->angmin > 0){
+
+	}
 	//else if ( set.cmin >=this->cmin && set.cmin<=this->angmax )
 	//return true;
-	else
+	//else
 		return false;
 }
 

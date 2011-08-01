@@ -93,6 +93,7 @@ class Tactic : public Thread
         double bestScore;
         const log4cxx::LoggerPtr log;
         int predicates;
+        bool finished;
 
 
 };

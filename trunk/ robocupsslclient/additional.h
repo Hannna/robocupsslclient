@@ -159,6 +159,10 @@ double convertAnglePI(double angle);
 ///@return kąt w radianach z przedziału 0..+2*M_PI
 double convertAngle2PI(double angle);
 
+template <class T>
+double euclideanNorm(T t1, T t2 ){
+	return sqrt( pow(t1-t2,2 ) );
+}
 
 /** @author Kamil Muszyński
  *

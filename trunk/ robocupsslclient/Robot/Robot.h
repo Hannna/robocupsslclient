@@ -75,6 +75,11 @@ public:
 	std::pair<Vector2D,double> getRelativeVelocity() const;
 	bool kick() const ;
 	bool kickerReady()const;
+	/// double dist wymagana odleglosc od przeszkody
+	bool disperse(const double dist );
+	Vector2D repulsivePotentialField( const Vector2D positionCoordinate, const Vector2D goal, std::list< Vector2D > obstacles );
+	Vector2D repulsivePotentialField( const Vector2D positionCoordinate, std::list< Vector2D > obstacles );
+
 	//double calculateAngularVel(const Pose & robotPosition, const Pose & targetPosition);
 	//double calculateAngularVel(const Pose & robotPosition, const Vector2D & targetPosition);
 
@@ -85,6 +90,7 @@ public:
 
 private :
 
+	//Vector2D repulsivePotentialField( Vector2D positionCoordinate,  std::list< Vector2D > obstacles );
 
 	PidRegulator pidRegulator;
 	///zadana predkosc liniowa

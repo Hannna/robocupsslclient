@@ -30,14 +30,14 @@ Play::Play(std::string teamColor): appConfig( Config::getInstance() ), log( getL
 	this->teamColor = teamColor;
 
 	if( teamColor.compare("red") == 0 ){
-		LOG_INFO(log,"Create simplePlay for red team");
+		LOG_INFO(log,"Create Play for red team");
 		role0 = Role( this->red0 );
 		role1 = Role( this->red1 );
 		role2 = Role( this->red2 );
 
 	}
 	else if( teamColor.compare("blue") == 0 ){
-		LOG_INFO(log,"Create simplePlay for blue team");
+		LOG_INFO(log,"Create Play for blue team");
 		role0 = Role( this->blue0 );
 		role1 = Role( this->blue1 );
 		role2 = Role( this->blue2 );
@@ -81,9 +81,8 @@ void Play::halt(){
 	role1.getRobotPtr()->stop();
 	role2.getRobotPtr()->stop();
 	//role3->getRobot()->stop();
-
-
 }
+
 Play::~Play()
 {
     //dtor

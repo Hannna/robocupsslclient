@@ -32,7 +32,9 @@ public:
 		//pilka zajmowana przez naszych
 		occupied_our,
 		//pilka zajmowana przez przeciwnika
-		occupied_theirs
+		occupied_theirs,
+		//
+		mine
 	};
     public:
      static EvaluationModule & getInstance();
@@ -79,8 +81,8 @@ public:
         /*@brief dla zadanej przeszkody znajduje przedział katowy z nia zwiazany
          *  jesli przeszkoda znajduje sie za robotem zwraca std::pair(-INF, -INF)
          */
-        Set findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition);
-        void addToList(Set &set,std::list<Set> &sets);
+        Set findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition, double rotation);
+        bool addToList(Set &set,std::list<Set> &sets);
 };
 
 std::ostream & operator<<(std::ostream & os, const EvaluationModule::ballState & bState );

@@ -50,7 +50,7 @@ Task* GoToPose::nextTask(){
 		}
 	}
 
-	LOG_TRACE(log, "next TASK is null= " );
+	LOG_INFO(log, "next TASK is null= " );
 
 	return NULL;
 }
@@ -166,11 +166,26 @@ Task::status GoToPose::run(void* arg, int steps){
 				//robot->setRelativeSpeed( robotNewVel, 0);
 				//robot->setRelativeSpeed( robotNewVel, w );
 				if( rrt->getDistToNearestObs() > 0.02 ){
-					LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
-											" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
-
-					robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
-
+					if( this->predicates && Task::got_ball ){
+						double deltaW = currGameState->getRobotAngularVelocity( robot->getRobotID() );
+						deltaW -=w;
+						if( fabs(deltaW) > 0.5 ){
+							deltaW = 0.5 * sgn(w);
+							LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+																		" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
+							robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
+						}
+						else{
+							LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+												" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
+							robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
+						}
+					}
+					else{
+						LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+												" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
+						robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
+					}
 				}
 				else{
 					LOG_INFO(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
@@ -199,8 +214,10 @@ Task::status GoToPose::run(void* arg, int steps){
 		}
 	}
 
-	if(this->stopTask)
+	if(this->stopTask){
+		LOG_DEBUG(log,"task was stopped");
 		return Task::ok;
+	}
 
 	return Task::not_completed;
 }

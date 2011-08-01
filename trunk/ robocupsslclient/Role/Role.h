@@ -27,6 +27,7 @@ public:
 
 	void execute();
 	void addTactic( Tactic * tactic);
+	size_t getTacticsSize( );
 	/*@brief stop executing current tactic
 	 *
 	 */

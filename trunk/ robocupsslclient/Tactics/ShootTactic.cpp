@@ -51,10 +51,42 @@ void ShootTactic::execute(void *){
     	//}
     }
 
-    goalPose.get<2>() = ( ang.first + ang.second )/2 ;
+    ////
+
+	double score = 0;
+	double sign = 1.0;
+
+	if( ang.first * ang.second > 0.0  ){
+		score = ang.second - ang.first;
+	}
+	else{
+		if( fabs(ang.second )  + fabs( ang.first) > M_PI ){
+			score = fabs( M_PI - fabs(ang.second )  + M_PI- fabs( ang.first) );
+			sign = -1;
+		}
+		else{
+			score = fabs(ang.second )  + fabs( ang.first);
+		}
+	}
+
+	//jesli warto strzelic na bramke
+	//if( fabs(score) > EvaluationModule::minOpenAngle   ){
+	//	LOG_INFO(this->log,"MoveBall -> KickBall score "<<score<<"  ang.first"<<ang.first<<" ang.second "<<ang.second );
+	//	return new KickBall( robot,  convertAnglePI( ang.first + sign*score/2.0 )  ) ;
+	//}
+
+    ////
+
+	double angleToGoal = ang.first + sign*score/2.0;
+
+    //goalPose.get<2>() = ( ang.first + ang.second )/2 ;
+
+	goalPose = Pose( goalPose.get<0>(), goalPose.get<1>(), angleToGoal  );
+	//goalPose.get<2>() = angleToGoal;
 
     Task::status taskStatus = Task::not_completed;
-    double score =0;
+    //double score =0;
+    score =0;
     double bestScore = 0;
 
     //(score, target) ← evaluation.aimAtGoal()
@@ -62,10 +94,13 @@ void ShootTactic::execute(void *){
     //score ← score + HYSTERESIS
     // SParami ← setCommand(MoveBall, target, KICK IF WE CAN)
 
+    Task::predicate predicates = Task::null;
     while( !this->stop ){
     	taskStatus = Task::not_completed;
 		this->currentTask = TaskSharedPtr( new MoveBall( goalPose, &robot ) );
-		this->currentTask->markParam(Task::kick_if_we_can);
+		Task::predicate p = Task::kick_if_we_can;
+		this->currentTask->markParam(p);
+		this->currentTask->markParam(predicates);
 		bestScore = score;
 		Task* newTask;
 		int steps=1;
@@ -87,13 +122,23 @@ void ShootTactic::execute(void *){
 			if( taskStatus == Task::collision ){
 				robot.stop();
 				LOG_FATAL(log,"Shoot tactic Task::collision " );
+				finished = true;
 				return;
 			}
 
 			if( taskStatus == Task::kick_ok ){
 				robot.stop();
 				LOG_FATAL(log," Shoot tactic Task::kick_ok " );
+				finished = true;
 				return;
+			}
+
+			if( taskStatus == Task::get_ball ){
+				taskStatus = Task::ok;
+				predicates = Task::got_ball;
+				//robot.stop();
+				//LOG_FATAL(log," Shoot tactic Task::kick_ok " );_
+				//return;
 			}
 
 		}
@@ -101,11 +146,13 @@ void ShootTactic::execute(void *){
 		//if(newTask)
 		//	delete newTask;
     }
+    finished = true;
+    LOG_INFO(log,"exit from shoot tactic " );
 }
 
 bool  ShootTactic::isFinish(){
 
-    return true;
+    return this->finished;
 }
 
 ShootTactic::~ShootTactic()

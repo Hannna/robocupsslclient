@@ -26,7 +26,8 @@ public:
     bool isFinished();
     virtual void execute();
     virtual void reset();
-
+    virtual void stop();
+    virtual void halt();
 	virtual ~NaivePlay();
 protected:
     /*przygotowuje roboty do startu
@@ -48,7 +49,7 @@ protected:
     /*wszystkie roboty zatrzymuja sie co najmniej 30 cm od pilki
      *
      */
-    virtual void stop();
+    //virtual void stop();
 
 
 

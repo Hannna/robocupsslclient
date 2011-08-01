@@ -72,12 +72,30 @@ double Robot::calculateAngularVel(const Pose & currRobotPose, const double goalR
 */
 
 
-double calculateAngularVel2(const Pose & currRobotPose, const double goalRotation){
+double KickBall::calculateAngularVel2( const Pose & currRobotPose, const double goalRotation ){
 
     static double oldTetaCel;
 
     double Ker=0.5;
     double Ko=20;
+
+    double sgn=1;
+
+    if( fabs( goalRotation - currRobotPose.get<2>() ) < M_PI ){
+    	if( goalRotation > currRobotPose.get<2>() ){
+    		sgn = 1;
+    	}
+    	else
+    		sgn = -1;
+    }
+	else{
+	   	if( goalRotation > currRobotPose.get<2>() ){
+	    	sgn = -1;
+	    }
+	    else
+	    	sgn = 1;
+	}
+
 
     //rotacja do celu
     double currTetaCel= convertAnglePI( goalRotation - currRobotPose.get<2>() );
@@ -85,7 +103,7 @@ double calculateAngularVel2(const Pose & currRobotPose, const double goalRotatio
 
     oldTetaCel=currTetaCel;
 
-    return fabs( angularVel ) > M_PI/2 ? M_PI/2 * sgn(angularVel) : angularVel;
+    return fabs( angularVel ) > M_PI ? M_PI * sgn : fabs(angularVel)*sgn;
     //return angularVel;
 }
 
@@ -113,10 +131,10 @@ Task::status KickBall::run(void * arg, int steps ){
 			}
 
 			//oblicz blad wzgledny
-			error= fabs( rotation - currPose.get<2>() )/ rotation;
-
+			//error= fabs(  (currPose.get<2>() - rotation ) / rotation )*100.0;
+			error= fabs(  (currPose.get<2>() - rotation ) );
             //if(  ( error=pow( rotation - currPose.get<2>(),2 )  )   < ROTATION_PRECISION ){
-			if( error < ROTATION_PRECISION ){
+			if( error < 0.017 ){//1stopien
                 robot->setRelativeSpeed( Vector2D(0.0,0.0), 0 );
                 task_status = Task::ok;
                 LOG_INFO(log,"Task::ok shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>() );
@@ -125,7 +143,7 @@ Task::status KickBall::run(void * arg, int steps ){
             }
             else{
     			double w = calculateAngularVel2( currPose , rotation);
-    			LOG_INFO(log,"shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>()<<"set speed w "<< w);
+    			LOG_INFO(log,"shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>()<<"set speed w "<< w<<" current error "<<error);
     			LOG_INFO(log,"current robot ang speed "<<currGameState->getRobotAngularVelocity( robot->getRobotID() )<<" linear vel "<<currGameState->getRobotGlobalVelocity(robot->getRobotID() )  );
     			robot->setRelativeSpeed( Vector2D(0.0,0.0), w );
     			task_status = Task::not_completed;
@@ -133,7 +151,7 @@ Task::status KickBall::run(void * arg, int steps ){
     	}
     }
 
-    if( task_status == Task::ok /*|| this->kickNow */ ){
+    if( task_status == Task::ok  || this->kickNow  ){
     	if(task_status == Task::ok){
     		LOG_INFO(log,"shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>());
     		LOG_INFO(log,"Have good position. Try to kick ball.");

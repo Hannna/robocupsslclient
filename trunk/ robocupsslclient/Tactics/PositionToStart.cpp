@@ -21,7 +21,7 @@ PositionToStart::PositionToStart( const Pose &startPose_, Robot* robot_  ): Tact
 
 
 bool PositionToStart::isFinish(){
-	return true;
+	return this->finished;
 }
 
 void PositionToStart::execute(void* null){
@@ -57,11 +57,14 @@ void PositionToStart::execute(void* null){
 			if( taskStatus == Task::collision ){
 				robot.stop();
 				LOG_FATAL(log,"Tactic error taskStatus " <<taskStatus );
+				finished = true;
 				return;
 			}
 		}
 	}
 	robot.stop();
+
+	finished = true;
 
 }
 
