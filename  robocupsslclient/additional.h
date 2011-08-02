@@ -163,6 +163,8 @@ template <class T>
 double euclideanNorm(T t1, T t2 ){
 	return sqrt( pow(t1-t2,2 ) );
 }
+template <>
+double euclideanNorm<Vector2D>(Vector2D t1, Vector2D t2 );
 
 /** @author Kamil Muszyński
  *
