@@ -80,6 +80,8 @@ public:
 	Vector2D repulsivePotentialField( const Vector2D positionCoordinate, const Vector2D goal, std::list< Vector2D > obstacles );
 	Vector2D repulsivePotentialField( const Vector2D positionCoordinate, std::list< Vector2D > obstacles );
 
+	Vector2D navigationFunction( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles);
+
 	//double calculateAngularVel(const Pose & robotPosition, const Pose & targetPosition);
 	//double calculateAngularVel(const Pose & robotPosition, const Vector2D & targetPosition);
 
