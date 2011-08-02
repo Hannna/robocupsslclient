@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <string>
+#include <boost\math\special_functions\fpclassify.hpp>
 
 #ifdef GAZEBO
 	#include <gazebo/gazebo.h>
