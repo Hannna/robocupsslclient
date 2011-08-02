@@ -408,11 +408,6 @@ double gradientBetai(double q, double qi){
 
 Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles){
 
-	//double result;
-
-	//const double obstacleInfluence = 0.5;//kazda przeszkoda odddzalywuje na 1 metr
-	//double fieldMagnitude = 0.01;
-
 	std::list< Vector2D >::iterator ii = obstacles.begin();
 	assert( obstacles.size() < 7 );
 
@@ -424,11 +419,11 @@ Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Ve
 
 	unsigned int obsNr=0;
 
-	beta = ( pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) - pow( 2.0*Config::getInstance().field.FIELD_LENGTH , 2) );
+	beta = ( pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) - pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) );
 	for(; ii != obstacles.end(); ii++ ){
-		obsNr++;
+
 		double temp =
-				betai(positionCoordinates,Config::getInstance().field.FIELD_MIDDLE_VECTOR,  Config::getInstance().field.FIELD_LENGTH );
+				betai( positionCoordinates,Config::getInstance().field.FIELD_MIDDLE_VECTOR,  Config::getInstance().field.FIELD_LENGTH/2.0 );
 
 		for( unsigned int i=0; i < obstacles.size();i++ ){
 			if(i!=obsNr){
@@ -439,16 +434,27 @@ Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Ve
 				}*/
 				//else{
 					temp *= betai(positionCoordinates, *ii, 2.0*Config::getInstance().getRRTRobotRadius() );
+
+					assert( boost::math::isnormal( temp ) );
 					//beta *= ( pow( euclideanNorm( positionCoordinates, *ii),2 ) - pow( 2.0*Config::getInstance().getRRTRobotRadius() , 2) );
 				//}
 			}
 		}
 		gradientBetaX +=gradientBetai(positionCoordinates.x, ii->x) * temp;
 
+		assert( boost::math::isnormal(gradientBetaX) );
+
 		gradientBetaY +=gradientBetai(positionCoordinates.y, ii->y) * temp;
 
-		beta *= ( pow( euclideanNorm( positionCoordinates, *ii),2 ) - pow( 2.0*Config::getInstance().getRRTRobotRadius() , 2) );
+		assert( boost::math::isnormal(gradientBetaY) );
 
+		//TODO:
+		//sprawdzic jaki jest faktyczny promien przeszkody tj innego robota
+		beta *= ( pow( euclideanNorm( positionCoordinates, *ii),2.0 ) - pow( 2.0*Config::getInstance().getRRTRobotRadius() , 2.0 ) );
+
+		assert( boost::math::isnormal( beta ) );
+
+		obsNr++;
 	}
 
 	double gradientX = 0;
@@ -462,12 +468,41 @@ Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Ve
 	double lambda =1.0;
 	double d = euclideanNorm( positionCoordinates,goal);
 	double kappa = 5.0;
-	gradientX =-1.0*( 2.0*d*derivativeDX*( pow( lambda*beta + pow(d,2*kappa), 2.0/kappa) ) - (1.0/kappa)*pow( lambda*beta + pow(d,2.0*kappa), 1.0/kappa -1.0)*
-			(lambda*gradientBetaX + 2.0*kappa*pow(d,2.0*kappa-1) )*derivativeDX )/pow( (lambda*beta + pow(d,2.0*kappa)), 2.0/kappa );
 
+	double a, b, c , d;
+
+	a = 2.0*d*derivativeDX*( pow( lambda*beta + pow(d,2.0*kappa), 2.0/kappa) );
+	assert( boost::math::isnormal( a ) );
+
+	b = (1.0/kappa)*pow( lambda*beta + pow(d,2.0*kappa), 1.0/kappa -1.0);
+	assert( boost::math::isnormal( b ) );
+
+	c = (lambda*gradientBetaX + 2.0*kappa*pow(d,2.0*kappa-1.0) )*derivativeDX;
+	assert( boost::math::isnormal( c ) );
+
+	d = pow( (lambda*beta + pow(d,2.0*kappa)), 2.0/kappa );
+	assert( boost::math::isnormal( d ) );
+
+	gradientX =-1.0*( a - b*c )/d;
+
+	a = 2.0*d*derivativeDY*( pow( lambda*beta + pow(d,2.0*kappa), 2.0/kappa) );
+	assert( boost::math::isnormal( a ) );
+
+	b = (1.0/kappa)*pow( lambda*beta + pow(d,2.0*kappa), 1.0/kappa -1.0);
+	assert( boost::math::isnormal( b ) );
+
+	c = (lambda*gradientBetaY + 2.0*kappa*pow(d,2.0*kappa-1.0) )*derivativeDY;
+	assert( boost::math::isnormal( c ) );
+
+	d = pow( (lambda*beta + pow(d,2.0*kappa)), 2.0/kappa );
+	assert( boost::math::isnormal( d ) );
+
+	gradientY = -1.0*( a - b*c )/d;
+
+	/*
 	gradientY =-1.0*( 2.0*d*derivativeDY*( pow( lambda*beta + pow(d,2*kappa), 2.0/kappa) ) - (1.0/kappa)*pow( lambda*beta + pow(d,2.0*kappa), 1.0/kappa -1.0)*
 			(lambda*gradientBetaY + 2.0*kappa*pow(d,2.0*kappa-1) )*derivativeDY )/pow( (lambda*beta + pow(d,2.0*kappa)), 2.0/kappa );
-
+	 */
 
 	return Vector2D(gradientX,gradientY);
 }
