@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <string>
-#include <boost\math\special_functions\fpclassify.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 
 #ifdef GAZEBO
 	#include <gazebo/gazebo.h>
@@ -25,6 +25,18 @@
  *
  */
 class GameState;
+
+typedef
+struct funcParams_{
+	double param;
+	std::list< Vector2D > obstacles;
+	Vector2D goal;
+
+}funcParams;
+
+double navigationFunctionX( const double x, void * params);
+
+double navigationFunctionY( const double y, void * params);
 
 class Robot
 {
@@ -81,7 +93,11 @@ public:
 	Vector2D repulsivePotentialField( const Vector2D positionCoordinate, const Vector2D goal, std::list< Vector2D > obstacles );
 	Vector2D repulsivePotentialField( const Vector2D positionCoordinate, std::list< Vector2D > obstacles );
 
-	Vector2D navigationFunction( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles);
+	Vector2D navigationFunctionGradient( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles);
+
+	Vector2D navigationFunctionGradient2( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles, double granularity);
+
+	double navigationFunction( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles);
 
 	//double calculateAngularVel(const Pose & robotPosition, const Pose & targetPosition);
 	//double calculateAngularVel(const Pose & robotPosition, const Vector2D & targetPosition);

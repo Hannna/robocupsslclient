@@ -8,6 +8,8 @@
 #include <boost/bind.hpp>
 //#include <boost\math\special_functions\fpclassify.hpp>
 
+#include <gsl/gsl_deriv.h>
+
 std::ostream& operator<<(std::ostream& os,const Robot::robotID& id){
 	if( id==Robot::red0 ){
 		return os<<"red0";
@@ -229,9 +231,11 @@ bool Robot::disperse( const double dist ){
 	Vector2D goalPose;
 	if( strncmp( this->robotName.c_str(), "red", 3 ) == 0 ){
 		goalPose = Videoserver::getInstance().getRedGoalMidPosition();
-	}else
+		LOG_INFO(log,"red robot, goal Pose "<<goalPose);
+	}else{
 		goalPose = Videoserver::getInstance().getBlueGoalMidPosition();
-
+		LOG_INFO(log,"blue robot, goal Pose "<<goalPose);
+	}
 
 	Vector2D oldGradient(0.0,0.0);
 	Vector2D gradient(0.0,0.0);
@@ -282,9 +286,44 @@ bool Robot::disperse( const double dist ){
 			}
 
 			//Vector2D oldGradient(0.0,0.0);
-			//gradient = this->repulsivePotentialField(currRobotPose.getPosition(),goalPose,obstacles);
+			//gradient = this->repulsivePotentialField(currRobotPose.getPosition(),goalPo se,obstacles);
+			//double granurality = 0.001;
+			//gradient = this->navigationFunctionGradient2( currRobotPose.getPosition(),goalPose,obstacles,granurality );
 
-			gradient = this->navigationFunction(currRobotPose.getPosition(),goalPose,obstacles);
+			double val = navigationFunction( currRobotPose.getPosition(), goalPose, obstacles );
+
+			LOG_INFO(log,"navigationFunction in " << currRobotPose.getPosition() << " val="<<val);
+
+			Vector2D g;
+			gsl_function F;
+			double result, abserr;
+			funcParams params;
+			params.obstacles = obstacles;
+			params.goal = goalPose;
+			params.param = currRobotPose.getPosition().y;
+
+			F.function = &navigationFunctionX;
+			F.params = &params;
+
+			gsl_deriv_central (&F, 2.0, 1e-8, &result, &abserr);
+			g.x = result;
+
+			params.goal = goalPose;
+			params.param = currRobotPose.getPosition().x;
+
+			F.function = &navigationFunctionY;
+			F.params = &params;
+
+			gsl_deriv_central (&F, 2.0, 1e-8, &result, &abserr);
+			g.y = result;
+
+			LOG_INFO(log," gradient from lib dx="<<g.x<<" dy="<<g.y);
+			LOG_INFO(log," gradient calculated dx="<<gradient.x<<" dy="<<gradient.y);
+
+			//gradient = gradient * (-1.0);
+			gradient = g ;
+
+			//gradient = this->navigationFunctionGradient( currRobotPose.getPosition(),goalPose,obstacles);
 
 			/*
 			if( gradient.x * oldGradient.x  < 0.0 ||  gradient.y * oldGradient.y  < 0.0 ){
@@ -298,17 +337,30 @@ bool Robot::disperse( const double dist ){
 
 			oldGradient=gradient;
 
+			//Pose targetGlobalPose = currRobotPose + gradient;
+			//Vector2D newSpeed = calculateVelocity(gameState->getRobotGlobalVelocity( this->getRobotID( ) ), currRobotPose , targetGlobalPose);
+
 			obstacles.clear();
 
+
 			Vector2D velocity = gradient;
-			double max = fabs( velocity.x ) > fabs( velocity.y ) ? fabs( velocity.x ) : fabs( velocity.y );
+			double max;
+			if( fabs( velocity.x ) > fabs( velocity.y ) )
+				max = fabs( velocity.x );
+			else
+				max = fabs( velocity.y );
+
+			//double max = fabs( velocity.x ) > fabs( velocity.y ) ? fabs( velocity.x ) : fabs( velocity.y );
 
 			if( max > 0 )
-				velocity = velocity * ( 1.0/max );
+				velocity = velocity * ( 0.5/max );
 
 			LOG_INFO( log,"gradient "<< gradient <<"set speed "<<velocity<<" distTo nearest obs "<<distToObstacle<< " nearestObsPose"<<nearestObsPose << " dist to ball "<<ballPose.distance( currRobotPose ) );
 
+
 			this->setGlobalSpeed( velocity,0,currRobotPose.get<2>() );
+
+			//this->setGlobalSpeed( newSpeed,0,currRobotPose.get<2>() );
 		}
 
 	}while( /*( ballPose.distance( currRobotPose )  < dist ) ||*/  distToObstacle < dist    );
@@ -406,7 +458,108 @@ double gradientBetai(double q, double qi){
 	return 2*(q-qi);
 }
 
-Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles){
+double navigationFunctionX( double x, void * p){
+	funcParams* params = reinterpret_cast< funcParams* >( p );
+
+	Vector2D positionCoordinates(x,params->param);
+
+	double beta = -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) ;
+
+	std::list< Vector2D >::iterator ii = params->obstacles.begin();
+	for( ;ii!=params->obstacles.end();ii++ ){
+
+		beta*=( pow( euclideanNorm( positionCoordinates, params->goal),2 ) - pow( 2.0*Config::getInstance().getRRTRobotRadius() , 2) );
+	}
+	assert( beta >= 0);
+
+	double lambda = 1;
+	double kappa = 10;
+
+	double fi = pow( euclideanNorm( positionCoordinates, params->goal),2 )/ pow( lambda*beta + pow( euclideanNorm( positionCoordinates, params->goal),2.0*kappa ), 1.0/kappa );
+
+	return 1.0*fi;
+}
+
+double navigationFunctionY( double y, void * p){
+	funcParams* params = reinterpret_cast< funcParams* >( p );
+
+	Vector2D positionCoordinates(params->param,y);
+
+	double beta = -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) ;
+
+	std::list< Vector2D >::iterator ii = params->obstacles.begin();
+	for( ;ii!=params->obstacles.end();ii++ ){
+
+		beta*=( pow( euclideanNorm( positionCoordinates, params->goal),2 ) - pow( 2.0*Config::getInstance().getRobotMainCylinderRadious() , 2) );
+	}
+	assert( beta >= 0);
+
+	double lambda = 1;
+	double kappa = 10;
+
+	double fi = pow( euclideanNorm( positionCoordinates, params->goal),2 )/ pow( lambda*beta + pow( euclideanNorm( positionCoordinates, params->goal),2.0*kappa ), 1.0/kappa );
+
+	return 1.0*fi;
+}
+
+
+double Robot::navigationFunction( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles){
+
+	double beta = -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) ;
+
+	std::list< Vector2D >::iterator ii = obstacles.begin();
+	for( ;ii!=obstacles.end();ii++ ){
+
+		beta*=( pow( euclideanNorm( positionCoordinates, goal),2 ) - pow( Config::getInstance().getRRTRobotRadius() , 2) );
+	}
+	assert( beta >= 0);
+
+	double lambda = 1;
+	double kappa = 10;
+
+	double fi = pow( euclideanNorm( positionCoordinates, goal),2 )/ pow( lambda*beta + pow( euclideanNorm( positionCoordinates, goal),2.0*kappa ), 1.0/kappa );
+
+	return fi;
+}
+
+Vector2D Robot::navigationFunctionGradient2( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles, double granularity){
+
+	double minDX = numeric_limits<double>::infinity();
+	double minDY = numeric_limits<double>::infinity();
+
+	double X=0;
+	double Y=0;
+	double minFi = numeric_limits<double>::infinity();
+
+	double eps = 0.001;
+
+	Vector2D v;
+
+	v.x = ( navigationFunction( Vector2D(positionCoordinates.x+ eps,positionCoordinates.y), goal, obstacles) -
+			navigationFunction( Vector2D( positionCoordinates.x - eps ,positionCoordinates.y ), goal, obstacles) ) /2.0*eps ;
+
+	v.y = ( navigationFunction( Vector2D( positionCoordinates.x, positionCoordinates.y + eps ), goal, obstacles) -
+			navigationFunction( Vector2D(positionCoordinates.x ,positionCoordinates.y - eps ), goal, obstacles) ) /2.0*eps ;
+	/*
+	//wyszukaj kierunek najwiekszego spadku
+	for(double x = positionCoordinates.x - 1.0 ; x < positionCoordinates.x + 1.0; x += granularity ){
+		for(double y = positionCoordinates.y - 1.0 ; y < positionCoordinates.y + 1.0; y += granularity ){
+
+			double tmp = ( navigationFunction( Vector2D(x+ eps,y), goal, obstacles) - navigationFunction( Vector2D(x - eps ,y), goal, obstacles) ) /2.0*eps ;
+
+			if( tmp < minFi  ){
+				X = x;
+				Y = y;
+				tmp = minFi;
+			}
+		}
+
+	}*/
+
+	return v;
+}
+
+Vector2D Robot::navigationFunctionGradient( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles){
 
 	std::list< Vector2D >::iterator ii = obstacles.begin();
 	assert( obstacles.size() < 7 );
@@ -417,44 +570,59 @@ Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Ve
 
 	double gradientBetaY = 0;
 
-	unsigned int obsNr=0;
+	//unsigned int obsNr=0;
 
-	beta = ( pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) - pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) );
-	for(; ii != obstacles.end(); ii++ ){
+	beta = ( -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) );
 
-		double temp =
-				betai( positionCoordinates,Config::getInstance().field.FIELD_MIDDLE_VECTOR,  Config::getInstance().field.FIELD_LENGTH/2.0 );
+	assert( beta >= 0.0 );
 
-		for( unsigned int i=0; i < obstacles.size();i++ ){
-			if(i!=obsNr){
+	for( unsigned int i =0; ii!= obstacles.end(); i++ ){
+
+
+		double temp =1;
+		if(i >0 )
+			temp = ( -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) );
+			//temp=betai( positionCoordinates,Config::getInstance().field.FIELD_MIDDLE_VECTOR,  Config::getInstance().field.FIELD_LENGTH/2.0 );
+
+		for( unsigned int j=0; j < obstacles.size();j++ ){
+			if( j!=i ){
 				/*if(i==0){
 					temp = betai(positionCoordinates, *ii, 2.0*Config::getInstance().getRRTRobotRadius() );
 
 					beta = ( pow( euclideanNorm( positionCoordinates, *ii),2 ) - pow( 2.0*Config::getInstance().getRRTRobotRadius() , 2) );
 				}*/
 				//else{
-					temp *= betai(positionCoordinates, *ii, 2.0*Config::getInstance().getRRTRobotRadius() );
+					temp *= betai(positionCoordinates, *ii, 1.5*Config::getInstance().getRRTRobotRadius() );
 
 					assert( boost::math::isnormal( temp ) );
 					//beta *= ( pow( euclideanNorm( positionCoordinates, *ii),2 ) - pow( 2.0*Config::getInstance().getRRTRobotRadius() , 2) );
 				//}
 			}
 		}
-		gradientBetaX +=gradientBetai(positionCoordinates.x, ii->x) * temp;
+		if(i==0)
+			gradientBetaX += (-2.0*( positionCoordinates.x -  Config::getInstance().field.FIELD_MIDDLE_VECTOR.x ) )  * temp;
+		else
+			gradientBetaX +=gradientBetai(positionCoordinates.x, ii->x) * temp;
 
 		assert( boost::math::isnormal(gradientBetaX) );
 
-		gradientBetaY +=gradientBetai(positionCoordinates.y, ii->y) * temp;
-
+		if(i==0)
+			gradientBetaY += (-2.0*(positionCoordinates.y -  Config::getInstance().field.FIELD_MIDDLE_VECTOR.y) )  * temp;
+		else{
+			gradientBetaY +=gradientBetai(positionCoordinates.y, ii->y) * temp;
+			ii++;
+		}
 		assert( boost::math::isnormal(gradientBetaY) );
 
 		//TODO:
 		//sprawdzic jaki jest faktyczny promien przeszkody tj innego robota
-		beta *= ( pow( euclideanNorm( positionCoordinates, *ii),2.0 ) - pow( 2.0*Config::getInstance().getRRTRobotRadius() , 2.0 ) );
+		beta *= ( pow( euclideanNorm( positionCoordinates, *ii),2.0 ) - pow( 1.5*Config::getInstance().getRRTRobotRadius() , 2.0 ) );
+
+		assert( beta >= 0.0 );
 
 		assert( boost::math::isnormal( beta ) );
 
-		obsNr++;
+		//obsNr++;
 	}
 
 	double gradientX = 0;
@@ -465,14 +633,23 @@ Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Ve
 
 	double derivativeDY = (positionCoordinates.y - goal.y)/euclideanNorm( positionCoordinates,goal);
 
-	double lambda =1.0;
+	double lambda = 10.0;
 	double d = euclideanNorm( positionCoordinates,goal);
-	double kappa = 5.0;
+	double kappa = 2.0;
 
-	double a, b, c , d;
+	double a, b, c , e;
+
+	assert( boost::math::isnormal( derivativeDX ) );
+
+	assert( boost::math::isnormal( d ) );
 
 	a = 2.0*d*derivativeDX*( pow( lambda*beta + pow(d,2.0*kappa), 2.0/kappa) );
+	if( !boost::math::isnormal( a ) ){
+		std::cout<<"2.0*d*derivativeDX"<<2.0*d*derivativeDX<<" pow( lambda*beta + pow(d,2.0*kappa), 2.0/kappa) "<<pow( lambda*beta + pow(d,2.0*kappa), 2.0/kappa)<<std::endl;
+	}
 	assert( boost::math::isnormal( a ) );
+
+	assert( beta >= 0.0 );
 
 	b = (1.0/kappa)*pow( lambda*beta + pow(d,2.0*kappa), 1.0/kappa -1.0);
 	assert( boost::math::isnormal( b ) );
@@ -480,10 +657,10 @@ Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Ve
 	c = (lambda*gradientBetaX + 2.0*kappa*pow(d,2.0*kappa-1.0) )*derivativeDX;
 	assert( boost::math::isnormal( c ) );
 
-	d = pow( (lambda*beta + pow(d,2.0*kappa)), 2.0/kappa );
+	e = pow( (lambda*beta + pow(d,2.0*kappa)), 2.0/kappa );
 	assert( boost::math::isnormal( d ) );
 
-	gradientX =-1.0*( a - b*c )/d;
+	gradientX =1.0*( a - b*c )/e;
 
 	a = 2.0*d*derivativeDY*( pow( lambda*beta + pow(d,2.0*kappa), 2.0/kappa) );
 	assert( boost::math::isnormal( a ) );
@@ -494,10 +671,10 @@ Vector2D Robot::navigationFunction( const Vector2D positionCoordinates, const Ve
 	c = (lambda*gradientBetaY + 2.0*kappa*pow(d,2.0*kappa-1.0) )*derivativeDY;
 	assert( boost::math::isnormal( c ) );
 
-	d = pow( (lambda*beta + pow(d,2.0*kappa)), 2.0/kappa );
+	e = pow( (lambda*beta + pow(d,2.0*kappa)), 2.0/kappa );
 	assert( boost::math::isnormal( d ) );
 
-	gradientY = -1.0*( a - b*c )/d;
+	gradientY = 1.0*( a - b*c )/e;
 
 	/*
 	gradientY =-1.0*( 2.0*d*derivativeDY*( pow( lambda*beta + pow(d,2*kappa), 2.0/kappa) ) - (1.0/kappa)*pow( lambda*beta + pow(d,2.0*kappa), 1.0/kappa -1.0)*
