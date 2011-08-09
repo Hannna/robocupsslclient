@@ -290,9 +290,9 @@ bool Robot::disperse( const double dist ){
 			//double granurality = 0.001;
 			//gradient = this->navigationFunctionGradient2( currRobotPose.getPosition(),goalPose,obstacles,granurality );
 
-			double val = navigationFunction( currRobotPose.getPosition(), goalPose, obstacles );
+			//double val = navigationFunction( currRobotPose.getPosition(), goalPose, obstacles );
 
-			LOG_INFO(log,"navigationFunction in " << currRobotPose.getPosition() << " val="<<val);
+			//LOG_INFO(log,"navigationFunction in " << currRobotPose.getPosition() << " val="<<val);
 
 			Vector2D g;
 			gsl_function F;
@@ -305,7 +305,7 @@ bool Robot::disperse( const double dist ){
 			F.function = &navigationFunctionX;
 			F.params = &params;
 
-			gsl_deriv_central (&F, 2.0, 1e-8, &result, &abserr);
+			gsl_deriv_central (&F, currRobotPose.get<0>(), 1e-8, &result, &abserr);
 			g.x = result;
 
 			params.goal = goalPose;
@@ -314,14 +314,15 @@ bool Robot::disperse( const double dist ){
 			F.function = &navigationFunctionY;
 			F.params = &params;
 
-			gsl_deriv_central (&F, 2.0, 1e-8, &result, &abserr);
+			gsl_deriv_central (&F, currRobotPose.get<1>(), 1e-8, &result, &abserr);
 			g.y = result;
 
 			LOG_INFO(log," gradient from lib dx="<<g.x<<" dy="<<g.y);
 			LOG_INFO(log," gradient calculated dx="<<gradient.x<<" dy="<<gradient.y);
 
-			//gradient = gradient * (-1.0);
-			gradient = g ;
+			//gradient = gradient ;
+			gradient = g * (-1.0);
+			//gradient = g ;
 
 			//gradient = this->navigationFunctionGradient( currRobotPose.getPosition(),goalPose,obstacles);
 
@@ -463,21 +464,21 @@ double navigationFunctionX( double x, void * p){
 
 	Vector2D positionCoordinates(x,params->param);
 
-	double beta = -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) ;
+	double beta = -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH , 2) ;
 
 	std::list< Vector2D >::iterator ii = params->obstacles.begin();
 	for( ;ii!=params->obstacles.end();ii++ ){
 
-		beta*=( pow( euclideanNorm( positionCoordinates, params->goal),2 ) - pow( 2.0*Config::getInstance().getRRTRobotRadius() , 2) );
+		beta*=( pow( euclideanNorm( positionCoordinates, *ii ),2 ) - pow( Config::getInstance().getRobotMainCylinderRadious() , 2) );
 	}
 	assert( beta >= 0);
 
-	double lambda = 1;
-	double kappa = 10;
+	double lambda = 0.2;
+	double kappa = 6;
 
 	double fi = pow( euclideanNorm( positionCoordinates, params->goal),2 )/ pow( lambda*beta + pow( euclideanNorm( positionCoordinates, params->goal),2.0*kappa ), 1.0/kappa );
 
-	return 1.0*fi;
+	return fi;
 }
 
 double navigationFunctionY( double y, void * p){
@@ -485,21 +486,21 @@ double navigationFunctionY( double y, void * p){
 
 	Vector2D positionCoordinates(params->param,y);
 
-	double beta = -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH/2.0 , 2) ;
+	double beta = -1.0*pow( euclideanNorm( positionCoordinates, Config::getInstance().field.FIELD_MIDDLE_VECTOR),2 ) + pow( Config::getInstance().field.FIELD_LENGTH , 2) ;
 
 	std::list< Vector2D >::iterator ii = params->obstacles.begin();
 	for( ;ii!=params->obstacles.end();ii++ ){
 
-		beta*=( pow( euclideanNorm( positionCoordinates, params->goal),2 ) - pow( 2.0*Config::getInstance().getRobotMainCylinderRadious() , 2) );
+		beta*=( pow( euclideanNorm( positionCoordinates, *ii ),2 ) - pow( Config::getInstance().getRobotMainCylinderRadious() , 2) );
 	}
 	assert( beta >= 0);
 
-	double lambda = 1;
-	double kappa = 10;
+	double lambda = 0.2;
+	double kappa = 6;
 
 	double fi = pow( euclideanNorm( positionCoordinates, params->goal),2 )/ pow( lambda*beta + pow( euclideanNorm( positionCoordinates, params->goal),2.0*kappa ), 1.0/kappa );
 
-	return 1.0*fi;
+	return fi;
 }
 
 
@@ -510,7 +511,7 @@ double Robot::navigationFunction( const Vector2D positionCoordinates, const Vect
 	std::list< Vector2D >::iterator ii = obstacles.begin();
 	for( ;ii!=obstacles.end();ii++ ){
 
-		beta*=( pow( euclideanNorm( positionCoordinates, goal),2 ) - pow( Config::getInstance().getRRTRobotRadius() , 2) );
+		beta*=( pow( euclideanNorm( positionCoordinates, *ii),2 ) - pow( Config::getInstance().getRRTRobotRadius() , 2) );
 	}
 	assert( beta >= 0);
 
