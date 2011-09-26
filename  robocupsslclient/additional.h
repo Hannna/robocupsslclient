@@ -9,12 +9,17 @@
 #include <math.h>
 #include <sys/time.h>
 #include <strings.h>
+#include <list>
 
 #include "boost/tuple/tuple.hpp"
 #include "Vector2d/Vector2D.h"
 #include "RotationMatrix/RotationMatrix.h"
 #include <boost/math/special_functions/fpclassify.hpp>
 
+#include <libxml/tree.h>
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
 
 //dokladnosc polozenia robota
 //lub okreslania czy robot jest u celu itp
@@ -198,6 +203,9 @@ enum what{start, stop};
 
 double measureTime(what what_,struct timespec * startTime);
 
+//int xpathTest(const char* filename, const xmlChar* xpathExpr);
 //struct timeval measureTime(what what_,struct timeval * startTime);
+
+std::list<std::string> getRobotNames(const char* filename, const xmlChar* xpathExpr);
 
 #endif /*ADDITIONAL_H_*/
