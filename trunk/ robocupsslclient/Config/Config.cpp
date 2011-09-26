@@ -11,6 +11,7 @@
 #include <boost/regex.hpp>	//wyrażenia regularne - do interpretacji plików, -lboost_regex!!
 #include <boost/lexical_cast.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <string.h>
 
 Config* Config::config;
 pthread_mutex_t Config::mutex=PTHREAD_MUTEX_INITIALIZER;
@@ -33,6 +34,23 @@ bool Config::isDebugMode(){
 }
 
 bool Config::load(std::string filename){
+
+	//loading robots name
+
+    std::list<std::string> robots = getRobotNames("/home/maciek/mgr/mgr/my_plansza/test_worlds/test_world_1.xml",
+    		BAD_CAST "//*[namespace-uri()='http://playerstage.sourceforge.net/gazebo/xmlschema/#model']");
+
+    std::list<std::string>::iterator ii = robots.begin();
+
+    for(;ii!=robots.end();ii++){
+    	if(strncmp(ii->c_str(),"red",3)==0 ){
+    		this->redTeam.push_back(*ii);
+    	}
+    	else if (strncmp(ii->c_str(),"blue",3)==0 ){
+    	    		this->blueTeam.push_back(*ii);
+    	    	}
+    }
+
 
 	bool status=true;
 	std::cout<<"Wczytuje plik: "<<filename.c_str()<<std::endl;
@@ -65,6 +83,7 @@ bool Config::load(std::string filename){
 
 		current = current->xmlChildrenNode;
 		while (current != NULL) {
+			/*
 			if(!xmlStrcmp(current->name,(const xmlChar *) "blueTeam")){
 				//std::cout<<"blueTeam"<<std::endl;
 				if(!loadBlueTeam(current, config)){
@@ -79,7 +98,8 @@ bool Config::load(std::string filename){
 					return false;
 				}
 			}
-			else if(!xmlStrcmp(current->name,(const xmlChar *) "settings")){
+			*/
+			if(!xmlStrcmp(current->name,(const xmlChar *) "settings")){
 				//std::cout<<"settings"<<std::endl;
 				if(!loadSettings(current, config)){
 					LOG_DEBUG(log,"unable to load settings");

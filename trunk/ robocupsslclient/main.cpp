@@ -113,7 +113,7 @@ int main(int argc, char*argv[],char *envp[]){
     xmlInitParser();
 
 //    log4cxx::PropertyConfigurator::configure("log4cxx.properties");
-    Config::getInstance().load("/home/maciek/workspace/mgr2/Debug/config.xml");
+    Config::getInstance().load("/home/maciek/workspace/magisterka/Debug/config.xml");
     Config::getInstance().setTestMode(true);
 
     Tests::TestKind testKind=Tests::none;

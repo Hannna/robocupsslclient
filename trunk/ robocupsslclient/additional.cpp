@@ -4,6 +4,13 @@
 #include <boost/assert.hpp>
 #include <limits>
 
+#include <libxml/tree.h>
+#include <libxml/parser.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+
 bool equealDouble(const double & a, const  double & b) {
     return std::fabs(a - b) < std::numeric_limits<double>::epsilon();
 }
@@ -156,6 +163,90 @@ double measureTime(what what_,struct timespec * startTime){
 
 	return -1;
 
+}
+
+
+/**
+ * example4:
+ * @filename:		the input XML filename.
+ * @xpathExpr:		the xpath expression for evaluation.
+ * @value:		the new node content.
+ *
+ * Parses input XML file, evaluates XPath expression and update the nodes
+ * then print the result.
+ *
+ * Returns 0 on success and a negative value otherwise.
+ */
+std::list<std::string> getRobotNames(const char* filename, const xmlChar* xpathExpr) {
+	std::list<std::string> robots;
+	xmlDocPtr doc;
+    xmlXPathContextPtr xpathCtx;
+    xmlXPathObjectPtr xpathObj;
+
+    assert(filename);
+    assert(xpathExpr);
+
+    /* Load XML document */
+    doc = xmlParseFile(filename);
+    if (doc == NULL) {
+	fprintf(stderr, "Error: unable to parse file \"%s\"\n", filename);
+		return robots;
+    }
+
+
+    /* Create xpath evaluation context */
+    xpathCtx = xmlXPathNewContext(doc);
+    if(xpathCtx == NULL) {
+        fprintf(stderr,"Error: unable to create new XPath context\n");
+        xmlFreeDoc(doc);
+        return robots;
+    }
+
+    /* Evaluate xpath expression */
+    xpathObj = xmlXPathEvalExpression(xpathExpr, xpathCtx);
+    if(xpathObj == NULL) {
+        fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", xpathExpr);
+        xmlXPathFreeContext(xpathCtx);
+        xmlFreeDoc(doc);
+        return robots;
+    }
+
+    //std::cout<<"xpathObj strinVal "<<xpathObj->stringval<<std::endl;
+
+
+    int size;
+    int i;
+
+    size = (xpathObj->nodesetval) ? xpathObj->nodesetval->nodeNr : 0;
+
+	std::cout<<" size " << size<<std::endl;
+    for(i = size - 1; i >= 0; i--) {
+    	assert(xpathObj->nodesetval->nodeTab[i]);
+    	//std::cout<<" xpathObj->nodesetval->nodeTab[i] name " << xpathObj->nodesetval->nodeTab[i]->name<<std::endl;
+    	//std::cout<<" xpathObj->nodesetval->nodeTab[i] name " <<
+    	//		xmlGetProp(xpathObj->nodesetval->nodeTab[i], BAD_CAST "name") <<std::endl;
+    	if( xmlStrncmp ( xmlGetProp(xpathObj->nodesetval->nodeTab[i], BAD_CAST "name"), BAD_CAST "red",3 )==0 ||
+    			xmlStrncmp (  xmlGetProp(xpathObj->nodesetval->nodeTab[i], BAD_CAST "name"), BAD_CAST "blue",3 )==0)
+    		robots.push_back( (const char*)  xmlGetProp(xpathObj->nodesetval->nodeTab[i], BAD_CAST "name") );
+    }
+
+
+    /* update selected nodes */
+    //update_xpath_nodes(xpathObj->nodesetval, value);
+
+
+    /* Cleanup of XPath data */
+    xmlXPathFreeObject(xpathObj);
+    xmlXPathFreeContext(xpathCtx);
+
+    /* dump the resulting document */
+    //xmlDocDump(stdout, doc);
+
+
+    /* free the document */
+    xmlFreeDoc(doc);
+
+    return robots;
 }
 
 /*
