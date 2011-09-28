@@ -10,6 +10,7 @@
 #include <boost/bind.hpp>
 
 #include "../Tactics/Tactic.h"
+#include "../Tactics/DisperseTactic.h"
 #include "../Logger/Logger.h"
 
 Role::Role( Robot* robot_ ): log( getLoggerPtr( robot_!=NULL ? robot_->getRobotName().c_str() : "app_debug" ) ) {
@@ -73,6 +74,7 @@ size_t Role::getTacticsSize(){
 }
 
 void Role::execute(){
+	LockGuard lock(mutex);
 	if( !tactics.empty() ){
 		currentTactic = tactics.front();
 		tactics.pop_front();
@@ -86,6 +88,13 @@ void Role::execute(){
 	//currentTactic  = NULL;
 
 	LOG_INFO(log,"finished  role execution for robot "<<this->robot->getRobotName() );
+}
+
+void Role::disperse( ){
+
+	currentTactic = new DisperseTactic( *this->robot );
+	currentTactic->start(NULL);
+
 }
 
 Role::~Role() {

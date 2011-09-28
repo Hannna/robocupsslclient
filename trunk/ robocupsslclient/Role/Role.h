@@ -10,6 +10,7 @@
 
 #include "../Logger/Logger.h"
 #include "../Robot/Robot.h"
+#include "../Lock/Lock.h"
 
 class Tactic;
 
@@ -28,14 +29,22 @@ public:
 	void execute();
 	void addTactic( Tactic * tactic);
 	size_t getTacticsSize( );
+	void disperse( );
+
 	/*@brief stop executing current tactic
 	 *
 	 */
 	void stop();
+
+	Tactic* getCurrentTactic(){
+		LockGuard lock(mutex);
+		return currentTactic;
+	}
+
 	virtual ~Role();
 
 private:
-
+	Mutex mutex;
 	Robot* robot;
 	std::list<Tactic* > tactics;
 	Tactic* currentTactic;

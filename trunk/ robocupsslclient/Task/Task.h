@@ -12,6 +12,7 @@
 #include "../VideoServer/Videoserver.h"
 #include "../EvaluationModule/EvaluationModule.h"
 #include "../Thread/Thread.h"
+
 #include <boost/thread/mutex.hpp>
 
 class Task;
@@ -67,6 +68,7 @@ public:
 	void unmarkParam(predicate p);
 	//virtual TaskSharedPtr & nextTask()=0;
 protected:
+
 	/*@brief metoda wykonujaca zadane polecenie
 	 *
 	 * @param [in] steps -> liczba krokow przez jaka wykonujemy

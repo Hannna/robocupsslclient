@@ -8,7 +8,9 @@
 #ifndef EXPERIMENTS_H_
 #define EXPERIMENTS_H_
 
-void experiment_1( );
+#include "../Thread/Thread.h"
 
+class Experiment :public Thread{
 
+};
 #endif /* EXPERIMENTS_H_ */

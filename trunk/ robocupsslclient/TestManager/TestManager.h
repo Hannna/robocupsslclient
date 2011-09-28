@@ -51,7 +51,7 @@ public:
 
 private:
 	void addTest(Tests::funcPtr t, void* arg=NULL);
-	void addTest(Thread* t);
+//	void addTest(Thread* t);
 
 	typedef struct testFuncArg_{
 		Tests::funcPtr testFunc;

@@ -60,6 +60,9 @@ position hcoordinatei hthetai
 #include "../Task/Task.h"
 #include "../Robot/Robot.h"
 #include "../Thread/Thread.h"
+#include "../Lock/Lock.h"
+
+
 class EvaluationModule;
 
 class Tactic : public Thread
@@ -74,6 +77,7 @@ class Tactic : public Thread
         Tactic(Robot & robot_);
         virtual bool isFinish()=0;
         void stopTactic(){
+
         	this->stop = true;
         }
 
@@ -85,6 +89,8 @@ class Tactic : public Thread
 
         virtual ~Tactic();
     protected:
+
+
         bool stop;
         virtual void execute(void*) = 0;
         EvaluationModule& evaluation;
