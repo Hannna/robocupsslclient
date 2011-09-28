@@ -40,10 +40,12 @@ void TestManager::addTest(Tests::funcPtr t, void* arg){
 
 }
 
+/*
 void TestManager::addTest(Thread* t){
 	this->tests_th.push_back(t);
 
 }
+*/
 
 void TestManager::addTest(Tests::TestKind testKind){
 	//this->tests_fun.push_back(t);

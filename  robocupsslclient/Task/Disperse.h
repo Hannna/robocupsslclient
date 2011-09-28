@@ -13,11 +13,13 @@
 class Disperse: public Task {
 public:
 	//jesli odleglosc przekracza ponizsza to konieczna zmiana tasku na GoToBall
-	static const double minimalDistanceToObstacle = 0.5; //m
+	static const double minimalDistanceToObstacle = 0.25; //m
 	static const double maxDisperseVelocity = 0.5; //m/s
 
 	Disperse(Robot * robot);
 	virtual Task* nextTask();
+
+	virtual ~Disperse();
 
 protected:
 	virtual Task::status run(void * arg, int steps=-1);
@@ -26,8 +28,6 @@ private:
 	Disperse();
 	Disperse(const Disperse &);
 	Disperse& operator=(const Disperse&);
-
-	virtual ~Disperse();
 };
 
 

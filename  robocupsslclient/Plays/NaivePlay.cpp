@@ -94,8 +94,24 @@ void NaivePlay::waitForFinish( ){
 //	}
 
 //	tactics.clear();
+	while( this->role0.getCurrentTactic()->isFinish() ){
+		//this->role0.currentTactic->isFinish();
+		usleep(100);
 
-	std::cout<<"Preparing for start finished"<<std::endl;
+	}
+
+	while( this->role1.getCurrentTactic()->isFinish() ){
+			//this->role0.currentTactic->isFinish();
+		usleep(100);
+
+	}
+
+	while( this->role2.getCurrentTactic()->isFinish() ){
+			//this->role0.currentTactic->isFinish();
+		usleep(100);
+
+	}
+	//std::cout<<"Preparing for start finished"<<std::endl;
 
 }
 
@@ -117,9 +133,10 @@ void NaivePlay::stop(){
 void NaivePlay::halt(){
 
 	LOG_INFO(log,"halt NaivePlay");
-	role0.getRobotPtr()->disperse(0.5);
-	role1.getRobotPtr()->disperse(0.5);
-	role2.getRobotPtr()->disperse(0.5);
+
+	this->role0.disperse( );
+	this->role1.disperse( );
+	this->role2.disperse( );
 	//role3->getRobot()->stop();
 }
 

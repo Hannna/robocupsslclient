@@ -98,23 +98,40 @@ void run_stp(){
 			// zatrzymaj roboty
 			else if( command == RefereeCommands::halt ){
 
-				if( bluePlay.get() )
+				LOG_INFO(log, "HALT " );
+
+				if( bluePlay.get() ){
+					LOG_INFO(log, "try to stop blue  team" );
 					bluePlay->stop();
+				}
 
-				if( redPlay.get() )
+				if( redPlay.get() ){
+					LOG_INFO(log, "try to stop red  team" );
 					redPlay->stop();
+				}
 
+				LOG_INFO(log, "before halt" );
 				if( bluePlay.get() )
 					bluePlay->halt();
 
 				if( redPlay.get() )
 					redPlay->halt();
 
-				if( redPlay.get() )
-					redPlay.reset();
+				if( redPlay.get() ){
+					redPlay->waitForFinish();
+				}
 
-				if( bluePlay.get() )
-					bluePlay.reset();
+				if( bluePlay.get() ){
+					bluePlay->waitForFinish();
+				}
+
+				LOG_INFO(log, "disperse finished " );
+
+			//	if( redPlay.get() )
+			//		redPlay.reset();
+
+			//	if( bluePlay.get() )
+			//		bluePlay.reset();
 
 			}
 			//zatrzymaj roboty 30cm od pilki

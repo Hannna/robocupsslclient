@@ -187,10 +187,7 @@ int main(int argc, char*argv[],char *envp[]){
     	nanosleep(&req,&rem);
     }
 
-
-
     //RefereeClient::getInstance().start();
-
 
     if(Config::getInstance().isTestMode()){
     	int sleep_status = 0;
