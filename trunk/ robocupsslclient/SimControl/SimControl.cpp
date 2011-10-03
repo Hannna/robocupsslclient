@@ -317,7 +317,17 @@ int SimControl::getAllPos(std::map<std::string,Pose > &positions)
 	 return true;
 */
 	LOG_TRACE(log,"start getALLPPos");
-	strvec names = Names::getNames();
+	strvec names;//Names::getNames();
+	strvec blueTeam = Config::getInstance().getBlueTeam();
+	strvec redTeam = Config::getInstance().getRedTeam();
+	std::vector<std::string>::iterator jj = blueTeam.begin();
+	for(;jj!=blueTeam.end();jj++){
+		names.push_back(*jj);
+	}
+	jj = redTeam.begin();
+	for(;jj!=redTeam.end();jj++){
+		names.push_back(*jj);
+	}
 	strvec::iterator ii;
 
 	//this->wait();
@@ -346,7 +356,7 @@ int SimControl::getAllPos(std::map<std::string,Pose > &positions)
 			#endif
 			bzero(request->name,512);
 			memcpy(request->name, model_name.c_str(), model_name.length() );
-			assert( strlen(request->name)==model_name.length() );
+	        assert( strlen(request->name)==model_name.length() );
 			request->name[511] = '\0';
 		}
 	}
@@ -522,7 +532,21 @@ void SimControl::stopBall( ){
 void SimControl::moveAwayModels(){
 
 	LockGuard lock(mutex);
-	strvec names = Names::getNames();
+	//strvec names = Names::getNames();
+
+	strvec names;//Names::getNames();
+	strvec blueTeam = Config::getInstance().getBlueTeam();
+	strvec redTeam = Config::getInstance().getRedTeam();
+	std::vector<std::string>::iterator jj = blueTeam.begin();
+	for(;jj!=blueTeam.end();jj++){
+		names.push_back(*jj);
+	}
+	jj = redTeam.begin();
+	for(;jj!=redTeam.end();jj++){
+		names.push_back(*jj);
+	}
+
+
 	strvec::iterator ii;
 	//simIface->Lock(1);
 	while(simIface->Lock(1)!=1);

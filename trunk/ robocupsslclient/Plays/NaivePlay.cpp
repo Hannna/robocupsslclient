@@ -34,13 +34,13 @@ ROLE 4
 */
 
 
-NaivePlay::NaivePlay(std::string teamColor): Play(teamColor) {
+NaivePlay::NaivePlay(std::string teamColor): Play(teamColor,3) {
 
-	this->role0.addTactic( new ShootTactic( role0.getRobot() ) );
+	this->roles[0]->addTactic( new ShootTactic( roles[0]->getRobot() ) );
 
-	this->role1.addTactic( new ShootTactic( role1.getRobot() ) );
+	this->roles[1]->addTactic( new ShootTactic( roles[1]->getRobot() ) );
 
-	this->role2.addTactic( new ShootTactic( role2.getRobot() ) );
+	this->roles[2]->addTactic( new ShootTactic( roles[2]->getRobot() ) );
 
 }
 
@@ -53,20 +53,20 @@ void NaivePlay::execute(){
 
 	LOG_INFO(log,"STARTING NaivePlay");
 
-	if( this->role0.getTacticsSize() == 0 )
-		this->role0.addTactic( new ShootTactic( role0.getRobot() ) );
+	if( this->roles[0]->getTacticsSize() == 0 )
+		this->roles[0]->addTactic( new ShootTactic( roles[0]->getRobot() ) );
 
-	this->role0.execute();
+	this->roles[0]->execute();
 
-	if( this->role1.getTacticsSize() == 0 )
-		this->role1.addTactic( new ShootTactic( role1.getRobot() ) );
+	if( this->roles[1]->getTacticsSize() == 0 )
+		this->roles[1]->addTactic( new ShootTactic( roles[1]->getRobot() ) );
 
-	this->role1.execute();
+	this->roles[1]->execute();
 
-	if( this->role2.getTacticsSize() == 0 )
-		this->role2.addTactic( new ShootTactic( role2.getRobot() ) );
+	if( this->roles[2]->getTacticsSize() == 0 )
+		this->roles[2]->addTactic( new ShootTactic( roles[2]->getRobot() ) );
 
-	this->role2.execute();
+	this->roles[2]->execute();
 
 
 }
@@ -94,19 +94,19 @@ void NaivePlay::waitForFinish( ){
 //	}
 
 //	tactics.clear();
-	while( this->role0.getCurrentTactic()->isFinish() ){
+	while( this->roles[0]->getCurrentTactic()->isFinish() ){
 		//this->role0.currentTactic->isFinish();
 		usleep(100);
 
 	}
 
-	while( this->role1.getCurrentTactic()->isFinish() ){
+	while( this->roles[1]->getCurrentTactic()->isFinish() ){
 			//this->role0.currentTactic->isFinish();
 		usleep(100);
 
 	}
 
-	while( this->role2.getCurrentTactic()->isFinish() ){
+	while( this->roles[2]->getCurrentTactic()->isFinish() ){
 			//this->role0.currentTactic->isFinish();
 		usleep(100);
 
@@ -124,9 +124,9 @@ void NaivePlay::stop(){
 
 	LOG_INFO(log,"STOP PLAY for "<<this->teamColor);
 
-	this->role0.stop();
-	this->role1.stop();
-	this->role2.stop();
+	this->roles[0]->stop();
+	this->roles[1]->stop();
+	this->roles[2]->stop();
 
 }
 
@@ -134,9 +134,9 @@ void NaivePlay::halt(){
 
 	LOG_INFO(log,"halt NaivePlay");
 
-	this->role0.disperse( );
-	this->role1.disperse( );
-	this->role2.disperse( );
+	this->roles[0]->disperse( );
+	this->roles[1]->disperse( );
+	this->roles[2]->disperse( );
 	//role3->getRobot()->stop();
 }
 

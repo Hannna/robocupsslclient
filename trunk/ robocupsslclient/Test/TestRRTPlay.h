@@ -8,12 +8,12 @@
 #ifndef TESTRRTPLAY_H_
 #define TESTRRTPLAY_H_
 
-#include "Play.h"
-
+#include "../Plays/Play.h"
+/*
 class TestRRTPlay: public Play {
 public:
 	TestRRTPlay();
 	virtual ~TestRRTPlay();
 };
-
+*/
 #endif /* TESTRRTPLAY_H_ */

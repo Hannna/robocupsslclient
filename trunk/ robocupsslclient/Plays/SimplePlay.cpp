@@ -34,13 +34,13 @@ ROLE 4
 */
 
 
-SimplePlay::SimplePlay(std::string teamColor): Play(teamColor) {
+SimplePlay::SimplePlay(std::string teamColor): Play(teamColor,3) {
 
-	this->role0.addTactic( new ShootTactic( role0.getRobot() ) );
+	this->roles[0]->addTactic( new ShootTactic( roles[0]->getRobot() ) );
 
-	this->role1.addTactic( new ShootTactic( role1.getRobot() ) );
+	this->roles[1]->addTactic( new ShootTactic( roles[1]->getRobot() ) );
 
-	this->role2.addTactic( new ShootTactic( role2.getRobot() ) );
+	this->roles[2]->addTactic( new ShootTactic( roles[2]->getRobot() ) );
 
 }
 
@@ -53,11 +53,11 @@ void SimplePlay::execute(){
 
 	LOG_INFO(log,"STARTING SIMPLEPLAY");
 
-	this->role0.execute();
+	this->roles[0]->execute();
 
-	this->role1.execute();
+	this->roles[1]->execute();
 
-	this->role2.execute();
+	this->roles[2]->execute();
 
 
 }
@@ -99,9 +99,9 @@ void SimplePlay::stop(){
 
 	LOG_INFO(log,"STOP PLAY for "<<this->teamColor);
 
-	this->role0.stop();
-	this->role1.stop();
-	this->role2.stop();
+	this->roles[0]->stop();
+	this->roles[1]->stop();
+	this->roles[2]->stop();
 
 }
 

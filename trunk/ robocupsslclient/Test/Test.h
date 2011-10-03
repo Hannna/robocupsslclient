@@ -67,4 +67,6 @@ void testPassTacticFunc(void * arg);
 
 void testKick();
 
+void run_experiment_1();
+
 #endif /* TEST_H_ */

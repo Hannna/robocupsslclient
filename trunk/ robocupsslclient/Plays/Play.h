@@ -33,7 +33,9 @@ class Role;
 class Play
 {
     public:
-        Play(std::string teamColor);
+		typedef std::map<int, Role*>::iterator RoleIterator;
+
+		Play(std::string teamColor, const int nrOfRoles);
         bool isFinished();
         virtual void execute()=0;
         virtual void reset()=0;
@@ -68,21 +70,10 @@ class Play
 
     std::string teamColor;
 
-    Role role0;
-	Role role1;
-	Role role2;
+    std::map<int, Role*> roles;
 
-//	Robot* robot0;
-//	Robot* robot1;
-//	Robot* robot2;
-
-	static Robot* red0;
-	static Robot* red1;
-	static Robot* red2;
-
-	static Robot* blue0;
-	static Robot* blue1;
-	static Robot* blue2;
+    static std::map<int, Robot*> redTeam;
+    static std::map<int, Robot*> blueTeam;
 
 };
 

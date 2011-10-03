@@ -6,6 +6,7 @@
  */
 
 #include "GameState.h"
+#include "../Config/Config.h"
 #include "../RotationMatrix/RotationMatrix.h"
 #include <boost/foreach.hpp>
 
@@ -105,10 +106,12 @@ double GameState::getSimTime() const {
 GameState & GameState::operator=(const GameState &gameState){
 	///dane dotyczace robotow
 	this->robots=gameState.robots;
-	if( this->robots.size() != 6 ){
-		std::cout<<"warning this->robots.size() != 6 gameState "<<*this<<std::endl;
+	if( this->robots.size() != ( Config::getInstance().getBlueTeamSize() + Config::getInstance().getRedTeamSize() ) ){
+		std::cout<<"warning this->robots.size()<"<<this->robots.size()<<">!="<<( Config::getInstance().getBlueTeamSize() + Config::getInstance().getRedTeamSize() )
+				<<" gameState "<<*this<<std::endl;
+		//std::cout<<"warning this->robots.size() != 6 gameState "<<*this<<std::endl;
 	}
-	assert( this->robots.size() == 6 );
+	assert( this->robots.size() == ( Config::getInstance().getBlueTeamSize() + Config::getInstance().getRedTeamSize() )  );
 	///dane dotyczace pilki
 	this->ball=gameState.ball;
 	this->simTime=gameState.simTime;

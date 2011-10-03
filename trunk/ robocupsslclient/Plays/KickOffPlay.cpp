@@ -7,7 +7,7 @@
 
 #include "KickOffPlay.h"
 
-KickOffPlay::KickOffPlay( std::string teamColor ): Play( teamColor) {
+KickOffPlay::KickOffPlay( std::string teamColor ): Play( teamColor, 3) {
 	/*przygotowuje roboty do wykopu pilki ze srodka boiska
 	 *
 	 */

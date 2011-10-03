@@ -23,7 +23,8 @@
 #include "../Tactics/DefendLine.h"
 #include "../Tactics/Receive_pass.h"
 #include "../Tactics/Pass.h"
-
+#include "../Plays/ObstaclesPlay.h"
+#include "../Plays/Experiment1.h"
 
 
 const std::string ifaceName="::position_iface";
@@ -535,7 +536,6 @@ void testPassTacticFunc(void * arg){
 		delete receive_pass;
 		delete pass_tactic;
 
-		std::cout<<" AAAAAAAAAAAA "<<std::endl;
 		Robot * tmp = pass;
 		pass = recv;
 		recv = tmp;
@@ -623,4 +623,168 @@ void testKick(){
     task->execute( NULL );
 
 #endif
+}
+
+void run_experiment_1(){
+
+	log4cxx::LoggerPtr log = getLoggerPtr ("app_debug");
+	LOG_INFO(log, "starting experiment 1" );
+
+	struct timespec req;
+	req.tv_sec = 0;
+	req.tv_nsec = 10000000;//10ms;
+	struct timespec rem;
+	bzero(&rem, sizeof(rem) );
+
+	//RefereeClient & referee = RefereeClient::getInstance();
+	boost::shared_ptr<Play> redPlay ( new ObstaclesPlay("red", 6) );
+
+	boost::shared_ptr<Play> bluePlay ( new Experiment_1("blue",1) );
+
+	bluePlay->execute();
+	redPlay->execute();
+
+	bluePlay->waitForFinish();
+	redPlay->waitForFinish();
+
+	SimControl::getInstance().moveBall( Config::getInstance().field.FIELD_MIDDLE_POSE );
+	LOG_INFO(log, "end from experiment 1" );
+	/*
+	Robot::robotID teamID = Robot::unknown;
+
+	while( true ){
+		try{
+			ballState_ = EvaluationModule::getInstance().getBallState( Robot::red0 );
+			//1. Get Command from sslbox
+			command = referee.getCommand();
+
+			if( command == RefereeCommands::unknown){
+				usleep(10000);
+				//LOG_INFO( log,"unknown command " );
+				continue;
+			}
+			teamID = referee.getTeamId();
+
+			LOG_INFO( log,"get command "<<command<<" for team "<<teamID );
+
+			//rozpocznij gre
+			if( command == RefereeCommands::start ){
+				SimControl::getInstance().moveBall( Config::getInstance().field.FIELD_MIDDLE_POSE );
+
+				redPlay = boost::shared_ptr<Play>( new NaivePlay("red") );
+				bluePlay = boost::shared_ptr<Play>( new NaivePlay("blue") );
+				bluePlay->execute();
+				redPlay->execute();
+			}
+			// zatrzymaj roboty
+			else if( command == RefereeCommands::halt ){
+
+				LOG_INFO(log, "HALT " );
+
+				if( bluePlay.get() ){
+					LOG_INFO(log, "try to stop blue  team" );
+					bluePlay->stop();
+				}
+
+				if( redPlay.get() ){
+					LOG_INFO(log, "try to stop red  team" );
+					redPlay->stop();
+				}
+
+				LOG_INFO(log, "before halt" );
+				if( bluePlay.get() )
+					bluePlay->halt();
+
+				if( redPlay.get() )
+					redPlay->halt();
+
+				if( redPlay.get() ){
+					redPlay->waitForFinish();
+				}
+
+				if( bluePlay.get() ){
+					bluePlay->waitForFinish();
+				}
+
+				LOG_INFO(log, "disperse finished " );
+
+			//	if( redPlay.get() )
+			//		redPlay.reset();
+
+			//	if( bluePlay.get() )
+			//		bluePlay.reset();
+
+			}
+			//zatrzymaj roboty 30cm od pilki
+			else  if( command == RefereeCommands::stopGame ){
+
+				if( bluePlay.get() )
+					bluePlay->stop();
+
+				if( redPlay.get() )
+					redPlay->stop();
+
+				if( ballState_== EvaluationModule::out ){
+					;
+				}
+
+				if( redPlay.get() )
+					redPlay.reset();
+
+				if( bluePlay.get() )
+					bluePlay.reset();
+
+
+				//delete redPlay.get();
+				//delete bluePlay.get();
+			}
+			else if( command == RefereeCommands::second_half ){
+			//	bluePlay->prepareForStart();
+			//	redPlay->prepareForStart();
+			}
+			else if( command == RefereeCommands::goal_scored ){
+			//	bluePlay->prepareForStart();
+			//	redPlay->prepareForStart();
+			}
+			else if( command == RefereeCommands::kick_off ){
+
+			//	bluePlay->prepareForStart();
+			//	redPlay->prepareForStart();
+
+				bluePlay->waitForFinish();
+				redPlay->waitForFinish();
+
+				if( teamID == Robot::red ){
+					Vector2D v = EvaluationModule::getInstance().getPositionForThrowIn().getPosition( );
+					Pose p(v,0);
+					SimControl::getInstance().moveBall( p );
+					//redPlay->prepareForKickOff( v );
+					//bluePlay->prepareForStart();
+
+					//redPlay->waitForFinish();
+					//bluePlay->prepareForStart();
+
+				}
+				else{
+					Vector2D v = EvaluationModule::getInstance().getPositionForThrowIn().getPosition( );
+					Pose p(v,0);
+					SimControl::getInstance().moveBall( p );
+					//bluePlay->prepareForKickOff( v );
+					//redPlay->prepareForStart();
+
+					//bluePlay->waitForFinish();
+					//redPlay->waitForFinish();
+
+				}
+			}
+		}
+		catch( ... ){
+			LOG_INFO( log, " in main STP loop exception handled " );
+			break;
+		}
+
+		//SimControl::getInstance().restart();
+		nanosleep(&req, &rem); //10ms
+	}
+*/
 }

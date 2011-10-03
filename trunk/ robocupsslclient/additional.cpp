@@ -14,7 +14,7 @@
 bool equealDouble(const double & a, const  double & b) {
     return std::fabs(a - b) < std::numeric_limits<double>::epsilon();
 }
-
+/*
 strvec Names::names_list;
 
 strvec & Names::getNames()
@@ -42,7 +42,7 @@ Names::~Names()
 {
 
 }
-
+*/
 
 
 Pose Pose::transform(const Vector2D& distance,const RotationMatrix & rm) const {

@@ -71,6 +71,7 @@
 #include "TestManager/TestManager.h"
 #include "RefereeClient/RefereeClient.h"
 #include "STP_algorithm/STP.h"
+#include "Test/Experiments.h"
 
 
 
@@ -117,11 +118,16 @@ int main(int argc, char*argv[],char *envp[]){
     Config::getInstance().setTestMode(true);
 
     Tests::TestKind testKind=Tests::none;
+    Experiments::ExperimentKind experimentKind =  Experiments::none;
 
     if(argc>1){
-        if(strncmp(argv[1],"test",4)==0)
+        if( strncmp(argv[1],"test",4)==0 ){
             Config::getInstance().setTestMode(true);
-        if(argc>2){
+        }
+        else if( strncmp(argv[1],"experiment_1",12)==0 ){
+        	experimentKind = Experiments::navigation_2011;
+        }
+        else if(argc>2){
             if(strncmp(argv[2],"velocity",8)==0)
                 testKind=Tests::velocity;
             if(strncmp(argv[2],"position",8)==0)
@@ -156,7 +162,7 @@ int main(int argc, char*argv[],char *envp[]){
             exit(0);
         }
     }
-    LOG_ERROR(getLoggerPtr ("app_debug"), "AAAAAAAAAAAAAAAAAAAAAAAAAAAAtest");
+    LOG_ERROR(getLoggerPtr ("app_debug"), "logger test");
 
     LOG_DEBUG(getLoggerPtr ("red0"), "test");
     LOG_DEBUG(getLoggerPtr ("red1"), "test");
@@ -189,7 +195,17 @@ int main(int argc, char*argv[],char *envp[]){
 
     //RefereeClient::getInstance().start();
 
-    if(Config::getInstance().isTestMode()){
+    if( experimentKind != Experiments::none ){
+    	if( experimentKind == Experiments::navigation_2011 ){
+    		//uruchomienie experymentu
+    		run_experiment_1();;
+    		while(1){
+    			sleep_status=nanosleep(&req,&rem);
+    		};
+    	}
+
+    }
+    else if(Config::getInstance().isTestMode()){
     	int sleep_status = 0;
         struct timespec req;
         req.tv_sec=0;
