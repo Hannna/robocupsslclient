@@ -20,6 +20,15 @@ std::ostream& operator<<(std::ostream& os,const Robot::robotID& id){
 	else if( id==Robot::red2 ){
 		return os<<"red2";
 	}
+	else if( id==Robot::red3 ){
+		return os<<"red3";
+	}
+	else if( id==Robot::red4 ){
+		return os<<"red4";
+	}
+	else if( id==Robot::red5 ){
+		return os<<"red5";
+	}
 	else if( id==Robot::blue0 ){
 		return os<<"blue0";
 	}
@@ -28,6 +37,15 @@ std::ostream& operator<<(std::ostream& os,const Robot::robotID& id){
 	}
 	else if( id==Robot::blue2 ){
 		return os<<"blue2";
+	}
+	else if( id==Robot::blue3 ){
+		return os<<"blue3";
+	}
+	else if( id==Robot::blue4 ){
+		return os<<"blue4";
+	}
+	else if( id==Robot::blue5 ){
+		return os<<"blue5";
 	}
 
 	return os<<"unknown";
@@ -713,6 +731,18 @@ Robot::robotID Robot::getRobotID(const  std::string & robot_name){
 	else if( robot_name.compare("red2")==0 ){
 		return Robot::red2;
 	}
+	else if( robot_name.compare("red3")==0 ){
+		return Robot::red3;
+	}
+	else if( robot_name.compare("red4")==0 ){
+		return Robot::red4;
+	}
+	else if( robot_name.compare("red5")==0 ){
+		return Robot::red5;
+	}
+	else if( robot_name.compare("red6")==0 ){
+		return Robot::red6;
+	}
 	else if( robot_name.compare("blue0")==0 ){
 		return Robot::blue0;
 	}
@@ -721,6 +751,18 @@ Robot::robotID Robot::getRobotID(const  std::string & robot_name){
 	}
 	else if( robot_name.compare("blue2")==0 ){
 		return Robot::blue2;
+	}
+	else if( robot_name.compare("blue3")==0 ){
+		return Robot::blue3;
+	}
+	else if( robot_name.compare("blue4")==0 ){
+		return Robot::blue4;
+	}
+	else if( robot_name.compare("blue5")==0 ){
+		return Robot::blue5;
+	}
+	else if( robot_name.compare("blue6")==0 ){
+		return Robot::blue6;
 	}
 
 	return Robot::unknown;
@@ -781,7 +823,9 @@ double Robot::calculateAngularVel(const  Pose & globalRobotPose, const  Pose & g
     Pose reltargetPose = reltargetPose_*100;
     double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;
 
-
+    if( fabs(rotacjaDocelowa) > M_PI ){
+    	LOG_DEBUG(this->log,"assert( fabs(rotacjaDocelowa) < M_PI) " << fabs(rotacjaDocelowa) );
+    }
     assert( fabs(rotacjaDocelowa) < M_PI);
 
     //double rotacjaDocelowa=-atan2(reltargetPose.get<1>(),reltargetPose.get<0>()) ;// (M_PI/2);

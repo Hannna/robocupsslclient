@@ -175,7 +175,7 @@ double euclideanNorm<Vector2D>(Vector2D t1, Vector2D t2 );
  *
  * @brief klasa zawierająca nazwy wszystkich modeli gazebo znajdujących się na planszy
  * */
-
+/*
 class Names{
 public:
 	static strvec & getNames();
@@ -185,6 +185,7 @@ private:
 	Names();
 
 };
+*/
 
 /**
  * function to convert strings to sth else

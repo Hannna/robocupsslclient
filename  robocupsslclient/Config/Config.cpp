@@ -37,6 +37,8 @@ bool Config::load(std::string filename){
 
 	//loading robots name
 
+	//TODO:
+	//dodac nazwe pliku jako parametr
     std::list<std::string> robots = getRobotNames("/home/maciek/mgr/mgr/my_plansza/test_worlds/test_world_1.xml",
     		BAD_CAST "//*[namespace-uri()='http://playerstage.sourceforge.net/gazebo/xmlschema/#model']");
 

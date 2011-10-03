@@ -128,6 +128,7 @@ void Videoserver::update(){
 		for(;ii!=positions.end();++ii){
 			model_name=(*ii).first;
 
+
 			if(model_name.compare("ball")==0){
 				Videoserver::gameState->updateBallData(Vector2D((*ii).second.get<0>(),(*ii).second.get<1>()),Vector2D(0.0,0.0));
 			}
@@ -166,7 +167,7 @@ void Videoserver::update(){
 	#ifdef OLD
 		void Videoserver::registerRobot( gazebo::PositionIface *posIface,std::string robotName){
 	#else
-			void Videoserver::registerRobot( libgazebo::PositionIface *posIface,std::string robotName){
+		void Videoserver::registerRobot( libgazebo::PositionIface *posIface,std::string robotName){
 	#endif
 		this->posIfaces[robotName]=posIface;
 	}
@@ -207,7 +208,7 @@ void Videoserver::execute(void * arg){
 		Videoserver::getInstance().update();
 	}
 	LOG_TRACE(log,"Exit from videoserver thread");
-		//usleep(Videoserver::updateDeltaTime);
+	//usleep(Videoserver::updateDeltaTime);
 }
 
 

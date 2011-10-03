@@ -157,8 +157,14 @@ public:
 	static bool end;
 	bool load(std::string configFileName);
     double getRobotMainCylinderRadious() const ;
-	const std::vector<std::string> getBlueTeam()const;
 	const std::vector<std::string> getRedTeam()const;
+	const int getRedTeamSize()const{
+		return this->redTeam.size();
+	}
+	const std::vector<std::string> getBlueTeam()const;
+	const int getBlueTeamSize()const{
+		return this->blueTeam.size();
+	}
 	std::string getTestModelName();
 	bool isDebugMode();
 	time_t getTestEstimatedTime();

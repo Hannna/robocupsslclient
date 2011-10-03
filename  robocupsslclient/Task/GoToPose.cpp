@@ -50,7 +50,7 @@ Task* GoToPose::nextTask(){
 		}
 	}
 
-	LOG_INFO(log, "next TASK is null= " );
+	LOG_TRACE(log, "next TASK is null= " );
 
 	return NULL;
 }
