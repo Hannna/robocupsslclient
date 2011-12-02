@@ -199,7 +199,7 @@ int main(int argc, char*argv[],char *envp[]){
     	if( experimentKind == Experiments::navigation_2011 ){
     		//uruchomienie experymentu
     		run_experiment_1();;
-    		while(1){
+    		while(Videoserver::getInstance().updateGameState( gameState ) > 0.001){
     			sleep_status=nanosleep(&req,&rem);
     		};
     	}

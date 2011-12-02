@@ -159,7 +159,7 @@ void testMotion(const Pose goalPose,Videoserver & video,Robot& robot){
 		//Vector2D targetRelPosition=rmY.Inverse()*(goToAbsPosition-currentAbsPosition);
 
 		Vector2D robotVel=(*gameState).getRobotGlobalVelocity( robot.getRobotID() );
-		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose );
+		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose ,(*gameState).getSimTime());
 		//speed=calculateVelocity( robotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
 		speed=calculateVelocity( robotVel,currRobotPose, goalPose);
 

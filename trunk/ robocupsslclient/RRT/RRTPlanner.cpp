@@ -48,13 +48,18 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
                 maxXvalue ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.x - Config::getInstance().field.FIELD_MARIGIN ),
                 minXvalue ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.x + Config::getInstance().field.FIELD_MARIGIN ),
                 maxYvalue ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.y - Config::getInstance().field.FIELD_MARIGIN ),
-                minYvalue ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.y + Config::getInstance().field.FIELD_MARIGIN )
+                minYvalue ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.y + Config::getInstance().field.FIELD_MARIGIN ),
+                minDistance ( Config::getInstance().getRRTMinDistance() )
     {
 
 //	 LOG_WARN( logger," creating rrt maxXvalue "<<maxXvalue <<" maxYvalue  "<<maxYvalue <<"  minXvalue  "<<minXvalue
 //	    		<<" minYvalue "<<minXvalue );
 //	LOG_TRACE( logger,"maxXvalue "<<maxXvalue<<" minXvalue "<<minXvalue<<" maxYvalue "<<maxYvalue<<" minYvalue "<<minYvalue );
 
+
+
+    xConstraints = NULL;
+    yConstraints = NULL;
 
     static int rrtNr;
 
@@ -103,7 +108,8 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
                 maxXvalue ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.x ),
                 minXvalue ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.x ),
                 maxYvalue ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.y ),
-                minYvalue ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.y )
+                minYvalue ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.y ),
+                minDistance ( Config::getInstance().getRRTMinDistance() )
     {
 
 //    LOG_WARN( logger," creating rrt maxXvalue "<<maxXvalue <<" maxYvalue  "<<maxYvalue <<"  minXvalue  "<<minXvalue
@@ -152,7 +158,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
         return RRTPlanner::BadTarget;
     }
 
-	const double minDistance=Config::getInstance().getRRTMinDistance();
+	//const double minDistance=Config::getInstance().getRRTMinDistance();
 	GameStatePtr extendedGameState;
 	bool collision=false;
 
@@ -415,6 +421,7 @@ Pose RRTPlanner::choseTarget( Pose goalPose, int * targetType, std::list<Pose>* 
 	*targetType=RANDOMPOINT;
 
 	double t=uniformGen_01();
+	bool randomPose = false;
 	//jesli w poprzednim kroku znaleziono sciezke do celu
 	if( this->path->size()!=0 ){
 		if( t<0.1 ){
@@ -424,6 +431,7 @@ Pose RRTPlanner::choseTarget( Pose goalPose, int * targetType, std::list<Pose>* 
 			}
 			else{
 				result=getRandomPose();
+				randomPose = true;
 				result.get<2>()=0;
 			}
 		}
@@ -446,6 +454,7 @@ Pose RRTPlanner::choseTarget( Pose goalPose, int * targetType, std::list<Pose>* 
 		}
 		else{
 			result=getRandomPose();
+			randomPose = true;
 		}
 	}
 	//jesli nie znaleziono wczesniej sciezki do celu
@@ -456,15 +465,20 @@ Pose RRTPlanner::choseTarget( Pose goalPose, int * targetType, std::list<Pose>* 
 			*targetType=GOALPOSE;
 			//*isGoalPose = true;
 		}
-		else
+		else{
 			result=getRandomPose();
+			randomPose = true;
+		}
 	}
 
 	assert( result.get<0>() >= 0);
 	assert( result.get<1>() >= 0);
-
-	LOG_TRACE(logger,"choseTarget. new target="<<result);
-
+	if( randomPose ){
+		LOG_DEBUG(logger,"chose new random target. new target="<<result );
+	}
+	else{
+		LOG_TRACE(logger,"choseTarget. new target="<<result);
+	}
 	return result;
 }
 
@@ -583,6 +597,7 @@ RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose,RRTNod
 	return result;
 }
 
+/*
 Pose RRTPlanner::getRandomPose(){
 
 	//generator wspolrzednej X
@@ -609,7 +624,70 @@ Pose RRTPlanner::getRandomPose(){
 
 	return randomPose;
 }
+*/
+Pose RRTPlanner::getRandomPose( ){
 
+	//generator wspolrzednej X
+	static boost::mt19937 rngX(static_cast<unsigned> (time(NULL)));
+	//generator wspolrzednej Y
+	static boost::mt19937 rngY(static_cast<unsigned> (2*time(NULL)));
+
+	//interesujace sa jedynie pozycje rozniace sie co najwyzej o 0.01 [m]
+
+	if(this->xConstraints){
+		//LOG_DEBUG( logger, "########## getRandomPose  with constraints ##############" );
+
+		std::pair<double, double> c = *this->xConstraints;
+		Vector2D m( c.first > this->minXvalue ?  c.first : this->minXvalue, c.second < this->maxXvalue ?  c.second : this->maxXvalue   );
+		LOG_TRACE( logger, "uniform_int for X xmin ="<<m.x<< "xmax ="<<m.y );
+		boost::uniform_int<int> uni_distX(m.x*10,m.y*10);
+		static boost::variate_generator<boost::mt19937, boost::uniform_int<int> >
+			genX(rngX, uni_distX);
+
+		genX.distribution( ) = uni_distX;
+
+		c = *this->yConstraints;
+		m = Vector2D ( c.first > this->minYvalue ?  c.first : this->minYvalue, c.second < this->maxYvalue ?  c.second : this->maxYvalue   );
+		LOG_TRACE( logger, "uniform_int for Y xmin ="<<m.x<< "xmax ="<<m.y );
+		boost::uniform_int<int> uni_distY(m.x*10,m.y*10);
+		static boost::variate_generator<boost::mt19937, boost::uniform_int<int> >
+					genY(rngY, uni_distX);
+		genY.distribution( ) = uni_distY;
+
+
+		double x=genX();
+		double y=genY();
+
+		Pose randomPose(x/10.0,y/10.0,0);
+
+		return randomPose;
+
+	}
+	else{
+		static boost::uniform_int<int> uni_distX(this->minXvalue*10,this->maxXvalue*10);
+
+		//interesujace sa jedynie pozycje rozniace sie co najwyzej o 0.01 [m]
+		static boost::variate_generator<boost::mt19937, boost::uniform_int<int> >
+		genX(rngX, uni_distX);
+
+		static boost::uniform_int<int> uni_distY(this->minYvalue*10,this->maxYvalue*10);
+
+		//interesujace sa jedynie pozycje rozniace sie co najwyzej o 0.01 [m]
+		static boost::variate_generator<boost::mt19937, boost::uniform_int<int> >
+		genY(rngY, uni_distY);
+
+
+
+		double x=genX();
+		double y=genY();
+
+		Pose randomPose(x/10.0,y/10.0,0);
+
+		return randomPose;
+	}
+}
+
+/*
 Pose RRTPlanner::getRandomPose(Pose currentPose){
 	LOG_TRACE(logger,"getRandomPose");
 	Pose robotPose=currentPose;
@@ -626,7 +704,7 @@ Pose RRTPlanner::getRandomPose(Pose currentPose){
 
 	return Pose(genX(),genY(),robotPose.get<2>());
 }
-
+*/
 Pose RRTPlanner::getRandomPose(const Pose currentPose,Vector2D currentVel, double deltaVel){
 	LOG_TRACE(logger,"getRandomPose");
 	std::ostringstream ois;
@@ -838,7 +916,8 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
 	double teta_cel=atan2( (tar.y) , (tar.x));
 	RotationMatrix rm( convertAnglePI(teta_cel - M_PI/2) );
 
-	double A,B,C;
+	StraightLine line( currPose.getPosition(), targetPose.getPosition() );
+/*	double A,B,C;
 	//jesli jest to prosta typu x=A
 	if( fabs(currPose.get<0>()-targetPose.get<0>() ) < 0.001 ){
 		A=1;
@@ -851,7 +930,7 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
 		B = -1;
 		C=A*(-targetPose.get<0>()) + targetPose.get<1>();
 	}
-
+*/
 #ifdef DEBUG
     Pose targetPose_r=targetPose.transform(currPose.getPosition(),rm);
 	LOG_DEBUG(logger,"biezaca pozycja globalnie "<<currPose<<"pozycja celu globalnie "<<targetPose<<" oraz w ukl zw z robotem "<<targetPose_r<<std::endl;
@@ -866,7 +945,8 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
 		std::cout<<"check collision with "<<obstaclePose<<std::endl;
 #endif
 		//jesli odleglosc  srodka przeszkody od prostej laczacej robota i cel jest <= R przeszkody to mamy kolizje
-		d=fabs( A*obstaclePose.get<0>() + B*obstaclePose.get<1>() +C )/sqrt(pow(A,2)+pow(B,2));
+		line.distFromPoint( obstaclePose.getPosition() );
+		//d=fabs( A*obstaclePose.get<0>() + B*obstaclePose.get<1>() +C )/sqrt(pow(A,2)+pow(B,2));
 
 		obstaclePose_r=obstaclePose.transform(currPose.getPosition(),rm);
 
@@ -892,8 +972,8 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
 			//std::cout<<"check collision with "<<obstaclePose<<std::endl;
 	#endif
 			//jesli odleglosc  srodka przeszkody od prostej laczacej robota i cel jest <= R przeszkody to mamy kolizje
-			d=fabs( A*obstaclePose.get<0>() + B*obstaclePose.get<1>() +C )/sqrt(pow(A,2)+pow(B,2));
-
+			//d=fabs( A*obstaclePose.get<0>() + B*obstaclePose.get<1>() +C )/sqrt(pow(A,2)+pow(B,2));
+			line.distFromPoint( obstaclePose.getPosition() );
 			obstaclePose_r=obstaclePose.transform(currPose.getPosition(),rm);
 
 	#ifdef DEBUG

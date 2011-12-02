@@ -24,7 +24,7 @@ Task* GetBall::nextTask(){
 	//video.updateGameState(currGameState);
 
 	Pose robotPos = currGameState->getRobotPos(this->robot->getRobotID() );
-	Pose ballPos=currGameState->getBallPos();
+	Pose ballPos = currGameState->getBallPos();
 	Vector2D toBall = Vector2D( ballPos.getPosition() - robotPos.getPosition() );
 
 	if( toBall.length() > this->maxDistanceToBall ){

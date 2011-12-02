@@ -93,6 +93,27 @@ enum ErrorCode{
 	inline bool getDistToNearestObs(){
 		return this->distToNearestObs;
 	}
+
+	void setMinDistance(double d ){
+		this->minDistance = d;
+	}
+
+	//Vector2D ( *xConstraints )( );
+	//Vector2D ( *yConstraints )( );
+
+	void addXConstraint(  std::pair<double, double> * xConstraints  ){
+		this->xConstraints = xConstraints;
+
+	    //LOG_INFO( logger,"dodano ograniczenia x:["<<xConstraints->first <<";"<< xConstraints->second<<"]" );
+	}
+
+	void addYConstraint( std::pair<double, double> * yConstraints ){
+		this->yConstraints = yConstraints;
+
+	    //LOG_INFO( logger,"dodano ograniczenia y:["
+	    //   		<<yConstraints->first <<";"<< yConstraints->second<<"]" );
+	}
+
 	virtual ~RRTPlanner();
 
 private:
@@ -270,6 +291,12 @@ private:
     const double minXvalue;
     const double maxYvalue;
     const double minYvalue;
+
+    double minDistance;
+
+
+    std::pair<double, double> *xConstraints;
+    std::pair<double, double> *yConstraints;
 };
 
 

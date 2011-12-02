@@ -42,7 +42,7 @@ Task::status Rotate::run(void * arg, int steps){
 
 			currRobotPose=currGameState->getRobotPos( robot->getRobotID() );
 
-			double w = robot->calculateAngularVel( currRobotPose, targetPosition);
+			double w = robot->calculateAngularVel( currRobotPose, targetPosition, currGameState->getSimTime() );
 			//LOG_TRACE(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" setVel "<<robotNewVel <<" w"<<w);
 
 			if( fabs(w) < 0.01 ){

@@ -22,7 +22,7 @@
 
 #include "../RefereeClient/RefereeClient.h"
 
-extern const std::string ifaceName;
+//extern const std::string ifaceName;
 
 /*Ogolny model dzialania algorytmu STP
  *

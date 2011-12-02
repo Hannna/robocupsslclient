@@ -58,7 +58,8 @@ double Videoserver::updateGameState(GameStatePtr& gameState_) const{
 	if(this->simError){
 		pthread_cond_broadcast(&Videoserver::update_game_state_cv);
 		pthread_mutex_unlock (&Videoserver::mutex);
-		std::cout<<"simcontrol error"<<std::endl;
+		LOG_FATAL(log,"SIMCONTROL error");
+		//std::cout<<"simcontrol error"<<std::endl;
 		return -1;
 	}
 
@@ -113,7 +114,9 @@ void Videoserver::update(){
 		while(  ( r = SimControl::getInstance().getAllPos(positions) ) == 0 );
 		if(r < 0){
 			simError= true;
+			pthread_cond_broadcast(&Videoserver::update_game_state_cv);
 			pthread_mutex_unlock (&Videoserver::mutex);
+			LOG_FATAL(log,"Error when update game state set simError to true");
 			return;
 		}
 

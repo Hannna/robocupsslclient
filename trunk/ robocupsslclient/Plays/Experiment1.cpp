@@ -22,8 +22,8 @@ void Experiment_1::execute( ){
 	GameStatePtr gameState( new GameState() );
 	Videoserver::getInstance().updateGameState( gameState );
 
-	Vector2D startPostion( 2.7 , 1.0);// gameState->getRobotPos( this->roles[0]->getRobot().getRobotID( ) ).getPosition();
-	Vector2D endPostion( 2.7 , 6.7);
+	Vector2D startPostion( 2.7 , 1.3);//( 2.7 , 1.0)// gameState->getRobotPos( this->roles[0]->getRobot().getRobotID( ) ).getPosition();
+	Vector2D endPostion( 2.7 , 6.1);//( 2.7 , 6.7)
 	//rola 1 jazda wzdluz linii w gore
 	this->roles[0]->addTactic( new
 			FollowLineAndAvoidObs( this->roles[0]->getRobot(), startPostion, endPostion ) );

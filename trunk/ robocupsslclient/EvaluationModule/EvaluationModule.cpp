@@ -168,7 +168,7 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
 
     Pose p;
     Pose ballPose = gameState->getBallPos();
-
+    LOG_TRACE( log,"Ball position is  "<<ballPose );
     if( Robot::isBlue(id) ){
     	bs = EvaluationModule::occupied_our;
     }
@@ -803,6 +803,9 @@ std::ostream & operator<<(std::ostream & os, const EvaluationModule::ballState &
 		break;
 	case EvaluationModule::occupied_theirs:
 		os<<"occupied_theirs";
+		break;
+	case EvaluationModule::mine:
+		os<<"mine";
 		break;
 	default:
 		break;

@@ -10,21 +10,32 @@
 #include "../RRT/RRTPlanner.h"
 #include "../Exceptions/SimulationException.h"
 
-GoToPose::GoToPose(const Pose & pose,Robot * robot):Task(robot),goalPose(pose),serialize( Config::getInstance().isDebugMode() ) {
+GoToPose::GoToPose(const Pose & pose,Robot * robot, double maxDistToGoal_):
+	Task(robot),goalPose(pose),serialize( Config::getInstance().isDebugMode() ), maxDistToGoal( maxDistToGoal_)  {
 	this->rrt=NULL;
 	currSimTime=0;
 	lastSimTime=0;
 	currSimTime=video.updateGameState(currGameState);
 	force = false;
+
+	xConstraints = NULL;
+	yConstraints = NULL;
+
 	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force );
 }
 
-GoToPose::GoToPose(const Pose & pose,Robot * robot, bool force_):Task(robot),goalPose(pose),serialize( Config::getInstance().isDebugMode() ) {
+GoToPose::GoToPose(const Pose & pose,Robot * robot, bool force_, double maxDistToGoal_):
+		Task(robot),goalPose(pose),serialize( Config::getInstance().isDebugMode() ), maxDistToGoal( maxDistToGoal_) {
 	this->rrt=NULL;
 	currSimTime=0;
 	lastSimTime=0;
 	currSimTime=video.updateGameState(currGameState);
 	force = force_;
+
+	xConstraints = NULL;
+	yConstraints = NULL;
+
+
 	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force );
 }
 
@@ -111,6 +122,17 @@ Task::status GoToPose::run(void* arg, int steps){
 					rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
 							robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path,currSimTime, timeMeasure );
 				}
+
+				rrt->setMinDistance( maxDistToGoal );
+
+				if( this->xConstraints ){
+					rrt->addXConstraint( this->xConstraints );
+				}
+
+				if( this->yConstraints ){
+					rrt->addYConstraint( this->yConstraints );
+				}
+
 				status=rrt->run( video.getUpdateDeltaTime() );
             }
             else{
@@ -122,6 +144,7 @@ Task::status GoToPose::run(void* arg, int steps){
             		rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
                     						robot->getRobotName(),obsPredictionEnable,currGameState,goalPose,&path,currSimTime, timeMeasure );
             	}
+            	rrt->setMinDistance( maxDistToGoal );
             	status=rrt->run( video.getUpdateDeltaTime() );
             }
 
@@ -159,7 +182,7 @@ Task::status GoToPose::run(void* arg, int steps){
 
 				robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
 				//double w = robot->calculateAngularVel(*currGameState,robot->getRobotID(), goalPose);
-				double w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), goalPose);
+				double w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), goalPose, currGameState->getSimTime() );
 				//LOG_INFO(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
 				//		" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
 
