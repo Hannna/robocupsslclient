@@ -151,6 +151,58 @@ class Region{
 		const Vector2D ruc;
 };
 
+class StraightLine{
+	public:
+		friend std::ostream& operator<<(std::ostream& os,const Region& region);
+
+		StraightLine(const Vector2D p1,const  Vector2D p2);
+
+		Vector2D getPoint1(){
+			return p1;
+		}
+
+		Vector2D getPoint2(){
+				return p2;
+		}
+
+		double distFromPoint( const Vector2D p1 );
+
+		double getA() const {
+			return A;
+		}
+
+		double getB() const {
+			return B;
+		}
+
+		double getC() const {
+			return C;
+		}
+
+		Vector2D getP1() const {
+			return p1;
+		}
+
+		Vector2D getP2() const {
+			return p2;
+		}
+
+		double angleToOX( ){
+			Vector2D w( -this->B, this->A );
+
+			return w.angleTo( Vector2D(1.0,0) );
+		}
+
+		virtual ~StraightLine();
+	private:
+		StraightLine();
+		double A,B,C;
+		const Vector2D p1;
+		const Vector2D p2;
+};
+
+
+
 typedef std::vector<std::string> strvec;
 
 ///@brief Funkcja signum

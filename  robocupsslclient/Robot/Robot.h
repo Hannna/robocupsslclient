@@ -18,6 +18,8 @@
 #include "../PidRegulator/PidRegulator.h"
 
 #include <list>
+#include <fstream>
+
 /**
  * @author Maciej Gąbka
  *
@@ -108,8 +110,8 @@ public:
 	//double calculateAngularVel(const Pose & robotPosition, const Pose & targetPosition);
 	//double calculateAngularVel(const Pose & robotPosition, const Vector2D & targetPosition);
 
-	double calculateAngularVel( const  Pose & globalRobotPose, const Vector2D & globalTargetPosition );
-	double calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose );
+	double calculateAngularVel( const  Pose & globalRobotPose, const Vector2D & globalTargetPosition , double simTime );
+	double calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose, double simTime );
 	void stop( );
 
 
@@ -147,6 +149,17 @@ private :
 	 double time;
 	 //do wyznaczania predkosci obrotowej
 	 double oldAlfaToCel;
+
+	 double lastUpdateTime;
+	 double last_tetad;
+	 double last_teta;
+
+	 std::ofstream file;
+	 std::string fileName;
+
+	 const static int filterSize = 5;
+	 int last_w_index;
+	 double last_angular_vel[filterSize];
 
 
 };

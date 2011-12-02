@@ -318,6 +318,7 @@ int SimControl::getAllPos(std::map<std::string,Pose > &positions)
 */
 	LOG_TRACE(log,"start getALLPPos");
 	strvec names;//Names::getNames();
+	names.push_back("ball");
 	strvec blueTeam = Config::getInstance().getBlueTeam();
 	strvec redTeam = Config::getInstance().getRedTeam();
 	std::vector<std::string>::iterator jj = blueTeam.begin();

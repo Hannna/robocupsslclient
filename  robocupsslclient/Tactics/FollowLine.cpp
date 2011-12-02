@@ -17,7 +17,7 @@
 
 FollowLine::FollowLine(Robot & robot_, const Vector2D p1_, const Vector2D p2_ ): Tactic(robot_),
 				p1( p1_ ), p2( p2_ ) {
-
+	this->finished = false;
 	LOG_INFO(log,"create FollowLine tactic for robot "<<robot_.getRobotName()<< " Line "<<p1<<" "<<p2);
 }
 
@@ -65,7 +65,7 @@ void FollowLine::execute(void *){
 
 		Vector2D robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currPose, goalPose);
 		//double w = robot->calculateAngularVel(*currGameState,robot->getRobotID(), goalPose);
-		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose);
+		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose, gameState->getSimTime() );
 
 	   //this->robot.setRelativeSpeed( Vector2D( 1.0,0.0 ) * sgn( diff.x ) ,0 );
 	   this->robot.setGlobalSpeed( robotNewGlobalVel ,w , currPose.get<2>());
@@ -83,11 +83,12 @@ void FollowLine::execute(void *){
 	   }
 	   */
 	}
+    this->finished = false;
 }
 
 bool FollowLine::isFinish(){
 
-	return false;
+	return this->finished;
 }
 
 FollowLine::~FollowLine() {

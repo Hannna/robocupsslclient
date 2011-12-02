@@ -9,7 +9,7 @@
 #include "../VideoServer/Videoserver.h"
 #include "../Tactics/PositionToStart.h"
 
-StartPlay::StartPlay(std::string teamColor): Play(teamColor)  {
+StartPlay::StartPlay(std::string teamColor): Play(teamColor,3)  {
 
 	//this->role0.addTactic( new ShootTactic( role0->getRobot() ) );
 
@@ -37,7 +37,7 @@ void StartPlay::execute(){
 	}
 
 	Pose robot0GoalPose( this->appConfig.field.FIELD_MIDDLE_POSE + p );
-	this->role0.addTactic( new PositionToStart( robot0GoalPose, role0.getRobot( ) ) );
+	this->roles[0]->addTactic( new PositionToStart( robot0GoalPose, roles[0]->getRobot( ) ) );
 
 	if( this->teamColor.compare("red") == 0){
 		if( Videoserver::redGoal == top )
@@ -53,7 +53,7 @@ void StartPlay::execute(){
 	}
 
 	Pose robot1GoalPose( this->appConfig.field.FIELD_MIDDLE_POSE + p );
-	this->role1.addTactic( new PositionToStart( robot1GoalPose, role1.getRobot( ) ) );
+	this->roles[1]->addTactic( new PositionToStart( robot1GoalPose, roles[1]->getRobot( ) ) );
 
 	if( this->teamColor.compare("red") == 0){
 		if( Videoserver::redGoal == top ){
@@ -85,12 +85,12 @@ void StartPlay::execute(){
 	std::cout<<" robot2GoalPose "<< robot2GoalPose << " target "<< target <<std::endl;
 
 	//exit(0);
-	this->role2.addTactic( new PositionToStart( robot2GoalPose, role2.getRobot( ) ) );
+	this->roles[2]->addTactic( new PositionToStart( robot2GoalPose, roles[2]->getRobot( ) ) );
 
 
-	this->role0.execute();
-	this->role1.execute();
-	this->role2.execute();
+	this->roles[0]->execute();
+	this->roles[1]->execute();
+	this->roles[2]->execute();
 
 //	std::list<AbstractTactic *>::iterator tactic = tactics.begin();
 

@@ -70,6 +70,49 @@ Region::~Region(){
 };
 
 
+std::ostream& operator<<(std::ostream& os,const StraightLine& line){
+	return os<<"line goes through points  "<<line.getP1()<<" "<<line.getP2()<<"  A "<<line.getA()<<" B "<<line.getB()<<" C"<<line.getC();
+}
+
+StraightLine::StraightLine(const Vector2D p1_,const  Vector2D p2_): p1(p1_),p2(p2_) {
+
+	/*
+	double A,B,C;
+	//jesli jest to prosta typu x=A
+	if( fabs(currPose.get<0>()-targetPose.get<0>() ) < 0.001 ){
+		A=1;
+		B=0;
+		C=-currPose.get<0>();
+	}
+	//rownanie prostej laczacej robota i pkt docelowy
+	else{
+		A = ( currPose.get<1>()-targetPose.get<1>() )/(currPose.get<0>()-targetPose.get<0>());
+		B = -1;
+		C=A*(-targetPose.get<0>()) + targetPose.get<1>();
+	}*/
+
+	//jesli jest to prosta typu x=A
+	if( (p1.x - p2.x ) < 0.001 ){
+		A=1;
+		B=0;
+		C=-p1.x;
+	}
+	//rownanie prostej laczacej robota i pkt docelowy
+	else{
+		A = ( p1.y - p2.y )/(p1.x - p2.x );
+		B = -1;
+		C=A*( -p2.x ) + p1.y;
+	}
+}
+
+double StraightLine::distFromPoint( const Vector2D o ){
+	return fabs( A*o.x + B*o.y +C )/sqrt(pow(A,2)+pow(B,2) );
+}
+
+StraightLine::~StraightLine(){
+
+}
+
 std::ostream& operator<<(std::ostream& os,const Region& region){
 	os<<"left bottom corner "<<region.lbc <<" right upper corner "<<region.ruc;
 	return os;

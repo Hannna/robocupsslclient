@@ -80,7 +80,7 @@ std::list<Robot::robotID> Robot::getRedTeam(){
 }
 
 Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robotName( robotName_ ), id( Robot::getRobotID(robotName_) ),
-		log( getLoggerPtr( robotName_.c_str() ) )
+		log( getLoggerPtr( robotName_.c_str() ) ), fileName(robotName), file( robotName_.c_str( ), ios_base::in | ios_base::trunc )
 {
 
 	this->posIfaceName=posIfaceName;
@@ -89,6 +89,22 @@ Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robo
 	this->time=0;
 	this->oldAlfaToCel = 0;
 
+	this->rot = 0;
+	this->time = 0;
+	this->oldAlfaToCel = 0;
+
+	this->lastUpdateTime = 0;
+	this->last_tetad = 0;
+	this->last_teta = 0;
+	this->last_w_index = 0;
+
+	for(int l=0;l<filterSize;l++){
+		this->last_angular_vel[l]=0;
+	}
+	//std::string appendix(".txt");
+	//std::string fileName = this->robotName + appendix;
+	//this->file = std::fstream( fileName.c_str( ), ios_base::in | ios_base::trunc );
+	file<<"vx"<<";"<<"vy"<<";"<<'w'<<std::endl;
 	//alokowanie interfejsu do zmiany pozycji
 #ifdef GAZEBO
     #ifdef OLD
@@ -145,6 +161,8 @@ void Robot::setRelativeSpeed(const Vector2D & v, const double & w)
 	else
 		this->time=SimControl::getInstance().getSimTime();
 */
+	this->w = w;
+	this->v = v;
 #ifdef GAZEBO
 	posIface->Lock(1);
 	posIface->data->cmdEnableMotors = 1;
@@ -157,24 +175,47 @@ void Robot::setRelativeSpeed(const Vector2D & v, const double & w)
 
     posIface->Unlock();
 #endif
+    file<<v.x<<";"<<v.y<<";"<<w<<"\n" ;
+    file.flush();
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<v.x<<"\t vy="<<v.y<<"\t" );
 
     LOG_TRACE( log, "set vel       name="<<this->robotName.c_str()<<" vx="<<v.x<<" vy="<<v.y<<" w "<<w );
 }
 
-void Robot::setGlobalSpeed(const Vector2D & v,const double & w, const double& rot){
+void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const double& rot){
 
 	Vector2D speed =v.rotate(-rot);
+
+	this->last_angular_vel[this->last_w_index] = angularV;
+	double temp=0;
+	for(int l=0;l<Robot::filterSize;l++){
+		temp+=(l+1)*this->last_angular_vel[l];
+	}
+	temp=temp/(double (this->filterSize+1.0) );
+
+	//this->w = w;
+	this->w = temp;
+	//this->w =angularV;
+	this->v = speed;
 #ifdef GAZEBO
 	posIface->Lock(1);
 	posIface->data->cmdEnableMotors = 1;
 	posIface->data->cmdVelocity.pos.x = speed.x;
 	posIface->data->cmdVelocity.pos.y = speed.y;
-    posIface->data->cmdVelocity.yaw = w;
+    posIface->data->cmdVelocity.yaw = angularV; //this->w
     posIface->Unlock();
 #endif
-    LOG_TRACE(log,"set vel  "<<" vx="<<speed.x<<" vy="<<speed.y<<" w "<<w );
+
+    file<<speed.x<<";"<<speed.y<<";"<<angularV<<";"<<this->w<<"\n" ;
+    file.flush();
+    LOG_FATAL(log,"set vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<speed.x<<"\t vy="<<speed.y<<"\t" );
+
+
+    this->last_w_index++;
+    if(this->last_w_index==this->filterSize){
+    	this->last_w_index = 0;
+    }
 
 }
 
@@ -800,11 +841,66 @@ void Robot::stop(  ){
 
 }
 
-double Robot::calculateAngularVel(const  Pose & globalRobotPose, const  Vector2D & globalTargetPosition){
+double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Vector2D & globalTargetPosition,  double simTime ){
 	Pose p( globalTargetPosition,0.0 );
-	return calculateAngularVel( globalRobotPose, p);
+	return calculateAngularVel( globalRobotPose, p, simTime );
 }
-double Robot::calculateAngularVel(const  Pose & globalRobotPose, const  Pose & globalTargetPose){
+
+
+double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose, double simTime ){
+
+    double kp = 0.1;
+    double kd = 0.06;
+    double ktheta = 0.9;
+    double currGlobalRobotRot = globalRobotPose.get<2>();
+
+    StraightLine sl( globalRobotPose.getPosition( ), globalTargetPose.getPosition( ) );
+
+    double c = this->w/this->v.length();
+
+    if( !boost::math::isnormal(c) ){
+    	c =0;
+    }
+
+    double tetad = sl.angleToOX(  ) ;//+ ktheta*( c )*pow( 2,this->v.length() );
+
+    LOG_FATAL( this->log,"sl.angleToOX(  ) " <<sl.angleToOX(  ) );
+
+    LOG_FATAL( this->log,"this->w " << this->w );
+
+    LOG_FATAL( this->log,"this->v.length() " << this->v.length() );
+
+
+    double teta = currGlobalRobotRot;
+
+    double deltaT = simTime - lastUpdateTime;
+//    LOG_FATAL(this->log,"#deltaT " << deltaT );
+
+    double dtetad = ( last_tetad - tetad )/deltaT;
+//    LOG_FATAL(this->log,"#last_tetad " << last_tetad<<" tetad "<<tetad );
+//    LOG_FATAL(this->log,"#dtetad " << dtetad );
+
+    double dteta = ( last_teta - teta )/deltaT;
+//   	LOG_FATAL(this->log,"#dteta " << dteta );
+
+//   	LOG_FATAL(this->log,"#tetad - teta " << tetad - teta );
+//   	LOG_FATAL(this->log,"#dtetad - dteta " << dtetad - dteta );
+
+
+    double angularVel=kp*(tetad - teta) +kd*( dtetad - dteta );
+
+    double w = angularVel;
+
+    //double w = fabs(angularVel) > M_PI/2 ? M_PI/2 * sgn(angularVel) : angularVel;
+
+    lastUpdateTime = simTime;
+
+    LOG_FATAL(this->log,"!!!!!!!!!!!!!calculateAngularVel return w " << w );
+    return  w;
+}
+
+/*
+double Robot::calculateAngularVel(const  Pose & globalRobotPose, const  Pose & globalTargetPose, double simTime){
 
 	//Pose globalTargetPosition = globalTargetPosition_*100;
 	//obrot jaki trzeba było wykonac w poprzednim kroku
@@ -869,6 +965,9 @@ double Robot::calculateAngularVel(const  Pose & globalRobotPose, const  Pose & g
 
     return  w;
 }
+*/
+
+
 
 /*
 double Robot::calculateAngularVel(GameState & gameState,Robot::robotID robotID, Pose targetPosition){
@@ -907,6 +1006,7 @@ Robot::~Robot()
 	this->posIface->Close();
 	delete this->posIface;
 	std::cout<<"~Robot "<<this->robotName<<std::endl;
+	file.close();
 }
 /*
 Vector2D calculateVelocity(const Vector2D &currVel, const Pose& currPose,const  Pose & targetPose){
