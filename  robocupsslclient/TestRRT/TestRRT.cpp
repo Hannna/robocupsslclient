@@ -82,7 +82,7 @@ void TestRRT::execute(void *args){
 		while( ( distanceToTarget = goalPose.distance(gameState->getRobotPos( robot->getRobotID() ) ) ) >
 				   ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
 
-			GoToPose goToPose( goalPose,robot);
+			GoToPose goToPose( goalPose.getPosition(),robot);
 			Task::status status = goToPose.execute(NULL);
 			if( status == Task::collision){
 				SimControl::getInstance().restart();

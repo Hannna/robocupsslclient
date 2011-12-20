@@ -55,7 +55,7 @@ void DefendLine::execute(void *){
 	   ballPosition = gameState->getBallPos().getPosition();
 	   goalPose = Pose( ballPosition.projectionOn(a,b,c), 0);
 
-	   this->currentTask = TaskSharedPtr( new GoToPose( goalPose, &robot ) );
+	   this->currentTask = TaskSharedPtr( new GoToPose( goalPose.getPosition(), &robot ) );
 	   //bestScore = score;
 	   Task* newTask;
 

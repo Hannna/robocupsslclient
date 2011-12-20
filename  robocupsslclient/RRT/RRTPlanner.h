@@ -61,10 +61,10 @@ enum ErrorCode{
 	 * @return
 	 */
 	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
-            const Pose goalPose,std::list<Pose> * path, double simTime_, bool timeMeasure);
+            const Pose goalPose,std::list<Pose> * path, double simTime_ );
 
 	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
-	            const Pose goalPose,std::list<Pose> * path, double simTime_, bool timeMeasure, bool analyseAllField);
+	            const Pose goalPose,std::list<Pose> * path, double simTime_, bool analyseAllField);
 
 	GameStatePtr getNearestState();
 	/* zwraca wierzcholek docelowy dla robota

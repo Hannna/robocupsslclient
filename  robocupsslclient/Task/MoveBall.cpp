@@ -11,7 +11,7 @@
 
 MoveBall::MoveBall(const Pose & pose,Robot * robot_):Task(robot_),goalPose(pose) {
 
-	goToPose = new GoToPose(goalPose,robot_);
+	goToPose = new GoToPose(goalPose.getPosition(),robot_);
 	goToPose->markParam(Task::kick_if_we_can);
 }
 

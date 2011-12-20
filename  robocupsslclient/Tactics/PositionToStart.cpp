@@ -38,7 +38,7 @@ void PositionToStart::execute(void* null){
 		}
 
 		bool force = true;
-		this->currentTask = TaskSharedPtr( new GoToPose( startPose, &robot, force  ) );
+		this->currentTask = TaskSharedPtr( new GoToPose( startPose.getPosition(), &robot, force  ) );
 
 		while(!stop && taskStatus!=Task::ok){
 			newTask = this->currentTask->nextTask();

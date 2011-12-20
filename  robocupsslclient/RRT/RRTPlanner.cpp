@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <boost/foreach.hpp>
 #include <boost/bind.hpp>
+#include <boost/timer.hpp>
 
 #define MY_ENCODING "ISO-8859-1"
 #include <libxml/xmlsave.h>
@@ -36,7 +37,7 @@ static boost::uniform_01<boost::mt19937> uniformGen_01(rngA);
 
 
 RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool withObsPrediction,
-			const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path, double simTime_, bool timeMeasure):
+			const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path, double simTime_ ):
 				robotName(robotName_ ),
 				robotId(Robot::getRobotID(robotName_)),
                 root( new RRTNode( currState,robotId ) ),
@@ -96,7 +97,7 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
 }
 
 RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool withObsPrediction,
-			const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path, double simTime_, bool timeMeasure, bool analyseAllField):
+			const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path, double simTime_, bool analyseAllField):
 				robotName(robotName_ ),
 				robotId(Robot::getRobotID(robotName_)),
                 root( new RRTNode( currState,robotId ) ),
@@ -148,8 +149,9 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	this->foundNewPlan = false;
 
 	LOG_TRACE(logger,"start run");
-    struct timespec startTime;
-    measureTime(start, &startTime);
+    //boost::timer timer;
+	struct timespec startTime;
+    measureTime(start_measure, &startTime);
 
     if( this->goalPose.get<0>() > this->maxXvalue ||  this->goalPose.get<0>() < this->minXvalue ||
         this->goalPose.get<1>() > this->maxYvalue || this->goalPose.get<1>() < this->minYvalue ){
@@ -210,8 +212,9 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	checkAddObstacles = true;
 	if(this->checkTargetAttainability(startRobotPose,goalPose,checkAddObstacles)){
 		//std::cout<<"root->state"<<(*(root->state))<<std::endl;
-        double ms = measureTime(stop, &startTime);
-        LOG_DEBUG(logger,"RRT, robot goes directly to goal. RRT time "<<ms<<" [ms]" );
+        //double boost_ms = timer.elapsed()*1000.0;
+		double ms = measureTime(stop_measure, &startTime);
+        LOG_DEBUG(logger,"RRT, robot goes directly to goal. RRT time "<<ms<<" [ms] " );
         GameStatePtr gameState( new GameState( *this->root->getGameState() ) );
         gameState->updateRobotData(this->robotName,this->goalPose );
         RRTNodePtr node(new RRTNode(gameState,this->robotId));
@@ -252,7 +255,13 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	while( (goalPose.distance( nextRobotPose ) > minDistance ) && nodeNr< RRTPlanner::maxNodeNumber ) {
 		//wybieram tymczasowy pkt docelowy w zaleznosci od odleglosci robota do najblizszej przeszkody
 
-		if( measureTime(stop, &startTime) > 400 ){
+		/*if( (timer.elapsed()*1000.0) > 400 ){
+			LOG_FATAL(logger," FATAL RRT take over than 400 ms");
+			break;
+		}*/
+
+
+		if( measureTime(stop_measure, &startTime) > 400 ){
 			LOG_FATAL(logger," FATAL RRT take over than 400 ms");
 			break;
 		}
@@ -350,8 +359,11 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	}
 
 
-	double ms = measureTime(stop, &startTime);
-    LOG_DEBUG( logger,"RRT time "<<ms<<" [ms]"<<" node amount "<<nodeNr<<" path size "<<this->path->size()
+	double ms = measureTime(stop_measure, &startTime);
+	//double ms = timer.elapsed()*1000000.0;
+	//std::ostringstream ois;
+	//ois<<std::setprecision (9)<<ms;
+    LOG_FATAL( logger,"RRT time  "<<ms <<" [ms] "<<" node amount "<<nodeNr<<" path size "<<this->path->size()
     		<<" foundNewPath"<<this->foundNewPlan  );
 
 	return RRTPlanner::Success;

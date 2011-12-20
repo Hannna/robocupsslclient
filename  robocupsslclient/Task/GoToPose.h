@@ -13,8 +13,15 @@ class RRTPlanner;
 
 class GoToPose: public Task {
 public:
-	GoToPose(const Pose & pose,Robot * robot, double maxDistToGoal = Config::getInstance().getRRTMinDistance() );
-	GoToPose(const Pose & pose,Robot * robot, bool force, double maxDistToGoal = Config::getInstance().getRRTMinDistance());
+	/*
+	 * tworzy obiekt kierujacy robota do pozycji position i stara sie aby robot byl zwrocony w strone wlasnie tej pozycji
+	 */
+	GoToPose(const Vector2D & position,Robot * robot, double maxDistToGoal = Config::getInstance().getRRTMinDistance() );
+	/*
+	 * tworzy obiekt kierujacy robota do pozycji position. w punkcie docelowym robot powinien miec rotacje okreslona przez rotation
+	 */
+	GoToPose(const Vector2D & position, const double rotation,  Robot * robot, double maxDistToGoal = Config::getInstance().getRRTMinDistance() );
+	GoToPose(const Vector2D & position,Robot * robot, bool force, double maxDistToGoal = Config::getInstance().getRRTMinDistance());
 
 	void addXConstraint(  std::pair<double, double> *xConstraints ){
 		this->xConstraints = xConstraints;
@@ -40,10 +47,14 @@ private:
 
 	RRTPlanner * rrt;
 	std::list<Pose>  path;
-	const Pose goalPose;
+	const Vector2D goalPose;
 	bool serialize;
-
 	const double maxDistToGoal;
+	const double rotation;
+	const bool spec_rot;
+
+
+
 	double currSimTime;
 	double lastSimTime;
 	bool force;

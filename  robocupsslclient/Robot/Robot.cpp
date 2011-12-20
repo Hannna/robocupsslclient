@@ -80,8 +80,12 @@ std::list<Robot::robotID> Robot::getRedTeam(){
 }
 
 Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robotName( robotName_ ), id( Robot::getRobotID(robotName_) ),
-		log( getLoggerPtr( robotName_.c_str() ) ), fileName(robotName), file( robotName_.c_str( ), ios_base::in | ios_base::trunc )
+		log( getLoggerPtr( robotName_.c_str() ) ), fileName(robotName), file( robotName_.c_str( ), ios_base::in | ios_base::trunc ),
+		file_teta_name( robotName_ +"teta" ), file_teta( file_teta_name.c_str() , ios_base::in | ios_base::trunc ),
+		file_xy_name( robotName_ +"xy" ), file_xy( file_xy_name.c_str() , ios_base::in | ios_base::trunc ),
+		file_v_name( robotName_ +"v" ), file_v( file_v_name.c_str() , ios_base::in | ios_base::trunc )
 {
+
 
 	this->posIfaceName=posIfaceName;
 	this->v=Vector2D(0,0);
@@ -97,6 +101,7 @@ Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robo
 	this->last_tetad = 0;
 	this->last_teta = 0;
 	this->last_w_index = 0;
+	this->last_teta_to_ball = 0;
 
 	for(int l=0;l<filterSize;l++){
 		this->last_angular_vel[l]=0;
@@ -179,7 +184,7 @@ void Robot::setRelativeSpeed(const Vector2D & v, const double & w)
     file.flush();
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<v.x<<"\t vy="<<v.y<<"\t" );
 
-    LOG_TRACE( log, "set vel       name="<<this->robotName.c_str()<<" vx="<<v.x<<" vy="<<v.y<<" w "<<w );
+    LOG_FATAL( log, "set vel       name="<<this->robotName.c_str()<<" vx="<<v.x<<" vy="<<v.y<<" w "<<w );
 }
 
 void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const double& rot){
@@ -190,10 +195,23 @@ void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const dou
 	double temp=0;
 	for(int l=0;l<Robot::filterSize;l++){
 		temp+=(l+1)*this->last_angular_vel[l];
+		 LOG_FATAL(log,"last_angular_vel["<<l<<"]"<<"= "<<last_angular_vel[l] );
 	}
-	temp=temp/(double (this->filterSize+1.0) );
+	temp=temp/(double (2.0 * this->filterSize+1.0) );
 
 	//this->w = w;
+    if( !boost::math::isnormal( temp ) ){
+    	temp = 0;
+    }
+
+    if( !boost::math::isnormal( speed.x ) ){
+    	speed.x = 0;
+    }
+
+    if( !boost::math::isnormal( speed.y ) ){
+        speed.y = 0;
+    }
+
 	this->w = temp;
 	//this->w =angularV;
 	this->v = speed;
@@ -202,12 +220,14 @@ void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const dou
 	posIface->data->cmdEnableMotors = 1;
 	posIface->data->cmdVelocity.pos.x = speed.x;
 	posIface->data->cmdVelocity.pos.y = speed.y;
-    posIface->data->cmdVelocity.yaw = angularV; //this->w
+    posIface->data->cmdVelocity.yaw = this->w; //this->w
     posIface->Unlock();
 #endif
 
-    file<<speed.x<<";"<<speed.y<<";"<<angularV<<";"<<this->w<<"\n" ;
-    file.flush();
+    if(this->robotName.compare("blue0")==0){
+    	file<<speed.x<<";"<<speed.y<<";"<<angularV<<";"<<this->w<<"\n" ;
+    	file.flush();
+    }
     LOG_FATAL(log,"set vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<speed.x<<"\t vy="<<speed.y<<"\t" );
 
@@ -841,20 +861,55 @@ void Robot::stop(  ){
 
 }
 
-double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Vector2D & globalTargetPosition,  double simTime ){
+double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Vector2D & globalTargetPosition,  double simTime, const bool haveBall ){
 	Pose p( globalTargetPosition,0.0 );
-	return calculateAngularVel( globalRobotPose, p, simTime );
+	return calculateAngularVel( globalRobotPose, p, simTime, haveBall );
 }
 
 
-double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose, double simTime ){
+double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose, const double simTime, const bool haveBall ){
 
-    double kp = 0.1;
-    double kd = 0.06;
-    double ktheta = 0.9;
+    double kp = 2;
+    double kd = 0.1;
+    double ktheta = 0.01;
     double currGlobalRobotRot = globalRobotPose.get<2>();
 
-    StraightLine sl( globalRobotPose.getPosition( ), globalTargetPose.getPosition( ) );
+    double delta=1;
+    if( sgn(currGlobalRobotRot)==sgn(last_teta) ){
+    	delta = fabs(currGlobalRobotRot - last_teta);
+    }
+    else{
+    	double min = currGlobalRobotRot < last_teta ? currGlobalRobotRot : last_teta;
+    	double max = currGlobalRobotRot < last_teta ? last_teta : currGlobalRobotRot;
+
+    	delta = fabs( convertAnglePI(max - min) );
+    }
+
+    if( delta < 0.2 ){
+    	currGlobalRobotRot=this->last_teta;
+    }
+
+    //StraightLine sl( globalRobotPose.getPosition( ), globalTargetPose.getPosition( ) );
+    double gx = globalTargetPose.get<0>( );
+    double gy = globalTargetPose.get<1>( );
+
+    double rx = globalRobotPose.get<0>( );
+    double ry = globalRobotPose.get<1>( );
+
+
+    gx = ceil( 100.0*gx );
+    gy = ceil( 100.0*gy );
+
+    rx = ceil( 100.0*rx );
+    ry = ceil( 100.0*ry );
+
+    gx = gx/100.0;
+    gy = gy/100.0;
+
+    rx = rx/100.0;
+    ry = ry/100.0;
+
+    Vector2D v( gx - rx, gy - ry  );
 
     double c = this->w/this->v.length();
 
@@ -862,41 +917,180 @@ double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & 
     	c =0;
     }
 
-    double tetad = sl.angleToOX(  ) ;//+ ktheta*( c )*pow( 2,this->v.length() );
+    //idealna rotacja robota do celu
+    Vector2D oy(0.0,1.0);
 
-    LOG_FATAL( this->log,"sl.angleToOX(  ) " <<sl.angleToOX(  ) );
+    double tetad = 0;
+    tetad = v.angleTo( oy );
+    //obliczam roznice w radianach pomiedzy katami
+    //jesli sa tego samego znaku
+    delta=1;
+    if( sgn(tetad)==sgn(last_tetad) ){
+    	delta = fabs(tetad - last_tetad);
+    }
+    //jesli sa przeciwnego znaku
+    else{
+    	double min = tetad < last_tetad ? tetad : last_tetad;
+    	double max = tetad < last_tetad ? last_tetad : tetad;
 
-    LOG_FATAL( this->log,"this->w " << this->w );
+    	delta = fabs( convertAnglePI(max - min) );
+    }
 
-    LOG_FATAL( this->log,"this->v.length() " << this->v.length() );
+    if( delta < 0.2 ){
+    	tetad=this->last_tetad;
+    }
+
+    if( haveBall ){
+    	//tetad += convertAnglePI( ktheta*( c )*pow( 2,this->v.length() ) ) ;
+
+    	//tetad = convertAnglePI( tetad ) ;
+    }
+    //double tetad = -1.0*sl.angleToOY(  ) ;//+ ktheta*( c )*pow( 2,this->v.length() );
+
+    //LOG_FATAL( this->log,"sl.angleToOX(  ) " <<sl.angleToOX(  ) );
+
+    //LOG_FATAL( this->log,"this->w " << this->w );
+
+    //LOG_FATAL( this->log,"this->v.length() " << this->v.length() );
 
 
     double teta = currGlobalRobotRot;
 
     double deltaT = simTime - lastUpdateTime;
-//    LOG_FATAL(this->log,"#deltaT " << deltaT );
+    //LOG_FATAL(this->log,"#simTime "<<simTime<<" lastUpdateTime "<<lastUpdateTime<<" deltaT " << deltaT );
 
-    double dtetad = ( last_tetad - tetad )/deltaT;
-//    LOG_FATAL(this->log,"#last_tetad " << last_tetad<<" tetad "<<tetad );
-//    LOG_FATAL(this->log,"#dtetad " << dtetad );
+    double dtetad = ( convertAnglePI(tetad - last_tetad)  )/deltaT;
+    //LOG_FATAL(this->log,"#delta to ideal rotation currGlobalRobotRot - tetad " << currGlobalRobotRot - tetad );
+    //LOG_FATAL(this->log,"#dtetad " << dtetad );
 
-    double dteta = ( last_teta - teta )/deltaT;
-//   	LOG_FATAL(this->log,"#dteta " << dteta );
+    double dteta = ( convertAnglePI(teta - last_teta)  )/deltaT;
+   	//LOG_FATAL(this->log,"#dteta " << dteta );
 
-//   	LOG_FATAL(this->log,"#tetad - teta " << tetad - teta );
+   	//LOG_FATAL(this->log,"#tetad - teta " << tetad - teconvertAnglePI(ta );
 //   	LOG_FATAL(this->log,"#dtetad - dteta " << dtetad - dteta );
 
+    /*if(this->robotName.compare("blue0")==0){
 
-    double angularVel=kp*(tetad - teta) +kd*( dtetad - dteta );
+    	this->file_v<<gx<<";"<<gy<<";"<<rx<<";"<<ry<<std::endl;
+    	this->file_v.flush();
 
-    double w = angularVel;
+    	this->file_teta<<last_teta<<";"<<teta<<";"<<tetad<<";"<<dteta<<";"<<dtetad<<";"<<c<<";"<<delta<<std::endl;
+    	this->file_teta.flush();
 
-    //double w = fabs(angularVel) > M_PI/2 ? M_PI/2 * sgn(angularVel) : angularVel;
+    	this->file_xy<<globalRobotPose.get<0>()<<";"<<globalRobotPose.get<1>()<<";"<<globalTargetPose.get<0>()<<";"<<globalTargetPose.get<1>()<<std::endl;
+    	this->file_xy.flush();
+    }*/
+    double angularVel=( kp*( convertAnglePI(tetad - teta) ) +kd*( dtetad - dteta ) );
+
+    double w_ = angularVel;
+
+    w_ = fabs(angularVel) > M_PI ? M_PI * sgn(angularVel) : angularVel;
 
     lastUpdateTime = simTime;
 
-    LOG_FATAL(this->log,"!!!!!!!!!!!!!calculateAngularVel return w " << w );
-    return  w;
+    LOG_FATAL(this->log,"!!!!!!!!!!!!!calculateAngularVel return w " << w_ );
+    last_teta = teta;
+    last_tetad = tetad;
+
+    if( !boost::math::isnormal(w_) ){
+    	w_ =0;
+    }
+    return  w_;
+}
+
+double Robot::calculateAngularVel( const  Pose & globalRobotPose, const double rotation, const double simTime, const bool haveBall ){
+
+    double kp = 2;
+    double kd = 0.1;
+    double ktheta = 0.01;
+    double currGlobalRobotRot = globalRobotPose.get<2>();
+
+    double delta=1;
+    if( sgn(currGlobalRobotRot)==sgn(last_teta) ){
+    	delta = fabs(currGlobalRobotRot - last_teta);
+    }
+    else{
+    	double min = currGlobalRobotRot < last_teta ? currGlobalRobotRot : last_teta;
+    	double max = currGlobalRobotRot < last_teta ? last_teta : currGlobalRobotRot;
+
+    	delta = fabs( convertAnglePI(max - min) );
+    }
+
+    if( delta < 0.2 ){
+    	currGlobalRobotRot=this->last_teta;
+    }
+
+    double c = this->w/this->v.length();
+
+    if( !boost::math::isnormal(c) ){
+    	c =0;
+    }
+
+    //idealna rotacja robota do celu
+    Vector2D oy(0.0,1.0);
+
+    double tetad = 0;
+    tetad = rotation;//v.angleTo( oy );
+    //obliczam roznice w radianach pomiedzy katami
+    //jesli sa tego samego znaku
+    delta=1;
+    if( sgn(tetad)==sgn(last_tetad) ){
+    	delta = fabs(tetad - last_tetad);
+    }
+    //jesli sa przeciwnego znaku
+    else{
+    	double min = tetad < last_tetad ? tetad : last_tetad;
+    	double max = tetad < last_tetad ? last_tetad : tetad;
+
+    	delta = fabs( convertAnglePI(max - min) );
+    }
+
+    if( delta < 0.2 ){
+    	tetad=this->last_tetad;
+    }
+
+    if( haveBall ){
+    	//tetad += convertAnglePI( ktheta*( c )*pow( 2,this->v.length() ) ) ;
+
+    	//tetad = convertAnglePI( tetad ) ;
+    }
+
+    double teta = currGlobalRobotRot;
+
+    double deltaT = simTime - lastUpdateTime;
+
+    double dtetad = ( convertAnglePI(tetad - last_tetad)  )/deltaT;
+
+    double dteta = ( convertAnglePI(teta - last_teta)  )/deltaT;
+
+    if(this->robotName.compare("blue0")==0){
+
+    	//this->file_v<<gx<<";"<<gy<<";"<<rx<<";"<<ry<<std::endl;
+    	//this->file_v.flush();
+
+    	this->file_teta<<last_teta<<";"<<teta<<";"<<tetad<<";"<<dteta<<";"<<dtetad<<";"<<c<<";"<<delta<<std::endl;
+    	this->file_teta.flush();
+
+    	//this->file_xy<<globalRobotPose.get<0>()<<";"<<globalRobotPose.get<1>()<<";"<<globalTargetPose.get<0>()<<";"<<globalTargetPose.get<1>()<<std::endl;
+    	//this->file_xy.flush();
+    }
+
+    double angularVel=( kp*( convertAnglePI(tetad - teta) ) +kd*( dtetad - dteta ) );
+
+    double w_ = angularVel;
+
+    w_ = fabs(angularVel) > M_PI ? M_PI * sgn(angularVel) : angularVel;
+
+    lastUpdateTime = simTime;
+
+    LOG_FATAL(this->log,"!!!!!!!!!!!!!calculateAngularVel return w " << w_ );
+    last_teta = teta;
+    last_tetad = tetad;
+
+    if( !boost::math::isnormal(w_) ){
+    	w_ =0;
+    }
+    return  w_;
 }
 
 /*
@@ -1006,7 +1200,10 @@ Robot::~Robot()
 	this->posIface->Close();
 	delete this->posIface;
 	std::cout<<"~Robot "<<this->robotName<<std::endl;
-	file.close();
+	this->file.close();
+	this->file_teta.close();
+	this->file_xy.close();
+	this->file_v.close();
 }
 /*
 Vector2D calculateVelocity(const Vector2D &currVel, const Pose& currPose,const  Pose & targetPose){
@@ -1023,7 +1220,7 @@ double calculateVelocity(const double vel, const double currPosition,const  doub
 	//przyspieszenie
 	double acc=2.26305;//7.5;//[m/s2]
 	//hamowanie
-	double dec=0.5;//9;//[m/s2]
+	double dec=3.5;//0.5 bylo //9;//[m/s2]
 	//jesli predkosc powoduje powiekszanie sie odleglosci miedzy cuur.x oraz target.x to zatrzymaj
 	/*Uwaga
 	 *
@@ -1080,6 +1277,19 @@ double calculateVelocity(const double vel, const double currPosition,const  doub
 		}
 		return newV;
 }
+
+boost::tuple< double, double, double > calculateCurwatureVelocity( const double radious, const double maxW){
+	boost::tuple< double, double, double > vel;
+
+	double c = 1/radious;
+
+	//double c = w/v
+
+	double w = maxW;
+	double v = w/c;
+
+	return boost::tuple< double, double, double >( v,v ,w );
+}
 /*
 Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & targetPose){
 	Vector2D newVel;
@@ -1121,6 +1331,7 @@ Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,
 	newVel.y=calculateVelocity(currVel.y, currGlobalPose.get<1>(),targetGlobalPose.get<1>() );
 
 	double scale = fabs(newVel.x) > fabs(newVel.y) ? fabs(newVel.x) : fabs(newVel.y) ;
+	//17 12 2011 zaremowane
 	if( scale > Config::getInstance().getRRTMaxVel() )
 		scale=Config::getInstance().getRRTMaxVel()/scale;
 	//Vector2D v=newVel*scale;

@@ -23,10 +23,11 @@ public:
 	~Vector2D();
 	///@brief zwraca długość wektora 
 	double length() const;
-	/*@brief zwraca kat pomiedzy wektorami
-	* @return kat w radianach
-	*/
-	double angleTo(const Vector2D &) const;
+	/* @brief zwraca kat pomiedzy wektorami
+	 * opisuje o ile trzeba obrocic this zeby pokryl sie z v (obrot w prawo jest ujemny , w lewo dodatni)
+	 * @return kat w radianach
+	 */
+	double angleTo( const Vector2D &v ) const;
 	///@brief zwraca znak kąta pomiedzy wektorami
 	int signOfangleTo(const Vector2D & to) const;
 	///@brief zwraca iloczyn skalarny
