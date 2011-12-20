@@ -188,9 +188,15 @@ class StraightLine{
 		}
 
 		double angleToOX( ){
-			Vector2D w( -this->B, this->A );
+			Vector2D w( this->B, -1.0*this->A );
 
-			return w.angleTo( Vector2D(1.0,0) );
+			return w.angleTo( Vector2D(1.0,0.0) );
+		}
+
+		double angleToOY( ){
+			Vector2D w( this->B, -1.0*this->A );
+
+			return w.angleTo( Vector2D(0.0,1.0) );
 		}
 
 		virtual ~StraightLine();
@@ -252,7 +258,7 @@ bool from_string(T& t,
   return !(iss >> f >> t).fail();
 }
 
-enum what{start, stop};
+enum what{start_measure, stop_measure};
 
 double measureTime(what what_,struct timespec * startTime);
 

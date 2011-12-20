@@ -9,9 +9,11 @@
 #include "GoToBall.h"
 #include "../Exceptions/SimulationException.h"
 
-GetBall::GetBall(Robot * robot):Task(robot) {
-	// TODO Auto-generated constructor stub
+//ios_base::trunc
 
+GetBall::GetBall(Robot * robot):Task(robot),file_name( robot->getRobotName() + "getBall" ), file( file_name.c_str( ), ios_base::in | ios_base::app ) {
+	// TODO Auto-generated constructor stub
+	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GetBall Task, goto " );
 }
 
 Task* GetBall::nextTask(){
@@ -73,8 +75,11 @@ Task::status GetBall::run(void * arg, int steps){
 			}
 
 			reference = Vector2D( cos( currRobotPose.get<2>()+M_PI_2 ), sin( currRobotPose.get<2>()+M_PI_2 ) );
-
 			angle = toBall.angleTo(reference);
+
+			if( strcmp( this->robot->getRobotName().c_str(), "blue0" ) == 0 )
+				file<<reference<<";"<<angle<<";"<<std::endl;
+
 
 			//czy pilka jest przed dribblerem
 			if ( fabs(angle) < 0.33 ){
@@ -89,14 +94,17 @@ Task::status GetBall::run(void * arg, int steps){
 					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, Pose( ballPos,0 ) );
 					//robot->setRelativeSpeed( robotNewVel, 0 );
 					robot->setGlobalSpeed( robotNewVel, 0, currRobotPose.get<2>() );
-					///LOG_INFO(log, "GetBall podjedz do pilki " );
+					LOG_INFO(log, "GetBall podjedz do pilki " );
 					return Task::not_completed;
 				}
 			}//obroc robota
 			else{
-
+				//const bool haveBall =false;
+				//double w = robot->calculateAngularVel( currRobotPose, ballPose, currGameState->getSimTime( ), haveBall );
+				//robot->setRelativeSpeed( Vector2D(0,0), w );
 				//obrot jaki trzeba było wykonac w poprzednim kroku
-				static double oldAlfaToCel;
+
+				double oldAlfaToCel = robot->getLastTetaToBall();
 
 				double Ker=0.5;
 				double Ko=20;
@@ -118,13 +126,15 @@ Task::status GetBall::run(void * arg, int steps){
 				double angularVel=Ko*( convertAnglePI(rotacjaDocelowa-currGlobalRobotRot) )+ Ker*( convertAnglePI(oldAlfaToCel - currAlfaToCel) );
 
 				oldAlfaToCel=currAlfaToCel;
-
+				robot->setLastTetaToBall(currAlfaToCel);
 				double w = fabs(angularVel) > M_PI/2 ? M_PI/2 * sgn(angularVel) : angularVel;
 
 
 				robot->setRelativeSpeed( Vector2D(0,0), w );
 				LOG_INFO(log, "obrot robota do pilki  currAlfaToCel "<<currAlfaToCel<<" w"<<w );
 				//usleep(10000);
+
+				LOG_INFO(log, "wykonaj obrot robota w "<<w );
 				return Task::not_completed;
 			}
 		}
@@ -135,4 +145,5 @@ Task::status GetBall::run(void * arg, int steps){
 
 GetBall::~GetBall() {
 	// TODO Auto-generated destructor stub
+	this->file.close();
 }

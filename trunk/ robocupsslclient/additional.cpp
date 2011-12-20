@@ -92,17 +92,28 @@ StraightLine::StraightLine(const Vector2D p1_,const  Vector2D p2_): p1(p1_),p2(p
 	}*/
 
 	//jesli jest to prosta typu x=A
-	if( (p1.x - p2.x ) < 0.001 ){
+	if( fabs(p1.x - p2.x ) < 0.001 ){
 		A=1;
 		B=0;
-		C=-p1.x;
+		C= -p1.x;
 	}
 	//rownanie prostej laczacej robota i pkt docelowy
 	else{
-		A = ( p1.y - p2.y )/(p1.x - p2.x );
-		B = -1;
-		C=A*( -p2.x ) + p1.y;
+		A = -1.0*( p1.y - p2.y )/(p1.x - p2.x );
+		B = 1.0;
+		C=(-1.0)*A*( p2.x ) - p2.y;
 	}
+
+	if( fabs(A*p1.x +B*p1.y +C) > 0.01 ){
+		std::cout<<"ERROR"<<*this<<" with point "<< p1 <<" err ="<<fabs(A*p1.x +B*p1.y +C) <<std::endl;
+		exit(0);
+	}
+
+	if( fabs(A*p2.x +B*p2.y +C) > 0.01 ){
+		std::cout<<"ERROR"<<*this<<" with point "<< p2 <<" err ="<<fabs(A*p2.x +B*p2.y +C)<<std::endl;
+		exit(0);
+	}
+	//assert( fabs(A*p2.x +B*p2.y +C) < 0.01);
 }
 
 double StraightLine::distFromPoint( const Vector2D o ){
@@ -182,11 +193,11 @@ double measureTime(what what_,struct timespec * startTime){
 	//static struct timeval startTime;
 	//struct timeval  diff;
 	//bzero(&diff, sizeof(struct timeval));
-	if(what_==start){
+	if(what_==start_measure){
 	    clock_gettime(CLOCK_REALTIME, startTime);
 		return 0;
 	}
-	else if(what_==stop)	{
+	else if(what_==stop_measure)	{
 	    struct timespec endTime;
 		//struct timespec diff;
 		//gettimeofday(&endTime, NULL);
@@ -195,7 +206,7 @@ double measureTime(what what_,struct timespec * startTime){
 		long nanosec = endTime.tv_nsec - startTime->tv_nsec;
 		long sec = endTime.tv_sec - startTime->tv_sec;
 
-		if( nanosec < 0 ){
+		if( (sec!=0) && (nanosec < 0 ) ){
             sec--;
             nanosec+=1E9;
 		}

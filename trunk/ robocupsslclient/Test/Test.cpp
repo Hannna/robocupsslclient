@@ -159,7 +159,8 @@ void testMotion(const Pose goalPose,Videoserver & video,Robot& robot){
 		//Vector2D targetRelPosition=rmY.Inverse()*(goToAbsPosition-currentAbsPosition);
 
 		Vector2D robotVel=(*gameState).getRobotGlobalVelocity( robot.getRobotID() );
-		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose ,(*gameState).getSimTime());
+		bool haveBall = false;
+		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose ,(*gameState).getSimTime(), haveBall);
 		//speed=calculateVelocity( robotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
 		speed=calculateVelocity( robotVel,currRobotPose, goalPose);
 
@@ -391,7 +392,7 @@ void * testTask(void * arg){
 	GameStatePtr gameState(new GameState());
 	Videoserver::getInstance().updateGameState(gameState);
 
-	GoToPose goToPose( (*gameState).getBallPos(),robot);
+	GoToPose goToPose( (*gameState).getBallPos().getPosition(),robot);
 	//GoToPose goToPose( Pose(6.0,4.0,0.0),robot);
 	goToPose.execute(NULL,-1);
 	//std::cout<<"exit from task"<<std::endl;
@@ -460,7 +461,7 @@ void testDribbler(Robot& robot){
     while( ( dist= (*gameState).getBallPos().distance(gameState->getRobotPos(robot.getRobotID() ) ) ) >
             ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
         std::cout<<"dist "<<dist<<std::endl;
-        GoToPose goToPose( (*gameState).getBallPos(),&robot);
+        GoToPose goToPose( (*gameState).getBallPos().getPosition(),&robot);
         if( goToPose.execute(NULL) == false)
             SimControl::getInstance().restart();
         Videoserver::getInstance().updateGameState(gameState);

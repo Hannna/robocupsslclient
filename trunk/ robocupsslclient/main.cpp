@@ -113,6 +113,16 @@ int main(int argc, char*argv[],char *envp[]){
     //Init libxml
     xmlInitParser();
 
+    /*
+    Vector2D v(0,1);
+    Vector2D w(1,0);
+    Vector2D ww(0,-1);
+
+    std::cout<<"angle  "<<v<<" to "<<w<<v.angleTo(w) <<std::endl;
+    std::cout<<"angle  "<<v<<" to "<<ww<<v.angleTo(ww) <<std::endl;
+    return 0;
+	*/
+
 //    log4cxx::PropertyConfigurator::configure("log4cxx.properties");
     Config::getInstance().load("/home/maciek/workspace/magisterka/Debug/config.xml");
     Config::getInstance().setTestMode(true);

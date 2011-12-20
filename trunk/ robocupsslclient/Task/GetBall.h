@@ -27,6 +27,8 @@ private:
 	GetBall();
 	GetBall(const GetBall &);
 	GetBall& operator=(const GetBall&);
+	std::string file_name;
+	std::ofstream file;
 
 };
 

@@ -77,6 +77,14 @@ public:
 	static std::list<robotID> getBlueTeam();
 	static std::list<robotID> getRedTeam();
 
+	double getLastTetaToBall(){
+		return this->last_teta_to_ball;
+	}
+
+	void setLastTetaToBall( double t){
+		this->last_teta_to_ball = t;;
+	}
+
 	std::string getPosIfaceName() const;
 	/*@brief metoda ustalajaca predkosci liniowa oraz katowa w ukladzie wspo zw z robotem
 	 *
@@ -110,8 +118,9 @@ public:
 	//double calculateAngularVel(const Pose & robotPosition, const Pose & targetPosition);
 	//double calculateAngularVel(const Pose & robotPosition, const Vector2D & targetPosition);
 
-	double calculateAngularVel( const  Pose & globalRobotPose, const Vector2D & globalTargetPosition , double simTime );
-	double calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose, double simTime );
+	double calculateAngularVel( const  Pose & globalRobotPose, const Vector2D & globalTargetPosition , double simTime, const bool haveBall );
+	double calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose, const double simTime, const bool haveBall );
+	double calculateAngularVel( const  Pose & globalRobotPose, const double rotation, const double simTime, const bool haveBall );
 	void stop( );
 
 
@@ -154,8 +163,20 @@ private :
 	 double last_tetad;
 	 double last_teta;
 
+	 double last_teta_to_ball;
+
 	 std::ofstream file;
 	 std::string fileName;
+
+	 std::string file_teta_name;
+	 std::ofstream file_teta;
+
+	 std::string file_v_name;
+	 std::ofstream file_v;
+
+	 std::string file_xy_name;
+	 std::ofstream file_xy;
+
 
 	 const static int filterSize = 5;
 	 int last_w_index;
@@ -170,7 +191,7 @@ private :
  * @param [in] targetPose polozenie celu w ukladzie odniesienia zwiazanym z robotem
  */
 Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose);
-
+boost::tuple< double, double, double > calculateCurwatureVelocity( const double radious,const double maxW );
 std::ostream& operator<<(std::ostream& os,const Robot::robotID& id);
 
 #endif /*ROBOT_H_*/

@@ -12,7 +12,7 @@ GoToBall::GoToBall(Robot * robot_):Task(robot_) {
 
 	this->video.updateGameState( this->currGameState );
 	this->ballPose = this->currGameState->getBallPos();
-	this->goToPose =  new GoToPose( this->ballPose, robot);
+	this->goToPose =  new GoToPose( this->ballPose.getPosition(), robot);
 
 }
 
@@ -86,10 +86,10 @@ Task::status GoToBall::run(void * arg, int steps){
 		ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
 
 		if( (this->predicates & Task::analyse_all_field ) > 0){
-			this->goToPose =  new GoToPose( Pose(ballPos,0), robot, true);
+			this->goToPose =  new GoToPose( ballPos, robot, true);
 		}
 		else
-			this->goToPose =  new GoToPose( Pose(ballPos,0), robot );
+			this->goToPose =  new GoToPose( ballPos, robot );
 			//this->goToPose =  new GoToPose( this->currGameState->getBallPos(), robot );
 	}
 

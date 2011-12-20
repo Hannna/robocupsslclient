@@ -25,7 +25,7 @@ public:
 		RIGHT
 	};
 
-	RoundObstacle(Robot * robot, const Vector2D obstacleCoordinates, enum direction d );
+	RoundObstacle(Robot * robot, const Vector2D obstacleCoordinates, const double obstacleRadiuous );
 	virtual Task* nextTask();
 	virtual ~RoundObstacle();
 protected:
@@ -35,18 +35,19 @@ private:
 	RoundObstacle(const RoundObstacle & r);
 	RoundObstacle& operator=(const RoundObstacle& r);
 
-	void initBezierParams(const Vector2D a,const  Vector2D b,const  Vector2D c,const  Vector2D d);
+	//void initBezierParams(const Vector2D a,const  Vector2D b,const  Vector2D c,const  Vector2D d);
 	/*@brief oblicza wspolrzedne punktu lezacego na krzywej beziera t nalezy do (0,1)
 	 *
 	 */
-	Vector2D bezierCurve(double n,Vector2D bezierParams[], double t);
+	//Vector2D bezierCurve(double n,Vector2D bezierParams[], double t);
 
-	Vector2D bezierParams[5];
+	//Vector2D bezierParams[5];
 
 	const Vector2D obstacleCoordinates;
+	const double obstacle_r;
 	GoToPose* goToPose;
-	double t;
-	enum direction d;
+	//double t;
+	//enum direction d;
 };
 
 

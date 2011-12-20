@@ -635,7 +635,7 @@ bool SimControl::wait(){
 	bzero( &rem, sizeof(rem) );
 
 	struct timespec  startTime;
-	measureTime( start, &startTime );
+	measureTime( start_measure, &startTime );
 	double endTime;
 
 	while(!ok){
@@ -646,7 +646,7 @@ bool SimControl::wait(){
 			continue;
 		}
 		nanosleep(&req,&rem);
-		endTime=measureTime( stop, &startTime );
+		endTime=measureTime( stop_measure, &startTime );
 		//3 sek jest ustawiony timeout w symulatorze gazebo
 		if(endTime>5000){
 			LOG_FATAL(log,"wait for request "<<endTime<<"ms");
@@ -668,7 +668,7 @@ bool SimControl::wait(int resp){
 	bzero( &rem, sizeof(rem) );
 
 	struct timespec  startTime;
-	measureTime( start, &startTime );
+	measureTime( start_measure, &startTime );
 	double endTime;
 
 	while(!ok){
@@ -688,7 +688,7 @@ bool SimControl::wait(int resp){
 		this->simIface->Unlock();
 
 		nanosleep(&req,&rem);
-		endTime=measureTime( stop, &startTime );
+		endTime=measureTime( stop_measure, &startTime );
 		//3 sek jest ustawiony timeout w symulatorze gazebo
 		if(endTime>5000){
 			//LOG_FATAL( log," wait simIface->data->requestCount "<<this->simIface->data->requestCount );
