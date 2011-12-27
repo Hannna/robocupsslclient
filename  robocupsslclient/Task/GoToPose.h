@@ -57,7 +57,7 @@ private:
 
 	double currSimTime;
 	double lastSimTime;
-	bool force;
+	const bool force;
 };
 
 #endif /* GOTOPOSE_H_ */

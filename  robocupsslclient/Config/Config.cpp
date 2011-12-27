@@ -35,25 +35,6 @@ bool Config::isDebugMode(){
 
 bool Config::load(std::string filename){
 
-	//loading robots name
-
-	//TODO:
-	//dodac nazwe pliku jako parametr
-    std::list<std::string> robots = getRobotNames("/home/maciek/mgr/mgr/my_plansza/test_worlds/test_world_1.xml",
-    		BAD_CAST "//*[namespace-uri()='http://playerstage.sourceforge.net/gazebo/xmlschema/#model']");
-
-    std::list<std::string>::iterator ii = robots.begin();
-
-    for(;ii!=robots.end();ii++){
-    	if(strncmp(ii->c_str(),"red",3)==0 ){
-    		this->redTeam.push_back(*ii);
-    	}
-    	else if (strncmp(ii->c_str(),"blue",3)==0 ){
-    	    		this->blueTeam.push_back(*ii);
-    	    	}
-    }
-
-
 	bool status=true;
 	std::cout<<"Wczytuje plik: "<<filename.c_str()<<std::endl;
 
@@ -123,6 +104,25 @@ bool Config::load(std::string filename){
 			}
 			current = current->next;
 		}
+
+		//loading robots name
+		//std::list<std::string> robots = getRobotNames("/home/maciek/mgr/mgr/my_plansza/test_worlds/test_world_1.xml",
+	    //		BAD_CAST "//*[namespace-uri()='http://playerstage.sourceforge.net/gazebo/xmlschema/#model']");
+
+		std::list<std::string> robots = getRobotNames(this->worldName.c_str(),
+	    		BAD_CAST "//*[namespace-uri()='http://playerstage.sourceforge.net/gazebo/xmlschema/#model']");
+
+
+	    std::list<std::string>::iterator ii = robots.begin();
+
+	    for(;ii!=robots.end();ii++){
+	    	if(strncmp(ii->c_str(),"red",3)==0 ){
+	    		this->redTeam.push_back(*ii);
+	    	}
+	    	else if (strncmp(ii->c_str(),"blue",3)==0 ){
+	    	    		this->blueTeam.push_back(*ii);
+	    	    	}
+	    }
 	}
 	catch(std::string& err){
 		std::cout<<err<<std::endl;
@@ -228,6 +228,12 @@ bool Config::loadSettings(xmlNodePtr node,xmlDocPtr config){
 			//std::cout<<"testMode"<<std::endl;
 			if(!loadTestMode(current,config))
 				return false;
+		}
+		if(!xmlStrcmp(current->name,(const xmlChar *) "world")){
+			xmlChar * str;
+			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
+			this->worldName = std::string((const char*) str);
+			xmlFree(str);
 		}
 		if(!xmlStrcmp(current->name,(const xmlChar *) "debug")){
 			xmlChar * str;

@@ -22,6 +22,7 @@ class RotationMatrix
 {
 public:
 	///konstruktor tworzy macierz obrotu odpowiadajaca katowi fi
+	//fi to kat o jaki trzeba obrocic uklad globalny zeby otrzymac lokalny
 	RotationMatrix(double fi);
 	RotationMatrix(const RotationMatrix& rm);
 	RotationMatrix & operator =(const RotationMatrix &); 

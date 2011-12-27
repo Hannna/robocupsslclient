@@ -23,7 +23,7 @@ public:
 	~Vector2D();
 	///@brief zwraca długość wektora 
 	double length() const;
-	/* @brief zwraca kat pomiedzy wektorami
+	/* @brief zwraca kat pomiedzy wektorami nalezacy do przedzialu [ -pi; pi ]
 	 * opisuje o ile trzeba obrocic this zeby pokryl sie z v (obrot w prawo jest ujemny , w lewo dodatni)
 	 * @return kat w radianach
 	 */

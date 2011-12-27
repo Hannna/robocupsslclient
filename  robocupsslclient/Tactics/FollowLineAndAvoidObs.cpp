@@ -313,7 +313,6 @@ void FollowLineAndAvoidObs::execute(void *){
 	   //odleglosc od pkt docelowego przy jakiej stwierdzamy ze robot dojechal do celu
 	   const double minDist = 0.1;
 
-
 	   LOG_DEBUG( log,"#############change control point to "<<goalPoint<<" pose = "<<goalPose );
 
 	   this->currentTask = TaskSharedPtr( new GoToPose( goalPose.getPosition(), &robot,  minDist) );
@@ -354,16 +353,16 @@ void FollowLineAndAvoidObs::execute(void *){
 				   throw SimulationException("FollowLineAndAvoidObs::execute");
 
 			endTime=measureTime( stop_measure, &startTime );
-			LOG_FATAL(log,"FollowLineAndAvoidObs loop update game state time "<<endTime<<" [ms]");
+			//LOG_FATAL(log,"FollowLineAndAvoidObs loop update game state time "<<endTime<<" [ms]");
 
 			bzero(&startTime, sizeof( startLoopTime ) );
 			measureTime(start_measure, &startLoopTime);
 
 			EvaluationModule::ballState bs = evaluation.getBallState(  this->robot.getRobotID( ) );
 
-			LOG_FATAL( log,"Ball state is  "<<bs );
+			//LOG_FATAL( log,"Ball state is  "<<bs );
 
-			//newTask = new GoToPose( goalPose, &robot,  minDist);
+			//newTask = new GoToPose( goalPose.getPosition(), &robot,  minDist);
 			//this->currentTask = TaskSharedPtr(newTask );
 
 

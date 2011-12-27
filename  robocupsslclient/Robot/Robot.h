@@ -89,7 +89,7 @@ public:
 	/*@brief metoda ustalajaca predkosci liniowa oraz katowa w ukladzie wspo zw z robotem
 	 *
      * @param v [in] predkosc liniowa robota w ukl wspolrzednych zw z robotem
-     * @param w [in] predkosci katowa robota w ukladzei wsp zw z robotem
+     * @param w [in] predkosci katowa robota w ukladzei wsp zw z robotem, w> 0 obrot w kierunku dodatnich katow fi, w< 0 obrot w kierunku ujemnych katow
 	 */
 	void setRelativeSpeed(const Vector2D & v,const double & w);
 	/*@brief metoda ustalajaca globalna predkosc liniowa oraz katowa
