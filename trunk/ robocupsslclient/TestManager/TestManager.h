@@ -17,21 +17,21 @@
 
 namespace Tests{
  typedef   enum TestKind_{
-            none=-1,
-            position =0,
-            velocity,
-            RRTPlanner,
-            multiRRTPlanner,
-            acceleration,
-            motion,
-            rotation,
-            taskScheduling,
-            ballDribbling,
-            kick,
-            testShootTactic,
-            testPassTactic,
-            refereeBox,
-            play
+            none = -1,
+            position = 0,
+            velocity = 1,
+            RRTPlanner = 2,
+            multiRRTPlanner = 3,
+            acceleration = 4,
+            motion = 5,
+            rotation = 6,
+            taskScheduling = 7,
+            ballDribbling = 8,
+            kick =9,
+            testShootTactic = 10,
+            testPassTactic = 11,
+            refereeBox = 12,
+            play = 13
 
             } TestKind;
 

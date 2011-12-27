@@ -14,6 +14,7 @@
 #include "../EvaluationModule/EvaluationModule.h"
 
 #include "../Task/GoToPose.h"
+#include "../Task/GetBall.h"
 #include "../Task/Task.h"
 #include "../Task/KickBall.h"
 
@@ -458,6 +459,7 @@ void testDribbler(Robot& robot){
 	Videoserver::getInstance().start(NULL);
 	Videoserver::getInstance().updateGameState(gameState);
     double dist;
+    /*
     while( ( dist= (*gameState).getBallPos().distance(gameState->getRobotPos(robot.getRobotID() ) ) ) >
             ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
         std::cout<<"dist "<<dist<<std::endl;
@@ -466,6 +468,52 @@ void testDribbler(Robot& robot){
             SimControl::getInstance().restart();
         Videoserver::getInstance().updateGameState(gameState);
     };
+    */
+    int steps = 1;
+    Task* task = NULL;
+    Task* nextTask_ = NULL;
+    EvaluationModule::ballState bs;
+	EvaluationModule& evaluation=EvaluationModule::getInstance();
+    bool gettingBall = false;
+	while(true){
+
+    	bs = evaluation.getBallState(  robot.getRobotID( ) );
+    	if( bs == EvaluationModule::free ){
+    		if( !gettingBall ){
+    			gettingBall = true;
+    			if( task ){
+    				delete task;
+    				task = NULL;
+    			}
+    			task = new GetBall( &robot );
+    		}
+    	}
+    	else if( bs == EvaluationModule::mine ){
+    		if( gettingBall ){
+    			gettingBall =  false;
+    			//odleglosc od pkt docelowego przy jakiej stwierdzamy ze robot dojechal do celu
+    			const double minDist = 0.1;
+    			if( task ){
+    				delete task;
+    				task = NULL;
+    			}
+    			task = new GoToPose( Config::getInstance().field.BOTTOM_GOAL_MID_POSITION, &robot,  minDist);
+    		}
+    	}
+    	else{
+    		SimControl::getInstance().restart();
+    		continue;
+    	}
+    	nextTask_ = task->nextTask();
+    	if(nextTask_){
+    		if( task ){
+    			delete task;
+    			task =nextTask_;
+    		}
+    	}
+    	task->execute(NULL,steps);
+    	Videoserver::getInstance().updateGameState(gameState);
+    }
 #endif
 
 /*

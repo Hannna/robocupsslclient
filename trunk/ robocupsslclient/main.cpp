@@ -137,7 +137,7 @@ int main(int argc, char*argv[],char *envp[]){
         else if( strncmp(argv[1],"experiment_1",12)==0 ){
         	experimentKind = Experiments::navigation_2011;
         }
-        else if(argc>2){
+        if(argc>2){
             if(strncmp(argv[2],"velocity",8)==0)
                 testKind=Tests::velocity;
             if(strncmp(argv[2],"position",8)==0)
@@ -154,8 +154,9 @@ int main(int argc, char*argv[],char *envp[]){
                 testKind=Tests::rotation;
             if(strncmp(argv[2],"task",4)==0)
                 testKind=Tests::taskScheduling;
-            if(strncmp(argv[2],"dribbler",8)==0)
+            if(strncmp(argv[2],"dribbler",8)==0){
                 testKind=Tests::ballDribbling;
+            }
             if(strncmp(argv[2],"kick",4)==0)
                 testKind=Tests::kick;
             if(strncmp(argv[2],"shoot",5)==0)
@@ -164,15 +165,16 @@ int main(int argc, char*argv[],char *envp[]){
                 testKind=Tests::testPassTactic;
             if(strncmp(argv[2],"play",4)==0)
                 testKind=Tests::play;
-        }
-        else{
-            std::cout<<"missing param"<<std::endl;
 
-            xmlCleanupParser();
-            exit(0);
+            if( testKind==Tests::none ){
+            	std::cout<<"unknown  param "<<argv[2]<<std::endl;
+            	xmlCleanupParser();
+            	exit(0);
+            }
         }
     }
-    LOG_ERROR(getLoggerPtr ("app_debug"), "logger test");
+
+    LOG_ERROR(getLoggerPtr ("app_debug"), "logger test " <<"program started with params "<<argv[2]<<" test kind "<<testKind );
 
     LOG_DEBUG(getLoggerPtr ("red0"), "test");
     LOG_DEBUG(getLoggerPtr ("red1"), "test");
@@ -182,7 +184,9 @@ int main(int argc, char*argv[],char *envp[]){
     LOG_DEBUG(getLoggerPtr ("blue1"), "test");
     LOG_DEBUG(getLoggerPtr ("blue2"), "test");
 
+
     Play::init();
+
     Videoserver::getInstance().start(NULL);
 
     //poczekaj az videoserwer pobierze pozycje robotow z symulatora
@@ -246,6 +250,7 @@ int main(int argc, char*argv[],char *envp[]){
 			//DO testow algorytmu
 			TestManager testManager;
 			for(int i=30;i>0;i--){
+				LOG_DEBUG(getLoggerPtr ("app_debug"), "adding test");
 				testManager.addTest(testKind);
 				testManager.startTests();
 				while(!testManager.isTestFinished()){

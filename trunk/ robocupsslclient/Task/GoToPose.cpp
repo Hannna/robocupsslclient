@@ -11,12 +11,11 @@
 #include "../Exceptions/SimulationException.h"
 
 GoToPose::GoToPose(const Vector2D & position,Robot * robot, double maxDistToGoal_):
-	Task(robot),goalPose(position),serialize( Config::getInstance().isDebugMode() ), maxDistToGoal( maxDistToGoal_), rotation(0),spec_rot(false)  {
+	Task(robot),goalPose(position),serialize( Config::getInstance().isDebugMode() ), maxDistToGoal( maxDistToGoal_), rotation(0),spec_rot(false),force(false)  {
 	this->rrt=NULL;
 	currSimTime=0;
 	lastSimTime=0;
 	//currSimTime=video.updateGameState(currGameState);
-	force = false;
 
 	xConstraints = NULL;
 	yConstraints = NULL;
@@ -25,13 +24,13 @@ GoToPose::GoToPose(const Vector2D & position,Robot * robot, double maxDistToGoal
 }
 
 GoToPose::GoToPose( const Vector2D & position, const double rotation_,  Robot * robot, double maxDistToGoal_ ):
-		Task(robot),goalPose(position),serialize( Config::getInstance().isDebugMode() ), maxDistToGoal( maxDistToGoal_),rotation(rotation_),spec_rot(true)  {
+		Task(robot),goalPose(position),serialize( Config::getInstance().isDebugMode() ), maxDistToGoal( maxDistToGoal_),rotation(rotation_),spec_rot(true), force(false)  {
 
 	this->rrt=NULL;
 	currSimTime=0;
 	lastSimTime=0;
 	//currSimTime=video.updateGameState(currGameState);
-	force = false;
+	//force = false;
 
 	xConstraints = NULL;
 	yConstraints = NULL;
@@ -40,12 +39,11 @@ GoToPose::GoToPose( const Vector2D & position, const double rotation_,  Robot * 
 
 }
 GoToPose::GoToPose(const Vector2D & position,Robot * robot, bool force_, double maxDistToGoal_):
-		Task(robot),goalPose(position),serialize( Config::getInstance().isDebugMode() ), maxDistToGoal( maxDistToGoal_),rotation(0),spec_rot(false) {
+		Task(robot),goalPose(position),serialize( Config::getInstance().isDebugMode() ), maxDistToGoal( maxDistToGoal_),rotation(0),spec_rot(false),force(force_) {
 	this->rrt=NULL;
 	currSimTime=0;
 	lastSimTime=0;
 	//currSimTime=video.updateGameState(currGameState);
-	force = force_;
 
 	xConstraints = NULL;
 	yConstraints = NULL;
@@ -202,11 +200,6 @@ Task::status GoToPose::run(void* arg, int steps){
 				double w = 0;
 
 				robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
-				if(this->spec_rot){
-					w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), this->rotation, currGameState->getSimTime(), haveBall );
-				}
-				else
-					w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), goalPose, currGameState->getSimTime(),haveBall );
 
 				if( rrt->getDistToNearestObs() > 0.02 ){
 					//if( this->predicates && Task::got_ball ){
@@ -221,26 +214,39 @@ Task::status GoToPose::run(void* arg, int steps){
 						//macierz obrotu os OY na wprost robota
 						RotationMatrix rm(robotRotation);
 						Pose t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
+						LOG_FATAL( log, "####################################################################################################################");
+						while( fabs(t.get<0>()) > 0.3 || t.get<1>() < 0 ){
+							Vector2D oy( 0.0,1.0 );
+							double angle = oy.angleTo( t.getPosition( ) );
+							LOG_FATAL( log, "currRobotPose "<< currRobotPose <<" globalNextPose "<<nextRobotPose << " nextRobotPose  "<<t<<" angle "<<angle );
+							double maxW = fabs(angle)/video.getUpdateDeltaTime() > M_PI ? M_PI : fabs(angle)/video.getUpdateDeltaTime() ;
+							double ball_radious = 0.02;
 
-						while( t.get<1>() < 0 ){
-							LOG_FATAL( log, "nextRobotPose "<<t );
-							double maxW =M_PI;
-							boost::tuple< double, double, double > vel = calculateCurwatureVelocity( 0.02, maxW );
+							//double angle = t.getPosition().angleTo( Vector2D( 0.0,1.0 ) );
+
+							boost::tuple< double, double, double > vel = calculateCurwatureVelocity( ball_radious*sgn(angle) , maxW );
 							Vector2D v = Vector2D( vel.get<0>(), vel.get<1>() );
 							double w = vel.get<2>();
 							robot->setRelativeSpeed( v, w );
-							currSimTime = video.updateGameState(currGameState) ;
+							while( lastSimTime - currSimTime >= 0 ){
+								currSimTime = video.updateGameState(currGameState);
+							}
+							lastSimTime = currSimTime;
+							//currSimTime = video.updateGameState(currGameState) ;
 							currRobotPose=(*currGameState).getRobotPos( robot->getRobotID() );
 							robotRotation = currRobotPose.get<2>();
-							rm = RotationMatrix(currRobotPose.get<2>());
+							rm = RotationMatrix(robotRotation);
 							t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
 						}
+						LOG_FATAL( log, "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 						robotCurrentGlobalVel=(*currGameState).getRobotGlobalVelocity( robot->getRobotID() );
 						robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
-						if(this->spec_rot){
-							w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), this->rotation, currGameState->getSimTime(), haveBall );
-						}
-						else
+
+						//jesli robot mam miec szczegolna rotacje w punckie docelowym
+						//if(this->spec_rot){
+						//	w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), this->rotation, currGameState->getSimTime(), haveBall );
+						//}
+						//else
 							w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), goalPose, currGameState->getSimTime(),haveBall );
 
 						LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
@@ -270,7 +276,14 @@ Task::status GoToPose::run(void* arg, int steps){
 						*/
 					}
 					else
-					{	LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+					{
+						if(this->spec_rot){
+							w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), this->rotation, currGameState->getSimTime(), haveBall );
+						}
+						else
+							w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), goalPose, currGameState->getSimTime(),haveBall );
+
+						LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
 												" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
 						if(fabs(w) >1.0 )
 							robot->setGlobalSpeed(Vector2D(0.0,0.0),w,robotRotation);

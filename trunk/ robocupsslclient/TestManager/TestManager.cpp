@@ -142,9 +142,9 @@ void TestManager::addTest(Tests::TestKind testKind){
 		}
 		break;
 		case ballDribbling: {
-			LOG_DEBUG(logger,"not supported test");
-			//Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
-			//testDribbler(testRobot);
+			LOG_DEBUG(logger,"ball dribbling");
+			Robot testRobot(Config::getInstance().getTestModelName(),ifaceName);
+			testDribbler(testRobot);
 		}
 		break;
 		case kick: {
@@ -172,6 +172,7 @@ void TestManager::addTest(Tests::TestKind testKind){
 		}
 		break;
 		default:
+			LOG_DEBUG( logger,"unknown test nr "<<testKind );
 		break;
 	}
 }

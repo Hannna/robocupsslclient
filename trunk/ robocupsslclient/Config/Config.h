@@ -213,6 +213,7 @@ private:
 	bool testMode;
 	//czy zapisujemy logi do plikow
 	bool debug;
+	std::string worldName;
 	//nazwy modeli druzyny niebieskiej
 	std::vector<std::string> blueTeam;
 	//nazwy modeli druzyny czerwonej

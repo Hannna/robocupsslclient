@@ -73,6 +73,7 @@ void Play::init(){
 	std::vector<std::string>::iterator robotName = redTeam.begin();
 
 	for(int i=0 ;robotName!=redTeam.end();robotName++,i++ ){
+		std::cout<< *robotName <<std::endl;
 		Play::redTeam[i] = new Robot(*robotName,ifaceName);
 	}
 
