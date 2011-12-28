@@ -201,7 +201,9 @@ Task::status GoToPose::run(void* arg, int steps){
 
 				robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
 
-				if( rrt->getDistToNearestObs() > 0.02 ){
+				// odleglosc punktu startowego od najblizszej przeszkody, brane sa pod uwage jedynie biezace polozenia robotow, jesli robot jest blizej przeszkody
+				// to wywolywana jest funkcja powodujaca rozproszenie
+				if( rrt->getDistToNearestObs() > GoToPose::minDistFromObstacle ){
 					//if( this->predicates && Task::got_ball ){
 					/*jesli mam pilke to sprawdz czy:
 					 * 1. robot jest zworcony przodem do punktu docelowego
@@ -292,12 +294,12 @@ Task::status GoToPose::run(void* arg, int steps){
 					}
 				}
 				else{
-					LOG_INFO(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+					LOG_FATAL(log,"disperse move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
 											" setVel global vel "<<robotNewGlobalVel <<" w"<<0);
 
-					robot->setGlobalSpeed(robotNewGlobalVel,0,robotRotation);
+					//robot->setGlobalSpeed(robotNewGlobalVel,0,robotRotation);
+					robot->disperse( GoToPose::minDistFromObstacle*2.0 );
 				}
-				//robot->
 			}
 			else if(status==RRTPlanner::RobotReachGoalPose){
                 LOG_DEBUG(log,"From rrtPlanner: RobotReachGoalPose");

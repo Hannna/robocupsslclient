@@ -25,14 +25,22 @@
 //czas o jaki przewidujemy ruch przeciwnika do przodu
 //#define PREDICTION_TIME 0.01 //[sek]
 
-#define GOALPOSE 1
-#define WAYPOINT 2
-#define RANDOMPOINT 3
+/* typ punktu losowanego przez choseTarget, do debugowania
+ *
+ */
+enum TargetType{
+	GOALPOSE = 1,
+	WAYPOINT = 2,
+	RANDOMPOINT = 3
+};
 
 class RRTPlanner {
 	friend class TestRRT;
 public:
 
+/*kody bledow algorytmu rrt
+ *
+ */
 enum ErrorCode{
     //mamy plan jak dojechac do celu
     Success=1,
@@ -98,20 +106,18 @@ enum ErrorCode{
 		this->minDistance = d;
 	}
 
-	//Vector2D ( *xConstraints )( );
-	//Vector2D ( *yConstraints )( );
 
 	void addXConstraint(  std::pair<double, double> * xConstraints  ){
 		this->xConstraints = xConstraints;
 
-	    //LOG_INFO( logger,"dodano ograniczenia x:["<<xConstraints->first <<";"<< xConstraints->second<<"]" );
+	    LOG_TRACE( logger,"dodano ograniczenia x:["<<xConstraints->first <<";"<< xConstraints->second<<"]" );
 	}
 
 	void addYConstraint( std::pair<double, double> * yConstraints ){
 		this->yConstraints = yConstraints;
 
-	    //LOG_INFO( logger,"dodano ograniczenia y:["
-	    //   		<<yConstraints->first <<";"<< yConstraints->second<<"]" );
+	    LOG_TRACE( logger,"dodano ograniczenia y:["
+	       		<<yConstraints->first <<";"<< yConstraints->second<<"]" );
 	}
 
 	virtual ~RRTPlanner();
@@ -123,7 +129,7 @@ private:
 	 * @param[in] goalPose punkt docelowy
 	 * @return
 	 */
-private:	Pose choseTarget( Pose goalPose, int * targetType , std::list<Pose>* wayPoints);
+private:	Pose choseTarget( Pose goalPose, TargetType * targetType , std::list<Pose>* wayPoints);
 	/**
 	 * @brief zwraca element poddrzewa(od currNode) znajdujacy sie najblizej celu.
 	 *
@@ -242,6 +248,7 @@ private:
 	//stanu odleglego od celu o max simTime_
 	bool foundNewPlan;
 
+	//odleglosc punktu startowego od najblizszej przeszkody , brane sa pod uwage jedynie biezace polozenia robotow
 	double distToNearestObs;
 
 
@@ -267,7 +274,7 @@ private:
     bool goDirectToTarget;
 
 	//promień okręgu w jakim losujemy kolejny losowy stan
-	static const double randomStateReach;
+	//static const double randomStateReach;
     //maksymalna liczba potomkow korzenia drzewa RRT
 	static const unsigned int maxRootChildren = 4;
 	//ograniczenie na maksymalna liczbe wezłów w drzewie
@@ -287,16 +294,25 @@ private:
     const log4cxx::LoggerPtr logger;
 
     bool blockedGoalPose;
+
+    //ograniczenia na dopuszczalna
+    //przestrzen z ktorej moga byc losowane tymczasowe punkty docelowe
+    //wynikajace z rozmiaru boiska
     const double maxXvalue;
     const double minXvalue;
     const double maxYvalue;
     const double minYvalue;
 
-    double minDistance;
-
-
+    //ograniczenia na dopuszczalna
+    //przestrzen z ktorej moga byc losowane tymczasowe punkty docelowe
+    //dodane odgornie , wynikajace z sytuacji na planszy, badz z rodzaju zadania
     std::pair<double, double> *xConstraints;
     std::pair<double, double> *yConstraints;
+
+
+    //odleglosc przy jakiej stwierdzamy ze robot jest u celu
+    double minDistance;
+
 };
 
 

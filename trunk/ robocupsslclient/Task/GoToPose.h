@@ -52,8 +52,12 @@ private:
 	const double maxDistToGoal;
 	const double rotation;
 	const bool spec_rot;
-
-
+	/*
+	 * obliczane przy uruchomieniu rrt
+	 odleglosc punktu startowego od najblizszej przeszkody, brane sa pod uwage jedynie biezace polozenia robotow, jesli robot jest blizej przeszkody
+	 to wywolywana jest funkcja powodujaca rozproszenie
+	 */
+	static const double minDistFromObstacle = 0.02;
 
 	double currSimTime;
 	double lastSimTime;
