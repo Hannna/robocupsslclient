@@ -29,7 +29,7 @@
 #include "../RotationMatrix/RotationMatrix.h"
 
 //zasieg w jakim losujemy cel
-const double RRTPlanner::randomStateReach=0.5;//[m]
+//const double RRTPlanner::randomStateReach=0.5;//[m]
 
 //generatory liczb losowych do losowania pozycji w drzewie rrt
 static boost::mt19937 rngA(static_cast<unsigned> (time(NULL)));
@@ -270,7 +270,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		 * to chose target nie bieze goalPose nie jest brane pod uwage
 		 *
 		 */
-		int  targetType;
+		TargetType  targetType;
 
 		temporaryTarget = this->choseTarget(goalPose, &targetType , &tmpWayPoints);
 		//temporaryTarget=this->choseTarget( goalPose , &isGoalPose);
@@ -278,7 +278,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		//wyszukuje pkt w drzewie najblizej wybranego celu tymczasowego
 		nearest=findNearestState(temporaryTarget);
 
-		if(nearest->getRobotPos(this->robotId).distance( temporaryTarget ) > minDistance){
+		if( nearest->getRobotPos(this->robotId).distance( temporaryTarget ) > minDistance ){
 
 			if( targetType==GOALPOSE ){
 				//rozszerzam do celu
@@ -287,6 +287,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 					this->blockedGoalPose = true;
 				}
 			}
+			//rozszerzam do waypoint, jesli jest zablokowany, przeszkoda etc to usuwam z listy
 			else if( targetType==WAYPOINT ){
 				extendedGameState=this->extendState( nearest->state,temporaryTarget,robotReach);
 				if(extendedGameState.get()==NULL){
@@ -428,7 +429,7 @@ GameStatePtr RRTPlanner::getNextState(){
 
 }
 
-Pose RRTPlanner::choseTarget( Pose goalPose, int * targetType, std::list<Pose>* wayPoints_ ){
+Pose RRTPlanner::choseTarget( Pose goalPose, TargetType * targetType, std::list<Pose>* wayPoints_ ){
 	Pose result;
 	*targetType=RANDOMPOINT;
 

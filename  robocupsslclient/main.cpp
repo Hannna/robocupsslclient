@@ -71,8 +71,14 @@
 #include "TestManager/TestManager.h"
 #include "RefereeClient/RefereeClient.h"
 #include "STP_algorithm/STP.h"
-#include "Test/Experiments.h"
+//#include "Test/Experiments.h"
 
+namespace Experiments{
+	enum ExperimentKind{
+		none,
+		navigation_2011
+	};
+}
 
 
 using namespace Tests;
