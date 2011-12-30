@@ -5,11 +5,16 @@
 #include <iostream>
 #include <boost/assert.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
-//#include "../tasks/GoToBallTask.h"
 #include "../additional.h"
 #include "../Robot/Robot.h"
 #include "../WorldDesc/WorldDesc.h"
 #include "../SimControl/SimControl.h"
+#include "../Task/Task.h"
+#include "../Task/GoToBall.h"
+#include "../Logger/Logger.h"
+
+//#include "../tasks/GoToBallTask.h"
+
 /**
  * @brief Klasa opisująca pojedynczy eksperyment  z użyciem algorytmu CVM.
  * 
@@ -44,6 +49,8 @@ public:
 	* 
 	*/
 	bool finished(std::fstream & file);
+
+	static void initRobots();
 	virtual ~Experiment();
 private:
 	/**
@@ -58,9 +65,11 @@ private:
 	/// opis rozmieszczenia obiektow podczas eksperymentu
 	WorldDesc wd;
 	///robot będący pod kontrolą eksperymentu
-	boost::shared_ptr<Robot> robot;
+	//boost::shared_ptr<Robot> robot;
+	Robot* robot;
 	///zadanie przydzielane robotowi
-	//boost::shared_ptr<GoToBallTask> task;
+	boost::shared_ptr<Task> task;
+	Task::status taskStatus;
 	/// czas, w którym robot wystartowal do celu
 	double startTime;
 	/// limit czasowy trwania eksperymentu
@@ -68,10 +77,10 @@ private:
 	///flaga informująca o tym, czy robot rzucil wyjatek zwiazany z kolizja z przeszkoda - wtedy 
 	///nalezy zakonczyc eksperyment
 	bool wyjatek;
-
-    static std::map<int, Robot*> redTeam;
-    static std::map<int, Robot*> blueTeam;
-
+	const log4cxx::LoggerPtr log;
+    //static std::map<std::string, Robot*> redTeam;
+    //static std::map<std::string, Robot*> blueTeam;
+	static std::map<std::string, Robot*> robots;
 };
 
 #endif /*STATICEXPERIMENT_H_*/

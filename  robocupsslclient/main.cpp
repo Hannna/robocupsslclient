@@ -8,6 +8,8 @@
 #include "RefereeClient/RefereeClient.h"
 #include "EvaluationModule/EvaluationModule.h"
 #include "Test/Test.h"
+#include "ExperimentConfig/ExperimentConfig.h"
+#include "Experiment/Experiment.h"
 
 #include "STP_algorithm/STP.h"
 
@@ -67,7 +69,6 @@
 #include "Plays/Play.h"
 
 #include "my_signal.h"
-
 #include "TestManager/TestManager.h"
 #include "RefereeClient/RefereeClient.h"
 #include "STP_algorithm/STP.h"
@@ -75,17 +76,16 @@
 
 namespace Experiments{
 	enum ExperimentKind{
-		none,
-		navigation_2011
+		none = -1,
+		navigation_2011 = 1,
+		rrtTest = 2
 	};
 }
 
 
 using namespace Tests;
 
-bool run=true;
-
-//extern const std::string ifaceName;
+//bool run=true;
 
 int daemonInit ( void )	{
 	pid_t pid;
@@ -135,7 +135,7 @@ int main(int argc, char*argv[],char *envp[]){
 
     Tests::TestKind testKind=Tests::none;
     Experiments::ExperimentKind experimentKind =  Experiments::none;
-
+    std::string situations;
     if(argc>1){
         if( strncmp(argv[1],"test",4)==0 ){
             Config::getInstance().setTestMode(true);
@@ -143,7 +143,12 @@ int main(int argc, char*argv[],char *envp[]){
         else if( strncmp(argv[1],"experiment_1",12)==0 ){
         	experimentKind = Experiments::navigation_2011;
         }
-        if(argc>2){
+        else if( strncmp(argv[1],"experiment_2",12)==0 ){
+        	experimentKind = Experiments::rrtTest;
+        	std::cout<<" !!!!!@@@@@@@@@@"<<argv[2]<<std::endl;
+        	situations = std::string(argv[2]);
+        }
+        else if(argc>2){
             if(strncmp(argv[2],"velocity",8)==0)
                 testKind=Tests::velocity;
             if(strncmp(argv[2],"position",8)==0)
@@ -222,6 +227,14 @@ int main(int argc, char*argv[],char *envp[]){
     		while(Videoserver::getInstance().updateGameState( gameState ) > 0.001){
     			sleep_status=nanosleep(&req,&rem);
     		};
+    	}
+    	else if( experimentKind == Experiments::rrtTest  ){
+    		//ExperimentConfig config("/home/maciek/workspace/magisterka/sytuacje/worlds.txt","tmp.txt");
+    		Experiment::initRobots();
+    		ExperimentConfig config ( situations ,"tmp.txt" );
+    		//ExperimentConfig config("/home/maciek/workspace/magisterka/sytuacje/dynamiczne.txt","tmp.txt");
+    		config.display();
+    		config.doEx();
     	}
 
     }

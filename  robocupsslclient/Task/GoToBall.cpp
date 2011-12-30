@@ -78,14 +78,15 @@ Task::status GoToBall::run(void * arg, int steps){
 	}
 
 	double dist = ballPose.distance(this->currGameState->getBallPos());
-	if( dist > GetBall::maxDistanceToBall){
+	//co to kurwa robi????
+	if( dist > GetBall::maxDistanceToBall ){
 		LOG_DEBUG(log, "go to ball distance to ball = "<<dist);
 		ballPose = this->currGameState->getBallPos();
 		delete this->goToPose;
 		Vector2D ballPos = this->currGameState->getBallPos().getPosition();
 		ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
 
-		if( (this->predicates & Task::analyse_all_field ) > 0){
+		if( ( this->predicates & Task::analyse_all_field ) > 0){
 			this->goToPose =  new GoToPose( ballPos, robot, true);
 		}
 		else

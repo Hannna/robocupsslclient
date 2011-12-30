@@ -120,8 +120,8 @@ bool Config::load(std::string filename){
 	    		this->redTeam.push_back(*ii);
 	    	}
 	    	else if (strncmp(ii->c_str(),"blue",3)==0 ){
-	    	    		this->blueTeam.push_back(*ii);
-	    	    	}
+	    	    this->blueTeam.push_back(*ii);
+	    	}
 	    }
 	}
 	catch(std::string& err){

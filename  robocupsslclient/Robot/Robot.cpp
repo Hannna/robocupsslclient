@@ -10,6 +10,8 @@
 
 #include <gsl/gsl_deriv.h>
 
+const std::string Robot::ifaceName=std::string("::position_iface");
+
 std::ostream& operator<<(std::ostream& os,const Robot::robotID& id){
 	if( id==Robot::red0 ){
 		return os<<"red0";
@@ -855,6 +857,7 @@ void Robot::stop(  ){
 		#ifdef GAZEBO
 			posIface->Lock(1);
 			err=( pow( posIface->data->velocity.pos.x, 2 ) + pow( posIface->data->velocity.pos.y, 2 ) );
+			posIface->data->cmdEnableMotors = 0;
 			posIface->Unlock();
 		#endif
 			usleep(10000);

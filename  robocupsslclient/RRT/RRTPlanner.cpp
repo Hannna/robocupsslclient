@@ -117,7 +117,8 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
 //    		<<" minYvalue "<<minXvalue );
 
     static int rrtNr;
-
+    xConstraints = NULL;
+    yConstraints = NULL;
     goDirectToTarget=false;
     finish=false;
 
@@ -647,7 +648,7 @@ Pose RRTPlanner::getRandomPose( ){
 
 	//interesujace sa jedynie pozycje rozniace sie co najwyzej o 0.01 [m]
 
-	if(this->xConstraints){
+	if(this->xConstraints && this->yConstraints){
 		//LOG_DEBUG( logger, "########## getRandomPose  with constraints ##############" );
 
 		std::pair<double, double> c = *this->xConstraints;

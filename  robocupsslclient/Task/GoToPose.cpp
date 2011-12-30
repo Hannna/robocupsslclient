@@ -163,6 +163,8 @@ Task::status GoToPose::run(void* arg, int steps){
             	}
             	rrt->setMinDistance( maxDistToGoal );
             	status=rrt->run( video.getUpdateDeltaTime() );
+
+            	//if( status == )
             }
 
             if(serialize){

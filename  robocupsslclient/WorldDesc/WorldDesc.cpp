@@ -2,34 +2,38 @@
 
 WorldDesc::WorldDesc()
 {
+	isDynamic = false;
+	this->name = std::string("");
+
+	/// limit czasu na przejazd w danej sytuacji
+	this->timeLimit = 0;
 }
 
 WorldDesc::~WorldDesc()
 {
 }
 
-void WorldDesc::addObject(double x,double y,double rot,std::string  name)
+void WorldDesc::addObject( double x, double y, double rot, std::string  name )
 {
-	this->objectsPos.push_back(boost::tuple<Vector2D,double,std::string>(Vector2D(x,y),rot,name));
+	this->objectsPositions.push_back( std::pair<Pose,std::string>( Pose(x,y,rot), name ) );
 }
 
-void WorldDesc::addSpeedOrder(std::string modelName, double vl, double vr)
+void WorldDesc::addSpeedOrder(std::string modelName, double vx, double vy)
 {
-	this->speeds.push_back(std::pair<std::string, Vector2D>(modelName, Vector2D(vl,vr)));
+	this->speeds.push_back(std::pair<std::string, Vector2D>(modelName, Vector2D(vx,vy)));
 }
 
-pos2D WorldDesc::getObjPos(std::string name)
+Pose WorldDesc::getObjPos(std::string name)
 {
-	pos2D result;
-	std::vector<boost::tuple<Vector2D,double, std::string> >::iterator ii=this->objectsPos.begin();
-	for(;ii!=this->objectsPos.end();ii++){
-		if((*ii).get<2>()==name){
-			result=pos2D((*ii).get<0>(),(*ii).get<1>());
-			return result;
+	std::vector< std::pair< Pose, std::string > >::iterator ii=this->objectsPositions.begin();
+	for(;ii!=this->objectsPositions.end();ii++){
+		if((*ii).second==name){
+			return ii->first;
 		}
 	}
-	return result;
+	return Pose(0,0,0);
 }
+
 void WorldDesc::setName(std::string name)
 {
 	this->name=name;
@@ -53,7 +57,7 @@ double WorldDesc::getTimeLimit()
 
 std::string WorldDesc::getFirstRobotName()
 {
-	std::string name = boost::get<2>(this->objectsPos.front());
+	std::string name = this->objectsPositions.front().second;
 	return name;
 }
 
@@ -63,11 +67,11 @@ void WorldDesc::display()
 {
 	std::cout<<"Nazwa świata: "+name+"\n";
 	std::cout<<"TimeLimit: "<<timeLimit<<"\n";
-	std::vector<boost::tuple<Vector2D,double, std::string> >::iterator ii=this->objectsPos.begin();
-	for(;ii!=objectsPos.end();ii++){
-		std::cout<<"\t"<<boost::get<2>(*ii)<<std::endl;
-		std::cout<<"\t"<<boost::get<0>(*ii)<<std::endl;
-		std::cout<<"\t"<<boost::get<1>(*ii)<<std::endl<<std::endl;
+	std::vector< std::pair<Pose, std::string> >::iterator ii=this->objectsPositions.begin();
+	for(;ii!=objectsPositions.end();ii++){
+		std::cout<<"\t"<<ii->first.get<0>()<<std::endl;
+		std::cout<<"\t"<<ii->first.get<1>()<<std::endl;
+		std::cout<<"\t"<<ii->first.get<2>()<<std::endl<<std::endl;
 	}
 	
 	std::vector<std::pair<std::string, Vector2D> >::iterator si = this->speeds.begin();

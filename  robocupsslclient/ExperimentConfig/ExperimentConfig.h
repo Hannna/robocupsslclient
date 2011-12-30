@@ -45,10 +45,10 @@ public:
 	
 
 	///@brief Wykonanie serii eksperymentów statycznych.
-	void doStaticEx();
+	void doEx();
 	
 	///@brief Wykonanie serii eksperymentów dynamicznych
-	void doDynamicEx();
+	//void doDynamicEx();
 	
 	///@brief Do debugowania
 	///Wypisuje wczytane światy
@@ -62,10 +62,11 @@ private:
 	std::string resultsFile;
 	
 	const Videoserver & video;
+	const log4cxx::LoggerPtr log;
 
 	///@brief Właściwa metoda uruchamiająca eksperyment, obudowana metodami doStaticEx i doDynamicEx
 	///@param isDynamic - jaki rodziaj eksperymentu wykonac - oznacza to nadanie predkosci modelom lub nie	
-	void doExperiment(bool isDynamic);
+	void doExperiment( );
 	
 };
 
