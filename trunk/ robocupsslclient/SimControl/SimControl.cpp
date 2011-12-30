@@ -100,30 +100,30 @@ void SimControl::pause()
 		std::cout<<"simulation already paused"<<std::endl;
 	}
 	this->simIface->Unlock();
-	this->wait();
+	//this->wait();
 }
 
 void SimControl::resume()
 {
 	LockGuard lock(mutex);
-	this->wait();
+	//this->wait();
 	while(simIface->Lock(1)!=1);
 	//simIface->Lock(1);
 	simIface->data->responseCount=0;
-	if (simIface->data->state==0){
+	//if (simIface->data->state==0){
     #ifdef OLD
     	gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
 		request->type =gazebo::SimulationRequestData::PAUSE;
     #else
     	libgazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
-		request->type =libgazebo::SimulationRequestData::PAUSE;
+		request->type =libgazebo::SimulationRequestData::UNPAUSE;
     #endif
-	}
-	else{
-		std::cout<<"simulation already run"<<std::endl;
-	}
+	//}
+	//else{
+	//	std::cout<<"simulation already run"<<std::endl;
+	//}
 	simIface->Unlock();
-	this->wait();
+	//this->wait();
 }
 
 double SimControl::getSimTime()
@@ -159,12 +159,23 @@ void SimControl::connectGazeboPosIface(libgazebo::PositionIface *posIface,const 
 void SimControl::setSimPos(const char* name, Pose &pose)
 {
 	LockGuard lock(mutex);
-	this->wait();
+	//this->wait();
 	//std::cout<<"setSimPos name="<<name<<" x="<<x<<" y="<<y<<" rot="<<rot<<std::endl;
-		while(simIface->Lock(1)!=1);
-		simIface->data->responseCount=0;
+		//while(simIface->Lock(1)!=1);
+		//simIface->data->responseCount=0;
 		if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
 			//std::cout<<"simIface->data->requestCount "<<simIface->data->requestCount<<std::endl;
+
+			//bzero(request->name,512);
+			std::string model_name("noname::");
+			model_name.append(name);
+			//memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
+			libgazebo::Vec3 p(pose.get<0>(),pose.get<1>(), 0.05);
+			libgazebo::Pose pose_(p,0.0,0.0, pose.get<2>() );
+			libgazebo::Vec3 v(0,0,0);
+
+			simIface->SetState(model_name.c_str(), pose_, v,v,v,v);
+			/*
 			#ifdef OLD
 			gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
 			request->type = gazebo::SimulationRequestData::SET_POSE2D;
@@ -173,7 +184,9 @@ void SimControl::setSimPos(const char* name, Pose &pose)
 			request->type = libgazebo::SimulationRequestData::SET_POSE2D;
 			#endif
 			bzero(request->name,512);
-			memcpy(request->name, name, strlen(name));
+			std::string model_name("noname::");
+			model_name.append(name);
+			memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
 			//sprintf(request->modelName,"%s", name);
 			//gazebo::Pose modelPose(gazebo::Vec3(x,y,0.05) , 0, 0, rot);
 			//simIface->SetPose3d(name, modelPose );
@@ -185,10 +198,11 @@ void SimControl::setSimPos(const char* name, Pose &pose)
 			request->modelPose.yaw = pose.get<2>();
 			request->modelPose.roll = 0;
 			request->modelPose.pitch = 0;
+			*/
 		}
-		simIface->Unlock();
+		//simIface->Unlock();
 		//waiting until request was executed
-		this->wait();
+		//this->wait();
 }
 SimControl::~SimControl()
 {
@@ -564,7 +578,10 @@ void SimControl::moveAwayModels(){
 			request->type = libgazebo::SimulationRequestData::SET_POSE3D;
 			#endif
 			bzero(request->name,512);
-			memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
+			std::string model_name_("noname::");
+			model_name_.append(model_name);
+			memcpy(request->name, model_name_.c_str(), strlen(model_name_.c_str()));
+			//memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
 			double x = 0.0;
 			y-=0.5;
 			double rot=0;
@@ -578,7 +595,7 @@ void SimControl::moveAwayModels(){
 		}
 	}
 	simIface->Unlock();
-	this->wait();
+	//this->wait();
 
 }
 

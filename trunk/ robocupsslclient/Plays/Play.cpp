@@ -4,8 +4,6 @@
 #include "../Role/Role.h"
 //extern const std::string ifaceName;
 
-const std::string ifaceName="::position_iface";
-
 
 //Robot* Play::red0;//( new Robot(std::string("red0"),ifaceName) );
 //Robot* Play::red1;//( new Robot(std::string("red1"),ifaceName) );
@@ -74,7 +72,7 @@ void Play::init(){
 
 	for(int i=0 ;robotName!=redTeam.end();robotName++,i++ ){
 		std::cout<< *robotName <<std::endl;
-		Play::redTeam[i] = new Robot(*robotName,ifaceName);
+		Play::redTeam[i] = new Robot( *robotName,Robot::ifaceName );
 	}
 
 	/*
@@ -86,7 +84,7 @@ void Play::init(){
 	robotName = blueTeam.begin();
 
 	for(int i=0 ;robotName!=blueTeam.end();robotName++, i++ ){
-		Play::blueTeam[i] = new Robot(*robotName,ifaceName);
+		Play::blueTeam[i] = new Robot(*robotName,Robot::ifaceName);
 	}
 
 	/*

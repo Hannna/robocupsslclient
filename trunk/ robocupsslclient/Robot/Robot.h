@@ -66,6 +66,8 @@ public:
 
 	Robot(const std::string robotName,const std::string posIfaceName);
 	virtual ~Robot();
+	//
+	static const std::string ifaceName;
 	///metoda zwracajaca unikalna nazwe robota
 	std::string getRobotName() const ;
 	robotID getRobotID() const;

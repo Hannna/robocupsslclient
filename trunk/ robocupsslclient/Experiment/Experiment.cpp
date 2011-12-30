@@ -1,33 +1,40 @@
 #include "Experiment.h"
+#include "../Config/Config.h"
 
 
-std::map<int, Robot*> Experiment::redTeam;
-std::map<int, Robot*> Experiment::blueTeam;
+std::map<std::string, Robot*> Experiment::robots;
 
-Experiment::Experiment(std::fstream & file, WorldDesc wd, bool isDynamic)													
+//std::map<int, Robot*> Experiment::blueTeam;
+
+Experiment::Experiment(std::fstream & file, WorldDesc wd, bool isDynamic):log( getLoggerPtr ("app_debug") )
 {
+	this->taskStatus = Task::error;
 	this->wd=wd;
 	this->timeLimit=wd.getTimeLimit();
 	
-	this->robot= boost::shared_ptr<Robot>( new Robot(wd.getFirstRobotName()));
-
-	//this->task=boost::shared_ptr<GoToBallTask>(new GoToBallTask(robot));
+	//this->robot= boost::shared_ptr<Robot>( new Robot(wd.getFirstRobotName(), Robot::ifaceName));
+	this->robot = robots[wd.getFirstRobotName()];
+	this->task=boost::shared_ptr<GoToBall>( new GoToBall( robot ) );
+	this->task->markParam( Task::analyse_all_field );
 	
+	/*
 	std::vector<std::string> redTeam = Config::getInstance().getRedTeam();
 	std::vector<std::string>::iterator robotName = redTeam.begin();
 
-	for(int i=0 ;robotName!=redTeam.end();robotName++,i++ ){
+	for( int i=0 ;robotName!=redTeam.end(); robotName++,i++ ){
 		std::cout<< *robotName <<std::endl;
-		Play::redTeam[i] = new Robot(*robotName,ifaceName);
+		//Experiment::redTeam[i] = new Robot(*robotName,Robot::ifaceName);
+		Experiment::robots[*robotName] = new Robot(*robotName,Robot::ifaceName);
 	}
 
 	std::vector<std::string> blueTeam = Config::getInstance().getBlueTeam();
 	robotName = blueTeam.begin();
 
 	for(int i=0 ;robotName!=blueTeam.end();robotName++, i++ ){
-		Play::blueTeam[i] = new Robot(*robotName,ifaceName);
+		//Experiment::blueTeam[i] = new Robot(*robotName,Robot::ifaceName);
+		Experiment::robots[*robotName] = new Robot(*robotName,Robot::ifaceName);
 	}
-
+	*/
 
 	boost::posix_time::ptime t = boost::posix_time::second_clock::local_time();
 	//file<<"Środowisko: "<<wd.getName()<<" "<<to_simple_string(t)<<std::endl;	
@@ -37,33 +44,85 @@ Experiment::Experiment(std::fstream & file, WorldDesc wd, bool isDynamic)
 	
 	this->init(isDynamic);
 }
+
+void Experiment::initRobots(){
+	std::vector<std::string> redTeam = Config::getInstance().getRedTeam();
+	std::vector<std::string>::iterator robotName = redTeam.begin();
+
+	for( int i=0 ;robotName!=redTeam.end(); robotName++,i++ ){
+		std::cout<< *robotName <<std::endl;
+		//Experiment::redTeam[i] = new Robot(*robotName,Robot::ifaceName);
+		Experiment::robots[*robotName] = new Robot(*robotName,Robot::ifaceName);
+	}
+
+	std::vector<std::string> blueTeam = Config::getInstance().getBlueTeam();
+	robotName = blueTeam.begin();
+
+	for(int i=0 ;robotName!=blueTeam.end();robotName++, i++ ){
+		//Experiment::blueTeam[i] = new Robot(*robotName,Robot::ifaceName);
+		Experiment::robots[*robotName] = new Robot(*robotName,Robot::ifaceName);
+	}
+
+}
+
 void Experiment::init(bool isDynamic)
 {
-	robot->setSpeed(0.0, 0.0);
+	LOG_INFO(this->log," INIT ");
+	robot->stop();
+	LOG_INFO(this->log," after curr robot stop ");
 	SimControl::getInstance().pause();
-	
+	LOG_INFO(this->log," after pause simulation ");
 	SimControl::getInstance().moveAwayModels();	//modele są odsuwane, zeby można je było poustawiać bez konfliktów
-	
-	std::vector<std::string> names = Names::getNames();
+	LOG_INFO(this->log," after moveAwayModels ");
+	//std::vector<std::string> names = Names::getNames();
+
+	std::vector<std::string> names = Config::getInstance().getRedTeam();
+	std::vector<std::string> tmp = Config::getInstance().getBlueTeam();
+	names.insert( names.begin(), tmp.begin(), tmp.end() );
+	names.push_back( "ball" );
+
 	std::vector<std::string>::iterator i;
 
 	for (i=names.begin(); i !=names.end(); i++) {
 		std::string name = (*i);
-		pos2D pos=wd.getObjPos(name);
-		SimControl::getInstance().setSimPos(name.c_str(), pos.first.x, pos.first.y, pos.second);
+		Pose pos=wd.getObjPos(name);
+		//dodaje nowy margines
+		Pose p( pos.get<0>() + Config::getInstance().field.FIELD_MARIGIN, pos.get<1>() + Config::getInstance().field.FIELD_MARIGIN, pos.get<2>()  );
+		LOG_INFO(this->log," after set sip pose for  "<<name.c_str() );
+		SimControl::getInstance().setSimPos( name.c_str(), p );
+	}
+
+	std::vector<std::string> redTeam = Config::getInstance().getRedTeam();
+	std::vector<std::string>::iterator robotName = redTeam.begin();
+	for( int i=0 ;robotName!=redTeam.end(); robotName++,i++ ){
+		//Experiment::redTeam[*robotName]->stop();
+		LOG_INFO( this->log," try to stop  "<<*robotName );
+		Experiment::robots[*robotName]->stop();
+	}
+
+	std::vector<std::string> blueTeam = Config::getInstance().getBlueTeam();
+	robotName = blueTeam.begin();
+	for(int i=0 ;robotName!=blueTeam.end();robotName++, i++ ){
+		//Experiment::blueTeam[*robotName]->stop();
+		LOG_INFO( this->log," try to stop  "<<*robotName );
+		Experiment::robots[*robotName]->stop();
 	}
 	
 	//jeżeli eksperyment ma być dynamiczny, zadawane są prędkości obiektom
 	if (isDynamic){
 		if (wd.speeds.size()==0){
-			std::cout<<"Blad w "<<wd.getName()<<std::endl;
-			std::cout<<"Wybrano eksperyment dynamiczny, a nie okreslono predkosci dla modeli (SPEED: model vl vr)\n";
+			LOG_INFO(this->log," Blad w "<<wd.getName() );
+			LOG_INFO(this->log,"Wybrano eksperyment dynamiczny, a nie okreslono predkosci dla modeli (SPEED: model vl vr)");
 			exit(0);
 		}
 		for(std::vector<std::pair<std::string, Vector2D> >::iterator is = wd.speeds.begin(); is!=wd.speeds.end();is++){
-			Robot r((*is).first);
+			//Robot r( (*is).first, Robot::ifaceName );
+
 			Vector2D speed = (*is).second;
-			r.setSpeed(speed.x,speed.y);	//vl, vr
+			double v = ( speed.x+speed.y )/2.0;
+			double w = ( speed.y-speed.x )/0.106;
+			Vector2D s(0,v);
+			Experiment::robots[(*is).first]->setRelativeSpeed( s, w );	//vl, vr
 		}
 	}
 	
@@ -74,26 +133,32 @@ void Experiment::init(bool isDynamic)
 }
 void Experiment::execute()
 {
-	try{
-		task->execute();
-	}
-	catch(std::string s){
-		wyjatek = true;
-	}
+	//try{
+		int steps = 1;
+		taskStatus = task->execute( NULL,steps );
+
+		if( taskStatus == Task::collision ){
+			wyjatek = true;
+		}
+	//}
+	//catch(std::string& s){
+	//	wyjatek = true;
+	//}
 }
 bool Experiment::finished(std::fstream & file)
 {
 	double timeElapsed = SimControl::getInstance().getSimTime() - startTime;
 	//std::cout<<"Time elapsed: "<<timeElapsed<<std::endl;
 	
-	if (wyjatek){
+	if ( wyjatek ){
 		boost::posix_time::ptime t = boost::posix_time::second_clock::local_time();
 		
 		file<<to_simple_string(t)<<"\t";
 		file<<0<<"\t";
 		file<<this->timeLimit<<std::endl;
 		
-		std::cout<<"Wystąpiła kolizja! "<<std::endl;
+		LOG_INFO(this->log,"Wystąpiła kolizja! ");
+
 		return true;
 	}
 	
@@ -107,12 +172,12 @@ bool Experiment::finished(std::fstream & file)
 		file<<2<<"\t";
 		file<<timeElapsed<<std::endl;
 		
-		std::cout<<"Przekroczono czas ("<<timeLimit<<"):"<<timeElapsed<<std::endl;
+		LOG_INFO(this->log,"Przekroczono czas ("<<timeLimit<<"):"<<timeElapsed);
 		
 		return true;
 	}
 	
-	if (task->finished())
+	if ( this->taskStatus == Task::ok )
 	{
 		//file<<"Eksperyment zakonczono powodzeniem w czasie "<<timeElapsed<<"\t";
 		boost::posix_time::ptime t = boost::posix_time::second_clock::local_time();
@@ -122,7 +187,7 @@ bool Experiment::finished(std::fstream & file)
 		file<<1<<"\t";
 		file<<timeElapsed<<std::endl;
 		
-		std::cout<<"Eksperyment zakonczono powodzeniem w czasie "<<timeElapsed<<std::endl;
+		LOG_INFO(this->log," Eksperyment zakonczono powodzeniem w czasie "<<timeElapsed );
 		
 		return true;
 	}
@@ -131,9 +196,9 @@ bool Experiment::finished(std::fstream & file)
 }
 Experiment::~Experiment()
 {
-	for (std::vector<std::pair<std::string, Vector2D> >::iterator is =
-			wd.speeds.begin(); is!=wd.speeds.end(); is++) {
-		Robot r((*is).first);
-		r.stop(); //vl, vr
+	std::map<std::string, Robot*>::iterator ii = Experiment::robots.begin();
+
+	for ( ; ii!=robots.end(); ii++) {
+		ii->second->stop();
 	}
 }

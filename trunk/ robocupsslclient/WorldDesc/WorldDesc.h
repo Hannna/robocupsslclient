@@ -6,7 +6,7 @@
 #include "../Vector2d/Vector2D.h"
 #include "../additional.h"
 
-typedef std::pair<Vector2D,double> pos2D;
+//typedef std::pair<Vector2D,double> pos2D;
 /**
  * @brief Klasa reprezentująca rozmieszczenie robotów oraz pilki na planszy 
  * @author Maciej Gabka
@@ -24,18 +24,26 @@ public:
 	/**
 	*  zwraca rotacje i pozycje obiektu o zadanej nazwie
 	*/
-	pos2D getObjPos(std::string name);
+	Pose getObjPos(std::string name);
 	
 	
 	/// dodaje polecenie nadania prędkości modelowi, wykorzystywane w przypadku 
 	/// eksperymentu dynamicznego
-	void addSpeedOrder(std::string modelName, double vl, double vr);
+	void addSpeedOrder(std::string modelName, double vx, double vy);
 	
 	virtual ~WorldDesc();
 	/**
 	*  ustawia nazwe danego rozstawienia robotow
 	*/
 	void setName(std::string);
+
+	void setDynamic( ){
+		this->isDynamic = true;
+	}
+
+	bool isDynamicWorld( ){
+		 return	this->isDynamic;
+	}
 
 	///Zwraca nazwę danego roztawienia robotow
 	std::string getName();
@@ -60,13 +68,16 @@ public:
 	
 private:
 	/// kolekcja pozycji poszczegolnych obiektow
-	std::vector<boost::tuple<Vector2D,double, std::string>  >objectsPos;
+	/// polozenie obiektu i nazwa
+	std::vector<std::pair<Pose, std::string>  >objectsPositions;
 	/// nazwa  opisywanego przez klase stanu na boisku
 	std::string name;
 	
 	/// limit czasu na przejazd w danej sytuacji
 	double timeLimit;
 	
+	bool isDynamic;
+
 	
 };
 
