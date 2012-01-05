@@ -240,6 +240,25 @@ const Vector2D  Videoserver::getBlueGoalRightCornerPosition(){
 	return Videoserver::blueGoalRightCornerPosition;
 }
 
+const Pose  Videoserver::getBallPosition(){
+
+	Pose ballPose;
+
+	pthread_mutex_lock (&Videoserver::mutex);
+	if(this->simError){
+		pthread_cond_broadcast(&Videoserver::update_game_state_cv);
+		pthread_mutex_unlock (&Videoserver::mutex);
+		LOG_FATAL(log,"SIMCONTROL error");
+		//std::cout<<"simcontrol error"<<std::endl;
+		return ballPose;
+	}
+
+		pthread_cond_wait(&Videoserver::update_game_state_cv,&Videoserver::mutex);
+		ballPose = (*Videoserver::gameState).getBallPos();
+
+	pthread_mutex_unlock (&Videoserver::mutex);
+	return ballPose;
+}
 /*
 void Videoserver::setRedGoalMidPosition( const Vector2D & v ){
 	std::cout<<" setRedGoalMidPosition "<<v<<std::endl;

@@ -68,7 +68,7 @@ public:
 	 */
 	std::vector<Pose> getEnemyRobotsPos(const Robot::robotID & id) const ;
 
-	Vector2D getRobotGlobalVelocity(const std::string name) const ;
+	//Vector2D getRobotRelativeVelocity(const std::string name) const ;
 	Vector2D getRobotGlobalVelocity(const Robot::robotID id) const ;
 	double getRobotAngularVelocity(const Robot::robotID id) const ;
 

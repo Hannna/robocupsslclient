@@ -92,7 +92,7 @@ private:
 //	void getResponseSimIface(double &x,double &y,double & rot,const char * name);
 
 	///Funkcja blokująca (do czasu, kiedy gazebo wykona rządanie)
-	bool wait();
+	//bool wait();
 
 	bool wait(int resp);
 

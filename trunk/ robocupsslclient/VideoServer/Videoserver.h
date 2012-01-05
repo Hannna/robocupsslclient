@@ -89,6 +89,8 @@ public:
 	static const Vector2D  getBlueGoalLeftCornerPosition();
 	static const Vector2D  getBlueGoalRightCornerPosition();
 
+	const Pose  getBallPosition( );
+
 //	static void setRedGoalMidPosition( const Vector2D & );
 //	static void setRedGoalLeftCornerPosition( const Vector2D & );
 //	static void setRedGoalRightCornerPosition( const Vector2D & );

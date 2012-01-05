@@ -231,7 +231,7 @@ void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const dou
     	file<<speed.x<<";"<<speed.y<<";"<<angularV<<";"<<this->w<<"\n" ;
     	file.flush();
     }
-    LOG_INFO(log,"set global vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
+    LOG_INFO(log,"set relative vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<speed.x<<"\t vy="<<speed.y<<"\t" );
 
 
@@ -246,7 +246,7 @@ std::pair<Vector2D,double> Robot::getDesiredVel() const
 {
 	return std::pair<Vector2D,double>(this->v,this->w);
 }
-std::pair<Vector2D,double> Robot::getRelativeVelocity() const
+std::pair<Vector2D,double> Robot::getGlobalVelocity() const
 {
 	double vx=0,vy=0,w=0;
 #ifdef GAZEBO
@@ -1210,7 +1210,8 @@ Robot::~Robot()
 {
 	this->posIface->Close();
 	delete this->posIface;
-	std::cout<<"~Robot "<<this->robotName<<std::endl;
+    LOG_FATAL( log, "~Robot "<<this->robotName );
+	//std::cout<<"~Robot "<<this->robotName<<std::endl;
 	this->file.close();
 	this->file_teta.close();
 	this->file_xy.close();

@@ -33,6 +33,19 @@ public:
 		//LOG_INFO( log,"dodano ograniczenia y:["<<yConstraints->first <<";"<< yConstraints->second<<"]" );
 	}
 
+	void wayPointsDisabled(){
+		way_points_disabled = true;
+	}
+
+	//czas w ms wszystkich uruchomien rrt w danym tasku
+	double total_rrt_time;
+	//liczba uruchomien rrt w danym tasku
+	unsigned int rrt_iterations;
+	unsigned int max_path_size;
+	unsigned int min_path_size;
+	unsigned int max_tree_size;
+	unsigned int min_tree_size;
+
 	virtual Task* nextTask();
 	virtual ~GoToPose();
 protected:
@@ -47,6 +60,10 @@ private:
 
 	RRTPlanner * rrt;
 	std::list<Pose>  path;
+	bool way_points_disabled;
+
+
+
 	const Vector2D goalPose;
 	bool serialize;
 	const double maxDistToGoal;

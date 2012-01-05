@@ -148,7 +148,7 @@ int main(int argc, char*argv[],char *envp[]){
         	std::cout<<" !!!!!@@@@@@@@@@"<<argv[2]<<std::endl;
         	situations = std::string(argv[2]);
         }
-        else if(argc>2){
+        else if( Config::getInstance().isTestMode( ) && (argc>2) ){
             if(strncmp(argv[2],"velocity",8)==0)
                 testKind=Tests::velocity;
             if(strncmp(argv[2],"position",8)==0)

@@ -103,7 +103,7 @@ public:
 	/// zwraca aktualnie zadane predkosci robota first = V  second = w
 	std::pair<Vector2D,double> getDesiredVel() const;
 	/// zwraca aktualnie  predkosci z jakimi faktycznie porusza sie robot robota first = V  second = w
-	std::pair<Vector2D,double> getRelativeVelocity() const;
+	std::pair<Vector2D,double> getGlobalVelocity() const;
 	bool kick() const ;
 	bool kickerReady()const;
 	/// double dist wymagana odleglosc od przeszkody
