@@ -36,14 +36,16 @@ static boost::mt19937 rngA(static_cast<unsigned> (time(NULL)));
 static boost::uniform_01<boost::mt19937> uniformGen_01(rngA);
 
 
-RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool withObsPrediction,
-			const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path, double simTime_ ):
+RRTPlanner::RRTPlanner(const double goalProb, const double wayPointProb, const std::string robotName_,bool withObsPrediction,
+			const GameStatePtr currState,const unsigned int maxNodeNumber_,const Pose goalPose_,std::list<Pose> * path, double simTime_ ):
 				robotName(robotName_ ),
 				robotId(Robot::getRobotID(robotName_)),
                 root( new RRTNode( currState,robotId ) ),
+                maxNodeNumber( maxNodeNumber_),
                 goalPose( goalPose_ ),
                 obsPredictionEnabled( withObsPrediction ),
                 toTargetLikelihood( goalProb ),
+                wayPointsLikelyhood ( wayPointProb ),
                 simTime( simTime_ ),
                 logger( getLoggerPtr(robotName_.c_str()) ),
                 maxXvalue ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.x - Config::getInstance().field.FIELD_MARIGIN ),
@@ -66,7 +68,8 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
 
     goDirectToTarget=false;
     finish=false;
-
+    rrt_time = 0;
+    treeSize = 0;
 	//clock_t startTime=clock();
 	//clock_t currTime;
 	//long long int clocks_per_msec=CLOCKS_PER_SEC/1000;
@@ -96,14 +99,16 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
     root->setTargetPose(this->goalPose);
 }
 
-RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool withObsPrediction,
-			const GameStatePtr currState,const Pose goalPose_,std::list<Pose> * path, double simTime_, bool analyseAllField):
+RRTPlanner::RRTPlanner(const double goalProb,const double wayPointProb, const std::string robotName_,bool withObsPrediction,
+			const GameStatePtr currState,const unsigned int maxNodeNumber_,const Pose goalPose_,std::list<Pose> * path, double simTime_, bool analyseAllField):
 				robotName(robotName_ ),
 				robotId(Robot::getRobotID(robotName_)),
                 root( new RRTNode( currState,robotId ) ),
+                maxNodeNumber( maxNodeNumber_),
                 goalPose( goalPose_ ),
                 obsPredictionEnabled( withObsPrediction ),
                 toTargetLikelihood( goalProb ),
+                wayPointsLikelyhood ( wayPointProb ),
                 simTime( simTime_ ),
                 logger( getLoggerPtr(robotName_.c_str()) ),
                 maxXvalue ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.x ),
@@ -121,6 +126,8 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
     yConstraints = NULL;
     goDirectToTarget=false;
     finish=false;
+    rrt_time = 0;
+    treeSize = 0;
 
 	this->path=path;
 	int i=0;
@@ -148,8 +155,11 @@ RRTPlanner::RRTPlanner(const double goalProb,const std::string robotName_,bool w
 RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 
 	this->foundNewPlan = false;
+	this->rrt_time = 0;
 
-	LOG_TRACE(logger,"start run");
+	LOG_FATAL(logger,"start run last path size "<< this->path->size()<<" maxNodeNumber "<<maxNodeNumber<<" toTargetLikelihood "<<toTargetLikelihood
+			<<" wayPointsLikelyhood "<<wayPointsLikelyhood);
+
     //boost::timer timer;
 	struct timespec startTime;
     measureTime(start_measure, &startTime);
@@ -215,7 +225,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		//std::cout<<"root->state"<<(*(root->state))<<std::endl;
         //double boost_ms = timer.elapsed()*1000.0;
 		double ms = measureTime(stop_measure, &startTime);
-        LOG_DEBUG(logger,"RRT, robot goes directly to goal. RRT time "<<ms<<" [ms] " );
+        LOG_FATAL(logger,"RRT, robot goes directly to goal. RRT time "<<ms<<" [ms] " );
         GameStatePtr gameState( new GameState( *this->root->getGameState() ) );
         gameState->updateRobotData(this->robotName,this->goalPose );
         RRTNodePtr node(new RRTNode(gameState,this->robotId));
@@ -231,8 +241,10 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
     //zasieg robota w 1 kroku algorytmu
     //double robotReach=( (robotVelocity.x+robotVelocity.y) / 2 )*simTime;
 	//robotReach = std::max<double>( fabs( robotReach ), Config::getInstance().getRRTRobotReach() );
+    //zasieg robota w 1 kroku algorytmu, o tyle poszerzamy w extendState
     double robotReach = Config::getInstance().getRRTRobotReach();
-    double minRobotReach = (distanceToTarget/this->maxNodeNumber)*2;
+    //double minRobotReach = (distanceToTarget/this->maxNodeNumber);
+    double minRobotReach = Config::getInstance().getRRTRobotReach();
 
     LOG_TRACE( logger,"robotReach "<<robotReach<<" minRobotReach"<<minRobotReach );
 
@@ -241,7 +253,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	//tymczasowy cel w koljenym kroku algorytmu
 	Pose temporaryTarget;
 	//numer ostatnio dodanego wezla
-	unsigned int nodeNr=0;
+	this->treeSize=0;
 
 
 	//Pose tmpGoalPose = goalPose;
@@ -253,7 +265,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	 *
 	 */
 	std::list<Pose> tmpWayPoints=this->wayPoints;
-	while( (goalPose.distance( nextRobotPose ) > minDistance ) && nodeNr< RRTPlanner::maxNodeNumber ) {
+	while( (goalPose.distance( nextRobotPose ) > minDistance ) && treeSize< RRTPlanner::maxNodeNumber ) {
 		//wybieram tymczasowy pkt docelowy w zaleznosci od odleglosci robota do najblizszej przeszkody
 
 		/*if( (timer.elapsed()*1000.0) > 400 ){
@@ -277,7 +289,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		//temporaryTarget=this->choseTarget( goalPose , &isGoalPose);
 
 		//wyszukuje pkt w drzewie najblizej wybranego celu tymczasowego
-		nearest=findNearestState(temporaryTarget);
+		nearest=findNearestState( temporaryTarget );
 
 		if( nearest->getRobotPos(this->robotId).distance( temporaryTarget ) > minDistance ){
 
@@ -307,7 +319,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 			if( extendedGameState.get()!=NULL ){
 				tmpWayPoints=this->wayPoints;
 				this->blockedGoalPose = false;
-				nodeNr++;
+				treeSize++;
 				RRTNodePtr node(new RRTNode(extendedGameState,this->robotId));
 				node->setTargetPose(temporaryTarget);
 				LOG_TRACE(logger,"addNode "<< (*node));
@@ -330,7 +342,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		}
 	}
 
-	LOG_TRACE(logger,"end rrt with result "<<nearest->getRobotPos(this->robotId) <<" node amount "<<nodeNr);
+	LOG_TRACE(logger,"end rrt with result "<<nearest->getRobotPos(this->robotId) <<" node amount "<<treeSize);
 	/*
 	if(resultNode.get()==NULL){
 		if(!this->root->children.empty()){
@@ -361,11 +373,11 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	}
 
 
-	double ms = measureTime(stop_measure, &startTime);
+	rrt_time = measureTime(stop_measure, &startTime);
 	//double ms = timer.elapsed()*1000000.0;
 	//std::ostringstream ois;
 	//ois<<std::setprecision (9)<<ms;
-    LOG_FATAL( logger,"RRT time  "<<ms <<" [ms] "<<" node amount "<<nodeNr<<" path size "<<this->path->size()
+    LOG_FATAL( logger,"RRT time  "<<rrt_time <<" [ms] "<<" node amount "<<treeSize<<" path size "<<this->path->size()
     		<<" foundNewPath"<<this->foundNewPlan  );
 
 	return RRTPlanner::Success;
@@ -438,7 +450,7 @@ Pose RRTPlanner::choseTarget( Pose goalPose, TargetType * targetType, std::list<
 	bool randomPose = false;
 	//jesli w poprzednim kroku znaleziono sciezke do celu
 	if( this->path->size()!=0 ){
-		if( t<0.1 ){
+		if( t < this->toTargetLikelihood ){
 			if(!blockedGoalPose){
 				result=goalPose;
 				*targetType=GOALPOSE;
@@ -450,7 +462,7 @@ Pose RRTPlanner::choseTarget( Pose goalPose, TargetType * targetType, std::list<
 			}
 		}
 		//way point
-		else if (t<0.7 && wayPoints_->size() > 0 ){
+		else if (t< ( this->toTargetLikelihood+ this->wayPointsLikelyhood ) && wayPoints_->size() > 0 ){
 			*targetType=WAYPOINT;
 			//double p=1.0/this->path->size();
 			double p=1.0/wayPoints_->size();
@@ -483,6 +495,10 @@ Pose RRTPlanner::choseTarget( Pose goalPose, TargetType * targetType, std::list<
 			result=getRandomPose();
 			randomPose = true;
 		}
+	}
+
+	if( result.get<0>() < 0 || result.get<1>() < 0){
+		LOG_FATAL(logger,"new target. new target="<<result );
 	}
 
 	assert( result.get<0>() >= 0);
@@ -587,6 +603,7 @@ RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose,RRTNod
 	Pose robotPose;
 
 	BOOST_FOREACH(RRTNodePtr node,currNode->children){
+		//znajdz wezel najblizej w bierzacym drzewie znajdujacy sie najblizej targetPose
 		nearest=findNearestAttainableState(targetPose,node);
 		if(nearest.get()!=NULL){
 			robotPose=nearest->getMyRobotPos();
@@ -598,12 +615,12 @@ RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose,RRTNod
 		}
 	}
 	robotPose=currNode->getMyRobotPos();
-	if(this->foundNewPlan)
-		if(currNode->shortestDistance<=this->shortestDist)
+	if( this->foundNewPlan )
+		if( currNode->shortestDistance <= this->shortestDist )
 			path->push_back(robotPose);
 
-	if(result.get()==NULL || currNode->shortestDistance < result->shortestDistance){
-		if(checkTargetAttainability( startRobotPose, robotPose)==true){
+	if( result.get()==NULL || currNode->shortestDistance < result->shortestDistance ){
+		if( checkTargetAttainability( startRobotPose, robotPose )==true ){
 			result=currNode;
 		}
 	}
@@ -895,8 +912,9 @@ void RRTPlanner::evaluateEnemyPositions(const GameStatePtr & currState,const dou
 		if(modelName.compare(this->robotName)!=0){
 			Pose rPose=(*currState).getRobotPos( Robot::getRobotID(modelName) );
 
-			Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
-
+			//czemu jest jeszcze obrot
+			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
+			Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
 			Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime,rPose.get<1>()+globalV.y*deltaSimTime,0);
 			this->predictedObstaclesPos.push_back(newPose);
 			//std::cout<<"add obstacle blue "<<" robot velocity "<<v<<std::endl;

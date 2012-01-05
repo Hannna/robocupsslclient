@@ -14,8 +14,17 @@ Experiment::Experiment(std::fstream & file, WorldDesc wd, bool isDynamic):log( g
 	
 	//this->robot= boost::shared_ptr<Robot>( new Robot(wd.getFirstRobotName(), Robot::ifaceName));
 	this->robot = robots[wd.getFirstRobotName()];
-	this->task=boost::shared_ptr<GoToBall>( new GoToBall( robot ) );
-	this->task->markParam( Task::analyse_all_field );
+
+	//czas w ms wszystkich uruchomien rrt w danym tasku
+	total_rrt_time = 0;
+	//liczba uruchomien rrt w danym tasku
+	rrt_iterations = 0;
+	max_path_size = 0;
+	min_path_size = 0;
+	max_tree_size = 0;
+	min_tree_size = 0;
+
+	//this->task=boost::shared_ptr<GoToBall>( new GoToBall( robot ) );
 	
 	/*
 	std::vector<std::string> redTeam = Config::getInstance().getRedTeam();
@@ -70,7 +79,7 @@ void Experiment::init(bool isDynamic)
 	LOG_INFO(this->log," INIT ");
 	robot->stop();
 	LOG_INFO(this->log," after curr robot stop ");
-	SimControl::getInstance().pause();
+	//SimControl::getInstance().pause();
 	LOG_INFO(this->log," after pause simulation ");
 	SimControl::getInstance().moveAwayModels();	//modele są odsuwane, zeby można je było poustawiać bez konfliktów
 	LOG_INFO(this->log," after moveAwayModels ");
@@ -119,6 +128,7 @@ void Experiment::init(bool isDynamic)
 			//Robot r( (*is).first, Robot::ifaceName );
 
 			Vector2D speed = (*is).second;
+			//obliczanie predkosci liniowej i obrotowej na podstawie predkosci lewego i prawego kola
 			double v = ( speed.x+speed.y )/2.0;
 			double w = ( speed.y-speed.x )/0.106;
 			Vector2D s(0,v);
@@ -126,7 +136,12 @@ void Experiment::init(bool isDynamic)
 		}
 	}
 	
-	SimControl::getInstance().resume();
+	this->task=boost::shared_ptr<GoToPose>( new GoToPose( Videoserver::getInstance().getBallPosition().getPosition(), robot ) );
+	this->task->markParam( Task::analyse_all_field );
+	if(!Config::getInstance().RRTWayPointsEnabled())
+		this->task->wayPointsDisabled();
+
+	//SimControl::getInstance().resume();
 	
 	this->startTime = SimControl::getInstance().getSimTime();
 	  
@@ -136,6 +151,16 @@ void Experiment::execute()
 	//try{
 		int steps = 1;
 		taskStatus = task->execute( NULL,steps );
+
+		total_rrt_time = task->total_rrt_time;
+		rrt_iterations = task->rrt_iterations;
+		max_path_size = task->max_path_size;
+		if( max_path_size > 0 )
+			min_path_size = task->min_path_size;
+
+		max_tree_size = task->max_tree_size;
+		if( max_tree_size > 0 )
+			min_tree_size = task->min_tree_size;
 
 		if( taskStatus == Task::collision ){
 			wyjatek = true;
@@ -155,8 +180,15 @@ bool Experiment::finished(std::fstream & file)
 		
 		file<<to_simple_string(t)<<"\t";
 		file<<0<<"\t";
-		file<<this->timeLimit<<std::endl;
-		
+		//file<<this->timeLimit<<std::endl;
+		file<<this->timeLimit<<"\t";
+		file<<total_rrt_time<<"\t";
+		file<<rrt_iterations<<"\t";
+		file<<max_path_size<<"\t";
+		file<<min_path_size<<"\t";
+		file<<max_tree_size<<"\t";
+		file<<min_tree_size<<std::endl;
+		file.flush();
 		LOG_INFO(this->log,"Wystąpiła kolizja! ");
 
 		return true;
@@ -170,7 +202,14 @@ bool Experiment::finished(std::fstream & file)
 		
 		file<<to_simple_string(t)<<"\t";
 		file<<2<<"\t";
-		file<<timeElapsed<<std::endl;
+		//file<<timeElapsed<<std::endl;
+		file<<timeElapsed<<"\t";
+		file<<total_rrt_time<<"\t";
+		file<<rrt_iterations<<"\t";
+		file<<max_path_size<<"\t";
+		file<<min_path_size<<"\t";
+		file<<max_tree_size<<"\t";
+		file<<min_tree_size<<std::endl;
 		
 		LOG_INFO(this->log,"Przekroczono czas ("<<timeLimit<<"):"<<timeElapsed);
 		
@@ -185,7 +224,14 @@ bool Experiment::finished(std::fstream & file)
 		
 		file<<to_simple_string(t)<<"\t";
 		file<<1<<"\t";
-		file<<timeElapsed<<std::endl;
+		//file<<timeElapsed<<std::endl;
+		file<<timeElapsed<<"\t";
+		file<<total_rrt_time<<"\t";
+		file<<rrt_iterations<<"\t";
+		file<<max_path_size<<"\t";
+		file<<min_path_size<<"\t";
+		file<<max_tree_size<<"\t";
+		file<<min_tree_size<<std::endl;
 		
 		LOG_INFO(this->log," Eksperyment zakonczono powodzeniem w czasie "<<timeElapsed );
 		

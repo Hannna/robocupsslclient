@@ -68,11 +68,11 @@ enum ErrorCode{
 	 *
 	 * @return
 	 */
-	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
-            const Pose goalPose,std::list<Pose> * path, double simTime_ );
+	RRTPlanner(const double goalProb, const double wayPointProb, const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
+			const unsigned int maxNodeNumber_,const Pose goalPose,std::list<Pose> * path, double simTime_ );
 
-	RRTPlanner(const double goalProb,const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
-	            const Pose goalPose,std::list<Pose> * path, double simTime_, bool analyseAllField);
+	RRTPlanner(const double goalProb, const double wayPointProb, const std::string robotName,bool withObsPrediction,const GameStatePtr currState,
+			const unsigned int maxNodeNumber_,const Pose goalPose,std::list<Pose> * path, double simTime_, bool analyseAllField);
 
 	GameStatePtr getNearestState();
 	/* zwraca wierzcholek docelowy dla robota
@@ -118,6 +118,14 @@ enum ErrorCode{
 
 	    LOG_TRACE( logger,"dodano ograniczenia y:["
 	       		<<yConstraints->first <<";"<< yConstraints->second<<"]" );
+	}
+
+	double getRRTTime(){
+		return rrt_time;
+	}
+
+	unsigned int getTreeSize(){
+		return treeSize;
 	}
 
 	virtual ~RRTPlanner();
@@ -278,7 +286,8 @@ private:
     //maksymalna liczba potomkow korzenia drzewa RRT
 	static const unsigned int maxRootChildren = 4;
 	//ograniczenie na maksymalna liczbe wezłów w drzewie
-	static const unsigned int maxNodeNumber=150;
+	//static const unsigned int maxNodeNumber=150;
+	const unsigned int maxNodeNumber;
     //margines bezp przy wyznaczaniu sciezki
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
     static const double SAFETY_MARGIN = 0.09;
@@ -289,6 +298,8 @@ private:
 	const bool obsPredictionEnabled;
     //prawdopodobienstwo wyboru punktu kierujacego na cel
 	const double toTargetLikelihood;
+	//prawdopodobienstwo wyboru punktu z sciezki otrzymanej w poprzednim kroku
+	const double wayPointsLikelyhood;
 	//czas z sumulacji ktorego dotyczy drzewo
 	const double simTime;
     const log4cxx::LoggerPtr logger;
@@ -312,6 +323,10 @@ private:
 
     //odleglosc przy jakiej stwierdzamy ze robot jest u celu
     double minDistance;
+    //czas w milisekundach w jakim zostala znaleziona sciezka do celu, uwzglednia tylko te sytuacje kiedy faktycznie budowane jest drzewo rrt
+    double rrt_time;
+    //rozmiar drzewa
+    unsigned int treeSize;
 
 };
 

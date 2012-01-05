@@ -313,6 +313,34 @@ bool Config::loadRRTCfg(xmlNodePtr node,xmlDocPtr config){
 			from_string<double>(this->rrtCfg.goalProb,data,std::dec);
 			xmlFree(str);
 		}
+		else if(!xmlStrcmp(current->name,(const xmlChar *) "wayPointProb")){
+			xmlChar * str;
+			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
+			std::string data = std::string((const char*) str);
+			from_string<double>(this->rrtCfg.wayPointProb,data,std::dec);
+			xmlFree(str);
+		}
+		else if(!xmlStrcmp(current->name,(const xmlChar *) "wayPoints")){
+			xmlChar * str;
+			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
+			std::string data = std::string((const char*) str);
+			if( data.compare( "enabled" ) == 0 )
+				this->rrtCfg.wayPointsEnabled = true;
+			else
+				this->rrtCfg.wayPointsEnabled = false;
+			xmlFree(str);
+		}
+		else if(!xmlStrcmp(current->name,(const xmlChar *) "maxNodeNr")){
+			xmlChar * str;
+			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
+			std::string data = std::string((const char*) str);
+			if(data.compare("inf")==0){
+				this->rrtCfg.maxNodeAmount = INT_MAX;
+			}
+			else
+				from_string<int>(this->rrtCfg.maxNodeAmount,data,std::dec);
+			xmlFree(str);
+		}
 		else if(!xmlStrcmp(current->name,(const xmlChar *) "minDistance")){
 			xmlChar * str;
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
@@ -414,6 +442,34 @@ const double Config::getRRTMaxVel() const{
 const double Config::getRRTGoalProb() const{
 	return this->rrtCfg.goalProb;
 }
+const double Config::getRRTWayPointProb() const{
+	return this->rrtCfg.wayPointProb;
+}
+const bool Config::RRTWayPointsEnabled() const{
+	return this->rrtCfg.wayPointsEnabled;
+}
+void Config::setRRTWayPointsDisabled(){
+	this->rrtCfg.wayPointsEnabled = false;
+}
+void Config::setRRTWayPointsEnabled(){
+	this->rrtCfg.wayPointsEnabled = true;
+}
+const int Config::getRRTMaxNodeNr() const{
+	return this->rrtCfg.maxNodeAmount;
+}
+
+void Config::setRRTGoalProb(double goalProb){
+	this->rrtCfg.goalProb = goalProb;
+}
+
+void Config::setRRTWayPointProb(double wayPointProb){
+	this->rrtCfg.wayPointProb = wayPointProb;
+}
+
+void Config::setRRTMaxNodeNr( int nodeNr){
+	this->rrtCfg.maxNodeAmount = nodeNr;
+}
+
 const double Config::getRRTMinDistance() const{
 	return this->rrtCfg.minDistance;
 }

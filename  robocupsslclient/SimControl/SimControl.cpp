@@ -77,7 +77,8 @@ void SimControl::restart()
 
 	//simIface->Reset();
     this->simIface->Unlock();
-    this->wait();
+    const int responseCount = 1;
+    this->wait( responseCount );
 
 }
 void SimControl::pause()
@@ -100,7 +101,8 @@ void SimControl::pause()
 		std::cout<<"simulation already paused"<<std::endl;
 	}
 	this->simIface->Unlock();
-	//this->wait();
+	const int responseCount = 1;
+	this->wait( responseCount );
 }
 
 void SimControl::resume()
@@ -124,6 +126,8 @@ void SimControl::resume()
 	//}
 	simIface->Unlock();
 	//this->wait();
+	const int responseCount = 1;
+	this->wait( responseCount );
 }
 
 double SimControl::getSimTime()
@@ -143,6 +147,7 @@ void SimControl::connectGazeboPosIface(libgazebo::PositionIface *posIface,const 
 #endif
 
 {
+	LockGuard lock(mutex);
      /// Open the Position interface
     try
     {
@@ -163,7 +168,7 @@ void SimControl::setSimPos(const char* name, Pose &pose)
 	//std::cout<<"setSimPos name="<<name<<" x="<<x<<" y="<<y<<" rot="<<rot<<std::endl;
 		//while(simIface->Lock(1)!=1);
 		//simIface->data->responseCount=0;
-		if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
+		//if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
 			//std::cout<<"simIface->data->requestCount "<<simIface->data->requestCount<<std::endl;
 
 			//bzero(request->name,512);
@@ -199,10 +204,12 @@ void SimControl::setSimPos(const char* name, Pose &pose)
 			request->modelPose.roll = 0;
 			request->modelPose.pitch = 0;
 			*/
-		}
+		//}
 		//simIface->Unlock();
 		//waiting until request was executed
 		//this->wait();
+		const int responseCount = 1;
+		this->wait( responseCount );
 }
 SimControl::~SimControl()
 {
@@ -388,7 +395,8 @@ int SimControl::getAllPos(std::map<std::string,Pose > &positions)
 	}
 
 //teraz metoda wait blokuje simIface jesli znajdzie odpowiedz
-	//simIface->Lock(1);
+	//2 01 2011
+	simIface->Lock(1);
 
 	int responseCount=0;
 	unsigned int respCount = simIface->data->responseCount;
@@ -505,7 +513,8 @@ void SimControl::moveBall(Pose pose){
 	}
 */
 //	simIface->Unlock();
-	//this->wait();
+	int responseCount = 1;
+	this->wait( responseCount );
 	LOG_FATAL(log,"@@@@@@@@@@@@@@@@@@ EXIT from move ball to ");
 }
 
@@ -595,7 +604,8 @@ void SimControl::moveAwayModels(){
 		}
 	}
 	simIface->Unlock();
-	//this->wait();
+	int responseCount = 1;
+	this->wait( responseCount );
 
 }
 
@@ -640,6 +650,7 @@ bool SimulationIface::WaitForResponse()
 }
 */
 
+/*
 bool SimControl::wait(){
 	LOG_FATAL(log,"start waiting ");
 
@@ -673,6 +684,7 @@ bool SimControl::wait(){
 
 	return true;
 }
+*/
 
 bool SimControl::wait(int resp){
 	LOG_TRACE(log,"start waiting for "<<resp<<" responses");

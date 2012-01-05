@@ -83,7 +83,7 @@ void testRotation(Videoserver & video,Robot& robot){
 
 
 				std::cout<<"rotate to position to position "<<*ii<<std::endl;
-				(*gameState).updateRobotVel(robot.getRobotID(),robot.getRelativeVelocity() );
+				(*gameState).updateRobotVel( robot.getRobotID(),robot.getGlobalVelocity( ) );
 				deltaTime=video.getUpdateDeltaTime();
 
 				double rot=(*gameState).getRobotPos( robot.getRobotID() ).get<2>() ;
@@ -142,7 +142,7 @@ void testMotion(const Pose goalPose,Videoserver & video,Robot& robot){
 
 	do {
 		video.updateGameState(gameState);
-		(*gameState).updateRobotVel(robot.getRobotID() ,robot.getRelativeVelocity() );
+		(*gameState).updateRobotVel( robot.getRobotID() ,robot.getGlobalVelocity( ) );
 		deltaTime=video.getUpdateDeltaTime();
 
 		//double rot=(*gameState).getRobotPos( robot.getRobotID() ).get<2>() ;
@@ -210,8 +210,8 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 		double rot=currPosition.get<2>();
 		//macierz obrotu os OY na wprost robota
 		RotationMatrix rm(rot);
-		Vector2D relSpeed(robot.getRelativeVelocity().first);
-		double ang_vel = robot.getRelativeVelocity().second;
+		Vector2D relSpeed(robot.getGlobalVelocity().first);
+		double ang_vel = robot.getGlobalVelocity().second;
 
 		Vector2D tmp2(vx,vy);
 

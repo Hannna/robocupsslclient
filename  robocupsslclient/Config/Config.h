@@ -28,10 +28,19 @@ private:
 	class RRTCfg{
 	public:
 		RRTCfg(){
-			goalProb=0.5;
+			goalProb=0.1;
+			wayPointProb=0.6;
+			wayPointsEnabled = false;
+			maxNodeAmount = INT_MAX;
 		};
 		//prawdopodobienstwo kierowania robota na cel
 		double goalProb;
+		//prawdopodobienstwo skierowania robota na waypoint
+		double wayPointProb;
+		//czy wlaczona jest wersja z wayPoints
+		bool wayPointsEnabled;
+		//maksymalna liczba wezlow w drzewie
+		int maxNodeAmount;
 		//promien okregu opisujacego przeszkode/robota
 		double robotRadius;
 		//odleglosc do jakiej planujemy sciezke za pomoca rrt
@@ -173,6 +182,16 @@ public:
 	const std::vector<Pose > getPoseTests() const;
 	const double getRRTMaxVel() const;
 	const double getRRTGoalProb() const;
+	const double getRRTWayPointProb() const;
+	const bool RRTWayPointsEnabled() const;
+	void setRRTWayPointsDisabled();
+	void setRRTWayPointsEnabled();
+	const int getRRTMaxNodeNr() const;
+
+	void setRRTGoalProb(double );
+	void setRRTWayPointProb(double );
+	void setRRTMaxNodeNr( int );
+
 	const double getRRTMinDistance() const;
 	const double getRRTRobotReach() const;
 	const double getRRTRobotRadius() const;

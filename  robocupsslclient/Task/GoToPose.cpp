@@ -21,6 +21,13 @@ GoToPose::GoToPose(const Vector2D & position,Robot * robot, double maxDistToGoal
 	yConstraints = NULL;
 
 	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force );
+	//do testow rrt
+	total_rrt_time = 0;
+	rrt_iterations = 0;
+	max_path_size = 0;
+	min_path_size = INT_MAX;
+	max_tree_size = 0;
+	min_tree_size = INT_MAX;
 }
 
 GoToPose::GoToPose( const Vector2D & position, const double rotation_,  Robot * robot, double maxDistToGoal_ ):
@@ -34,6 +41,13 @@ GoToPose::GoToPose( const Vector2D & position, const double rotation_,  Robot * 
 
 	xConstraints = NULL;
 	yConstraints = NULL;
+	//do testow rrt
+	total_rrt_time = 0;
+	rrt_iterations = 0;
+	max_path_size = 0;
+	min_path_size = INT_MAX;
+	max_tree_size = 0;
+	min_tree_size = INT_MAX;
 
 	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" rotation "<<rotation<<" force "<<force );
 
@@ -48,13 +62,20 @@ GoToPose::GoToPose(const Vector2D & position,Robot * robot, bool force_, double 
 	xConstraints = NULL;
 	yConstraints = NULL;
 
+	way_points_disabled = false;
+
+	//do testow rrt
+	total_rrt_time = 0;
+	rrt_iterations = 0;
+	max_path_size = 0;
+	min_path_size = INT_MAX;
+	max_tree_size = 0;
+	min_tree_size = INT_MAX;
 
 	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force );
 }
 
-
 Task* GoToPose::nextTask(){
-
 	//jesli robot ma pilke i warto oddac strzal to strzel
 	if( this->evaluationModule.isRobotOwnedBall( this->robot ) ){
 		//jesli ustawiono flage zezwalajaca na strzal
@@ -73,17 +94,11 @@ Task* GoToPose::nextTask(){
 			}
 		}
 	}
-
 	LOG_TRACE(log, "next TASK is null= " );
 
 	return NULL;
 }
 
-/*
-TaskSharedPtr & GoToPose::nextTask(){
-	return TaskSharedPtr(this);
-}
-*/
 
 Task::status GoToPose::run(void* arg, int steps){
 	bool obsPredictionEnable=true;
@@ -132,12 +147,14 @@ Task::status GoToPose::run(void* arg, int steps){
             if(rrt){
 				delete rrt;
 				if( this->force ){
-					rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
-							robot->getRobotName(),obsPredictionEnable,currGameState,Pose(goalPose,0),&path,currSimTime, true );
+					rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),Config::getInstance().getRRTWayPointProb(),
+							robot->getRobotName(),obsPredictionEnable,currGameState,
+							Config::getInstance().getRRTMaxNodeNr(),Pose(goalPose,0),&path,currSimTime, true );
 				}
 				else{
-					rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
-							robot->getRobotName(),obsPredictionEnable,currGameState,Pose(goalPose,0),&path,currSimTime );
+					rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),Config::getInstance().getRRTWayPointProb(),
+							robot->getRobotName(),obsPredictionEnable,currGameState,
+							Config::getInstance().getRRTMaxNodeNr(),Pose(goalPose,0),&path,currSimTime );
 				}
 
 				rrt->setMinDistance( maxDistToGoal );
@@ -154,12 +171,14 @@ Task::status GoToPose::run(void* arg, int steps){
             }
             else{
             	if( this->force ){
-            		rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
-            							robot->getRobotName(),obsPredictionEnable,currGameState,Pose(goalPose,0),&path,currSimTime, true );
+            		rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),Config::getInstance().getRRTWayPointProb(),
+            							robot->getRobotName(),obsPredictionEnable,currGameState,
+            							Config::getInstance().getRRTMaxNodeNr(),Pose(goalPose,0),&path,currSimTime, true );
             	}
             	else{
-            		rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(),
-                    						robot->getRobotName(),obsPredictionEnable,currGameState,Pose(goalPose,0),&path,currSimTime );
+            		rrt = new RRTPlanner( Config::getInstance().getRRTGoalProb(), Config::getInstance().getRRTWayPointProb(),
+                    						robot->getRobotName(),obsPredictionEnable,currGameState,
+                    						Config::getInstance().getRRTMaxNodeNr(),Pose(goalPose,0),&path,currSimTime );
             	}
             	rrt->setMinDistance( maxDistToGoal );
             	status=rrt->run( video.getUpdateDeltaTime() );
@@ -167,11 +186,34 @@ Task::status GoToPose::run(void* arg, int steps){
             	//if( status == )
             }
 
+        	//do testow rrt
+            if( path.size() > 0 || rrt->getTreeSize() > 0){
+            	rrt_iterations+=1;
+            	total_rrt_time+=rrt->getRRTTime();
+            }
+
+            if( path.size() > max_path_size )
+            	max_path_size = path.size();
+
+            if( ( path.size() < min_path_size ) && ( path.size() > 0 ) )
+                min_path_size = path.size();
+
+            if( rrt->getTreeSize() > max_tree_size )
+            	max_tree_size = rrt->getTreeSize();
+
+            if( ( rrt->getTreeSize() < min_tree_size ) && ( rrt->getTreeSize() > 0 ) )
+                min_tree_size = rrt->getTreeSize();
+
+
             if(serialize){
                 std::string fileName("");
                 fileName.append(robot->getRobotName());
                 fileName.append("_rrtTree.xml");
                 rrt->serializeTree(fileName.c_str(),serializedTrees++);
+            }
+
+            if( this->way_points_disabled ){
+            	path.clear();
             }
 
 			if( status==RRTPlanner::Success ){
@@ -215,14 +257,64 @@ Task::status GoToPose::run(void* arg, int steps){
 
 					if( haveBall ){
 
+
+						LOG_FATAL( log, "####################################################################################################################");
+
+						//while( haveBall && ( fabs(t.get<0>()) > 0.3 || t.get<1>() < 0 ) ){
+
+						double currAlfaToCel=10;
+						/*
+						while( haveBall && fabs( currAlfaToCel ) > M_PI/2.0 ){
+						// ten kawalek kodu wyznacza kat o jaki robot musi sie obrocic zeby byc skierowanym na cel
+							RotationMatrix rm0(0);
+							//Pose ballPose( ballPos,0 );
+
+							Pose reltargetPose_ = nextRobotPose.transform( currRobotPose.getPosition(),rm0 );
+							Pose reltargetPose = reltargetPose_*100;
+							double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;
+
+							assert( fabs(rotacjaDocelowa) < M_PI);
+
+							//obrot jaki trzeba wykonac w biezacym kroku
+							currAlfaToCel = convertAnglePI( rotacjaDocelowa - robotRotation );
+							double maxW = fabs(robotRotation)/video.getUpdateDeltaTime() > M_PI ? M_PI : fabs(currAlfaToCel)/video.getUpdateDeltaTime() ;
+							//double angularVel=Ko*( convertAnglePI(rotacjaDocelowa-currGlobalRobotRot) )+ Ker*( convertAnglePI(oldAlfaToCel - currAlfaToCel) );
+
+							//oldAlfaToCel=currAlfaToCel;
+							robot->setLastTetaToBall(currAlfaToCel);
+							//double w = fabs(currAlfaToCel) > M_PI/2 ? M_PI/2 * sgn(currAlfaToCel) : currAlfaToCel;
+
+
+							LOG_FATAL( log, "currRobotPose "<< currRobotPose <<" globalNextPose "<<nextRobotPose );
+							//double maxW = fabs(angle)/video.getUpdateDeltaTime() > M_PI ? M_PI : fabs(angle)/video.getUpdateDeltaTime() ;
+							double ball_radious = 0.02;
+
+							//double angle = t.getPosition().angleTo( Vector2D( 0.0,1.0 ) );
+
+							boost::tuple< double, double, double > vel = calculateCurwatureVelocity( ball_radious*sgn(currAlfaToCel) , maxW );
+							Vector2D v = Vector2D( vel.get<0>(), vel.get<1>() );
+							double w = vel.get<2>();
+							robot->setRelativeSpeed( v, w );
+							while( lastSimTime - currSimTime >= 0 ){
+								currSimTime = video.updateGameState(currGameState);
+							}
+							lastSimTime = currSimTime;
+							//currSimTime = video.updateGameState(currGameState) ;
+							currRobotPose=(*currGameState).getRobotPos( robot->getRobotID() );
+							robotRotation = currRobotPose.get<2>();
+							//rm = RotationMatrix(robotRotation);
+							//t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
+							haveBall = this->evaluationModule.isRobotOwnedBall( this->robot );
+						}*/
+						//zakomentowano 30 12 2011
 						//macierz obrotu os OY na wprost robota
 						RotationMatrix rm(robotRotation);
 						Pose t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
-						LOG_FATAL( log, "####################################################################################################################");
-						while( fabs(t.get<0>()) > 0.3 || t.get<1>() < 0 ){
+
+						while( haveBall && ( fabs(t.get<0>()) > 0.3 || t.get<1>() < 0 ) ){
 							Vector2D oy( 0.0,1.0 );
 							double angle = oy.angleTo( t.getPosition( ) );
-							LOG_FATAL( log, "currRobotPose "<< currRobotPose <<" globalNextPose "<<nextRobotPose << " nextRobotPose  "<<t<<" angle "<<angle );
+							LOG_FATAL( log, "currRobotPose "<< currRobotPose <<" globalNextPose "<<nextRobotPose << " relative nextRobotPose  "<<t<<" angle "<<angle );
 							double maxW = fabs(angle)/video.getUpdateDeltaTime() > M_PI ? M_PI : fabs(angle)/video.getUpdateDeltaTime() ;
 							double ball_radious = 0.02;
 
@@ -241,6 +333,7 @@ Task::status GoToPose::run(void* arg, int steps){
 							robotRotation = currRobotPose.get<2>();
 							rm = RotationMatrix(robotRotation);
 							t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
+							haveBall = this->evaluationModule.isRobotOwnedBall( this->robot );
 						}
 						LOG_FATAL( log, "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 						robotCurrentGlobalVel=(*currGameState).getRobotGlobalVelocity( robot->getRobotID() );
@@ -289,9 +382,9 @@ Task::status GoToPose::run(void* arg, int steps){
 
 						LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
 												" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
-						if(fabs(w) >1.0 )
-							robot->setGlobalSpeed(Vector2D(0.0,0.0),w,robotRotation);
-						else
+						//if(fabs(w) >1.0 )
+						//	robot->setGlobalSpeed(Vector2D(0.0,0.0),w,robotRotation);
+						//else
 							robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
 					}
 				}

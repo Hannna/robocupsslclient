@@ -68,7 +68,7 @@ private:
 	//boost::shared_ptr<Robot> robot;
 	Robot* robot;
 	///zadanie przydzielane robotowi
-	boost::shared_ptr<Task> task;
+	boost::shared_ptr<GoToPose> task;
 	Task::status taskStatus;
 	/// czas, w którym robot wystartowal do celu
 	double startTime;
@@ -77,6 +77,16 @@ private:
 	///flaga informująca o tym, czy robot rzucil wyjatek zwiazany z kolizja z przeszkoda - wtedy 
 	///nalezy zakonczyc eksperyment
 	bool wyjatek;
+
+	//czas w ms wszystkich uruchomien rrt w danym tasku
+	double total_rrt_time;
+	//liczba uruchomien rrt w danym tasku
+	unsigned int rrt_iterations;
+	unsigned int max_path_size;
+	unsigned int min_path_size;
+	unsigned int max_tree_size;
+	unsigned int min_tree_size;
+
 	const log4cxx::LoggerPtr log;
     //static std::map<std::string, Robot*> redTeam;
     //static std::map<std::string, Robot*> blueTeam;

@@ -217,7 +217,8 @@ void ExperimentConfig::doExperiment( ){
 	std::fstream results;
 
 	std::vector<boost::shared_ptr<WorldDesc> >::iterator ii = worlds.end();
-	double a, b, c;
+	double pgoal, pwayPoint;
+	int maxNodeNr;
 	double kwant = 0.1;
 
 	//video.updateData();
@@ -229,15 +230,17 @@ void ExperimentConfig::doExperiment( ){
 				<<") nie istnieje, tworzenie\n";
 		results.open(resultsFile.c_str(), std::ios::out);
 		results
-				<<"alfa1\talfa2\talfa3\tsrodowisko\tczasRozp\tczasZak\tukonczono\tczasSym"
-				<<std::endl;
+				<<"pgoal\tpwaypoint\tnodeAmount\tsrodowisko\tczasRozp\tczasZak\tukonczono\tczasSym\t"
+				<<"total_rrt_time\t"<<"rrt_iterations\t"<<"max_path_size\t"<<"min_path_size\t"<<"max_tree_size\t"<<"min_tree_size"<<std::endl;
+
 		//e = boost::shared_ptr<StaticExperiment>(new StaticExperiment());
 
 		//USTAWIANIE WARUNKOW POCZATKOWYCH EKSPERYMENTU
 		//a=kwant; b=0; c=0;
-		a=kwant;
-		b=0.0;
-		c=0.0;
+		pgoal=0.0;
+		pwayPoint=0.0;
+		maxNodeNr=0;
+
 		ii = worlds.begin();
 	} else {
 		LOG_INFO( this->log," [staticEx] Wykryto plik wyjściowy ("<<resultsFile
@@ -258,11 +261,12 @@ void ExperimentConfig::doExperiment( ){
 		//std::cout<<ostatni<<std::endl;
 
 		if (ostatni
-				=="alfa1\talfa2\talfa3\tsrodowisko\tczasRozp\tczasZak\tukonczono\tczasSym") {
+				=="pgoal\tpwaypoint\tnodeAmount\tsrodowisko\tczasRozp\tczasZak\tukonczono\tczasSym\ttotal_rrt_time\trrt_iterations\tmax_path_size\tmin_path_size\tmax_tree_size\tmin_tree_size") {
 			//std::cout<<"Tylko pierwsza linia!"<<std::endl;
-			a=kwant;
-			b=0;
-			c=0;
+
+			pgoal=0.0;
+			pwayPoint=0.0;
+			maxNodeNr=0;
 			ii = worlds.begin();
 		} else {
 			//0.1	0	0.9	eksperyment09	2008-Jul-17 18:22:45	2008-Jul-17 18:22:54	0	3.11
@@ -277,7 +281,9 @@ void ExperimentConfig::doExperiment( ){
 			//reg2(nr + t + nr + t + nr + t + "([^\\s.]+)"+date+t+date+t+nr+t+nr);
 
 			const boost::regex reg(nr + t + nr + t + nr + t + "(.+)"+t+date+t
-					+date+t+nr+t+nr);
+					+date+t+nr+t+nr+t+nr+t+nr+t+nr+t+nr+t+nr+t+nr);
+			//double	int	int	int	int	int
+
 
 			boost::smatch what;
 			if (boost::regex_match(ostatni, what, reg)) {
@@ -294,9 +300,9 @@ void ExperimentConfig::doExperiment( ){
 				 std::cout<<"12: "<<what[12]<<std::endl;//czas
 				 */
 
-				a = boost::lexical_cast<double>(what[1]); //this->str2double(what[1]);
-				b = boost::lexical_cast<double>(what[3]); //this->str2double(what[3]);
-				c = boost::lexical_cast<double>(what[5]); //this->str2double(what[5]);
+				pgoal = boost::lexical_cast<double>(what[1]); //this->str2double(what[1]);
+				pwayPoint = boost::lexical_cast<double>(what[3]); //this->str2double(what[3]);
+				maxNodeNr = boost::lexical_cast<int>(what[5]); //this->str2double(what[5]);
 
 				std::string nazwa_swiata = what[7];
 
@@ -308,7 +314,7 @@ void ExperimentConfig::doExperiment( ){
 
 						if (ii == worlds.end()) {
 							ii = worlds.begin();
-							c += kwant;
+							pwayPoint += kwant;
 						}
 						break;
 					}
@@ -330,39 +336,27 @@ void ExperimentConfig::doExperiment( ){
 			}
 		}
 
-		LOG_INFO( this->log, "\nUWAGA: Wznawianie dla: a = "<<a<<" b = "<<b<<" c = "<< c <<" "<<(*ii)->getName() );
+		LOG_INFO( this->log, "\nUWAGA: Wznawianie dla: pgoal = "<<pgoal<<" pwayPoint = "<<pwayPoint<<" maxNodeNr = "<< maxNodeNr <<" "<<(*ii)->getName() );
 		results.open(resultsFile.c_str(),std::ios::out | std::ios::app);
 		//results<<"alfa1\talfa2\talfa3\tsrodowisko\tczasRozp\tczasZak\tukonczono\tczasSym"<<std::endl;
 	}
 
-	for(;a<=1.0;a += kwant) {
-		for(;b<=1.0;b += kwant) {
-			for(;c<=1.0;c += kwant) {
-				if (fabs(1.0 - (a+b+c)) < kwant/10.0) {
-					//CVM::alfa1=a;
-					//CVM::alfa2=b;
-					//CVM::alfa3=c;
-					
-//					//zestaw nr siedem na potrzeby ustawiania czasu
-//					CVM::alfa1=0.1;
-//					CVM::alfa2=0.6;
-//					CVM::alfa3=0.3;
+	for(;pgoal<=1.0;pgoal += kwant) {
+		for(;pwayPoint<=1.0;pwayPoint += kwant) {
+			if( ( pwayPoint + pgoal )  <=1.0  && ( pwayPoint + pgoal ) > 0 ) {
+
+					//okreslenie parametrow dla danego eksperymentu
+					Config::getInstance().setRRTWayPointProb( pwayPoint );
+					Config::getInstance().setRRTGoalProb( pgoal );
+					Config::getInstance().setRRTWayPointsEnabled();
 					
 
-					double alfa1=0.2;
-					double alfa2=0.4;
-					double alfa3=0.4;
-
-					//results<<"ZESTAW WAG: "<<CVM::alfa1<<" "<<CVM::alfa2<<" "<<CVM::alfa3<<std::endl;
-					//std::cout<<"\nZESTAW WAG: "<<CVM::alfa1<<" "<<CVM::alfa2<<" "
-					//<<CVM::alfa3<<std::endl<<std::endl;
-					//int num=0;
 					for (; ii!=worlds.end(); ii++) {
-						results<<alfa1<<"\t"<<alfa2<<"\t"<<alfa3<<"\t";
+						results<<pgoal<<"\t"<<pwayPoint<<"\t"<<maxNodeNr<<"\t";
 
 						LOG_INFO( this->log," EKSPERYMENT: "<<(*ii)->getName()<<" dynamic = "<<(*ii)->isDynamicWorld() );
 
-						//Experiment e(results, *(*ii), isDynamic);
+
 						Experiment e(results, *(*ii), (*ii)->isDynamicWorld() );
 						//video.updateData();
 						//Videoserver::data.display();	
@@ -374,8 +368,6 @@ void ExperimentConfig::doExperiment( ){
 						//Videoserver::InitPrint(file,fileName,std::string("hmt_red0"));
 						//int i=0;
 						while (!e.finished(results)) {
-							//video.updateData();
-							//Videoserver::data.display();
 							e.execute();
 							//if(i++%2==0)
 							//Videoserver::Print(file,std::string("hmt_red0"));
@@ -388,10 +380,8 @@ void ExperimentConfig::doExperiment( ){
 					}
 					ii = worlds.begin();
 				} //if				
-			} //dla c
-			c = 0.0;
 		} //dla b
-		b = 0.0;
+		pwayPoint = 0.0;
 	} //dla a
 
 

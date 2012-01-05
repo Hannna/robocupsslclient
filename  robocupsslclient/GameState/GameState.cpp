@@ -79,12 +79,14 @@ Pose GameState::getRobotPos(const Robot::robotID id) const {
 	// return robots[id].pos;
 }
 
+
 Vector2D GameState::getRobotGlobalVelocity(const Robot::robotID id) const {
 	RobotsPoseConstIt  r = robots.find(id);
 	assert( r != robots.end() );
 	return r->second.v;
 	//return this->robots[id].v;
 }
+
 
 Vector2D GameState::getBallGlobalVelocity( ) const {
 	return this->ball.v;
