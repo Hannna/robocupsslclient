@@ -13,7 +13,7 @@
 
 GetBall::GetBall(Robot * robot):Task(robot),file_name( robot->getRobotName() + "getBall" ), file( file_name.c_str( ), ios_base::in | ios_base::app ) {
 	// TODO Auto-generated constructor stub
-	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GetBall Task, goto " );
+	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GetBall Task" );
 }
 
 Task* GetBall::nextTask(){
@@ -87,6 +87,7 @@ Task::status GetBall::run(void * arg, int steps){
 				//0.075 srodek dribblera 0.22 troche powiekszony promien pilki
 				//0.006 promien dribblera
 				if ( toBall.length() < ( 0.075+0.006+0.020 ) / cos(angle) ){
+					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose<<" angleToBall "<<angle<<" distance to ball "<< toBall.length());
 					LOG_INFO(log, "GetBall Task::ok  toBall.length()"<<toBall.length() );
 					return Task::get_ball;
 				}//podjedz do pilki
@@ -131,7 +132,8 @@ Task::status GetBall::run(void * arg, int steps){
 
 
 				robot->setRelativeSpeed( Vector2D(0,0), w );
-				LOG_INFO(log, "obrot robota do pilki  currAlfaToCel "<<currAlfaToCel<<" w"<<w );
+				LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose );
+				LOG_INFO(log, "obrot robota do pilki  currAlfaToCel "<<currAlfaToCel<<" set w "<< w );
 				//usleep(10000);
 
 				LOG_INFO(log, "wykonaj obrot robota w "<<w );
