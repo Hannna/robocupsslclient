@@ -57,10 +57,13 @@ public:
 
      Pose findBestDribbleTarget();
 
-     bool haveBall_1( const Robot & robot);
+     //bool haveBall_1( const Robot & robot);
 
      bool isRobotOwnedBall(const Robot & robot);
+
      bool isRobotOwnedBall(const Robot * robot);
+
+     bool isRobotOwnedBall(const Robot & robot, const GameStatePtr& currGameState,double& distanceToBall, double& angleToBall);
 
      void test(Pose currRobotPose,Pose targetPosition);
 

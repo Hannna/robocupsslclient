@@ -275,6 +275,7 @@ Pose EvaluationModule::findBestDribbleTarget(){
 *
 *@ret true jesli robot jest w posiadaniu pilki
 */
+/*
 bool EvaluationModule::haveBall_1(const Robot & robot){
     GameStatePtr currGameState(new GameState());
 
@@ -297,10 +298,95 @@ bool EvaluationModule::haveBall_1(const Robot & robot){
 
     return fabs(toBallRot) < ROTATION_PRECISION ? true : false ;
 }
+*/
 
 bool EvaluationModule::isRobotOwnedBall(const Robot * robot){
 	return isRobotOwnedBall( *robot );
 }
+
+bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
+
+    GameStatePtr currGameState(new GameState());
+
+    if( video.updateGameState(currGameState) < 0 ){
+		std::ostringstream s;
+		s<<__FILE__<<":"<<__LINE__;
+    	throw SimulationException( s.str() );
+    }
+    double distanceToBall;
+    double angleToBall;
+    return isRobotOwnedBall(robot, currGameState,distanceToBall,angleToBall );
+}
+
+bool EvaluationModule::isRobotOwnedBall(const Robot & robot, const GameStatePtr& currGameState, double& distanceToBall, double& angleToBall){
+
+	const Pose currRobotPose = currGameState->getRobotPos( robot.getRobotID() );
+	const Pose ballPose = currGameState->getBallPos();
+	Vector2D ballPosition = ballPose.getPosition();
+	//dystans do pilki
+	//const Vector2D distToBall = Vector2D( ballPosition - currRobotPose.getPosition() );
+
+	const double robotRotation = currRobotPose.get<2>();
+	RotationMatrix rm(robotRotation);
+	//pozycja pilki w ukladzie wsp zw z robotem
+	Pose ballRelativePose = ballPose.transform( currRobotPose.getPosition() , rm);
+	//wektor EB gdzie E to idealna pozycja pilki kiedy jest przechwycona przez robota a B pozycja pilki
+	Vector2D eb (ballRelativePose.get<0>(), ballRelativePose.get<1>() - 0.08 );
+    //idealna rotacja robota do celu
+	//const double angle = convertAnglePI(atan2(t.get<1>(),t.get<0>()) -M_PI/2.0);
+	//stara wersja
+    //Vector2D oy(0.0,1.0);
+    //const double angle = eb.angleTo( oy );
+    //const double angle = convertAnglePI(atan2(ballRelativePose.get<1>(),ballRelativePose.get<0>()) -M_PI/2.0);
+    distanceToBall = eb.length();
+	// for debug infofmation
+	//if( strcmp( robot.getRobotName().c_str(), "blue0" ) == 0 )
+	//	file<<reference<<";"<<angle<<";"<<std::endl;
+
+    bool robotHaveBall = false;
+
+    Vector2D reference( cos( robotRotation+M_PI_2 ), sin( robotRotation+M_PI_2 ) );
+    Vector2D toBall = ballPosition - currRobotPose.getPosition();
+    double angle = toBall.angleTo(reference);
+
+
+    //czy pilka jest przed dribblerem
+    if ( fabs(angle) < 0.33 ){
+        //czy pilka jest odpowienio blisko dribblera
+        if ( toBall.length() < ( 0.075+0.012+0.022 ) / cos(angle) ){
+        	robotHaveBall = true;
+        }
+    }
+
+    /*
+     * to nie dziala
+    //czy pilka jest przed dribblerem
+	if ( fabs(angle) < 0.33 ){
+		//czy pilka jest odpowienio blisko dribblera
+		//promien robota + wystajacy dribbler + promien pilki
+		if( distanceToBall < 0.06 + 0.04 + 0.01){
+			LOG_INFO(log, "Robot has got ball. RobotPosition "<<currRobotPose<<" ball position "<< ballPosition<<" angleToBall "<<angle<<" distance to ball "<< distToBall.length());
+			robotHaveBall = true;
+		}
+	}
+	*/
+
+	// ten kawalek kodu wyznacza kat o jaki robot musi sie obrocic zeby byc skierowanym na cel
+    {	//to nie dziala
+		/*RotationMatrix rm0(0);
+
+		Pose reltargetPose_ = ballPose.transform( currRobotPose.getPosition(),rm0 );
+		Pose reltargetPose = reltargetPose_*100;
+		angleToBall = -atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;
+		 */
+    	angleToBall = convertAnglePI(atan2(ballRelativePose.get<1>(),ballRelativePose.get<0>()) -M_PI/2.0);
+    }
+	return robotHaveBall;
+}
+
+
+//fcja wg Kamila
+/*
 bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
 //dane od KAMILA
 //0.22 = kąt :) srodek robota - srodek tego grubszego elementu dribblera
@@ -341,7 +427,7 @@ bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
 
     return ballIsOwned;
 }
-
+*/
 /*
 *@ zwraca najwiekszy otwarty kat prowadzacy do celu
 */
