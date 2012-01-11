@@ -312,11 +312,12 @@ Task::status GoToPose::run(void* arg, int steps){
 						Pose t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
 
 						while( haveBall && ( fabs(t.get<0>()) > 0.3 || t.get<1>() < 0 ) ){
+						//while( haveBall && (  t.get<1>() < 0 ) ){
 							//Vector2D oy( 0.0,1.0 );
 							//double angle = oy.angleTo( t.getPosition( ) );
 							double angle = convertAnglePI(atan2(t.get<1>(),t.get<0>()) -M_PI/2.0);
 							LOG_FATAL( log, "currRobotPose "<< currRobotPose <<" globalNextPose "<<nextRobotPose << " relative nextRobotPose  "<<t<<" angle "<<angle );
-							double maxW = fabs(angle)/video.getUpdateDeltaTime() > M_PI ? M_PI : fabs(angle)/video.getUpdateDeltaTime() ;
+							double maxW = fabs(angle)/video.getUpdateDeltaTime() > 2*M_PI ? 2*M_PI : fabs(angle)/video.getUpdateDeltaTime() ;
 							double ball_radious = 0.02;
 
 							//double angle = t.getPosition().angleTo( Vector2D( 0.0,1.0 ) );
@@ -335,6 +336,8 @@ Task::status GoToPose::run(void* arg, int steps){
 							rm = RotationMatrix(robotRotation);
 							t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
 							haveBall = this->evaluationModule.isRobotOwnedBall( this->robot );
+
+							LOG_FATAL( log, "haveBall "<<haveBall );
 						}
 						LOG_FATAL( log, "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 						robotCurrentGlobalVel=(*currGameState).getRobotGlobalVelocity( robot->getRobotID() );

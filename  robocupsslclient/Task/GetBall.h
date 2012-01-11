@@ -15,7 +15,7 @@
 class GetBall: public Task {
 public:
 	//jesli odleglosc przekracza ponizsza to konieczna zmiana tasku na GoToBall
-	static const double maxDistanceToBall = 0.15;
+	static const double maxDistanceToBall = 0.2;
 
 	GetBall(Robot * robot);
 	virtual Task* nextTask();

@@ -30,7 +30,7 @@ Task* GetBall::nextTask(){
 	Vector2D toBall = Vector2D( ballPos.getPosition() - robotPos.getPosition() );
 
 	if( toBall.length() > this->maxDistanceToBall ){
-		LOG_INFO(log, "change GetBall ->> GoToBall " );
+		LOG_INFO(log, "change GetBall ->> GoToBall distance to ball "<<toBall.length() );
 		return new GoToBall(this->robot);
 	}
 	return NULL;
@@ -43,90 +43,59 @@ Task::status GetBall::run(void * arg, int steps){
 	Pose ballPose;
 	Vector2D ballPos;
 
-	Vector2D reference;
-	Vector2D toBall;
-	double angle;
 	Vector2D robotCurrentVel;
 	double lastSimTime = 0;
 	double currSimTime = 0;
 
+	double distanceToBall=0;
+	double angleToBall=0;
+	bool hasBall=false;
+
 	while( !this->stopTask && (steps--)!=0 ){
 
-		//video.updateGameState(currGameState);
 		if( Videoserver::getInstance().updateGameState( currGameState ) < 0 )
 		    throw SimulationException("GetBall::run");
 
-
 		if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
-			currRobotPose = currGameState->getRobotPos(this->robot->getRobotID() );
-			ballPose = currGameState->getBallPos();
-			ballPos = ballPose.getPosition();
-			toBall = Vector2D( ballPos - currRobotPose.getPosition() );
-			if( toBall.length() > this->maxDistanceToBall ){
-				LOG_INFO(log, "GetBall, ball is too far " );
+			hasBall = this->evaluationModule.isRobotOwnedBall( *(this->robot) ,currGameState, distanceToBall,angleToBall);
+			if(hasBall){
+				LOG_INFO(log, "GetBall, robot "<<robot->getRobotName()<<" have ball" );
+				break;
+			}
+			if( distanceToBall > this->maxDistanceToBall ){
+				LOG_INFO(log, "GetBall, ball is too far. Distance to ball "<<distanceToBall );
 				return Task::not_completed;
 			}
 
+			currRobotPose = currGameState->getRobotPos( this->robot->getRobotID() );
+			ballPose = currGameState->getBallPos();
+			ballPos = ballPose.getPosition();
+
+			//jedz do pilki
 			robot->disperse( this->maxDistanceToBall );
-
-			lastSimTime = currSimTime;
-			const double robotRotation = currRobotPose.get<2>();
-			RotationMatrix rm(robotRotation);
-			Pose ballRelativePose = ballPose.transform( currRobotPose.getPosition() , rm);
-			Vector2D eb (ballRelativePose.get<0>(), ballRelativePose.get<1>() - 0.08 );
-		    //idealna rotacja robota do celu
-		    Vector2D oy(0.0,1.0);
-		    angle = eb.angleTo( oy );
-
-
-
-/*
-			robotCurrentVel = currGameState->getRobotGlobalVelocity(this->robot->getRobotID());
-
-			//bool ballIsOwned =  false;
-			currRobotPose = currGameState->getRobotPos(this->robot->getRobotID() );
-			ballPose = currGameState->getBallPos();
-			ballPos = ballPose.getPosition();
-			ballPos = ballPos + currGameState->getBallGlobalVelocity()*video.getUpdateDeltaTime();
-
-			toBall = Vector2D( ballPos - currRobotPose.getPosition() );
-			if( toBall.length() > this->maxDistanceToBall ){
-				LOG_INFO(log, "GetBall, ball is too far " );
-				return Task::not_completed;
+			if( strcmp( this->robot->getRobotName().c_str(), "blue0" ) == 0 ){
+				double reference = 0;
+				file<<reference<<";"<<angleToBall<<";"<<std::endl;
 			}
-*/
-			//reference = Vector2D( cos( currRobotPose.get<2>()+M_PI_2 ), sin( currRobotPose.get<2>()+M_PI_2 ) );
-			//angle = toBall.angleTo(reference);
-
-			if( strcmp( this->robot->getRobotName().c_str(), "blue0" ) == 0 )
-				file<<reference<<";"<<angle<<";"<<std::endl;
-
-
-			//czy pilka jest przed dribblerem
-			if ( fabs(angle) < 0.33 ){
-				//czy pilka jest odpowienio blisko dribblera
-				//0.075 srodek dribblera 0.22 troche powiekszony promien pilki
-				//0.006 promien dribblera
-				//if ( toBall.length() < ( 0.075+0.006+0.020 ) / cos(angle) ){
-				if(eb.length() < 0.02){
-					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose<<" angleToBall "<<angle<<" distance to ball "<< toBall.length());
-					LOG_INFO(log, "GetBall Task::ok  toBall.length()"<<toBall.length() );
+			lastSimTime = currSimTime;
+			//czy pilka jest na wprost robota
+			if ( fabs(angleToBall) < 0.33 ){
+				//czy jest odpowiednia odleglosc
+				if( distanceToBall < 0.02 ){
+					//LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose<<" angleToBall "<<angle<<" distance to ball "<< toBall.length());
+					LOG_INFO(log, "GetBall Task::ok" );
 					return Task::get_ball;
 				}//podjedz do pilki
 				else{
 					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, Pose( ballPos,0 ) );
-					//robot->setRelativeSpeed( robotNewVel, 0 );
 					robot->setGlobalSpeed( robotNewVel, 0, currRobotPose.get<2>() );
-					LOG_INFO(log, "GetBall podjedz do pilki " );
+					LOG_INFO(log, "GetBall podjedz do pilki o "<<distanceToBall );
 					return Task::not_completed;
 				}
-			}//obroc robota
+			}
+			//obroc robota
 			else{
-				//const bool haveBall =false;
-				//double w = robot->calculateAngularVel( currRobotPose, ballPose, currGameState->getSimTime( ), haveBall );
-				//robot->setRelativeSpeed( Vector2D(0,0), w );
-				//obrot jaki trzeba było wykonac w poprzednim kroku
-
+				LOG_INFO(log, "GetBall obroc robota do pilki o "<<angleToBall );
 				double oldAlfaToCel = robot->getLastTetaToBall();
 
 				double Ker=0.5;
@@ -150,20 +119,23 @@ Task::status GetBall::run(void * arg, int steps){
 
 				oldAlfaToCel=currAlfaToCel;
 				robot->setLastTetaToBall(currAlfaToCel);
-				double w = fabs(angularVel) > M_PI/2 ? M_PI/2 * sgn(angularVel) : angularVel;
+				double w = fabs(angularVel) > M_PI ? M_PI * sgn(angularVel) : angularVel;
 
+				//podjedz tez do pilki
+				if( distanceToBall > 0.02 ){
+					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, Pose( ballPos,0 ) );
+					robot->setGlobalSpeed( robotNewVel, w, currRobotPose.get<2>() );
+					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose <<" obrot robota do pilki o currAlfaToCel "<<currAlfaToCel<<"  set w "<< w<<" i dojazd do pilki speed "<<robotNewVel  );
 
-				robot->setRelativeSpeed( Vector2D(0,0), w );
-				LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose );
-				LOG_INFO(log, "obrot robota do pilki  currAlfaToCel "<<currAlfaToCel<<" set w "<< w );
-				//usleep(10000);
-
-				LOG_INFO(log, "wykonaj obrot robota w "<<w );
+				}
+				else{
+					robot->setRelativeSpeed( Vector2D(0,0), w );
+					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose <<" obrot robota do pilki o currAlfaToCel "<<currAlfaToCel<<" set w "<< w );
+				}
 				return Task::not_completed;
 			}
 		}
 	}
-
 	return Task::ok;
 }
 
