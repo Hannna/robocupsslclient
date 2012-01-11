@@ -171,6 +171,16 @@ void TestManager::addTest(Tests::TestKind testKind){
 			//refereeClient.join();
 		}
 		break;
+		case Tests::navi_function :{
+				LOG_DEBUG(logger,"navi_function");
+				static Robot red0(std::string("blue0"),ifaceName);
+				test=reinterpret_cast<funcPtr>(&testNaviFuncion);
+				this->tests_fun.push_back( std::pair<funcPtr,void*>(test,reinterpret_cast<void*>(&red0) ) );
+				//RefereeClient refereeClient;
+				//refereeClient.start();
+				//refereeClient.join();
+			}
+			break;
 		default:
 			LOG_DEBUG( logger,"unknown test nr "<<testKind );
 		break;

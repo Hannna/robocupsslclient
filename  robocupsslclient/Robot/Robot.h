@@ -108,8 +108,8 @@ public:
 	bool kickerReady()const;
 	/// double dist wymagana odleglosc od przeszkody
 	bool disperse(const double dist );
-	Vector2D repulsivePotentialField( const Vector2D positionCoordinate, const Vector2D goal, std::list< Vector2D > obstacles );
-	Vector2D repulsivePotentialField( const Vector2D positionCoordinate, std::list< Vector2D > obstacles );
+	//Vector2D repulsivePotentialField( const Vector2D positionCoordinate, const Vector2D goal, std::list< Vector2D > obstacles );
+	//Vector2D repulsivePotentialField( const Vector2D positionCoordinate, std::list< Vector2D > obstacles );
 
 	Vector2D navigationFunctionGradient( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles);
 

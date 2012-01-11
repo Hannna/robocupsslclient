@@ -21,7 +21,7 @@ class RRTNode {
 	friend class RRTPlanner;
 	friend std::ostream& operator<<(std::ostream& os,const RRTNode& node);
 public:
-	RRTNode(const GameStatePtr state_,const Robot::robotID & id);
+	RRTNode(const GameStatePtr state_,const Robot::robotID & id, bool root=false);
 	//void addNode(const GameStatePtr & state);
 	void addNode(const RRTNodePtr & node);
 	Pose getRobotPos(const Robot::robotID & id) const;
@@ -43,6 +43,9 @@ public:
 	int serializeNodeToXml( xmlTextWriterPtr & writer);
 	virtual ~RRTNode();
 	void setFinal();
+	bool isRootNode(){
+		return isRoot;
+	}
 private:
 	//stan planszy w aktualnym wezle
 	const GameStatePtr state;
@@ -53,6 +56,7 @@ private:
 	//odleglosc  calej sciezki do celu
 	//rozumiana jako minimalna odleglosc od celu jakiegokolwiek wezła potomnego
 	double shortestDistance;
+	const bool isRoot;
 
 	std::list<RRTNodePtr> children;
 	//czy jest to wezeł na ścieżce końcowej

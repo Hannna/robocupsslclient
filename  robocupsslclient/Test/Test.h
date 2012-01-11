@@ -61,6 +61,8 @@ void testTaskThread();
 
 void* testTask(void * arg);
 
+void testNaviFuncion(void * arg);
+
 void testShootTacticFunc(void * arg);
 
 void testPassTacticFunc(void * arg);

@@ -58,8 +58,29 @@ Task::status GetBall::run(void * arg, int steps){
 
 
 		if( lastSimTime < ( currSimTime=video.updateGameState(currGameState) ) ){
-			lastSimTime = currSimTime;
+			currRobotPose = currGameState->getRobotPos(this->robot->getRobotID() );
+			ballPose = currGameState->getBallPos();
+			ballPos = ballPose.getPosition();
+			toBall = Vector2D( ballPos - currRobotPose.getPosition() );
+			if( toBall.length() > this->maxDistanceToBall ){
+				LOG_INFO(log, "GetBall, ball is too far " );
+				return Task::not_completed;
+			}
 
+			robot->disperse( this->maxDistanceToBall );
+
+			lastSimTime = currSimTime;
+			const double robotRotation = currRobotPose.get<2>();
+			RotationMatrix rm(robotRotation);
+			Pose ballRelativePose = ballPose.transform( currRobotPose.getPosition() , rm);
+			Vector2D eb (ballRelativePose.get<0>(), ballRelativePose.get<1>() - 0.08 );
+		    //idealna rotacja robota do celu
+		    Vector2D oy(0.0,1.0);
+		    angle = eb.angleTo( oy );
+
+
+
+/*
 			robotCurrentVel = currGameState->getRobotGlobalVelocity(this->robot->getRobotID());
 
 			//bool ballIsOwned =  false;
@@ -73,9 +94,9 @@ Task::status GetBall::run(void * arg, int steps){
 				LOG_INFO(log, "GetBall, ball is too far " );
 				return Task::not_completed;
 			}
-
-			reference = Vector2D( cos( currRobotPose.get<2>()+M_PI_2 ), sin( currRobotPose.get<2>()+M_PI_2 ) );
-			angle = toBall.angleTo(reference);
+*/
+			//reference = Vector2D( cos( currRobotPose.get<2>()+M_PI_2 ), sin( currRobotPose.get<2>()+M_PI_2 ) );
+			//angle = toBall.angleTo(reference);
 
 			if( strcmp( this->robot->getRobotName().c_str(), "blue0" ) == 0 )
 				file<<reference<<";"<<angle<<";"<<std::endl;
@@ -86,7 +107,8 @@ Task::status GetBall::run(void * arg, int steps){
 				//czy pilka jest odpowienio blisko dribblera
 				//0.075 srodek dribblera 0.22 troche powiekszony promien pilki
 				//0.006 promien dribblera
-				if ( toBall.length() < ( 0.075+0.006+0.020 ) / cos(angle) ){
+				//if ( toBall.length() < ( 0.075+0.006+0.020 ) / cos(angle) ){
+				if(eb.length() < 0.02){
 					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose<<" angleToBall "<<angle<<" distance to ball "<< toBall.length());
 					LOG_INFO(log, "GetBall Task::ok  toBall.length()"<<toBall.length() );
 					return Task::get_ball;

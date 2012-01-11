@@ -85,6 +85,11 @@ double Videoserver::getUpdateDeltaTime()const{
 	return 	updateT;
 }
 
+void Videoserver::getSpeeds(std::map<std::string,std::list<Vector2D> >& speeds){
+	pthread_mutex_lock (&Videoserver::mutex);
+	speeds=this->speeds;
+	pthread_mutex_unlock (&Videoserver::mutex);
+}
 void Videoserver::update(){
 
     //std::cout<<"Videoserver::update() start"<<std::endl;
@@ -144,7 +149,11 @@ void Videoserver::update(){
 						vy = posIface->second->data->velocity.pos.y;
 						//TODO:poprawic pobieranie predkosci katowej robota
 						w = posIface->second->data->cmdVelocity.yaw;
-
+						speeds[model_name].push_front( Vector2D(vx,vy) );
+						if(speeds[model_name].size( ) > 3)
+							speeds[model_name].pop_back();
+						LOG_FATAL(log,"model "<<model_name<<" vx "<<vx<<" vy "<<vy<<" w "<<w);
+						//std::cout<<model_name<<" vx "<<vx<<" vy "<<vy<<" w "<<w<<std::endl;
 						posIface->second->Unlock();
 					}
 				}

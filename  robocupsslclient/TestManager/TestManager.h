@@ -31,7 +31,8 @@ namespace Tests{
             testShootTactic = 10,
             testPassTactic = 11,
             refereeBox = 12,
-            play = 13
+            play = 13,
+            navi_function = 14
 
             } TestKind;
 

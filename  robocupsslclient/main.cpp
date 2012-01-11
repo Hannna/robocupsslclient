@@ -148,7 +148,7 @@ int main(int argc, char*argv[],char *envp[]){
         	std::cout<<" !!!!!@@@@@@@@@@"<<argv[2]<<std::endl;
         	situations = std::string(argv[2]);
         }
-        else if( Config::getInstance().isTestMode( ) && (argc>2) ){
+        if( Config::getInstance().isTestMode( ) && (argc>2) ){
             if(strncmp(argv[2],"velocity",8)==0)
                 testKind=Tests::velocity;
             if(strncmp(argv[2],"position",8)==0)
@@ -176,6 +176,8 @@ int main(int argc, char*argv[],char *envp[]){
                 testKind=Tests::testPassTactic;
             if(strncmp(argv[2],"play",4)==0)
                 testKind=Tests::play;
+            if(strncmp(argv[2],"navi_fun",8)==0)
+                testKind=Tests::navi_function;
 
             if( testKind==Tests::none ){
             	std::cout<<"unknown  param "<<argv[2]<<std::endl;

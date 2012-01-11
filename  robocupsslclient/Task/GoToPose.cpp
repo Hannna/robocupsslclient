@@ -20,7 +20,7 @@ GoToPose::GoToPose(const Vector2D & position,Robot * robot, double maxDistToGoal
 	xConstraints = NULL;
 	yConstraints = NULL;
 
-	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force );
+	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force<<" pointer "<<this );
 	//do testow rrt
 	total_rrt_time = 0;
 	rrt_iterations = 0;
@@ -49,7 +49,7 @@ GoToPose::GoToPose( const Vector2D & position, const double rotation_,  Robot * 
 	max_tree_size = 0;
 	min_tree_size = INT_MAX;
 
-	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" rotation "<<rotation<<" force "<<force );
+	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" rotation "<<rotation<<" force "<<force<<" pointer "<<this );
 
 }
 GoToPose::GoToPose(const Vector2D & position,Robot * robot, bool force_, double maxDistToGoal_):
@@ -72,7 +72,7 @@ GoToPose::GoToPose(const Vector2D & position,Robot * robot, bool force_, double 
 	max_tree_size = 0;
 	min_tree_size = INT_MAX;
 
-	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force );
+	LOG_INFO(log, "robot "<<robot->getRobotName()<<" create GoToPose Task, goto "<<this->goalPose<<" force "<<force<<" pointer "<<this );
 }
 
 Task* GoToPose::nextTask(){
@@ -312,8 +312,9 @@ Task::status GoToPose::run(void* arg, int steps){
 						Pose t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
 
 						while( haveBall && ( fabs(t.get<0>()) > 0.3 || t.get<1>() < 0 ) ){
-							Vector2D oy( 0.0,1.0 );
-							double angle = oy.angleTo( t.getPosition( ) );
+							//Vector2D oy( 0.0,1.0 );
+							//double angle = oy.angleTo( t.getPosition( ) );
+							double angle = convertAnglePI(atan2(t.get<1>(),t.get<0>()) -M_PI/2.0);
 							LOG_FATAL( log, "currRobotPose "<< currRobotPose <<" globalNextPose "<<nextRobotPose << " relative nextRobotPose  "<<t<<" angle "<<angle );
 							double maxW = fabs(angle)/video.getUpdateDeltaTime() > M_PI ? M_PI : fabs(angle)/video.getUpdateDeltaTime() ;
 							double ball_radious = 0.02;
@@ -354,25 +355,26 @@ Task::status GoToPose::run(void* arg, int steps){
 							robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
 
 
-						/*
-						double deltaW = currGameState->getRobotAngularVelocity( robot->getRobotID() );
-						deltaW -=w;
-						if( fabs(deltaW) > 0.5 ){
-							deltaW = 0.5 * sgn(w);
-							LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
-																		" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
 
-							robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
-						}
+						//double deltaW = currGameState->getRobotAngularVelocity( robot->getRobotID() );
+						//deltaW -=w;
+						//if( fabs(deltaW) > 0.5 ){
+						//	deltaW = 0.5 * sgn(w);
+						//	LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+						//												" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
+//
+//							robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
+//						}
+//
+//						else{
+//							LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
+//												" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
+//							robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
+//						}
 
-						else{
-							LOG_DEBUG(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" robot curr global Vel"<<robotCurrentGlobalVel<<
-												" setVel global vel "<<robotNewGlobalVel <<" w"<<w);
-							robot->setGlobalSpeed(robotNewGlobalVel,w,robotRotation);
-						}
-						*/
+
 					}
-					else
+					//else
 					{
 						if(this->spec_rot){
 							w = robot->calculateAngularVel( currGameState->getRobotPos( robot->getRobotID() ), this->rotation, currGameState->getSimTime(), haveBall );
@@ -425,4 +427,5 @@ Task::status GoToPose::run(void* arg, int steps){
 
 GoToPose::~GoToPose() {
 	delete this->rrt;
+	LOG_DEBUG(log,"pointer "<<this);
 }

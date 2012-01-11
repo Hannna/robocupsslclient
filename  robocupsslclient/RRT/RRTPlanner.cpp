@@ -24,9 +24,10 @@
 #include <libxml/tree.h>
 #include <errno.h>
 
-
+#include "../RotationMatrix/RotationMatrix.h"
 #include "../Logger/Logger.h"
 #include "../RotationMatrix/RotationMatrix.h"
+#include "../VideoServer/Videoserver.h"
 
 //zasieg w jakim losujemy cel
 //const double RRTPlanner::randomStateReach=0.5;//[m]
@@ -103,7 +104,7 @@ RRTPlanner::RRTPlanner(const double goalProb,const double wayPointProb, const st
 			const GameStatePtr currState,const unsigned int maxNodeNumber_,const Pose goalPose_,std::list<Pose> * path, double simTime_, bool analyseAllField):
 				robotName(robotName_ ),
 				robotId(Robot::getRobotID(robotName_)),
-                root( new RRTNode( currState,robotId ) ),
+                root( new RRTNode( currState,robotId,true ) ),
                 maxNodeNumber( maxNodeNumber_),
                 goalPose( goalPose_ ),
                 obsPredictionEnabled( withObsPrediction ),
@@ -194,12 +195,13 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	distToNearestObs=this->distanceToNearestObstacle(startRobotPose);
 
 	//sprawdz czy aktualnie robot  nie jest w kolizji
-	double safetyMarigin=0;
+	double safetyMarigin=-0.02;
 	bool checkAddObstacles=false;
-	collision=isTargetInsideObstacle(startRobotPose,safetyMarigin,checkAddObstacles);
+	Pose collisionPose;
+	collision=isTargetInsideObstacle(startRobotPose,safetyMarigin,checkAddObstacles, &collisionPose);
 
 	if(collision){
-		LOG_DEBUG(logger,this->robotName<<" robot is inside obstacle. collision");
+		LOG_DEBUG(logger,this->robotName<<" robot is inside obstacle. collision with "<<collisionPose);
 		return RRTPlanner::RobotCollision;
 	}
 
@@ -227,7 +229,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		double ms = measureTime(stop_measure, &startTime);
         LOG_FATAL(logger,"RRT, robot goes directly to goal. RRT time "<<ms<<" [ms] " );
         GameStatePtr gameState( new GameState( *this->root->getGameState() ) );
-        gameState->updateRobotData(this->robotName,this->goalPose );
+        gameState->updateRobotData( this->robotName,this->goalPose );
         RRTNodePtr node(new RRTNode(gameState,this->robotId));
         node->setFinal();
         this->root->addNode( node );
@@ -243,8 +245,8 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	//robotReach = std::max<double>( fabs( robotReach ), Config::getInstance().getRRTRobotReach() );
     //zasieg robota w 1 kroku algorytmu, o tyle poszerzamy w extendState
     double robotReach = Config::getInstance().getRRTRobotReach();
-    //double minRobotReach = (distanceToTarget/this->maxNodeNumber);
-    double minRobotReach = Config::getInstance().getRRTRobotReach();
+    double minRobotReach = (distanceToTarget/this->maxNodeNumber);
+    //double minRobotReach = Config::getInstance().getRRTRobotReach();
 
     LOG_TRACE( logger,"robotReach "<<robotReach<<" minRobotReach"<<minRobotReach );
 
@@ -317,16 +319,31 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 			}
 
 			if( extendedGameState.get()!=NULL ){
-				tmpWayPoints=this->wayPoints;
-				this->blockedGoalPose = false;
-				treeSize++;
-				RRTNodePtr node(new RRTNode(extendedGameState,this->robotId));
-				node->setTargetPose(temporaryTarget);
-				LOG_TRACE(logger,"addNode "<< (*node));
-				nearest->addNode(node);
-				nextRobotPose=node->getMyRobotPos();
-				//toNearestObstacleDist=this->distanceToNearestObstacle( extendedGameState,nextRobotPose);
-				toNearestObstacleDist=this->distanceToNearestObstacle(nextRobotPose);
+				//jesli wezel jest korzeniem sprawdz roznice katowa miedzy robotem a punktem docelowym
+				/* 11 01 2011
+				if( nearest->isRootNode() ){
+					RotationMatrix rm(this->root->getMyRobotPos().get<2>());
+					Pose relativeP = extendedGameState->getRobotPos(this->robotId).transform(this->root->getMyRobotPos().getPosition(),rm);
+
+					double teta = convertAnglePI(atan2(relativeP.get<1>(),relativeP.get<0>()) -M_PI/2.0);
+
+					if(fabs(teta) > 0.52360){ //maksymalny obrot przy korzeniu to 30 stopni
+						continue;
+					}
+				}
+				*/
+				//else{
+					tmpWayPoints=this->wayPoints;
+					this->blockedGoalPose = false;
+					treeSize++;
+					RRTNodePtr node(new RRTNode(extendedGameState,this->robotId));
+					node->setTargetPose(temporaryTarget);
+					LOG_TRACE(logger,"addNode "<< (*node));
+					nearest->addNode(node);
+					nextRobotPose=node->getMyRobotPos();
+					//toNearestObstacleDist=this->distanceToNearestObstacle( extendedGameState,nextRobotPose);
+					toNearestObstacleDist=this->distanceToNearestObstacle(nextRobotPose);
+				//}
 			}
 		}
 		else if(targetType==GOALPOSE){
@@ -504,7 +521,7 @@ Pose RRTPlanner::choseTarget( Pose goalPose, TargetType * targetType, std::list<
 	assert( result.get<0>() >= 0);
 	assert( result.get<1>() >= 0);
 	if( randomPose ){
-		LOG_DEBUG(logger,"chose new random target. new target="<<result );
+		LOG_TRACE(logger,"chose new random target. new target="<<result );
 	}
 	else{
 		LOG_TRACE(logger,"choseTarget. new target="<<result);
@@ -582,6 +599,7 @@ RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose){
 			if( result.get()==NULL || tmpResult->shortestDistance < result->shortestDistance ){
 				if(checkTargetAttainability( startRobotPose, robotPose)==true){
 					result=tmpResult;;
+
 				}
 			}
 
@@ -609,6 +627,16 @@ RRTNodePtr RRTPlanner::findNearestAttainableState(const Pose & targetPose,RRTNod
 			robotPose=nearest->getMyRobotPos();
 			if(result.get()==NULL || nearest->shortestDistance < result->shortestDistance ){
 				if(checkTargetAttainability( startRobotPose, robotPose)==true){
+					/*
+					RotationMatrix rm(this->root->getMyRobotPos().get<2>());
+					Pose relativeP = robotPose.transform(this->root->getMyRobotPos().getPosition(),rm);
+
+					double teta = convertAnglePI(atan2(relativeP.get<1>(),relativeP.get<0>()) -M_PI/2.0);
+
+					if(fabs(teta) > 0.52360){ //maksymalny obrot przy korzeniu to 30 stopni
+						continue;
+					}*/
+
 					result=nearest;
 				}
 			}
@@ -908,30 +936,56 @@ void RRTPlanner::evaluateEnemyPositions(const GameStatePtr & currState,const dou
 	LOG_TRACE(logger,"evaluateEnemyPositions");
 	const std::vector<std::string> blueTeam=Config::getInstance().getBlueTeam();
 
+	std::map<std::string,std::list<Vector2D> > obs_speeds;
+	Videoserver::getInstance().getSpeeds(obs_speeds);
+
+	std::list<Vector2D> speeds;
+	std::list<Vector2D>::iterator ii;
+
 	BOOST_FOREACH(std::string modelName,blueTeam){
 		if(modelName.compare(this->robotName)!=0){
 			Pose rPose=(*currState).getRobotPos( Robot::getRobotID(modelName) );
-
+			for(int i=1;i<=21;i+=5){
 			//czemu jest jeszcze obrot
 			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
-			Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
-			Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime,rPose.get<1>()+globalV.y*deltaSimTime,0);
-			this->predictedObstaclesPos.push_back(newPose);
+
+			std::list<Vector2D>::iterator ii = speeds.begin();
+			speeds = obs_speeds[modelName];
+			Vector2D globalV;
+			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
+			globalV.y = 0;
+			for(;ii!=speeds.end();ii++){
+				globalV=*ii;
+				Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime*i,rPose.get<1>()+globalV.y*deltaSimTime*i,0);
+				this->predictedObstaclesPos.push_back(newPose);
+			}
 			//std::cout<<"add obstacle blue "<<" robot velocity "<<v<<std::endl;
 			//(*currState).updateRobotData(modelName,newPose,v,0);
+			}
 		}
 	}
 
 	const std::vector<std::string> redTeam=Config::getInstance().getRedTeam();
 	BOOST_FOREACH(std::string modelName,redTeam){
 		if(modelName.compare(this->robotName)!=0){
-			//Vector2D v=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
 			Pose rPose=(*currState).getRobotPos( Robot::getRobotID(modelName) );
-			Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
-			Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime,rPose.get<1>()+globalV.y*deltaSimTime,0);
-			this->predictedObstaclesPos.push_back(newPose);
-			//std::cout<<"add obstacle red "<<nr++<<" robot velocity "<<v<<std::endl;
+			for(int i=1;i<=21;i+=5){
+			//czemu jest jeszcze obrot
+			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
+
+			std::list<Vector2D>::iterator ii = speeds.begin();
+			speeds = obs_speeds[modelName];
+			Vector2D globalV;
+			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
+			globalV.y = 0;
+			for(;ii!=speeds.end();ii++){
+				globalV=*ii;
+				Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime*i,rPose.get<1>()+globalV.y*deltaSimTime*i,0);
+				this->predictedObstaclesPos.push_back(newPose);
+			}
+			//std::cout<<"add obstacle blue "<<" robot velocity "<<v<<std::endl;
 			//(*currState).updateRobotData(modelName,newPose,v,0);
+			}
 		}
 	}
 }
@@ -1030,7 +1084,7 @@ bool RRTPlanner::checkTargetAttainability(const Pose &currPose,const Pose &targe
  * @param [in] currPose biezaca pozycja robota w globalnym ukladzie wspolrzednych
  * @param [in] targetPose pozycja celu w globalnym ukladzie wsplorzednych
  */
-bool RRTPlanner::isTargetInsideObstacle(const Pose &targetPose, double safetyMarigin,bool checkAddObstacles){
+bool RRTPlanner::isTargetInsideObstacle(const Pose &targetPose, double safetyMarigin,bool checkAddObstacles, Pose* collidePosition){
 
 	const double robotRadius=Config::getInstance().getRRTRobotRadius();
 
@@ -1039,6 +1093,8 @@ bool RRTPlanner::isTargetInsideObstacle(const Pose &targetPose, double safetyMar
 		if(  pow(targetPose.get<0>()-obstaclePose.get<0>(),2) + pow(targetPose.get<1>()-obstaclePose.get<1>(),2) <=
 						pow(robotRadius+safetyMarigin,2) ){
 			LOG_TRACE(logger,"isTargetInsideObstacle true");
+			if(collidePosition)
+				*collidePosition = obstaclePose;
 			return true;
 		}
 	}
@@ -1049,6 +1105,8 @@ bool RRTPlanner::isTargetInsideObstacle(const Pose &targetPose, double safetyMar
 			if(  pow(targetPose.get<0>()-obstaclePose.get<0>(),2) + pow(targetPose.get<1>()-obstaclePose.get<1>(),2) <=
 							pow(robotRadius+safetyMarigin,2) ){
 				LOG_TRACE(logger,"isTargetInsideObstacle true addObs");
+				if(collidePosition)
+					*collidePosition = obstaclePose;
 				return true;
 			}
 		}
