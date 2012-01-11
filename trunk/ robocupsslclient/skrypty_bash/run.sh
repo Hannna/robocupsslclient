@@ -84,7 +84,21 @@ else
 		sleep 5
 		 ./magisterka test ${string:2} | tee run.log
 #		valgrind --leak-check=yes --log-file=/home/maciek/workspace/mgr/Debug/valgrind.log /home/maciek/workspace/mgr/Debug/mgr test ${string:2}  | tee run.log 
-	elif [ "$1" = "--experiment_1" ] ; then	
+	elif [ "$1" = "--navi_fun" ]; then	
+		
+		sleep 1
+		
+		echo "start "
+		echo $1
+			
+		TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/test_worlds/test_world_1.world"	
+		echo "creating world"
+		echo $TEST_WORLD
+		gazebo $TEST_WORLD | tee  gazebo_logi &	
+		sleep 5
+		 ./magisterka test ${string:2} | tee run.log
+	
+	elif [ "$1" = "--experiment_1" ]; then	
 		
 		sleep 1
 		

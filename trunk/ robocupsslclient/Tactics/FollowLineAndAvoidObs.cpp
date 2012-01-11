@@ -300,7 +300,7 @@ void FollowLineAndAvoidObs::execute(void *){
 	std::pair<double, double > yConstraint;
 
 	bool gettingBall = false;
-
+	bool newGoalPose = true;;
 	while(true){
 	   taskStatus = Task::not_completed;
 
@@ -315,7 +315,10 @@ void FollowLineAndAvoidObs::execute(void *){
 
 	   LOG_DEBUG( log,"#############change control point to "<<goalPoint<<" pose = "<<goalPose );
 
-	   this->currentTask = TaskSharedPtr( new GoToPose( goalPose.getPosition(), &robot,  minDist) );
+	   //this->currentTask = TaskSharedPtr( new GoToPose( goalPose.getPosition(), &robot,  minDist) );
+	   goToPose = TaskSharedPtr( new GoToPose( goalPose.getPosition(), &robot,  minDist) );
+	   this->currentTask = TaskSharedPtr( goToPose );
+	   newGoalPose = false;
 	   //bestScore = score;
 	   Task* newTask;
 
@@ -343,7 +346,7 @@ void FollowLineAndAvoidObs::execute(void *){
 	   struct timespec startTime;
 	   struct timespec startLoopTime;
 	   double endTime = 0;
-	   while(taskStatus!=Task::ok /* && !gettingBall */ ){
+	   while( taskStatus!=Task::ok  /*&& !gettingBall */ ){
 
 			//what w = start;
 			bzero(&startTime, sizeof( startTime ) );
@@ -368,6 +371,7 @@ void FollowLineAndAvoidObs::execute(void *){
 
 			//jesli pilka jest wolna to zdobadz ja
 			if( bs == EvaluationModule::free ){
+			   LOG_FATAL(log,"EvaluationModule::free ");
 			   newTask = new GetBall( &this->robot );
 			   gettingBall = true;
 			   this->currentTask = TaskSharedPtr(newTask );
@@ -375,7 +379,7 @@ void FollowLineAndAvoidObs::execute(void *){
 			//jesli jestes w posiadaniu pilki to jedz do celu
 			else if( bs == EvaluationModule::mine ){
 				gettingBall = false;
-
+				LOG_FATAL(log,"EvaluationModule::mine ");
 				//Vector2D obstacleCoordinates = gameState->getBallPos().getPosition();
 				//double obstacleRadiuous = 0.02*2;//Config::getInstance().getB;
 				//newTask = new RoundObstacle(&robot, obstacleCoordinates, obstacleRadiuous );
@@ -385,14 +389,16 @@ void FollowLineAndAvoidObs::execute(void *){
 				//exit(0);
 
 
-				newTask = new GoToPose( goalPose.getPosition(), &robot,  minDist);
-				this->currentTask = TaskSharedPtr(newTask );
+				//newTask = new GoToPose( goalPose.getPosition(), &robot,  minDist);
+				//newTask = goToPose.get();
+				this->currentTask = goToPose;//TaskSharedPtr(newTask );
 			}
 			//jesli pilka jest zajeta to jedz do celu
 			else{
+			   LOG_FATAL(log,"EvaluationModule::pilka zajeta ");
 			   gettingBall = false;
-			   newTask = new GoToPose( goalPose.getPosition(), &robot,  minDist);
-			   this->currentTask = TaskSharedPtr(newTask );
+
+			   this->currentTask = goToPose;//TaskSharedPtr(newTask );
 			}
 
 			newTask = this->currentTask->nextTask();
@@ -408,12 +414,12 @@ void FollowLineAndAvoidObs::execute(void *){
 			}
 
 			int steps=1;
-			taskStatus = this->currentTask->execute(NULL,steps);
 
 			bzero(&startTime, sizeof( startTime ) );
 			measureTime(start_measure, &startTime);
-
+			taskStatus = this->currentTask->execute(NULL,steps);
 			endTime=measureTime( stop_measure, &startTime );
+
 			LOG_FATAL(log,"FollowLineAndAvoidObs loop current task 1 step execute time "<<endTime<<" [ms]");
 
 			if( taskStatus == Task::error ){
@@ -429,6 +435,10 @@ void FollowLineAndAvoidObs::execute(void *){
 
 			endTime=measureTime( stop_measure, &startLoopTime );
 			LOG_FATAL(log,"FollowLineAndAvoidObs loop execute time "<<endTime<<" [ms]");
+
+			if(gettingBall)
+				continue;
+			//taskStatus!=Task::ok  /*&& !gettingBall */
 	   }
 	   goalPoint ++;
 	   if( goalPoint > 5 )
@@ -437,7 +447,7 @@ void FollowLineAndAvoidObs::execute(void *){
 	   //goalPose = control_points[goalPoint++];
 
 	   goalPose = Pose( control_points[goalPoint], 0 );
-
+	   newGoalPose = true;
 	}
 }
 

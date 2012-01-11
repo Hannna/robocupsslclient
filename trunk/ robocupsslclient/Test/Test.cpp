@@ -489,6 +489,9 @@ void testDribbler(Robot& robot){
     		}
     	}
     	else if( bs == EvaluationModule::mine ){
+    		SimControl::getInstance().restart();
+    		continue;
+    		/*
     		if( gettingBall ){
     			gettingBall =  false;
     			//odleglosc od pkt docelowego przy jakiej stwierdzamy ze robot dojechal do celu
@@ -499,6 +502,7 @@ void testDribbler(Robot& robot){
     			}
     			task = new GoToPose( Config::getInstance().field.BOTTOM_GOAL_MID_POSITION, &robot,  minDist);
     		}
+    		*/
     	}
     	else{
     		SimControl::getInstance().restart();
@@ -549,6 +553,75 @@ void testDribbler(Robot& robot){
     robot.setRelativeSpeed(Vector2D(0,0),0);
 	//sleep(1);
 	*/
+}
+
+void testNaviFuncion(void * arg){
+	std::cout<<"start testNaviFuncion"<<std::endl;
+	GameStatePtr gameState(new GameState());
+	Videoserver::getInstance().start(NULL);
+	Videoserver::getInstance().updateGameState(gameState);
+	Robot* red0 = reinterpret_cast<Robot*>(arg);
+    double dist;
+    red0->disperse(0.05);
+	std::cout<<"exit from testNaviFuncion"<<std::endl;
+/*
+    while( ( dist= (*gameState).getBallPos().distance(gameState->getRobotPos(robot.getRobotID() ) ) ) >
+            ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
+        std::cout<<"dist "<<dist<<std::endl;
+        GoToPose goToPose( (*gameState).getBallPos().getPosition(),&robot);
+        if( goToPose.execute(NULL) == false)
+            SimControl::getInstance().restart();
+        Videoserver::getInstance().updateGameState(gameState);
+    };
+*/
+
+    /*
+    int steps = 1;
+    Task* task = NULL;
+    Task* nextTask_ = NULL;
+    EvaluationModule::ballState bs;
+	EvaluationModule& evaluation=EvaluationModule::getInstance();
+    bool gettingBall = false;
+	while(true){
+
+    	bs = evaluation.getBallState(  robot.getRobotID( ) );
+    	if( bs == EvaluationModule::free ){
+    		if( !gettingBall ){
+    			gettingBall = true;
+    			if( task ){
+    				delete task;
+    				task = NULL;
+    			}
+    			task = new GetBall( &robot );
+    		}
+    	}
+    	else if( bs == EvaluationModule::mine ){
+    		if( gettingBall ){
+    			gettingBall =  false;
+    			//odleglosc od pkt docelowego przy jakiej stwierdzamy ze robot dojechal do celu
+    			const double minDist = 0.1;
+    			if( task ){
+    				delete task;
+    				task = NULL;
+    			}
+    			task = new GoToPose( Config::getInstance().field.BOTTOM_GOAL_MID_POSITION, &robot,  minDist);
+    		}
+    	}
+    	else{
+    		SimControl::getInstance().restart();
+    		continue;
+    	}
+    	nextTask_ = task->nextTask();
+    	if(nextTask_){
+    		if( task ){
+    			delete task;
+    			task =nextTask_;
+    		}
+    	}
+    	task->execute(NULL,steps);
+    	Videoserver::getInstance().updateGameState(gameState);
+    }
+    */
 }
 void testPassTacticFunc(void * arg){
 #ifdef GAZEBO

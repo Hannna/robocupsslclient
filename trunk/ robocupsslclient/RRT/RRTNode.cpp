@@ -18,8 +18,8 @@ std::ostream& operator<<(std::ostream& os,const RRTNode& node){
 }
 
 
-RRTNode::RRTNode(const GameStatePtr state_,const Robot::robotID & id):
-                        state(state_),  currRobotPose( (*state).getRobotPos( id ) ){
+RRTNode::RRTNode(const GameStatePtr state_,const Robot::robotID & id, bool root):
+                        state(state_),  currRobotPose( (*state).getRobotPos( id ) ), isRoot(root){
 	this->final=false;
 	shortestDistance=std::numeric_limits<double>::infinity();
 //	this->shortestDstToTarget=std::numeric_limits<double>::infinity();

@@ -218,20 +218,28 @@ void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const dou
 	this->w = temp;
 	//this->w =angularV;
 	this->v = speed;
+
+	double vx,vy ,ww;
 #ifdef GAZEBO
 	posIface->Lock(1);
 	posIface->data->cmdEnableMotors = 1;
 	posIface->data->cmdVelocity.pos.x = speed.x;
 	posIface->data->cmdVelocity.pos.y = speed.y;
     posIface->data->cmdVelocity.yaw = this->w; //this->w
+
+	vx = posIface->data->velocity.pos.x;
+	vy = posIface->data->velocity.pos.y;
+	//TODO:poprawic pobieranie predkosci katowej robota
+	ww = posIface->data->cmdVelocity.yaw;
     posIface->Unlock();
 #endif
 
     if(this->robotName.compare("blue0")==0){
-    	file<<speed.x<<";"<<speed.y<<";"<<angularV<<";"<<this->w<<"\n" ;
+    	//file<<speed.x<<";"<<speed.y<<";"<<angularV<<";"<<this->w<<";"<<vx<<";"<<vy<<";"<<ww<<"\n" ;
+    	file<<v.x<<";"<<v.y<<";"<<angularV<<";"<<this->w<<";"<<vx<<";"<<vy<<";"<<ww<<"\n" ;
     	file.flush();
     }
-    LOG_INFO(log,"set relative vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
+    LOG_INFO(log,"set global speed "<<v<<" angular "<<angularV<<" relative vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<speed.x<<"\t vy="<<speed.y<<"\t" );
 
 
@@ -309,21 +317,19 @@ bool Robot::disperse( const double dist ){
 
 	GameStatePtr gameState( new GameState() );
 	Videoserver::getInstance().updateGameState( gameState );
-
+	currRobotPose = gameState->getRobotPos( this->getRobotID( ) );
 	Vector2D goalPose;
 	if( strncmp( this->robotName.c_str(), "red", 3 ) == 0 ){
-		goalPose = Videoserver::getInstance().getRedGoalMidPosition();
-		LOG_INFO(log,"red robot, goal Pose "<<goalPose);
+		goalPose = Videoserver::getInstance().getBallPosition().getPosition();//Videoserver::getInstance().getRedGoalMidPosition();
+		LOG_INFO(log,"red robot, pose "<<currRobotPose<<" goal Pose "<<goalPose);
 	}else{
-		goalPose = Videoserver::getInstance().getBlueGoalMidPosition();
-		LOG_INFO(log,"blue robot, goal Pose "<<goalPose);
+		goalPose = Videoserver::getInstance().getBallPosition().getPosition();//Videoserver::getInstance().getBlueGoalMidPosition();
+		LOG_INFO(log,"blue robot,pose "<<currRobotPose<<" goal Pose "<<goalPose);
 	}
 
 	Vector2D oldGradient(0.0,0.0);
 	Vector2D gradient(0.0,0.0);
 
-	//int cnt=0;
-	//odleglosc robota od pilki jest mniejsza niz 30 cm
 	do {
 
 		GameStatePtr gameState( new GameState() );
@@ -438,7 +444,7 @@ bool Robot::disperse( const double dist ){
 			if( max > 0 )
 				velocity = velocity * ( 0.5/max );
 
-			LOG_INFO( log,"gradient "<< gradient <<"set speed "<<velocity<<" distTo nearest obs "<<distToObstacle<< " nearestObsPose"<<nearestObsPose << " dist to ball "<<ballPose.distance( currRobotPose ) );
+			LOG_INFO( log,"gradient "<< gradient <<"set speed "<<velocity<<" distTo nearest obs "<<distToObstacle<< " nearestObsPose"<<nearestObsPose << " dist to goal "<<goalPose.distance( currRobotPose.getPosition() ) );
 
 
 			this->setGlobalSpeed( velocity,0,currRobotPose.get<2>() );
@@ -446,7 +452,7 @@ bool Robot::disperse( const double dist ){
 			//this->setGlobalSpeed( newSpeed,0,currRobotPose.get<2>() );
 		}
 
-	}while( /*( ballPose.distance( currRobotPose )  < dist ) ||*/  distToObstacle < dist    );
+	}while( ( goalPose.distance( currRobotPose.getPosition() )  > dist ) /*||  distToObstacle < dist*/    );
 
 	this->stop();
 
@@ -454,7 +460,7 @@ bool Robot::disperse( const double dist ){
 
 	return true;
 }
-
+/*
 Vector2D Robot::repulsivePotentialField( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles){
 
 	//double result;
@@ -493,7 +499,8 @@ Vector2D Robot::repulsivePotentialField( const Vector2D positionCoordinates, con
 
 	return gradient;
 }
-
+*/
+/*
 Vector2D Robot::repulsivePotentialField( const Vector2D positionCoordinates, std::list< Vector2D > obstacles){
 
 	//double result;
@@ -532,7 +539,7 @@ Vector2D Robot::repulsivePotentialField( const Vector2D positionCoordinates, std
 
 	return gradient;
 }
-
+*/
 double betai( Vector2D q, Vector2D qi, double radious){
 	return pow( euclideanNorm(q,qi),2) - pow(radious,2);
 }
@@ -953,10 +960,10 @@ double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & 
 
     	delta=fabs( convertAnglePI(max - min) );
     }
-    //if( haveBall ){
-    	//tetad += convertAnglePI( ktheta*( c )*pow( 2,this->v.length() ) ) ;
-    	//tetad = convertAnglePI( tetad ) ;
-    //}
+    if( haveBall ){
+    	tetad += convertAnglePI( ktheta*( c )*pow( 2,this->v.length() ) ) ;
+    	tetad = convertAnglePI( tetad ) ;
+    }
 
     //double tetad = -1.0*sl.angleToOY(  ) ;//+ ktheta*( c )*pow( 2,this->v.length() );
     //LOG_FATAL( this->log,"sl.angleToOX(  ) " <<sl.angleToOX(  ) );

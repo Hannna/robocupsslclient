@@ -229,7 +229,7 @@ private:	void evaluateEnemyPositions(const GameStatePtr & currState,const double
 	 * @param[in] checkAddObstacles jesli true, to sprawdza tez kolizje z przewidywanymi polozeniami przeszkod
 	 * @return false if there is a collision with  an obstacle; true if everything is OK
 	 */
-private:	bool isTargetInsideObstacle(const Pose &targetPose,double safetyMarigin,bool checkAddObstacles = false);
+private:	bool isTargetInsideObstacle(const Pose &targetPose,double safetyMarigin,bool checkAddObstacles = false, Pose* collidePosition = NULL);
 	/**
 	 * @brief sprawdza czy targetPose jest bezposrednio osiagalna z currPose
 	 *
@@ -290,7 +290,7 @@ private:
 	const unsigned int maxNodeNumber;
     //margines bezp przy wyznaczaniu sciezki
     //o tyle powiekszamy promien robota przy wyznaczaniu sciezki
-    static const double SAFETY_MARGIN = 0.09;
+    static const double SAFETY_MARGIN = 0.05;
 
 	//pozycja docelowa robota
 	const Pose goalPose;

@@ -9,7 +9,7 @@
 #define FOLLOWLINEANDAVOIDOBS_H_
 
 #include "Tactic.h"
-
+#include "../Task/GoToPose.h"
 /*Taktyka obronna polegajaca na bronieniu wybranej linii
  *
  * Robot porusza sie wzdluz odcinka (p1,p2)  z mozliwoscia odchylanie od niego o maxDistFromLine w kierunku pilki
@@ -27,6 +27,7 @@ public:
 protected:
 	const Vector2D p1;
 	const Vector2D p2;
+	TaskSharedPtr goToPose;
 
 private:
 

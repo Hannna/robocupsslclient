@@ -60,6 +60,7 @@ public:
 	 */
 	double getUpdateDeltaTime() const;
 
+	void getSpeeds(std::map<std::string,std::list<Vector2D> >& speeds);
 	/**
 	@brief rejestruje dany interfejs robota
 	*/
@@ -109,6 +110,7 @@ private:
 	 */
 	void update();
 	GameStatePtr gameState;
+	std::map<std::string,std::list<Vector2D> > speeds;
 	static Videoserver * video;
 	Videoserver();
 	Videoserver(const Videoserver& v);
