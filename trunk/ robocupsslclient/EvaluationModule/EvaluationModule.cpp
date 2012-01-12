@@ -148,7 +148,7 @@ std::pair<double, double> EvaluationModule::aimAtTeamMate(Robot::robotID shootin
 }
 */
 
-EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
+EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bool * iAmCloserToBall ){
 
 	GameStatePtr gameState( new GameState() );
 
@@ -165,6 +165,7 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
 	//dla kazdego robota z druzyny przeciwnej sprawdz czy nie jest posiadaczem pilki
 
     ballState bs;
+    ballState ballState_;
 
     Pose p;
     Pose ballPose = gameState->getBallPos();
@@ -178,8 +179,14 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
     double distanceToBall;
     double angleToBall;
 
+    //odleglosc najblizszego robota do pilki
+    double shortestDistance = numeric_limits<double>::max( );
+    Robot::robotID closerToBallRobotID;
+
+    Robot::robotID robotID;
 	BOOST_FOREACH(std::string modelName,blueTeam){
-		p = gameState->getRobotPos( Robot::getRobotID( modelName) );
+		robotID = Robot::getRobotID( modelName);
+		p = gameState->getRobotPos( robotID );
 
 		//if( p.distance(ballPose) < ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
 		if( this->isRobotOwnedBall( Robot::getRobotID( modelName ), gameState , distanceToBall, angleToBall ) ){
@@ -189,7 +196,19 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
 			else
 				return ballState_;
 		}
+		if( distanceToBall < shortestDistance ){
+			shortestDistance=distanceToBall;
+			closerToBallRobotID = robotID;
+		}
+
 	}
+
+	if(iAmCloserToBall){
+		*iAmCloserToBall = false;
+		if( closerToBallRobotID == id )
+			*iAmCloserToBall = true;
+	}
+
 
     if( Robot::isBlue(id) ){
     	bs = EvaluationModule::occupied_theirs;
@@ -240,7 +259,7 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
 		if( ( ballPose.getPosition().x >= Config::getInstance().field.BOTTOM_GOAL_LEFT_CORNER.x  ) &&
 				( ballPose.getPosition().x  <= Config::getInstance().field.BOTTOM_GOAL_RIGHT_CORNER.x  ) ){
 
-				this->ballState_ = EvaluationModule::in_goal;
+				ballState_ = EvaluationModule::in_goal;
 				return EvaluationModule::in_goal;
 		}
 	}
@@ -250,15 +269,15 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
 		if( ( ballPose.getPosition().x >= Config::getInstance().field.TOP_GOAL_LEFT_CORNER.x  ) &&
 				( ballPose.getPosition().x  <= Config::getInstance().field.TOP_GOAL_RIGHT_CORNER.x  ) ){
 
-				this->ballState_ = EvaluationModule::in_goal;
+				ballState_ = EvaluationModule::in_goal;
 				return EvaluationModule::in_goal;
 		}
 	}
 
 
 	//pilka jest na aucie
-	if( this->ballState_ != EvaluationModule::out){
-		this->ballState_ = EvaluationModule::out;
+	if( ballState_ != EvaluationModule::out){
+		ballState_ = EvaluationModule::out;
 		this->positionForThrowIn = ballPose.getPosition();
 		 LOG_INFO( log,"!!!!!!!!!!!!!this->positionForThrowIn "<<this->positionForThrowIn);
 	}
