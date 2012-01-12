@@ -28,6 +28,8 @@ protected:
 	const Vector2D p1;
 	const Vector2D p2;
 	TaskSharedPtr goToPose;
+	std::string file_name;
+	std::ofstream file;
 
 private:
 

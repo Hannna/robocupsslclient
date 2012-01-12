@@ -28,6 +28,7 @@ std::map<int, Robot*> Play::blueTeam;
 
 Play::Play(std::string teamColor, const int nrOfROles): appConfig( Config::getInstance() ), log( getLoggerPtr ( "app_debug" ) )
 {
+
 	this->teamColor = teamColor;
 
 	if( teamColor.compare("red") == 0 ){
@@ -71,7 +72,7 @@ void Play::init(){
 	std::vector<std::string>::iterator robotName = redTeam.begin();
 
 	for(int i=0 ;robotName!=redTeam.end();robotName++,i++ ){
-		std::cout<< *robotName <<std::endl;
+		std::cout<<" add robot "<<*robotName<<" to play "<<std::endl;
 		Play::redTeam[i] = new Robot( *robotName,Robot::ifaceName );
 	}
 
@@ -84,6 +85,7 @@ void Play::init(){
 	robotName = blueTeam.begin();
 
 	for(int i=0 ;robotName!=blueTeam.end();robotName++, i++ ){
+		std::cout<<" add robot "<<*robotName<<" to play "<<std::endl;
 		Play::blueTeam[i] = new Robot(*robotName,Robot::ifaceName);
 	}
 
