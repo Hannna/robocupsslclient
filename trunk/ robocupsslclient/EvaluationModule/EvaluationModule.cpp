@@ -169,16 +169,20 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
     Pose p;
     Pose ballPose = gameState->getBallPos();
     LOG_TRACE( log,"Ball position is  "<<ballPose );
-    if( Robot::isBlue(id) ){
+    if( Robot::isBlue( id ) ){
     	bs = EvaluationModule::occupied_our;
     }
     else
     	bs = EvaluationModule::occupied_theirs;
 
+    double distanceToBall;
+    double angleToBall;
+
 	BOOST_FOREACH(std::string modelName,blueTeam){
 		p = gameState->getRobotPos( Robot::getRobotID( modelName) );
 
-		if( p.distance(ballPose) < ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
+		//if( p.distance(ballPose) < ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
+		if( this->isRobotOwnedBall( Robot::getRobotID( modelName ), gameState , distanceToBall, angleToBall ) ){
 			ballState_ = bs;
 			if( Robot::getRobotID( modelName) == id )
 				return EvaluationModule::mine;
@@ -199,7 +203,8 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id){
 	BOOST_FOREACH(std::string modelName,redTeam){
 		p = gameState->getRobotPos( Robot::getRobotID( modelName ) );
 
-		if( p.distance(ballPose) < ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
+		//if( p.distance(ballPose) < ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
+		if( this->isRobotOwnedBall( Robot::getRobotID( modelName ), gameState , distanceToBall, angleToBall ) ){
 			//this->ballSate=ballState;
 			ballState_ = bs;
 			LOG_DEBUG(log,"Robot have got Ball p.distance(ballPose) "<< p.distance(ballPose) <<" robot name"<<modelName);
@@ -304,6 +309,20 @@ bool EvaluationModule::isRobotOwnedBall(const Robot * robot){
 	return isRobotOwnedBall( *robot );
 }
 
+bool EvaluationModule::isRobotOwnedBall(const Robot::robotID & robotId){
+	double distanceToBall;
+	double angleToBall;
+    GameStatePtr currGameState(new GameState());
+
+	if( video.updateGameState(currGameState) < 0 ){
+		std::ostringstream s;
+		s<<__FILE__<<":"<<__LINE__;
+    	throw SimulationException( s.str() );
+    }
+
+	return isRobotOwnedBall( robotId, currGameState, distanceToBall, angleToBall);
+}
+
 bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
 
     GameStatePtr currGameState(new GameState());
@@ -320,7 +339,11 @@ bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
 
 bool EvaluationModule::isRobotOwnedBall(const Robot & robot, const GameStatePtr& currGameState, double& distanceToBall, double& angleToBall){
 
-	const Pose currRobotPose = currGameState->getRobotPos( robot.getRobotID() );
+	return isRobotOwnedBall( robot.getRobotID( ), currGameState, distanceToBall, angleToBall);
+}
+
+bool EvaluationModule::isRobotOwnedBall(const Robot::robotID & robotID, const GameStatePtr& currGameState,double& distanceToBall, double& angleToBall){
+	const Pose currRobotPose = currGameState->getRobotPos( robotID );
 	const Pose ballPose = currGameState->getBallPos();
 	Vector2D ballPosition = ballPose.getPosition();
 	//dystans do pilki
@@ -383,7 +406,6 @@ bool EvaluationModule::isRobotOwnedBall(const Robot & robot, const GameStatePtr&
     }
 	return robotHaveBall;
 }
-
 
 //fcja wg Kamila
 /*

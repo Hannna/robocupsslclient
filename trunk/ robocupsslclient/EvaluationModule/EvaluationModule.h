@@ -59,11 +59,16 @@ public:
 
      //bool haveBall_1( const Robot & robot);
 
+
+     bool isRobotOwnedBall(const Robot::robotID & robotId);
+
      bool isRobotOwnedBall(const Robot & robot);
 
      bool isRobotOwnedBall(const Robot * robot);
 
      bool isRobotOwnedBall(const Robot & robot, const GameStatePtr& currGameState,double& distanceToBall, double& angleToBall);
+
+     bool isRobotOwnedBall(const Robot::robotID & robotID, const GameStatePtr& currGameState,double& distanceToBall, double& angleToBall);
 
      void test(Pose currRobotPose,Pose targetPosition);
 

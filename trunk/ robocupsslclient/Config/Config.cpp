@@ -118,9 +118,11 @@ bool Config::load(std::string filename){
 	    for(;ii!=robots.end();ii++){
 	    	if(strncmp(ii->c_str(),"red",3)==0 ){
 	    		this->redTeam.push_back(*ii);
+	    		std::cout<<*ii<<std::endl;
 	    	}
 	    	else if (strncmp(ii->c_str(),"blue",3)==0 ){
 	    	    this->blueTeam.push_back(*ii);
+	    	    std::cout<<*ii<<std::endl;
 	    	}
 	    }
 	}
@@ -279,6 +281,7 @@ bool Config::loadRedTeam(xmlNodePtr node,xmlDocPtr config){
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			this->redTeam.push_back(data);
+			std::cout<<data<<std::endl;
 			xmlFree(str);
 		}
 		current = current->next;
@@ -295,6 +298,7 @@ bool Config::loadBlueTeam(xmlNodePtr node,xmlDocPtr config){
 			str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
 			std::string data = std::string((const char*) str);
 			this->blueTeam.push_back(data);
+			std::cout<<data<<std::endl;
 			xmlFree(str);
 		}
 		current = current->next;

@@ -18,21 +18,13 @@
 #include "../Exceptions/SimulationException.h"
 #include "../additional.h"
 
-/*
-std::pair<double, double> xConstraints( * )( ) {
-	this->xConstraints = xConstraints;
-}
-*/
-/*
-void addYConstraint( std::pair<double, double> ( *yConstraints )( ) ){
-	this->yConstraints = yConstraints;
-}
-*/
 
 FollowLineAndAvoidObs::FollowLineAndAvoidObs(Robot & robot_, const Vector2D p1_, const Vector2D p2_ ): Tactic(robot_),
-				p1( p1_ ), p2( p2_ ) {
+				p1( p1_ ), p2( p2_ ),
+				file_name( this->robot.getRobotName()+std::string("_points") ),file( file_name.c_str( ), ios_base::in | ios_base::app ) {
 
 	LOG_INFO(log,"create FollowLineAndAvoidObs tactic for robot "<<robot_.getRobotName()<< " Line "<<p1<<" "<<p2);
+
 }
 
 
@@ -301,28 +293,27 @@ void FollowLineAndAvoidObs::execute(void *){
 
 	bool gettingBall = false;
 	bool newGoalPose = true;;
-	while(true){
+
+	double startSimTime = SimControl::getInstance().getSimTime();
+	double lastSimTime = startSimTime;
+	const double exTime = 120;
+	while( (lastSimTime - startSimTime) < exTime ){
 	   taskStatus = Task::not_completed;
 
 	   if( Videoserver::getInstance().updateGameState( gameState ) < 0)
 		   throw SimulationException("FollowLineAndAvoidObs::execute");
-
-	   //ballPosition = gameState->getBallPos().getPosition();
-	   //goalPose = Pose( ballPosition.projectionOn(a,b,c), 0);
 
 	   //odleglosc od pkt docelowego przy jakiej stwierdzamy ze robot dojechal do celu
 	   const double minDist = 0.1;
 
 	   LOG_DEBUG( log,"#############change control point to "<<goalPoint<<" pose = "<<goalPose );
 
-	   //this->currentTask = TaskSharedPtr( new GoToPose( goalPose.getPosition(), &robot,  minDist) );
 	   goToPose = TaskSharedPtr( new GoToPose( goalPose.getPosition(), &robot,  minDist) );
 	   this->currentTask = TaskSharedPtr( goToPose );
 	   newGoalPose = false;
-	   //bestScore = score;
+
 	   Task* newTask;
 
-	   //Vector2D startPostion( 2.7 , 1.0)
 	   Pose currPose;
 	   currPose = gameState->getRobotPos(robot.getRobotID());
 
@@ -346,28 +337,12 @@ void FollowLineAndAvoidObs::execute(void *){
 	   struct timespec startTime;
 	   struct timespec startLoopTime;
 	   double endTime = 0;
-	   while( taskStatus!=Task::ok  /*&& !gettingBall */ ){
-
-			//what w = start;
-			bzero(&startTime, sizeof( startTime ) );
-			measureTime(start_measure, &startTime);
-
-			if( Videoserver::getInstance().updateGameState( gameState ) < 0)
-				   throw SimulationException("FollowLineAndAvoidObs::execute");
-
-			endTime=measureTime( stop_measure, &startTime );
-			//LOG_FATAL(log,"FollowLineAndAvoidObs loop update game state time "<<endTime<<" [ms]");
+	   while( taskStatus!=Task::ok  && ( (lastSimTime - startSimTime) < exTime ) ){
 
 			bzero(&startTime, sizeof( startLoopTime ) );
 			measureTime(start_measure, &startLoopTime);
 
 			EvaluationModule::ballState bs = evaluation.getBallState(  this->robot.getRobotID( ) );
-
-			//LOG_FATAL( log,"Ball state is  "<<bs );
-
-			//newTask = new GoToPose( goalPose.getPosition(), &robot,  minDist);
-			//this->currentTask = TaskSharedPtr(newTask );
-
 
 			//jesli pilka jest wolna to zdobadz ja
 			if( bs == EvaluationModule::free ){
@@ -380,25 +355,14 @@ void FollowLineAndAvoidObs::execute(void *){
 			else if( bs == EvaluationModule::mine ){
 				gettingBall = false;
 				LOG_FATAL(log,"EvaluationModule::mine ");
-				//Vector2D obstacleCoordinates = gameState->getBallPos().getPosition();
-				//double obstacleRadiuous = 0.02*2;//Config::getInstance().getB;
-				//newTask = new RoundObstacle(&robot, obstacleCoordinates, obstacleRadiuous );
-				//this->currentTask = TaskSharedPtr(newTask );
-
-				//taskStatus = this->currentTask->execute(NULL,1);
-				//exit(0);
-
-
-				//newTask = new GoToPose( goalPose.getPosition(), &robot,  minDist);
-				//newTask = goToPose.get();
-				this->currentTask = goToPose;//TaskSharedPtr(newTask );
+				this->currentTask = goToPose;
 			}
 			//jesli pilka jest zajeta to jedz do celu
 			else{
 			   LOG_FATAL(log,"EvaluationModule::pilka zajeta ");
 			   gettingBall = false;
 
-			   this->currentTask = goToPose;//TaskSharedPtr(newTask );
+			   this->currentTask = goToPose;
 			}
 
 			newTask = this->currentTask->nextTask();
@@ -429,8 +393,17 @@ void FollowLineAndAvoidObs::execute(void *){
 
 			if( taskStatus == Task::collision ){
 				robot.stop();
+				robot.disperse(0.1);
 				LOG_FATAL(log,"FollowLineAndAvoidObs Task::collision ");
-				return;
+				double tmp = SimControl::getInstance().getSimTime();
+				double diffTime = tmp - lastSimTime;
+				lastSimTime = tmp;
+				if( (lastSimTime - startSimTime) < exTime ){
+					file<<-1<<"\t"<<diffTime<<std::endl;
+					file.flush();
+				}
+				continue;
+				//return;
 			}
 
 			endTime=measureTime( stop_measure, &startLoopTime );
@@ -440,15 +413,37 @@ void FollowLineAndAvoidObs::execute(void *){
 				continue;
 			//taskStatus!=Task::ok  /*&& !gettingBall */
 	   }
-	   goalPoint ++;
-	   if( goalPoint > 5 )
+		if( Videoserver::getInstance().updateGameState( gameState ) < 0)
+			   throw SimulationException("FollowLineAndAvoidObs::execute");
+
+	   currPose = gameState->getRobotPos(robot.getRobotID());
+	   if(control_points[goalPoint].distance(currPose.getPosition()) < 0.2 ){
+		   goalPoint ++;
+	   }
+
+	   if( goalPoint > 5 ){
 		   goalPoint = 0;
+		   double tmp = SimControl::getInstance().getSimTime();
+		   double diffTime = tmp - lastSimTime;
+		   lastSimTime = tmp;
+		   if( (lastSimTime - startSimTime) < exTime ){
+				if( evaluation.getBallState(  this->robot.getRobotID( ) ) == EvaluationModule::mine)
+					file<<3<<"\t"<<diffTime<<std::endl;
+				else
+					file<<1<<"\t"<<diffTime<<std::endl;
+
+				file.flush();
+				LOG_FATAL(log,"################ loop sim Time  "<< diffTime <<"###########################");
+		   }
+	   }
 
 	   //goalPose = control_points[goalPoint++];
 
 	   goalPose = Pose( control_points[goalPoint], 0 );
 	   newGoalPose = true;
 	}
+
+	file.close();
 }
 
 

@@ -107,7 +107,9 @@ public:
 	bool kick() const ;
 	bool kickerReady()const;
 	/// double dist wymagana odleglosc od przeszkody
-	bool disperse(const double dist );
+	bool disperse( const double dist );
+	/// jedz do pilki wymagana odleglosc od pilki
+	bool goToBall(const double dist );
 	//Vector2D repulsivePotentialField( const Vector2D positionCoordinate, const Vector2D goal, std::list< Vector2D > obstacles );
 	//Vector2D repulsivePotentialField( const Vector2D positionCoordinate, std::list< Vector2D > obstacles );
 
@@ -127,7 +129,7 @@ public:
 
 
 private :
-
+	bool navigateToPose( const double dist, const Vector2D* goalPose, const bool onlyDisperse = false );
 	//Vector2D repulsivePotentialField( Vector2D positionCoordinate,  std::list< Vector2D > obstacles );
 
 	PidRegulator pidRegulator;

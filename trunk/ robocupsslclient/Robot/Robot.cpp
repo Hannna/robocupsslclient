@@ -297,13 +297,19 @@ bool Robot::kick()const {
 	return true;
 }
 
+bool Robot::disperse( const double dist){
+	Vector2D goalPose;
+	if( strncmp( this->robotName.c_str(), "red", 3 ) == 0 ){
+		goalPose = Videoserver::getInstance().getRedGoalMidPosition();
 
-bool Robot::disperse( const double dist ){
-	//odsuwa robota od przeszkod za pomoca metody pol potencjalowych
-	//konstruuje pole ujemne
-	LOG_INFO(log,"start  disperse for robot "<<this->robotName<<" minimal distance from obstacle "<<dist );
+	}else{
+		goalPose = Videoserver::getInstance().getBlueGoalMidPosition();
+	}
 
-	//Vector2D Robot::repulsivePotentialField(Vector2D positionCoordinates, std::list< Vector2D > obstacles)
+	return navigateToPose( dist, &goalPose );
+}
+bool Robot::navigateToPose( const double dist, const Vector2D* goalPose, const bool onlyDisperse ){
+
 	std::list< Vector2D >obstacles;
 	Pose currRobotPose;
 	Pose ballPose;
@@ -318,14 +324,12 @@ bool Robot::disperse( const double dist ){
 	GameStatePtr gameState( new GameState() );
 	Videoserver::getInstance().updateGameState( gameState );
 	currRobotPose = gameState->getRobotPos( this->getRobotID( ) );
-	Vector2D goalPose;
-	if( strncmp( this->robotName.c_str(), "red", 3 ) == 0 ){
-		goalPose = Videoserver::getInstance().getBallPosition().getPosition();//Videoserver::getInstance().getRedGoalMidPosition();
-		LOG_INFO(log,"red robot, pose "<<currRobotPose<<" goal Pose "<<goalPose);
-	}else{
-		goalPose = Videoserver::getInstance().getBallPosition().getPosition();//Videoserver::getInstance().getBlueGoalMidPosition();
-		LOG_INFO(log,"blue robot,pose "<<currRobotPose<<" goal Pose "<<goalPose);
-	}
+
+
+	LOG_INFO(log,"robot "<<this->robotName<<" robot, pose "<<currRobotPose<<" goal Pose "<<*goalPose);
+	//odsuwa robota od przeszkod za pomoca metody pol potencjalowych
+	//konstruuje pole ujemne
+	LOG_INFO(log,"start  disperse for robot "<<this->robotName<<" minimal distance from obstacle "<<dist );
 
 	Vector2D oldGradient(0.0,0.0);
 	Vector2D gradient(0.0,0.0);
@@ -387,7 +391,7 @@ bool Robot::disperse( const double dist ){
 			double result, abserr;
 			funcParams params;
 			params.obstacles = obstacles;
-			params.goal = goalPose;
+			params.goal = *goalPose;
 			params.param = currRobotPose.getPosition().y;
 
 			F.function = &navigationFunctionX;
@@ -396,7 +400,7 @@ bool Robot::disperse( const double dist ){
 			gsl_deriv_central (&F, currRobotPose.get<0>(), 1e-8, &result, &abserr);
 			g.x = result;
 
-			params.goal = goalPose;
+			params.goal = *goalPose;
 			params.param = currRobotPose.getPosition().x;
 
 			F.function = &navigationFunctionY;
@@ -444,7 +448,7 @@ bool Robot::disperse( const double dist ){
 			if( max > 0 )
 				velocity = velocity * ( 0.5/max );
 
-			LOG_INFO( log,"gradient "<< gradient <<"set speed "<<velocity<<" distTo nearest obs "<<distToObstacle<< " nearestObsPose"<<nearestObsPose << " dist to goal "<<goalPose.distance( currRobotPose.getPosition() ) );
+			LOG_INFO( log,"gradient "<< gradient <<"set speed "<<velocity<<" distTo nearest obs "<<distToObstacle<< " nearestObsPose"<<nearestObsPose << " dist to goal "<<goalPose->distance( currRobotPose.getPosition() ) );
 
 
 			this->setGlobalSpeed( velocity,0,currRobotPose.get<2>() );
@@ -452,13 +456,18 @@ bool Robot::disperse( const double dist ){
 			//this->setGlobalSpeed( newSpeed,0,currRobotPose.get<2>() );
 		}
 
-	}while( ( goalPose.distance( currRobotPose.getPosition() )  > dist ) /*||  distToObstacle < dist*/    );
+	}while( ( goalPose->distance( currRobotPose.getPosition() )  > dist ) || ( onlyDisperse && ( distToObstacle < dist ) ) );
 
 	this->stop();
 
 	LOG_INFO( log,"end  disperse for robot "<<this->robotName );
 
 	return true;
+}
+
+bool Robot::goToBall(const double dist ){
+	Vector2D goalPose=Videoserver::getInstance().getBallPosition().getPosition();
+	return navigateToPose( dist, &goalPose );
 }
 /*
 Vector2D Robot::repulsivePotentialField( const Vector2D positionCoordinates, const Vector2D goal, std::list< Vector2D > obstacles){
