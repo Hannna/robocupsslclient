@@ -337,15 +337,17 @@ void FollowLineAndAvoidObs::execute(void *){
 	   struct timespec startTime;
 	   struct timespec startLoopTime;
 	   double endTime = 0;
+	   bool iAmCloserToBall;
 	   while( taskStatus!=Task::ok  && ( (lastSimTime - startSimTime) < exTime ) ){
 
 			bzero(&startTime, sizeof( startLoopTime ) );
 			measureTime(start_measure, &startLoopTime);
 
-			EvaluationModule::ballState bs = evaluation.getBallState(  this->robot.getRobotID( ) );
+
+			EvaluationModule::ballState bs = evaluation.getBallState(  this->robot.getRobotID( ), &iAmCloserToBall );
 
 			//jesli pilka jest wolna to zdobadz ja
-			if( bs == EvaluationModule::free ){
+			if( bs == EvaluationModule::free  && iAmCloserToBall ){
 			   LOG_FATAL(log,"EvaluationModule::free ");
 			   newTask = new GetBall( &this->robot );
 			   gettingBall = true;
@@ -392,9 +394,9 @@ void FollowLineAndAvoidObs::execute(void *){
 			}
 
 			if( taskStatus == Task::collision ){
+				LOG_FATAL(log,"FollowLineAndAvoidObs Task::collision ");
 				robot.stop();
 				robot.disperse(0.1);
-				LOG_FATAL(log,"FollowLineAndAvoidObs Task::collision ");
 				double tmp = SimControl::getInstance().getSimTime();
 				double diffTime = tmp - lastSimTime;
 				lastSimTime = tmp;

@@ -49,7 +49,7 @@ public:
       */
      score aimAtTeamMate(Robot::robotID myRobotID, Robot::robotID goalRobotID);
 
-     ballState getBallState(Robot::robotID);
+     ballState getBallState(Robot::robotID, bool * iAmCloserToBall = NULL);
 
      Pose getPositionForThrowIn(){
     	 return Pose(this->positionForThrowIn,0);
@@ -80,7 +80,7 @@ public:
         static Mutex mutex;
         const log4cxx::LoggerPtr log;
         Vector2D positionForThrowIn;
-        ballState ballState_;
+        //ballState ballState_;
 
         EvaluationModule();
         virtual ~EvaluationModule();

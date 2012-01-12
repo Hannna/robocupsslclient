@@ -866,6 +866,7 @@ void Robot::stop(  ){
 		this->setRelativeSpeed(result,0);
 	}
 */
+    LOG_FATAL( log, " Start stopping robot " );
 	this->setRelativeSpeed( Vector2D(0,0),0 );
 	//bool finish=false;
 	double err=1;
@@ -878,6 +879,7 @@ void Robot::stop(  ){
 		#endif
 			usleep(10000);
 	}
+	LOG_FATAL( log, " end stopping robot " );
 
 }
 
