@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+
+<model:physical name="field_model"
+	xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" 
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" 
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" 
+	xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom" 
+	xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint" 
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" 
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+    xmlns:visual="http://playerstage.sourceforge.net/gazebo/xmlschema/#visual" 
+   	xmlns:xi="http://www.w3.org/2001/XInclude"
+	>	
+
+	<xyz>0 0 0</xyz>
+	<rpy>0 0 0</rpy>
+	<canonicalBody>field_body</canonicalBody>
+	<static>true</static>
+
+	
+	<body:box name = "field_body">
+		<xyz>0 0 0</xyz>
+		<rpy>0 0 0</rpy>
+					
+		<!-- boisko ma wymiary zgodne z regułami ligi small size SSL 2009 -->
+		<!-- pole gry zaczyna się w pkt (0,0) -->
+		<!-- srodek : (2.7,3.7)-->
+		
+		
+		<geom:box name = "field_geom">
+			<xyz>2.7 3.7 0.025</xyz>
+			<rpy>0 0 0 </rpy>
+			<size>5.4 7.4 0.05</size>
+
+			<mu1>10.0</mu1>
+			
+			<kp>2e6</kp>
+			<kd>100</kd>
+			
+			<bounce>0.0</bounce>
+			<bounceVel>0</bounceVel>
+			<visual>	
+				<scale>5.4 7.4 0.05</scale>
+				<mesh>unit_box</mesh>
+				<material>Gazebo/RobocupFieldSSL2009</material>
+			</visual>
+		</geom:box>	
+				
+		<geom:box name = "bandDOWN">
+			<xyz>2.7 -0.05 0.075</xyz>
+			<rpy>0 0 0 </rpy>
+			<size>5.6 0.1 0.15</size>
+			<kp>1e8</kp>
+			<mass>10.0</mass>
+			<mu1>0.0</mu1>
+			<mu2>0.0</mu2>
+			<visual>	
+				<scale>5.6 0.1 0.15</scale>
+				<mesh>unit_box</mesh>
+				<material>Gazebo/Robocup_brown</material>
+			</visual>
+		</geom:box>		
+		
+		<geom:box name = "bandUP">
+			<xyz>2.7  7.405 0.075</xyz>
+			<rpy>0 0 0 </rpy>
+			<size>5.6 0.1 0.15</size>
+			<kp>1e8</kp>
+			<mass>10.0</mass>
+			<mu1>0.0</mu1>
+			<mu2>0.0</mu2>
+			<visual>	
+				<scale>5.6 0.1 0.15</scale>
+				<mesh>unit_box</mesh>
+				<material>Gazebo/Robocup_brown</material>
+			</visual>
+		</geom:box>	
+		
+		<geom:box name = "bandLEFT">		
+			<xyz>-0.05  3.7 0.075</xyz>
+			<rpy>0 0 0 </rpy>
+			<size>0.1 7.4 0.15</size>
+			<kp>1e8</kp>
+			<mass>10.0</mass>
+			<mu1>0.0</mu1>
+			<mu2>0.0</mu2>
+			<visual>	
+				<scale>0.1 7.4 0.15</scale>
+				<mesh>unit_box</mesh>
+				<material>Gazebo/Robocup_brown</material>
+			</visual>
+		</geom:box>		
+		
+		<geom:box name = "bandRIGHT">
+			<xyz>5.45  3.7 0.075</xyz>
+			<rpy>0 0 0 </rpy>
+			<size>0.1 7.4 0.15</size>
+			<kp>1e8</kp>
+			<mass>10.0</mass>
+			<mu1>0.0</mu1>
+			<mu2>0.0</mu2>
+			<visual>	
+				<scale>0.1 7.4 0.15</scale>
+				<mesh>unit_box</mesh>
+				<material>Gazebo/Robocup_brown</material>
+			</visual>
+		</geom:box>	
+
+
+		<!-- *********** bramki *********** -->
+		<model:physical name="goal_bottom">
+			<xyz>2.7 0.675 0.05 </xyz>
+			<rpy>0.0 0.0 0</rpy>
+		
+			<include embedded="true">
+				<xi:include href="goal.model" />
+			</include>
+		</model:physical>
+		
+		<model:physical name="goal_top">
+			<xyz>2.7 6.725 0.05 </xyz>
+			<rpy>0.0 0.0 180</rpy>
+		
+			<include embedded="true">
+				<xi:include href="goal.model" />
+			</include>
+		</model:physical>
+		
+	</body:box>
+</model:physical>
