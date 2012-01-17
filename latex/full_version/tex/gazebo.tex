@@ -78,19 +78,6 @@
 	\caption{\textit{Gazebo} -- okno główne (wersja 0.10)}
 	\end{figure}
 
- 	\subsection{Player}
- 	
- 	\textit{Player} jest serwerem sieciowym dostarczającym interfejs do kontroli nad sensorami i efektorami, w które wyposażony jest robot,
-	za pośrednictwem protokołu TCP/IP. Jak już wspomniano, został zaprojektowany do obsługi robotów z rodziny \textit{Pioneer 2} firmy ActivMedia, jednak z czasem rozbudowano go dodając obsługę wielu innych urządzeń i algorytmów\footnote{Aktualną listę można znaleźć pod adresem \url{http://playerstage.sourceforge.net/doc/Player-cvs/player/supported_hardware.html}}. Najważniejsze cechy decydujące o atrakcyjności i funkcjonalności Playera to:
-	\begin{itemize}
-	 \item niezależność od platformy i stosowanego języka programowania -- program klienta łączący się z aplikacją \textit{Playera} może zostać uruchomiony na dowolnym systemie operacyjnym; wymagane jest tylko istnienie połączenia sieciowego z robotem oraz to, żeby język programowania, w którym napisano progam kliencki, potrafił obsługiwać komunikację za pośrednictwem socketów TCP; \textit{Player} dostarcza obecnie narzędzia ułatwiające komunikację z nim w językach C, C++, Tcl, Java, Python i Common LISP,
-	 \item brak ograniczeń na strukturę programu klienta przeznaczonego do sterowania robotem -- może ona być wielowątkowa, napisana w prosty sposób reaktywny (pobierz dane - reaguj) lub bardziej skomplikowany -- z perspektywy \textit{Playera} nie ma to żadnego znaczenia,
-	 \item możliwość reprezentacji wielu urządzeń przez ten sam interfejs -- dzięki temu można np. sterować dwoma zupełnie różnymi robotami za pomocą tego samego programu klienta (ich efektory odpowiadające za przemieszczanie robota będą w obu przypadkach reprezentowane przez interfejs \textit{position}),
-	 \item wspieranie dowolnej liczby klientów; przykładowo, można stworzyć wiele połączeń do dowolnych instancji aplikacji \textit{Playera} na dowolnym robocie i za pomocą jednej aplikacji sterować robotami, podczas gdy druga będzie odpowiedzialna za generowanie wykresów obrazujących odczyty z sensorów,
-	 \item możliwość zdalnej konfiguracji serwera w czasie jego pracy,
-	 \item łatwość testowania rozwiązań w symulatorach -- \textit{Player} jest kompatybilny ze Stage oraz Gazebo, a kod napisany w celu sterowania robotami może działać bez poprawek zarówno z symulatorem, jak i z rzeczywistym robotem.
-	\end{itemize}
-
 	\section{Modelowanie obiektów w Gazebo}
 	Filozofia modelowania w \textit{Gazebo} opiera się na tworzeniu opisu świata (o parametrach określonych 
 	w pliku \textit{.world} za pomocą języka XML), w którym umieszczone zostają symulowane obiekty. Plik zawiera informacje o dodanych do świata modelach, ale także parametry określające przebieg symulacji, takie 

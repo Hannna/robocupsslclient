@@ -1,32 +1,37 @@
 \chapter[Wstęp ]{Wstęp}
-Wstęp został póki co przeklejony z pracy inżynierskiej \cite{inzynierka}.
-\todo{napisać nowy wstęp}
-Termin \emph{robot} został po raz pierwszy użyty w sztuce czeskiego pisarza Karela \u{C}apka. Słowo to określało maszynę-niewolnika  zastępującą człowieka w najbardziej uciążliwych zajęciach. Semantyka tego wyrazu doskonale wyraża motywację, którą kieruje się człowiek tworząc roboty. Dlatego w drugiej połowie XX wieku, kiedy technologia elektroniczna oferowała coraz większe możliwości, robotyka jako dziedzina nauki i techniki zaczęła się gwałtownie rozwijać. Początkowo konstruowano roboty do zastosowań przemysłowych. Były to manipulatory, czyli mechaniczne ramiona o kilku stopniach swobody, na których zamontowane były odpowiednie narzędzia. Pierwszy manipulator został wykorzystany w przemyśle samochodowym w 1961 roku przez firmę General Motors. 
-
-Wraz z rozwojem techniki zaczęto myśleć o wprowadzeniu robotów do codziennego życia przeciętnego człowieka. Koncepcja robotów usługowych zakłada, że będą one wyręczać ludzi z konieczności wykonywania żmudnych czynności, takich jak sprzątanie czy też koszenie trawników. Współczesne roboty usługowe mogą nawet pełnić funkcje przewodników po muzeach. Nie wyczerpuje to oczywiście wszystkich zastosowań robotów, które coraz częściej wykorzystywane są w medycynie, wojskowości oraz ratownictwie.
-
-Innowacyjne rozwiązania stwarzają jednak potrzebę opracowania wymagającego środowiska testowego. W przypadku robotów mobilnych gra w piłkę nożną może za takie posłużyć. Podobnie jak w przypadku ludzi zawodnik w takiej grze powinien charakteryzować się dużą zwrotnością i szybkością. Ponadto powinien sprawnie reagować na zmiany sytuacji na boisku, szybko podejmować decyzje oraz (ponieważ jest to gra zespołowa) współpracować z pozostałymi zawodnikami. Z takiego założenia wyszli twórcy \emph{RoboCup}, czyli rozgrywek robotów w piłkę nożną. Liga jest traktowana jako pole testowe dla konstrukcji mechanicznych oraz algorytmów sterowania.
-W ostatnich latach stworzono także osobne przedsięwzięcie o nazwie \textit{RoboCup Rescue}, mające na celu testowanie robotów pod kątem użyteczności w ratownictwie podczas sytuacji kryzysowych.
-
-Liga \textit{RoboCup} budzi zainteresowanie wielu ludzi na całym świecie, także liczne środowiska akademickie prowadzą prace z nią związane. Pomimo że na Politechnice Warszawskiej nie istnieje jeszcze w pełni funkcjonalna drużyna robotów, testowane są już algorytmy sterowania pojedynczym zawodnikiem.
-Jednym z podstawowych problemów, na który napotyka się przy sterowaniu robotem mobilnym, jest bezkolizyjna nawigacja w dynamicznie zmieniającym się środowisku. To właśnie ten problem należy rozwiązać przed przystąpieniem do kolejnych, bardziej zaawansowanych prac.
-
-%Autorzy niniejszej pracy postawili przed sobą dwa zasadnicze cele:
-%\begin{enumerate}
-%\item opracowanie środowiska symulacyjnego, odpowiadającego jednej z lig rozgrywek RoboCup, dającego w przyszłości możliwość testowania nowych rozwiązań i algorytmów kontrolujących drużynę robotów
-
-%\item zaimplementowanie oraz przetestowanie pod kątem użyteczności w rozgrywkach RoboCup wybranego algorymu unikania kolizji  
-%\end{enumerate} 
-
+Szybki postęp technologiczny zapoczątkowany w XX wieku umożliwił rozwój nowych dziedziń nauki, między innymi robotyki. Obecnie maszyny mogą zastępować ludzi przy wykonywaniu wielu rozmaitych czynności.
+Innowacyjne rozwiązania stwarzają jednak potrzebę opracowania wymagającego środowiska testowego. Jedną z takich inicjatyw, mających na celu wspieranie rozwoju i popularyzację robotyki są rozgrywki
+RoboCup. W obrębie przedsięwzięcia wyróżnionych jest kilka lig rozgrywek, różniących się zasadami oraz typem robotów biorących udział w zawodach.
+Głównym celem przyświecającym organizatorom jest stworzenie do 2050 roku drużyny robotów zdolnej wygrać z ówczesnymi mistrzami świata.
+Liga RoboCup budzi zainteresowanie wielu ludzi na całym świecie, wiele środowisk akademickich prowadzi prace z nią związane.
+W Polsce nie została jeszcze stworzona drużyna, która wystartowałaby w tych rozgrywkach.
+Rozwiązanie problemu stawia przed uczestnikami wyzwania konstukcyjne oraz algorytmiczne. W niniejszej pracy opisane zostaną właśnie te drugie. Rozwiązany zostanie problem sterowania zawodnikiem,
+wyznaczania bezkolizyjnej ścieżki do celu oraz rozwiązywania prostych zachowań niezbędnych podczas rozgrywek.
+\section{Zakres pracy}
+Niniejsza praca jest niejako kontynuacją działań podjętych podczas realizacji pracy inżynierskiej. Tematyka w niej poruszona dotyczy na wstępie samych rozgrywek Robocup, nastepnie (z uwagi na brak 
+rzeczywistych modeli) stworzenia nowego testowego środowiska symulacyjnego oraz przystosowania symulatora. Opracowane zostały nowe modele zawodników, zaimplementowany sterownik umożliwiający: kontrolę
+ nad prędkością robota, prowadzenie piłki jak i oddawanie strzału.
+ W stosunku do poprzednich prac zdecydowano się także na implementację oraz poddanie testom nowego algorytmu nawigacji. Rozwiązanie to zostało przetestowane w takich samych warunkach 
+jak rozwiązanie wcześniejsze.
+W pracy zostało także jedno z podejść stosowanych do koordynacji i planowania działań zawodników 
+\subsection{Liga Robocup}
+\subsection{Planowanie działań drużyny robotów}
 \section{Cel pracy}
 Celem niniejszej pracy było stworzenie środowiska symulacyjnego, umożliwiającego modelowanie rozgrywki robotów w piłkę nożną oraz 
 dającego w przyszłości możliwość testowania różnorodnych rozwiązań sterowania drużyną.
+Podczas realizacji postawionego zadania starano się zachować w jak największym stopniu realia rozgrywek \texttt{Robocup}, ze szczególnym uwzględnieniem zasad ligi \emph{Small-size League}.
+Z racji, iż wczesniejsze prace prowadzono na symulatorze \emph{Player/Stage/Gazebo} zdecydowano się na dalsze prace na tej platformie.
+Zachowano schemat przepływu informacji z pracy inżynierskiej. Został on zamieszczony na rysunku \ref{fig:przeplyw_sterowania}. Stosowany w rozgrywach \emph{Small-size League} został
+zamodelowany jako osobna warstwa  aplikacji, komunikująca się bezpośrednio z symulatorem. Osobną warstwę stanowi także część aplikacji odpowiedzialna za sterowanie robotem.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.38]{./zalozenia/przeplyw_sterowania.pdf}
+\caption{Komunikacja pomiędzy warstwami aplikacji.} \label{fig:przeplyw_sterowania}
+\end{figure}
+Dzięki takiej architekturze w łatwy sposób można przystosować aplikację do sterowania rzeczywistym robotem pobierającym dane z zewnętrznego serwera.
+Zdecydowano się jednak na odejście od modelu robota o napędzie różnicowym. Tego typu baza jezdna wprowadza jednak znaczące ograniczenia na sterowanie takim zawodnikiem. W symulatorze zamodelowane zostały rzeczywiste
+roboty biorące udział w rozgrywkach \emph{Small-size League}. Jak już wspomniano w rozdziale \ref{chap:robocup} są to roboty posiadające trzy niezależnie napędzane koła szwedzkie. Sterowanie takim zawodnikiem jest dużo
+prostsze. Model został także wyposażony w urządzenie do dryblowania piłki oraz umożliwiające strzał lub podanie.
+Przed przystąpieniem do prac nad architekturą aplikacji sterującej dokonano przeglądu rozwiązań stosowanych w rozgrywkach. Ostatecznie zdecydowano się na architekturę 
+\mbox{\texttt{STP - Skill Tactics Play}} oryginalny opis można znaleźć w \cite{stp}. Natomiast w niniejszej pracy szerzej została ona omówiona w rozdziale \ref{chap:stp}.
 
-%Celem niniejszej pracy było stworzenie kompletnego środowiska symulacyjnego, pozwalającego na modelowanie robotów grających w piłkę nożną i~dającego
-% w przyszłości możliwość testowania różnorodnych rozwiązań sterowania drużyną. Ponadto za zadanie przyjęto zaimplementowanie algorytmu unikania kolizji,
-% który pozwalałby zawodnikowi sprawnie poruszać się w dynamicznym środowisku, jakim jest rozgrywka \textit{RoboCup}. 
-%Tworząc modele robotów postawiono sobie za cel ich kompatybilność z robotami \textit{HMT} rozwijanymi aktualnie przez studenckie
-% Koło Naukowe Robotyki \textit{Bionik\footnote{\url{http://bionik.ia.pw.edu.pl}}} (funkcjonujące przy Zespole Programowania Robotów i Systemów Rozpoznających 
-%na Wydziale Elektroniki i Technik Informacyjnych). 
-%Autorzy mają nadzieję, ze ich praca w przyszłości przyczyni się do rozwoju działań związanych z rozgrywkami robotów w piłkę nożną na naszym Wydziale, 
-%a także okaże się przydatna innym osobom zajmującym się zagadnieniami związanymi z robotyką.
