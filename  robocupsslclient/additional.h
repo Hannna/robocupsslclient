@@ -222,6 +222,9 @@ double convertAnglePI(double angle);
 ///@return kąt w radianach z przedziału 0..+2*M_PI
 double convertAngle2PI(double angle);
 
+//oblicza kat o jaki trzeba sie obrocic do celu
+double calculateAngleToTarget( const Pose &currRobotPose,const Pose &targetPose );
+
 template <class T>
 double euclideanNorm(T t1, T t2 ){
 	return sqrt( pow(t1-t2,2 ) );

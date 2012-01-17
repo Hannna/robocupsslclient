@@ -111,6 +111,9 @@ int daemonInit ( void )	{
 
 using namespace Tests;
 
+
+
+
 int main(int argc, char*argv[],char *envp[]){
 
     //daemonInit ( );
@@ -118,16 +121,6 @@ int main(int argc, char*argv[],char *envp[]){
     // read config files
     //Init libxml
     xmlInitParser();
-
-    /*
-    Vector2D v(0,1);
-    Vector2D w(1,0);
-    Vector2D ww(0,-1);
-
-    std::cout<<"angle  "<<v<<" to "<<w<<v.angleTo(w) <<std::endl;
-    std::cout<<"angle  "<<v<<" to "<<ww<<v.angleTo(ww) <<std::endl;
-    return 0;
-	*/
 
 //    log4cxx::PropertyConfigurator::configure("log4cxx.properties");
     Config::getInstance().load("/home/maciek/workspace/magisterka/Debug/config.xml");
@@ -142,13 +135,15 @@ int main(int argc, char*argv[],char *envp[]){
         }
         else if( strncmp(argv[1],"experiment_1",12)==0 ){
         	experimentKind = Experiments::navigation_2011;
+        	Play::init();
         }
         else if( strncmp(argv[1],"experiment_2",12)==0 ){
         	experimentKind = Experiments::rrtTest;
         	std::cout<<" !!!!!@@@@@@@@@@"<<argv[2]<<std::endl;
         	situations = std::string(argv[2]);
+        	Play::init();
         }
-        if( Config::getInstance().isTestMode( ) && (argc>2) ){
+        if( Config::getInstance().isTestMode( ) && (argc>2) && ( experimentKind == Experiments::none ) ){
             if(strncmp(argv[2],"velocity",8)==0)
                 testKind=Tests::velocity;
             if(strncmp(argv[2],"position",8)==0)
@@ -179,7 +174,7 @@ int main(int argc, char*argv[],char *envp[]){
             if(strncmp(argv[2],"navi_fun",8)==0)
                 testKind=Tests::navi_function;
 
-            if( testKind==Tests::none ){
+            if( testKind==Tests::none && ( experimentKind == Experiments::none )){
             	std::cout<<"unknown  param "<<argv[2]<<std::endl;
             	xmlCleanupParser();
             	exit(0);
@@ -197,8 +192,6 @@ int main(int argc, char*argv[],char *envp[]){
     LOG_DEBUG(getLoggerPtr ("blue1"), "test");
     LOG_DEBUG(getLoggerPtr ("blue2"), "test");
 
-
-    Play::init();
 
     Videoserver::getInstance().start(NULL);
 
@@ -291,4 +284,6 @@ int main(int argc, char*argv[],char *envp[]){
 
     return 0;
 }
+
+
 #endif

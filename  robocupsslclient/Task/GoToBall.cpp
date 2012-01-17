@@ -14,6 +14,8 @@ GoToBall::GoToBall(Robot * robot_):Task(robot_) {
 	this->ballPose = this->currGameState->getBallPos();
 	this->goToPose =  new GoToPose( this->ballPose.getPosition(), robot);
 
+	LOG_INFO(log, "create GetBall task for "<<robot->getRobotName() );
+
 }
 
 Task* GoToBall::nextTask(){
@@ -82,9 +84,11 @@ Task::status GoToBall::run(void * arg, int steps){
 	if( dist > GetBall::maxDistanceToBall ){
 		LOG_DEBUG(log, "go to ball distance to ball = "<<dist);
 		ballPose = this->currGameState->getBallPos();
-
+		//LOG_FATAL(log, "ballPos "<<ballPos<<" ballPos with prediction ");
 		Vector2D ballPos = this->currGameState->getBallPos().getPosition();
 		ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
+
+		LOG_FATAL(log, " ballPos "<<this->currGameState->getBallPos().getPosition()<<" ballPos with prediction "<<ballPos );
 
 		if( ( this->predicates & Task::analyse_all_field ) > 0){
 			if( this->goToPose )

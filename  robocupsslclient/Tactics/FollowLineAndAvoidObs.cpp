@@ -17,6 +17,7 @@
 #include "../Task/GetBall.h"
 #include "../Exceptions/SimulationException.h"
 #include "../additional.h"
+#include "../RRT/SimAnnealing.h"
 
 
 FollowLineAndAvoidObs::FollowLineAndAvoidObs(Robot & robot_, const Vector2D p1_, const Vector2D p2_ ): Tactic(robot_),
@@ -390,13 +391,14 @@ void FollowLineAndAvoidObs::execute(void *){
 
 			if( taskStatus == Task::error ){
 				LOG_FATAL(log,"FollowLineAndAvoidObs Task::error ");
+
 				break;
 			}
 
 			if( taskStatus == Task::collision ){
 				LOG_FATAL(log,"FollowLineAndAvoidObs Task::collision ");
 				robot.stop();
-				robot.disperse(0.1);
+				robot.disperse(0.05);
 				double tmp = SimControl::getInstance().getSimTime();
 				double diffTime = tmp - lastSimTime;
 				lastSimTime = tmp;
@@ -446,12 +448,18 @@ void FollowLineAndAvoidObs::execute(void *){
 	}
 
 	file.close();
+
+	LOG_DEBUG( log,"############# TACTIC COMPLETED #############" );
+	robot.stop();
+	LockGuard m(mutex);
+	this->finished = true;
+
 }
 
 
 bool FollowLineAndAvoidObs::isFinish(){
-
-	return false;
+	LockGuard m(mutex);
+	return this->finished;
 }
 
 FollowLineAndAvoidObs::~FollowLineAndAvoidObs() {

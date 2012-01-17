@@ -42,10 +42,11 @@ Task::status Rotate::run(void * arg, int steps){
 
 			currRobotPose=currGameState->getRobotPos( robot->getRobotID() );
 			bool haveBall = false;
+			double angle = calculateAngleToTarget( currRobotPose, Pose(targetPosition.x,targetPosition.y,0) );
 			double w = robot->calculateAngularVel( currRobotPose, targetPosition, currGameState->getSimTime(), haveBall );
-			//LOG_TRACE(log,"move robot from"<<currRobotPose<<" to "<<nextRobotPose<<" setVel "<<robotNewVel <<" w"<<w);
+			LOG_INFO(log,"move robot from"<<currRobotPose<<" to "<<targetPosition<<" setVel w "<<w<<" angle to target "<<angle);
 
-			if( fabs(w) < 0.01 ){
+			if( fabs(w) < 0.1 ){
 				LOG_INFO(this->log,"Rotation OK");
 				return Task::ok;
 			}

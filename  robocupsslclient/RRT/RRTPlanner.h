@@ -293,7 +293,7 @@ private:
     static const double SAFETY_MARGIN = 0.05;
 
 	//pozycja docelowa robota
-	const Pose goalPose;
+	Pose goalPose;
     //czy przewidujemy ruch przeszkody
 	const bool obsPredictionEnabled;
     //prawdopodobienstwo wyboru punktu kierujacego na cel

@@ -160,7 +160,11 @@ Task::status KickBall::run(void * arg, int steps ){
     		LOG_INFO(log,"kick now set. Try to kick ball.");
     	}
     	this->robot->kick();
-		return Task::kick_ok;
+
+    	if( this->evaluationModule.isRobotOwnedBall( this->robot->getRobotID() ) )
+    		return Task::not_completed;
+    	else
+    		return Task::kick_ok;
     }
     else
     	return Task::not_completed;

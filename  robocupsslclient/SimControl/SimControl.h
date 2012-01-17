@@ -53,7 +53,8 @@ public:
         void connectGazeboPosIface(libgazebo::PositionIface *posIface,const char* name);
 	#endif
 	/// ustawia wybrany model na zadanej pozycji
-	void setSimPos(const char* name, Pose &position);
+	void setSimPos(const char* name, const Pose &position);
+	Vector2D getBallSpeed();
 	/// wypelnia x,y,rot odpowiednio do polozenia modelu o nazwie name na planszy
 //	void getSimPos(const char* name, double &x,double &y,double  &rot);
 	double getModelPos(std::string modelName,Pose &position);

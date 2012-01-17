@@ -171,7 +171,20 @@ double convertAngle2PI(double angle){
 		return angle;
 }
 
-
+double calculateAngleToTarget(const Pose &currRobotPose,const Pose &targetPose ){
+	const double robotRotation = currRobotPose.get<2>();
+	RotationMatrix rm(robotRotation);
+	//pozycja celu w ukladzie wsp zw z robotem
+	Pose targetRelativePose = targetPose.transform( currRobotPose.getPosition() , rm);
+	//wektor EB gdzie E to idealna pozycja pilki kiedy jest przechwycona przez robota a B pozycja pilki
+	//Vector2D eb (ballRelativePose.get<0>(), ballRelativePose.get<1>() - 0.08 );
+	//idealna rotacja robota do celu
+	//const double angle = convertAnglePI(atan2(t.get<1>(),t.get<0>()) -M_PI/2.0);
+	//stara wersja
+	//Vector2D oy(0.0,1.0);
+	//const double angle = eb.angleTo( oy );
+	return convertAnglePI(atan2(targetRelativePose.get<1>(),targetRelativePose.get<0>()) -M_PI/2.0);
+}
 double sgn(double d){
 	if (d > 0) return 1.0;
 	if (d == 0) return 0.0;

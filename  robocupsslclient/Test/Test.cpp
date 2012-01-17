@@ -175,8 +175,8 @@ void testMotion(const Pose goalPose,Videoserver & video,Robot& robot){
 void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 #ifdef GAZEBO
 
-	Videoserver::getInstance().stop();
-	Videoserver::getInstance().join();
+	//Videoserver::getInstance().stop();
+	//Videoserver::getInstance().join();
 
 
 	sleep(1);
@@ -194,7 +194,7 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 	//while(time(NULL)-startTime<5){
 
 
-	while( startPosition.distance(currPosition) < 1.0 ){
+	while( startPosition.distance(currPosition) < 3.0 ){
 		currSimTime=SimControl::getInstance().getModelPos(robot.getRobotName(),currPosition);
 
 		robot.setGlobalSpeed(speed,yaw, currPosition.get<2>());
@@ -221,7 +221,7 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 		std::cout<<"calculated relative robot velocity "<<t<<std::endl;
 		std::cout<<"calculated global robot velocity "<<tmp2<<" angular velocity "<<w<<std::endl;
 
-		std::cout<<"relative robot velocity from gazebo"<<relSpeed<<" angular velocity "<<ang_vel<<std::endl;
+		std::cout<<"global robot velocity from gazebo"<<relSpeed<<" angular velocity "<<ang_vel<<std::endl;
 		//RotationMatrix rm2(-rot);
 		//Vector2D rel = relSpeed.rotate(rot);
 		//std::cout<<"global robot velocity from gazebo"<<relSpeed.rotate(rot)<<" angular velocity "<<ang_vel<<std::endl;
@@ -229,9 +229,9 @@ void testVel(Vector2D speed,double yaw,Robot& robot,time_t testTime){
 		prevSimTime=currSimTime;
 		prevPosition=currPosition;
 
-
+		robot.setGlobalSpeed(speed,0, currPosition.get<2>());
 		//SimControl::getInstance().getAllPos(positions);
-		usleep(100000);//100ms
+		usleep(500000);//100ms
 	}
     std::cout<<"HAMOWANIE"<<std::endl;
     robot.stop();
@@ -630,15 +630,21 @@ void testPassTacticFunc(void * arg){
     //warunek na sprawdzenie czy pilka jest w posiadaniu robota
     //    while( ( dist = ballPose.distance( gameState->getRobotPos( redRobot0.getRobotID() ) ) ) >
     //               ( Config::getInstance().getRobotMainCylinderRadious() + 0.04 ) ){
-	Robot* red0 = reinterpret_cast<Robot*>(arg);//(std::string("red0"),ifaceName);
+	Robot* blue0 = reinterpret_cast<Robot*>(arg);//(std::string("red0"),ifaceName);
 
-	static Robot red1(std::string("red1"),ifaceName);
+	static Robot blue1(std::string("blue1"),ifaceName);
 	//jedz do pilki
 	//GameStatePtr gameState(new GameState());
 	//Videoserver::getInstance().updateGameState(gameState);
 
-	Robot *pass = &red1;
-	Robot *recv = red0;
+	Robot *pass = blue0;
+	Robot *recv = &blue1;
+
+	GameStatePtr gameState(new GameState());
+	Videoserver::getInstance().updateGameState(gameState);
+
+	Pose start0 = gameState->getRobotPos(blue0->getRobotID());
+	Pose start1 = gameState->getRobotPos(blue1.getRobotID());
 
 	while(true){
 
@@ -650,13 +656,20 @@ void testPassTacticFunc(void * arg){
 		pass_tactic->start(NULL);
 
 		pass_tactic->join();
+		std::cout<<" after join pass_tactic "<<std::endl;
 //		receive_pass->join();
 
 		receive_pass->stopTactic();
 		receive_pass->join();
+		std::cout<<" after join receive_pass "<<std::endl;
 
 		delete receive_pass;
 		delete pass_tactic;
+
+		sleep(5);
+		SimControl::getInstance().setSimPos( "ball", Config::getInstance().field.FIELD_MIDDLE_POSE );
+		SimControl::getInstance().setSimPos( "blue0", start0 );
+		SimControl::getInstance().setSimPos( "blue1", start1 );
 
 		Robot * tmp = pass;
 		pass = recv;
@@ -767,6 +780,7 @@ void run_experiment_1(){
 	redPlay->execute();
 
 	bluePlay->waitForFinish();
+
 	redPlay->waitForFinish();
 
 	SimControl::getInstance().moveBall( Config::getInstance().field.FIELD_MIDDLE_POSE );

@@ -363,8 +363,9 @@ bool EvaluationModule::isRobotOwnedBall(const Robot & robot, const GameStatePtr&
 
 bool EvaluationModule::isRobotOwnedBall(const Robot::robotID & robotID, const GameStatePtr& currGameState,double& distanceToBall, double& angleToBall){
 	const Pose currRobotPose = currGameState->getRobotPos( robotID );
-	const Pose ballPose = currGameState->getBallPos();
+	const Pose ballPose = Pose( currGameState->getBallPos().getPosition() + currGameState->getBallGlobalVelocity()*this->video.getUpdateDeltaTime(),0);
 	Vector2D ballPosition = ballPose.getPosition();
+
 	//dystans do pilki
 	//const Vector2D distToBall = Vector2D( ballPosition - currRobotPose.getPosition() );
 
@@ -395,7 +396,8 @@ bool EvaluationModule::isRobotOwnedBall(const Robot::robotID & robotID, const Ga
     //czy pilka jest przed dribblerem
     if ( fabs(angle) < 0.33 ){
         //czy pilka jest odpowienio blisko dribblera
-        if ( toBall.length() < ( 0.075+0.012+0.022 ) / cos(angle) ){
+        //if ( toBall.length() < ( 0.075+0.012+0.022 ) / cos(angle) ){
+    	if ( toBall.length() < ( 0.075+0.006+0.022 ) / cos(angle) ){
         	robotHaveBall = true;
         }
     }

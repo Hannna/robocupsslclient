@@ -6,6 +6,7 @@
  */
 
 #include "RRTPlanner.h"
+#include "SimAnnealing.h"
 
 #include <algorithm>
 #include <limits>
@@ -210,7 +211,15 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	collision=isTargetInsideObstacle(goalPose,safetyMarigin);
 	if( collision ){
 		LOG_ERROR(logger,"Achtung !!!"<<this->robotName<<" target is inside obstacle.");
-		return RRTPlanner::TargetInsideObstacle;
+
+		SimAnnealing sim(root->getGameState(),goalPose.getPosition(),robotId);
+
+		Vector2D v =sim.simAnnnealing();
+		LOG_ERROR(logger,"Achtung !!!"<<this->robotName<<" target is inside obstacle. Change "<<goalPose <<" to "<<v);
+		goalPose = Pose(v.x,v.y, goalPose.get<2>());
+
+
+		//return RRTPlanner::TargetInsideObstacle;
 	}
 
     double distanceToTarget;

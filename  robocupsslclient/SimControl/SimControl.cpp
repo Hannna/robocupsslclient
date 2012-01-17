@@ -161,7 +161,26 @@ void SimControl::connectGazeboPosIface(libgazebo::PositionIface *posIface,const 
     }
     return;
 }
-void SimControl::setSimPos(const char* name, Pose &pose)
+
+Vector2D SimControl::getBallSpeed(){
+	LockGuard lock(mutex);
+
+	std::string model_name("noname::ball");
+	libgazebo::Vec3 p;
+	libgazebo::Pose pose_;
+	libgazebo::Vec3 linearVel(0,0,0);
+	libgazebo::Vec3 angVel(0,0,0);
+	libgazebo::Vec3 linearAcc(0,0,0);
+	libgazebo::Vec3 angAcc(0,0,0);
+
+	simIface->GetState(model_name.c_str(), pose_, linearVel, angVel, linearAcc, angAcc);
+
+	const int responseCount = 1;
+	//this->wait( responseCount );
+
+	return Vector2D(linearVel.x,linearVel.y);
+}
+void SimControl::setSimPos(const char* name, const Pose &pose)
 {
 	LockGuard lock(mutex);
 	//this->wait();

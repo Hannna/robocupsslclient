@@ -182,8 +182,8 @@ void Robot::setRelativeSpeed(const Vector2D & v, const double & w)
 
     posIface->Unlock();
 #endif
-    file<<v.x<<";"<<v.y<<";"<<w<<"\n" ;
-    file.flush();
+    //file<<v.x<<";"<<v.y<<";"<<w<<"\n" ;
+    //file.flush();
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<v.x<<"\t vy="<<v.y<<"\t" );
 
     LOG_FATAL( log, "set relative vel       name="<<this->robotName.c_str()<<" vx="<<v.x<<" vy="<<v.y<<" w "<<w );
@@ -192,6 +192,8 @@ void Robot::setRelativeSpeed(const Vector2D & v, const double & w)
 void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const double& rot){
 
 	Vector2D speed =v.rotate(-rot);
+
+	 LOG_INFO(log,"change v "<<v<<" to "<<speed );
 
 	this->last_angular_vel[this->last_w_index] = angularV;
 	double temp=0;
@@ -220,6 +222,7 @@ void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const dou
 	this->v = speed;
 
 	double vx,vy ,ww;
+	double simTime;
 #ifdef GAZEBO
 	posIface->Lock(1);
 	posIface->data->cmdEnableMotors = 1;
@@ -231,15 +234,18 @@ void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const dou
 	vy = posIface->data->velocity.pos.y;
 	//TODO:poprawic pobieranie predkosci katowej robota
 	ww = posIface->data->cmdVelocity.yaw;
+
+	simTime = posIface->data->head.time;
+
     posIface->Unlock();
 #endif
 
-    if(this->robotName.compare("blue0")==0){
+    if(this->robotName.compare("red0")==0){
     	//file<<speed.x<<";"<<speed.y<<";"<<angularV<<";"<<this->w<<";"<<vx<<";"<<vy<<";"<<ww<<"\n" ;
     	file<<v.x<<";"<<v.y<<";"<<angularV<<";"<<this->w<<";"<<vx<<";"<<vy<<";"<<ww<<"\n" ;
     	file.flush();
     }
-    LOG_INFO(log,"set global speed "<<v<<" angular "<<angularV<<" relative vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
+    LOG_INFO(log,"simTime "<<simTime<<" set global speed "<<v<<" angular "<<angularV<<" relative vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<speed.x<<"\t vy="<<speed.y<<"\t" );
 
 
@@ -305,8 +311,8 @@ bool Robot::disperse( const double dist){
 	}else{
 		goalPose = Videoserver::getInstance().getBlueGoalMidPosition();
 	}
-
-	return navigateToPose( dist, &goalPose );
+	bool onlyDisperse = true;
+	return navigateToPose( dist, &goalPose , onlyDisperse );
 }
 bool Robot::navigateToPose( const double dist, const Vector2D* goalPose, const bool onlyDisperse ){
 
@@ -456,7 +462,10 @@ bool Robot::navigateToPose( const double dist, const Vector2D* goalPose, const b
 			//this->setGlobalSpeed( newSpeed,0,currRobotPose.get<2>() );
 		}
 
-	}while( ( goalPose->distance( currRobotPose.getPosition() )  > dist ) || ( onlyDisperse && ( distToObstacle < dist ) ) );
+		if( onlyDisperse && ( distToObstacle >= dist ) )
+			break;
+
+	}while( ( goalPose->distance( currRobotPose.getPosition() )  > dist ) );
 
 	this->stop();
 
@@ -891,7 +900,7 @@ double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Vector2
 
 double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose, const double simTime, const bool haveBall ){
 
-    double kp = 2;
+    double kp = 1;
     double kd = 0.1;
     double ktheta = 0.01;
     double currGlobalRobotRot = globalRobotPose.get<2>();
@@ -943,7 +952,9 @@ double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & 
     Vector2D oy(0.0,1.0);
 
     double tetad = 0;
-    tetad = v.angleTo( oy );
+    //tetad = v.angleTo( oy );
+    tetad = calculateAngleToTarget( globalRobotPose,globalTargetPose );
+    tetad = convertAnglePI( tetad + globalRobotPose.get<2>() );
     //obliczam roznice w radianach pomiedzy katami
     //jesli sa tego samego znaku
     delta=1;
@@ -1248,9 +1259,9 @@ Vector2D calculateVelocity(const Vector2D &currVel, const Pose& currPose,const  
 double calculateVelocity(const double vel, const double currPosition,const  double targetPosition){
 	double newV;
 	//przyspieszenie
-	double acc=2.26305;//7.5;//[m/s2]
+	double acc=1.87;//7.5;//[m/s2]
 	//hamowanie
-	double dec=3.5;//0.5 bylo //9;//[m/s2]
+	double dec=0.6;//0.5 bylo //9;//[m/s2]
 	//jesli predkosc powoduje powiekszanie sie odleglosci miedzy cuur.x oraz target.x to zatrzymaj
 	/*Uwaga
 	 *
