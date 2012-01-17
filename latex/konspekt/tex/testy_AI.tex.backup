@@ -1,0 +1,33 @@
+\chapter{Testy algorytmu nawigacji robota}
+W rozdziale zostaną zaprezentowane testy warstwy odpowiadającej za nawigację robotem, a więc sprawdzony zostanie algorytm RRT oraz
+algorytm wyznaczania prędkości prowadzącej do zadanego punktu. Testy zostana przeprowadzone zarówno w środowisku statycznym jak i dynamicznym.
+\section{Zachowanie algorytmu RRT w środowisku statycznym}
+W paragrafie zostaną opisane eksperymenty dowodzące poprawność działania algorytmu RRT. Ponadto eksperyment ma pomóc w dobraniu odpowiednej wagi parametru p odpowiadającego za kierowanie robota do punktu docelowego.\\
+Do wizualizacji ścieżki utworzonej przez robota w każdym kroku algorytmu RRT zostanie użyta osobna aplikacja napisana w języku JAVA.
+\textbf{Plan eksperymentów:}
+\begin{itemize}
+ \item w jednej linii ustawionych kilka robotów  a za nimi piłka, jeden z robotów ma za zadanie dotrzeć do piłki,
+ \item przedmiotem badań będzie czas wykonania algorytmu na który bezpośrednio przekłada się maksymalna dopuszczalna liczba węzłów drzewa oraz parametr p określający prawdopodobieństwo, że w kolejnym kroku algorytmu robot będzie
+ poruszał się do celu,
+\end{itemize}
+
+Na podstawie eksperymentów zostanią sporządzone rysunki wyznaczające trajektorie po jakiej poruszał się robot na drodze do celu oraz średni czas dojazdu dla wybranych parametrów.
+
+\section{Środowisko dynamiczne}
+W paragrafie zostaną opisane eksperymenty mające na celu sprawdzenie efektywności algorytmu RRT w środowisku
+zmiennym w czasie. Sprawdzona zostanie efektywność modyfikacji algorytmu RRT pod kątem pracy w takim środowisku (m.in. predykcja położeni ruchomych przeszkód),
+\textbf{Plan eksperymentów:}
+\begin{enumerate}
+ \item pierwsze eksperymenty mają na celu wykazanie poprawności działania algorytmu RRT w środowisku dynamicznym,
+ a więc za pomocą algorytmu sterowany będzie jeden robot, reszta natomiast poruszać się bedzie po stałych trajektoriach ze stałą prędkośćią,
+ \item wszyscy zawodnicy obu drużyn sterowani za pomocą algorytmu RRT kierowani są do losowych punktów docelowych,
+ przedmiotem eksperymentu jest liczba wszystkich kolizji w przeciągu całego czasu trwania eksperymentu.
+\end{enumerate}
+
+\section{Prowadzenie piłki}
+W paragrafie zostaną opisane testy sprawdzające poruszanie się robota w kierunku zadanego punktu docelowego w sytuacji kiedy prowadzi on piłkę.
+\begin{enumerate}
+ \item opisanie dodatkowych ograniczeń wynikających z prowadzenia piłki,
+ \item porównanie z wynikami otrzymanymi w porzednich paragrafach.
+\end{enumerate}
+

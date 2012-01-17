@@ -1,0 +1,158 @@
+\chapter[Sterowanie modelem robota z \emph{Small-size League} (\textit{Maciej Gąbka})]{Sterowanie modelem robota z \emph{Small-size League} \label{chap:holonomic}}
+\chaptermark{holonomic}
+\begin{abstract}
+W rozdziale zostanie zaprezentowana trójkołowa holonomiczna baza jezdna. Wyjaśniony zostanie sposób w jaki osiągnieto omnikierunkowość robota.
+Dodatkowo zostanie omówiony algorytm wyznaczania prędkośći kół robota przy zadanej prędkości liniowej i kątowej robota.
+Wyjaśniony także zostanie algorytm wyznaczający prędkość liniową robota przy poruszaniu się do konretnego punktu.
+Na samym końcu poruszony zostanie problem poruszania się robota z piłką i ograniczenia z niego wynikające.
+\end{abstract}
+Budowę i napęd robota należy dobrać odpowiednio do postawionego zadania. W przypadku ligi \emph{Small-size League}, najważniejszym elementem jest prostota i mobilność
+takiej jednostki, w pracy inżynierskiej \cite{inzynierka} posługiwano się robotem modelem robota o napędzie różnicowym( dwa niezależnie napędzane koła), jednak
+zrezygnowano z tego modelu, ponieważ nie był wystarczająco funkcjonalny.  
+\section{Omówienie omnikierunkowej bazy jezdnej}
+Analogicznie jak podczas rzeczywistej rozgrywki, decydującym elementem jest budowa anatomiczna i zdolności motoryczne zawodników, tak samo podczas
+rozgrywek robotów istotna rolę odgrywa baza jezdna zawodników. W pracy inżynierskiej testom poddawany był robot o napędzie różnicowym. Baza ta posiadała jednak 
+znaczące ograniczenia, które musiały zostać uwzględnione w algorytmach sterujących. Praktyczniejszą w użyciu jest baza omnikierunkowa. Korzystając z takiej bazy w
+wiekszości algorytmów robot może być traktowany jako punkt materialny.
+\subsection{Opis położenia kół}
+Baza omnikierunkowa składa się z umieszczonych symetrycznie co najmniej trzech kół szwedzkich tak jak zaprezentowano to na rysunku \ref{fig:holonomic_base}.
+Każde z kół posiada osobny napęd. Budowę koła omnikierunkowego przedstawiono na ilustracji \ref{fig:omnidirectional_wheel}. 
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.7]{./holonomic/holonomic_base}
+\caption{ Rozkład kół w omnikierunkowej bazie jezdnej }\label{fig:holonomic_base}
+\end{figure}
+Koło szwedzkie posiada na swoim
+obwodzie zamontowane w odpowiedni sposób dodatkowe rolki. Umożliwiają one ruch koła w dowolnym kierunku, bez względu na to, 
+jak koło jest zorientowane w przestrzeni. Dzięki temu umożliwia ruch robota w dowolnym kierunku, czyli należy do klasy robotów holonomicznych.
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.7]{./holonomic/omnidirectional_wheel}
+\caption{ Konstrukcja przykładowego koła szwedzkiego }\label{fig:omnidirectional_wheel}
+\end{figure}
+\subsection{Opis kinematyki oraz dynamiki bazy}
+Podczas sterowania robotem istotnym problemem jest sposób w jaki prędkości i przyspieszenia obrotowe poszczególnych kół przekładają się
+na predkość/przyspieszenie kątowe i liniowe całego robota. Wszytskie poniższe obliczenia zostały wykonane przy założeniu, że koła nie ulegają poślizgowi,
+czyli że cały moment obrotowy śilników przekłada się na prędkość robota.
+Przyspieszenie liniowe i prędkość obrotowa środka masy takiego układu dane jest następującymi wzorami:
+\begin{equation}
+a=\frac{1}{M}(F1+F2+F3)
+\end{equation}
+
+\begin{equation}
+\dot{ \omega }=\frac{R}{I}(f_1+f_2+f_3)
+\end{equation}
+, gdzie $f_i$ oznacza długość wektora siły przyłożonego do poszczególnego koła, a $I$  jest momentem bezwładności.
+Przyspieszenie wzdłuż poszczególnych osi można obliczyć rozbijając siłę działającą na koło wzdłuż tychże osi, otrzymamy wtedy:
+\begin{equation}
+Ma_x=-f_1sin\theta_1 - f_2sin\theta_2 - f_3sin\theta_3
+\end{equation}
+\begin{equation}
+Ma_y=f_1cos\theta_1 + f_2cos\theta_2 + f_3cos\theta_3
+\end{equation}
+Dla jednolitego cylindra moment bezwładności obliczany jest ze wzoru $I=\frac{1}{2}MR^2$, natomiast dla obręczy $I=MR^2$, gdzie $R$ jest odpowiednio promieniem
+cylindra/obręczy natomiast $M$ masą. Dla obiektów o rozkładzie masy pomiędzy
+obręczą, a cylindrem wprowadzany jest dodatkowy parametr $\alpha$. Wzór przyjmuje wtedy postać: $I=\alpha MR^2$, gdzie $0<\alpha<1$.
+Używając zapisu macierzowego równania można przedstawić w postaci:
+\begin{equation}
+ \begin{pmatrix}
+  a_x\\
+  a_y\\
+  \dot{\omega}
+ \end{pmatrix}
+  =
+\begin{pmatrix}
+  -sin\theta_1 & -sin\theta_2 & -sin\theta_3 \\
+  cos\theta_1 & cos\theta_2 & cos\theta_3 \\
+  \frac{MR}{I} & \frac{MR}{I} & \frac{MR}{I}\\
+ \end{pmatrix} 
+ \begin{pmatrix}
+  f_1\\
+  f_2\\
+  f_3
+ \end{pmatrix}
+\end{equation}
+
+Podstawiając do powyższego wzoru $I=\alpha MR^2$ oraz zastępując $\dot{\omega}$ wyrażeniem $R\dot{\omega}$ otrzymujemy:
+\begin{equation}
+ \begin{pmatrix}
+  a_x\\
+  a_y\\
+  R\dot{\omega}
+ \end{pmatrix}
+  =
+\begin{pmatrix}
+  -sin\theta_1 & -sin\theta_2 & -sin\theta_3 \\
+  cos\theta_1 & cos\theta_2 & cos\theta_3 \\
+  \frac{1}{\alpha} & \frac{1}{\alpha} & \frac{1}{\alpha}\\
+ \end{pmatrix} 
+ \begin{pmatrix}
+  f_1\\
+  f_2\\
+  f_3
+ \end{pmatrix}
+\end{equation}
+
+Macierz z powyższego równania o wymiarze $3x3$ zostanie oznaczona symbolem $C_{\alpha}$.
+
+Jednak najbardziej interesujący jest sposób w jaki prędkość obrotowa kół przekłada się na prędkość liniową robota.
+Załóżmy, że robot porusza się wzdłuż osi OX, zatem wektor prędkości $(\upsilon_{x}, \upsilon_{y}, R\omega)$ wygląda następująco $(1,0,0)$.
+Rozważmy jedno z kół, tak jak to przedstawiono na rysunku \ref{fig:linear_speed}, dokonując rozkładu wektora prędkości na dwie składowe, jedną zgodną z ruchem
+obrotowym dużego koła, a drugą zgodną z ruchem małych, poprzecznych kółek otrzymujemy odpowiednio prędkości $\upsilon=-sin\theta$ $\upsilon_{y}=cos\theta$.
+Przy wyznaczaniu prędkośći koła przyjęto założenie, że prędkość dodatnia powoduje obrót w kierunku wyznaczonym przez kciuk prawej dłoni, gdy pokrywa się ona z osią 
+silnika.
+Otrzymyjemy zatem następujące powiązanie pomiędzy prędkościami robota, a prędkościami poszczególnych silników:
+ \begin{equation}
+ \begin{pmatrix}
+  \upsilon_1\\
+  \upsilon_2\\
+  \upsilon_3
+ \end{pmatrix}
+  =
+\begin{pmatrix}
+  -sin\theta_1 & cos\theta_1 & 1 \\
+  -sin\theta_2 & cos\theta_2 & 1 \\
+  -sin\theta_3 & cos\theta_3 & 1 \\
+ \end{pmatrix} 
+ \begin{pmatrix}
+  \upsilon_x\\
+  \upsilon_y\\
+  R\omega
+ \end{pmatrix}
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.7]{./holonomic/linear_speed}
+\caption{ Prędkość liniowa dużego koła szwedzkiego i małych kółek, gdy robot porusza się wzdłuż osi OX }\label{fig:linear_speed}
+\end{figure}
+
+\section{Opis algorytmu wyznaczającego prędkość liniową robota}
+
+Znając już powiązanie pomiędzy prędkościa obrotową kół, a prędkością liniową i obrotową robota, ostatnim elementem jest wyznaczenie prędkości prowadzących 
+robota do zadanego punktu. Należy przy tym wziąć pod uwagę takie parametry robota jak przyspieszenie i opóźnienie. W tym celu skorzystano z metody opisanej w 
+\cite{trapezy1} oraz \cite{trapezy2}. Polega ona na dekompozycji dwuwymiarowego problemu sterowania robotem, do dwóch problemów jednowymiarowych, tak jak to zaprezentowano
+na rysunku \ref{trapezoid_rule}. Ruch robota w kierunku osi OX i w kierunku osi OY jest rozpatrywany osobno. 
+Podejście to jest znane w robotyce pod nazwą trapezoidalnego profilu prędkości.
+Zaczynając od punktu w którym robot się znajduje przyspiesza on
+ze swoim stałym przyspieszeniem, aż do osiągnięcia maksymalnej predkosci, następnie zaczyna hamować, tak aby zatrzymać się w punkcie docelowym.
+W szczególnym przypadku profil prędkości może przybrać formę trójkąta.
+ 
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.7]{./holonomic/trapezoid_rule}
+\caption{ Dekompozycja sterowania robotem w 2D na dwa niezależne zadania w 1D }\label{fig:trapezoid_rule}
+\end{figure}
+
+
+\begin{itemize}
+ \item ograniczenia wynikające z budowy \texttt{dribblera},
+ \item wyznaczanie dopuszczalnych prędkośći.
+\end{itemize}
+
+\section{Dryblowanie z piłką}
+\begin{itemize}
+ \item ograniczenia wynikające z budowy \texttt{dribblera},
+ \item wyznaczanie dopuszczalnych prędkośći.
+\end{itemize}
+

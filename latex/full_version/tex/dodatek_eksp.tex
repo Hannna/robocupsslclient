@@ -1,0 +1,150 @@
+\chapter[Szczegóły eksperymentów]{Szczegóły eksperymentów \label{sec:szczegoly_eksp}}
+\chaptermark{Szczegóły eksperymentów}
+Dodatek zawiera poglądowe rysunki przedstawiające środowiska testowe, na których przeprowadzane były eksperymenty.
+Na każdym z nich zaznaczono inne roboty nie podlegające sterowaniu przez testowany algorytm oraz początkowe położenie 
+i orientację sterowanego robota. 
+W przypadku eksperymentów w środowisku dynamicznym zaznaczono także kierunek i zwrot prędkości z jaka poruszały się przeszkody.
+Poniżej zamieszczono legendę objaśniającą znaczenie użytych symboli.
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.35]{./eksperymenty/srodowiska/legenda}
+	\end{figure}	
+
+W drugiej części dodatku zamieszczono tabelę z zastosowanymi podczas eksperymentów z użyciem algorytmu \textit{CVM} zestawami wag. Ponieważ każda ze składowych funkcji celu (\ref{eq:fcelu_cvm}) algorytmu  zwraca wartość z przedziału 
+$[0;1]$ zdecydowano się na przetestowanie takich trójek liczb z tego przedziału,  które sumują się do jedności.
+\section*{Środowiska testowe\label{sec:srodowiska_testowe}}
+\subsection*{statyczne:}
+	\begin{figure}[H]
+	\centering	
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/eksperyment00}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/eksperyment01}}    \\
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/eksperyment05}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/eksperyment06}}  \\
+
+	\end{figure}	
+
+	\begin{figure}[H]
+	\centering
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/eksperyment09}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/korytarz}}  	\\
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/prosta}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/waskie_przejscie}}  \\
+	\end{figure}
+	\begin{figure}[H]
+	\centering
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/atak1}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/atak2}}
+	\end{figure}
+\subsection*{dynamiczne:}
+	\begin{figure}[H]
+	\centering
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks01}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks02}}    \\
+	\end{figure}
+	\begin{figure}[H]
+	\centering
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks03}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks04}}  \\
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks05}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks06}}  	\\
+	\end{figure}	
+	\begin{figure}[H]
+	\centering
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks07}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks08}}  \\
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks09}} 
+	\hspace{0.5cm}
+	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks10}}
+	\end{figure}	
+
+\section*{Zestawy wag używane w eksperymentach \label{sec:zestawy_wag}}
+\begin{table}[H]
+\centering
+\scalebox{0.8}{
+\begin{tabular}[t]{|c ||c |c| }
+\hline
+Zestaw wag & $goalProb$ & $wayPointProb$ \\ \hline\hline
+1 & 0.0 & 0.0\\ \hline
+2 & 0.0 & 0.2\\ \hline
+3 & 0.0 & 0.3\\ \hline
+4 & 0.0 & 0.4\\ \hline
+5 & 0.0 & 0.5\\ \hline
+6 & 0.0 & 0.6\\ \hline
+7 & 0.0 & 0.7\\ \hline
+8 & 0.0 & 0.8\\ \hline
+9 & 0.0 & 0.9\\ \hline
+10 & 0.0 & 1.0\\ \hline
+11 & 0.1 & 0.0\\ \hline
+12 & 0.1 & 0.1\\ \hline
+13 & 0.1 & 0.2\\ \hline
+14 & 0.1 & 0.3\\ \hline
+15 & 0.1 & 0.4\\ \hline
+16 & 0.1 & 0.5\\ \hline
+17 & 0.1 & 0.6\\ \hline
+18 & 0.1 & 0.7\\ \hline
+19 & 0.1 & 0.8\\ \hline
+20 & 0.1 & 0.9\\ \hline
+21 & 0.2 & 0.0\\ \hline
+22 & 0.2 & 0.1\\ \hline
+23 & 0.2 & 0.2\\ \hline
+24 & 0.2 & 0.3\\ \hline
+25 & 0.2 & 0.4\\ \hline
+26 & 0.2 & 0.5\\ \hline
+27 & 0.2 & 0.6\\ \hline
+28 & 0.2 & 0.7\\ \hline
+29 & 0.2 & 0.8 \\ \hline
+30 & 0.3 & 0.0 \\ \hline
+31 & 0.3 & 0.1 \\ \hline
+32 & 0.3 & 0.2 \\ \hline
+33 & 0.3 & 0.3 \\ \hline
+\end{tabular}
+}
+\hspace{0.5cm}
+\scalebox{0.8}{
+\begin{tabular}[t]{|c ||c |c| }
+\hline
+Zestaw wag &$goalProb$ & $wayPointProb$\\ \hline\hline
+34 & 0.3 & 0.4 \\ \hline
+35 & 0.3 & 0.5 \\ \hline
+36 & 0.3 & 0.6 \\ \hline
+37 & 0.3 & 0.7 \\ \hline
+38 & 0.4 & 0.0 \\ \hline
+39 & 0.4 & 0.1 \\ \hline
+40 & 0.4 & 0.2 \\ \hline
+41 & 0.4 & 0.3 \\ \hline
+42 & 0.4 & 0.4 \\ \hline
+43 & 0.4 & 0.5 \\ \hline
+44 & 0.4 & 0.6 \\ \hline
+45 & 0.5 & 0.0 \\ \hline
+46 & 0.5 & 0.1 \\ \hline
+47 & 0.5 & 0.2 \\ \hline
+48 & 0.5 & 0.3 \\ \hline
+49 & 0.5 & 0.4 \\ \hline
+50 & 0.5 & 0.5 \\ \hline
+51 & 0.6 & 0.1 \\ \hline
+52 & 0.6 & 0.2 \\ \hline
+53 & 0.6 & 0.3 \\ \hline
+54 & 0.6 & 0.4 \\ \hline
+55 & 0.7 & 0.0 \\ \hline
+56 & 0.7 & 0.1 \\ \hline
+57 & 0.7 & 0.2 \\ \hline
+58 & 0.7 & 0.3 \\ \hline
+59 & 0.8 & 0.0 \\ \hline
+60 & 0.8 & 0.1 \\ \hline
+61 & 0.8 & 0.2 \\ \hline
+62 & 0.8 & 0.2 \\ \hline
+63 & 0.9 & 0.0 \\ \hline
+64 & 0.9 & 0.1 \\ \hline
+65 & 1.0 & 0.0 \\ \hline
+\end{tabular}
+}
+\end{table}

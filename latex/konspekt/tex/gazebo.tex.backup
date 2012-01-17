@@ -1,0 +1,48 @@
+\chapter{Projekt Player/Stage/Gazebo}
+	%Opisac we wstepie co to jest za sumulator jakie ma mozliwosci, opensource
+	\section{Motywacja}
+	UWAGA: czy rozwijać tutaj szczegółowo to, co zostanie przedstawione w założeniach?
+	(Tzn.: dokładne uzasadnienie -- dlaczego wybrano właśnie Gazebo?) Wydaje się, że ten punkt jest
+	zbędny: lepiej w założeniach (3.2) przedstawić tok myślenia, który doprowadził do wyboru tego symulatora, 
+	wtedy praca będzie bardziej spójna (?).
+	\section{Koncepcja projektu}
+	Krótkie wprowadzenie - symulator open source, stworzony w celu modelowania
+	robotów, umożliwiający symulowanie ich działania, ale także dostarczający interfejsy pozwalające na
+	sterowanie rzeczywistymi robotami. (Licencja GPL, podać strony www oraz wiki).
+	\section{Architektura}
+	Schemat architektury systemu i przepływu informacji:
+ 	Gazebo + Player + Stage + aplikacja kliencka + rzeczywisty robot.
+ 	Krótki opis każdego z komponentów i jego przydatności w kontekście rozważanego zadania (symulacja ligi).
+ 	\subsection{Stage}	
+ 	\subsection{Gazebo}
+ 	\subsection{Player}
+ 	
+ 	\subsection{Wybrane rozwiązanie}
+ 	
+ 	\textbf{Podkreślić, że wybrano rozwiązanie używające tylko Gazebo + aplikacja kliencka},
+ 	uzasadnienie
+		\begin{itemize}
+		\item Gazebo pozwala na uwzględnienie cech fizycznych
+		\item Player co prawda dostarcza interfejsy do sterowania np. silnikami lub czujnikami, ale i tak nie będzie
+		potrzebny, gdyż roboty posiadane przez koło Bionik mają własną aplikację do sterowania.
+		\item Korzystanie tylko z Gazebo przyspiesza pracę i testy
+		\end{itemize}
+ 	
+	\section{Modelowanie obiektów}
+	Krótki wstęp na temat modelowania: zaznaczyć, że wraz z rozwojem Gazebo autorzy zmienili sposób tworzenia modeli
+	przechodząc z języka C++ do opisu świata w XML-u. 
+	
+	\textbf{Podkreślić, dlaczego zdecydowano się na przejście do wersji 0.8. (Większe możliwości, szybsze działanie
+	i łatwiejsze modelowanie, brak implementacji współczynników tarcia(!) w poprzedniej wersji).}
+	\section{Przykładowy model (Gazebo do v.0.7)}
+	Pierwsze modele HMT stworzono właśnie w C++, stąd ten rozdział: prezentacja prostego
+	modelu napisanego pod starszą wersję Gazebo pozwoli na ukazanie różnic między wersjami. 
+	\section{Zasady modelowania w Gazebo 0.8}
+	Ta część rozdziału będzie opisywać ogólne zasady modelowania w symulatorze Gazebo w wersji 0.8. Zostanie
+	pokazany schemat (krok po kroku) tworzenia prostego świata (plik .world), obiektów, połączeń między nimi, 
+	sposobu kontroli przez aplikację kliencką. Proste przykłady, mające dać ogólne pojęcie o możliwościach środowiska,
+	bez wchodzenia w szczegóły.
+	
+	\section{Realizacja środowiska ligi Robocup}
+	Prezentacja modeli wykonanych na potrzeby ligi: boisko oraz roboty, wspomnieć o konieczności napisania własnego 
+	kontrolera. Screeny prezentujące modele. Pełne kody źródłowe -- w Dodatku.

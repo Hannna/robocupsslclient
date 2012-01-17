@@ -1,0 +1,56 @@
+\chapter{Algorytmy unikania kolizji}
+\begin{abstract}
+ W rozdziale zostanie szerzej zaprezentowany jeden z algorytmów unikania kolizji jakim jest RRT(\texttt{Rapidly-Exploring Random Tree}).
+Poruszona zostanie kwestia powodów, dla których wybrano tę, a nie inną metodę. Uzasadnione zostenie odejscie od algorytmu opracowanego w ramach pracy 
+inżynierskiej(CVM \texttt{Curvature Velocity Method}). Ponadto opisane zostaną inne metody planowania ścieżki, omówione zostane ich właściwości. Na tej podsatwie zostanie 
+uzasadniony wybór algorytmu RRT. Omówione zostaną także szczegóły implementacji algorytmu.
+\end{abstract}
+
+	\section{Krótki przegląd algorytmów unikania kolizji}
+	Krótki przegląd metod unikania kolizji  z odsyłaczami do literatury szerzej opisującej problem. 
+	Wstępne odrzucenie globalnych metod planowania ruchu, ze względu na dużą złożoność obliczeniową,
+	a co z tym idzie  niską efektywność w dynamicznym środowisku.
+	
+	\begin{itemize}
+	\item algorytm BUG
+ 	\item algorytm VFH
+	\item technika dynamicznego okna	
+	\item algorytm CVM
+	\item metoda pól potencjałowych
+	\item algorytm RRT
+	\end{itemize}
+	
+	\section{Zalety algorytmy RRT w stosunku \\do CVM}
+	\begin{itemize}
+	 \item Pokazanie zalet algorytmu oraz prostoty jego wykorzystania w przypadku robotów o napędzie holonomicznym.
+	 \item Szybka możliwość sterownania czasem trwania algorytmu, poprzez sterowanie liczbą węzłow drzewa.
+	 \item Proste modyfikacje algorytmu uwzględniające ograniczenia wynikające z dynamiki oraz kinematyki robota.
+	\end{itemize}
+	
+	\section{Szczegółowa zasada algorytmu RRT}
+	\begin{itemize}
+		\item opis algorytmu budującego drzewo
+		\item opis sposobu określania przestrzeni osiągalnych stanów robota w zależnośći rozpatrywanego węzła w drzewie
+		\begin{itemize}
+			\item uwzglednianie kolizji na drodze od położenia bierzącego punktu docelowego	
+			\item przeszkody opisywane za pomocą okręgów( promień okręgu przeszkody podczas planowania ścieżki jest
+			wiekszy niz podczas wykrywania kolizji)
+		\end{itemize}
+
+		\item modyfikacje wprowadzone do podstawowej wersji algorytmu
+		\begin{itemize}
+		\item \texttt{waypoints}
+		\item ograniczenie na maksymalna liczbę wezłów
+		\item uwzględnienie prędkośći przeszkód
+		\end{itemize}
+	\end{itemize}
+
+
+	\section{Szczegóły implementacji zastosowanego \\algorytmu }
+	\begin{itemize}
+	 \item opis wykorzystywanych struktur danych
+	 \item omówienienie funkcji losującej stan docelowy
+	\end{itemize}
+	
+	\section{Wyznaczanie prędkości prowadzącej do punktu docelowego}
+	W paragrafie zostanie opisany mechanizm wyznaczania prędkości robota

@@ -1,0 +1,57 @@
+\contentsline {chapter}{\numberline {1}Wst\IeC {\k e}p }{4}
+\contentsline {section}{\numberline {1.1}Cel pracy}{5}
+\contentsline {chapter}{\numberline {2}Liga Robocup }{6}
+\contentsline {section}{\numberline {2.1}Opis projektu Robocup }{6}
+\contentsline {section}{\numberline {2.2}Szczeg\IeC {\'o}\IeC {\l }owe om\IeC {\'o}wienie ligi Small-size (F180)}{8}
+\contentsline {subsection}{\numberline {2.2.1}Zasady}{8}
+\contentsline {subsection}{\numberline {2.2.2}Schemat komunikacji}{8}
+\contentsline {section}{\numberline {2.3}Budowa robota w \emph {Small-size League}}{10}
+\contentsline {chapter}{\numberline {3}Za\IeC {\l }o\IeC {\.z}enia projektowe }{12}
+\contentsline {chapter}{\numberline {4}Player/Stage/Gazebo }{14}
+\contentsline {section}{\numberline {4.1}Koncepcja}{14}
+\contentsline {section}{\numberline {4.2}Architektura symulatora}{15}
+\contentsline {subsection}{\numberline {4.2.1}Gazebo}{16}
+\contentsline {subsection}{\numberline {4.2.2}Player}{17}
+\contentsline {section}{\numberline {4.3}Modelowanie obiekt\IeC {\'o}w w Gazebo}{19}
+\contentsline {subsection}{\numberline {4.3.1}Zasady modelowania w Gazebo 0.10}{19}
+\contentsline {subsubsection}{Po\IeC {\l }\IeC {\k a}czenia pomi\IeC {\k e}dzy bry\IeC {\l }ami }{23}
+\contentsline {subsubsection}{Sterowniki modeli }{24}
+\contentsline {subsection}{\numberline {4.3.2}Realizacja \IeC {\'s}rodowiska Ligi RoboCup }{25}
+\contentsline {chapter}{\numberline {5}Architektura aplikacji steruj\IeC {\k a}cej dru\IeC {\.z}yn\IeC {\k a} robot\IeC {\'o}w }{27}
+\contentsline {section}{\numberline {5.1}Opis algorytmu sterujacego dru\IeC {\.z}yn\IeC {\k a}}{27}
+\contentsline {chapter}{\numberline {6}Sterowanie modelem robota z \emph {Small-size League}}{31}
+\contentsline {section}{\numberline {6.1}Om\IeC {\'o}wienie omnikierunkowej bazy jezdnej}{31}
+\contentsline {subsection}{\numberline {6.1.1}Opis po\IeC {\l }o\IeC {\.z}enia k\IeC {\'o}\IeC {\l }}{32}
+\contentsline {subsection}{\numberline {6.1.2}Opis kinematyki oraz dynamiki bazy}{33}
+\contentsline {section}{\numberline {6.2}Opis algorytmu wyznaczaj\IeC {\k a}cego pr\IeC {\k e}dko\IeC {\'s}\IeC {\'c} liniow\IeC {\k a} robota}{34}
+\contentsline {section}{\numberline {6.3}Dryblowanie z pi\IeC {\l }k\IeC {\k a}}{35}
+\contentsline {chapter}{\numberline {7}Algorytmy unikania kolizji }{37}
+\contentsline {section}{\numberline {7.1}Kr\IeC {\'o}tki przegl\IeC {\k a}d algorytm\IeC {\'o}w unikania kolizji}{37}
+\contentsline {subsection}{\numberline {7.1.1}Algorytm Bug}{37}
+\contentsline {subsection}{\numberline {7.1.2}Algorytm VHF}{39}
+\contentsline {subsection}{\numberline {7.1.3}Technika dynamicznego okna}{41}
+\contentsline {subsection}{\numberline {7.1.4}Algorytmy p\IeC {\'o}l potencja\IeC {\l }owych}{41}
+\contentsline {subsubsection}{Algorytm w wersji podstawowej}{41}
+\contentsline {subsubsection}{Funkcja nawigacji}{42}
+\contentsline {subsection}{\numberline {7.1.5}Algorytm CVM (\texttt {Curvature Velocity Method})}{44}
+\contentsline {section}{\numberline {7.2}Zasada dzia\IeC {\l }ania CVM }{45}
+\contentsline {section}{\numberline {7.3}Algorytm RRT\\(\texttt {Rapidly-Exploring Random Tree}) }{51}
+\contentsline {subsubsection}{Modyfikacje algorytmu, czyli przej\IeC {\'s}cie z \texttt {RRT} do \texttt {ERRT} }{53}
+\contentsline {section}{\numberline {7.4}Zalety algorytmu RRT w stosunku \\do CVM}{55}
+\contentsline {section}{\numberline {7.5}Opis implementacji algorytmu \texttt {RRT} }{56}
+\contentsline {subsection}{\numberline {7.5.1}Parametry zastosowanego algorytmu}{60}
+\contentsline {chapter}{\numberline {8}Testy zaimplementowanej wersji algorytmu \texttt {RRT} }{61}
+\contentsline {section}{\numberline {8.1}Opis \IeC {\'s}rodowisk testowych}{62}
+\contentsline {section}{\numberline {8.2}Wyniki eksperyment\IeC {\'o}w w \IeC {\'s}rodowisku statycznym}{64}
+\contentsline {section}{\numberline {8.3}Wyniki eksperyment\IeC {\'o}w \IeC {\'s}rodowisku dynamicznym}{69}
+\contentsline {chapter}{\numberline {9}Testy architektury \texttt {STP} }{76}
+\contentsline {section}{\numberline {9.1} Nawigacja w dynamicznym \IeC {\'s}rodowisku }{76}
+\contentsline {subsection}{\numberline {9.1.1} Wyniki testu nawigacji }{77}
+\contentsline {subsubsection}{Rezultaty uczestnik\IeC {\'o}w eliminacji}{77}
+\contentsline {section}{\numberline {9.2} Strzelanie po podaniu }{77}
+\contentsline {subsection}{\numberline {9.2.1} Wyniki testu }{78}
+\contentsline {subsubsection}{Rezultaty uczestnik\IeC {\'o}w eliminacji}{78}
+\contentsline {chapter}{\numberline {10}Podsumowanie}{79}
+\contentsline {chapter}{\numberline {A}Zawarto\IeC {\'s}\IeC {\'c} p\IeC {\l }yty CD }{80}
+\contentsline {chapter}{\numberline {B}Instrukcja instalacji Gazebo}{81}
+\contentsline {chapter}{\numberline {C}Szczeg\IeC {\'o}\IeC {\l }y eksperyment\IeC {\'o}w}{82}
