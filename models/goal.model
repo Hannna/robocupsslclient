@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+
+<model:physical name="goal"
+	xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" 
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" 
+	xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom" 
+    xmlns:visual="http://playerstage.sourceforge.net/gazebo/xmlschema/#visual" 
+	>	
+
+	<xyz>0 0 0</xyz>
+	<rpy>0 0 0</rpy>
+	<canonicalBody>goal_body</canonicalBody>
+	<static>true</static>
+	
+	<!-- 
+	wszystko zgodnie z SSL2009 rules
+	
+	|				x				|	głębokość 180 mm
+	|				tu srodek		|	
+	|				bramki (0,0)	|
+	|								|
+	_________________________________     grubosc 0.02 dla wszystkich scianek 
+				
+				
+								
+				
+	
+	wysokość ścianek = 0.16
+	
+	-->
+	
+	<body:box name = "goal_body">
+		<xyz>0 0 0.0</xyz>
+		<rpy>0 0 0</rpy>	
+			
+		<geom:box name = "goal_left">
+			<xyz>-0.36 -0.1 0.08</xyz>
+			<rpy>0 0 0 </rpy>
+			<size>0.02 0.2 0.16</size>
+			<kp>1e10</kp>
+			<mu1>0.0</mu1>
+			<mu2>0.0</mu2>
+			<mass>0.01</mass>
+			<visual>	
+				<scale>0.02 0.2 0.16</scale>
+				<mesh>unit_box</mesh>
+				<material>Gazebo/Grey</material>
+			</visual>
+		</geom:box>	
+		
+		<geom:box name = "goal_right">
+			<xyz>0.36 -0.1 0.08</xyz>
+			<rpy>0 0 0 </rpy>
+			<size>0.02 0.2 0.16</size>
+			<kp>1e10</kp>
+			<mu1>0.0</mu1>
+			<mu2>0.0</mu2>
+			<mass>0.01</mass>
+			<visual>	
+				<scale>0.02 0.2 0.16</scale>
+				<mesh>unit_box</mesh>
+				<material>Gazebo/Grey</material>
+			</visual>
+		</geom:box>	
+		
+		<geom:box name = "goal_center">
+			<xyz>0.0 -0.19 0.08</xyz>
+			<rpy>0 0 0 </rpy>
+			<size>0.7 0.02 0.16</size>
+			<kp>1e10</kp>
+			<mu1>0.0</mu1>
+			<mu2>0.0</mu2>
+			<mass>0.01</mass>
+			<visual>	
+				<scale>0.7 0.02 0.16</scale>
+				<mesh>unit_box</mesh>
+				<material>Gazebo/Grey</material>
+			</visual>
+		</geom:box>	
+		
+	</body:box>
+</model:physical>
