@@ -69,10 +69,13 @@ Task::status GetBall::run(void * arg, int steps){
 
 			currRobotPose = currGameState->getRobotPos( this->robot->getRobotID() );
 			ballPose = currGameState->getBallPos();
-			ballPos = ballPose.getPosition();
+			//ballPos = ballPose.getPosition();
+
+			//ballPos = this->currGameState->getBallPos().getPosition();
+
 
 			//jedz do pilki
-			robot->goToBall( this->maxDistanceToBall );
+			//robot->goToBall( this->maxDistanceToBall );
 			if( strcmp( this->robot->getRobotName().c_str(), "blue0" ) == 0 ){
 				double reference = 0;
 				file<<reference<<";"<<angleToBall<<";"<<std::endl;
@@ -87,7 +90,11 @@ Task::status GetBall::run(void * arg, int steps){
 					return Task::get_ball;
 				}//podjedz do pilki
 				else{
-					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, Pose( ballPos,0 ) );
+					ballPos = ballPose.getPosition();
+					LOG_INFO(log, "GetBall ballPos wo prediction "<<ballPos<<" ball v "<<currGameState->getBallGlobalVelocity()  );
+					Vector2D t =ballPos +  ( currGameState->getBallGlobalVelocity() * ( 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) ) );
+					LOG_INFO(log, "GetBall ballPos after prediction "<<t );
+					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, Pose( t,0 ) );
 					robot->setGlobalSpeed( robotNewVel, 0, currRobotPose.get<2>() );
 					LOG_INFO(log, "GetBall podjedz do pilki o "<<distanceToBall );
 					return Task::not_completed;
@@ -99,12 +106,16 @@ Task::status GetBall::run(void * arg, int steps){
 				double oldAlfaToCel = robot->getLastTetaToBall();
 
 				double Ker=0.5;
-				double Ko=20;
+				double Ko=2;
 				double currGlobalRobotRot = currRobotPose.get<2>();
 
 				// ten kawalek kodu wyznacza kat o jaki robot musi sie obrocic zeby byc skierowanym na cel
 				RotationMatrix rm0(0);
-				Pose ballPose( ballPos,0 );
+				//Pose ballPose( ballPos,0 );
+				ballPose = Pose(ballPose.getPosition() + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) ),0);
+				//ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
+
+				ballPos = ballPose.getPosition();
 
 				Pose reltargetPose_ = ballPose.transform( currRobotPose.getPosition(),rm0 );
 				Pose reltargetPose = reltargetPose_*100;
@@ -123,9 +134,13 @@ Task::status GetBall::run(void * arg, int steps){
 
 				//podjedz tez do pilki
 				if( distanceToBall > 0.02 ){
-					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, Pose( ballPos,0 ) );
+					Pose ballPose ( ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) ),0 );
+					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ballPos "<<ballPos<<" with prediction ball position "<< ballPose);
+
+					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, ballPose );
 					robot->setGlobalSpeed( robotNewVel, w, currRobotPose.get<2>() );
-					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose <<" obrot robota do pilki o currAlfaToCel "<<currAlfaToCel<<"  set w "<< w<<" i dojazd do pilki speed "<<robotNewVel  );
+					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose);
+					LOG_INFO(log," obrot robota do pilki o currAlfaToCel "<<currAlfaToCel<<"  set w "<< w<<" i dojazd do pilki speed "<<robotNewVel  );
 
 				}
 				else{

@@ -159,9 +159,9 @@ void TestManager::addTest(Tests::TestKind testKind){
 		}
 		break;
 		case testPassTactic:{
-				static Robot red0(std::string("red0"),ifaceName);
+				static Robot blue0(std::string("blue0"),ifaceName);
 				test=reinterpret_cast<funcPtr>(&testPassTacticFunc);
-				this->tests_fun.push_back( std::pair<funcPtr,void*>(test,reinterpret_cast<void*>(&red0) ) );
+				this->tests_fun.push_back( std::pair<funcPtr,void*>(test,reinterpret_cast<void*>(&blue0) ) );
 			}
 		break;
 		case refereeBox :{

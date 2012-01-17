@@ -90,7 +90,7 @@ class Tactic : public Thread
         virtual ~Tactic();
     protected:
 
-
+        Mutex mutex;
         bool stop;
         virtual void execute(void*) = 0;
         EvaluationModule& evaluation;
