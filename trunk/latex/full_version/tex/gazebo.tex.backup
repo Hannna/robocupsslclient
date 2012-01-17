@@ -303,3 +303,4 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	<fDir1>1 0 0</fDir1>
 	\end{lstlisting}
 	Powyższa wartość oznacza, że tarcie występuje jedynie w kierunku osi $OX$ danej bryły.
+	\todo{opisac jak zaimplentowano w ode brak tarcia}
