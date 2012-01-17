@@ -1,0 +1,166 @@
+\documentclass[11pt,onecolumn,a4paper,final]{article}
+
+\usepackage[left=2.5cm,top=2.5cm,right=2.5cm,bottom=1.5cm,includehead,includefoot]{geometry}
+\usepackage[MeX]{polski}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[justification=centering]{caption}
+\usepackage{subfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage[utf8]{inputenc}
+
+\linespread{1.3}
+
+\begin{document}
+ 
+
+\begin{flushright}
+	Warszawa, dn. 24.01.2010
+\end{flushright}
+
+\vspace{-1.45cm}
+
+\begin{flushleft}
+	Maciej Gąbka \\  nr indeksu: 198404 \\ \url{M.Gabka@stud.elka.pw.edu.pl}
+\end{flushleft}
+
+\vspace{0.5cm}
+
+\begin{center}
+	\LARGE \bfseries Plan eksperymentów do pracy magisterskiej \\
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+\textbf{Temat pracy}: Zcentralizowany algorytm sterowania drużyną robotów w rozgrywkach RoboCup\\
+\textbf{Promotor}: dr hab. in. Jarosław Arabas\
+\end{center}
+
+\section*{Eliminacje do mistrzostw świata SSL}
+Każda zgłoszona do rozgrywek drużyna, przed przystąpieniem do turnieju głównego musi przejść eliminację sprawdzające jej poziom.
+Poniżej zostały zaprezentowwane wybrane problemy techniczne, których rozwiązanie było ocenianie podczas eliminacji do turnieju głównego na przestrzeni
+kilku ostatnich lat\cite{robocup_www}.
+
+  \subsection*{ Nawigacja w dynamicznym środowisku (rok 2011)}
+  Celem próby jest sprawdzenie zdolności robotów do bezpiecznego poruszania się w dynamicznym środowisku. Poniżej zamieszczono rysunek przedstawiający 
+  środowisko testowe. Znajduje się na nim 6 robotów pełniących role przeszkód. Dwa z pośród nich są nieruchome, a pozostałe cztery poruszają się wzdłuż
+  zaznaczonej linii prostej.
+
+\begin{enumerate}
+\item The maximum number of participating robots are limited to 3.
+
+\item The participating robots must navigate between the two stationary obstacles as shown in pictures.
+
+\item Whenever a robot touches an obstacle or its teammate it will receive a penalty (-1).
+
+\item Each successful navigation cycle for each robot is scored (+1).
+
+\item Robots who can perform the cycle carrying the ball score (+3).
+
+\item The challenge time is 2 minutes. 
+\end{enumerate}
+
+  \subsection*{ moduł umożliwiający ocenę sytuacji na planszy (pozwalający na ocenę atrakcyjności zachowań, punktów docelowych etc) }
+  \subsection*{ moduł sztucznej inteligencji }
+  \subsection*{ moduł nawigacji robota} 
+  moduł ten powinien być odpowiedzialny za tworzenie bezkolizyjnej ścieżki prowadzącej do zadanego celu,
+  \subsection*{ moduł sterowania ruchem robota
+  moduł ten powinien wyznaczyć optymalne prędkości prowadzące do zadanego punktu (problem bezwładności robota,
+  wyhamowanie przed punktem docelowym etc.) }
+  \subsection*{moduł bezpośrednio odpowiedzialny za sterowanie warstwą fizyczną robota (zadawanie prędkości liniowej kątowej, uruchamianie urządzenia do prowadzenia 
+  piłki(\textit{dribbler-a}), kopnięcie piłki) }
+
+ 
+Nazwa \texttt{STP} odnosi się do sposobu realizacji modułu sztucznej inteligencji.
+\subsection*{Podstawowe pojęcia}
+Architektura \texttt{STP} zakłada planowanie działań drużyny na 3 poziomach.
+\begin{enumerate}
+  \item Poziomem najwyżej w hierachii jest \texttt{Play}. Przez to pojecie rozumiany jest plan gry dla całej drużyny, uwzględniana jest tutaj koordynacja
+  poczynań pomiędzy zawodnikami. Plan zakłada przydział roli dla każdego zawodnika. W obrębie danego planu zawodnik wykonuje swoją rolę, aż do momentu
+  zakończenia danego planu lub wyznaczenie kolejnego.
+  \item Przez \texttt{Tactics} rozumiany jest plan działań dla jednej roli. Można zatem to rozumieć jako plan działań na szczeblu robota prowadzący
+ do osiągnięcia efektu. Przykładem może być strzał na bramkę. Robot dostaje polecenie oddania strzału na bramkę, zatem plan jego poczynań ma doprowadzić
+ do sytuacji, w której osiągnie on pozycję umożliwiającą strzał na bramkę z zadanym powodzeniem.
+ Plan na szczeblu pojedynczego robota jest wykonywany do momentu zmiany planu gry calej druzyny.
+ Przykładowe plany działań dla robotów:
+ \begin{itemize}
+  \item strzał na bramkę,
+  \item podanie piłki,
+  \item odebranie podania,
+  \item blokowanie innego robota,
+  \item wyjście na pozycję,
+  \item bronienie pozycji,
+  \item dryblowanie z piłką.
+ \end{itemize}
+
+  \item Pojęcie \texttt{Skills} odnosi się do konkretnych umiejętności robota, takich jak:
+    \begin{itemize}
+    \item doprowadzenie piłki do celu piłki,
+    \item przemieszczenie robota do celu,
+    \item podążanie za innym robotem,
+    \end{itemize}
+  Na tym szczeblu zachowanie robota zmieniane jest w każdym kroku gry. Z każdego zadania, w każdym kroku gry określone musi być przejście
+  albo do nowego zadania albo wykonywanie nadal tego samego zadania. Przykładowo jeśli zlecimy robotowi przemieszczenie do celu z piłką i piłka 
+  odskoczy robotowi, to powinien do niej podjechać i ponownie prowadzić lub jeśli nastąpi dobra okazja do strzału wykorzystać ją.
+ 
+\end{enumerate}
+Koordynacja poczynań drużyny zapewnione jest na najwyższym poziomie. Dodatkowo każdy poziomo wprowadza dodatkowe parametry wykorzystywane przy wykonywaniu
+zadania na najniższym poziomie.
+Wykonywanie każdego planu \texttt{Play} wymaga spełnienia określonych predykatów, np. czy mamy rozpoczęcie gry z autu, czy wystąpił rzut rożny.
+\section*{Prace wykonane w tym semestrze}
+\begin{enumerate}
+ \item Dostosowanie symulatora \textbf{Gazebo} \footnote{\url{http://playerstage.sourceforge.net/}} do potrzeb pracy magisterskiej:
+    \begin{enumerate}
+    \item usunięcie błędów pamięci,
+    \item implementacja tarcia dla obiektów, którym prędkość nie jest zadawana w każdym kroku symulacji (np. piłka podczas rozgrywki),
+    \item rozszerzenie modelu dynamiki niektórych obiektów o tarcie w kierunku prostopadłym do kierunku ruchu obiektu (np. koła robota holonomicznego
+    charakteryzują się brakiem tarcia w kierunku prostopadłym do osi ich obrotu),
+    \item poprawienie modelu robota z omnikierunkową bazą jezdną  stworzonego w poprzednim semestrze.
+    \end{enumerate}
+
+    \item Implementacja algorytmu \texttt{Rapidly-Exploring Random Trees \cite{errt}}:
+    \begin{enumerate}
+     \item przetestowanie algorytmu pod względem omijania przeszkód,
+     \item implementacja serializacji ścieżki dla poszczególnych robotów do pliku xml,
+    \end{enumerate}
+  
+    \item Stworzenie aplikacji umożliwiającej krokowe śledzenie zachowań robota:
+    \begin{enumerate}
+    \item aplikacja umożliwia wczytywanie pliku xml z zapisem ścieżki robota,
+    \item podgląd zbudowanego drzewa \textbf{RRT} w kolejnych krokach gry,
+    \item podgląd planu gry dla danego robota.
+    \end{enumerate}
+
+    \item Implementacja punktów 1,4 oraz 6 wymienionych przy opisie algorytmu sterującego druzyną.
+\end{enumerate}
+
+\begin{thebibliography}{9}
+ \bibitem{stp}
+	B.Browning, J.Bruce, M.Bowling, M.Veloso:
+	\emph{STP: Skills, tactics and plays for multi-robot control
+             in adversarial environments.}
+	  Carnegie Mellon University, 2004.
+
+\bibitem{errt}
+	J.Bruce, M.Veloso: 
+	\emph{Real-Time Randomized Path Planning for Robot Navigation.}
+	  Carnegie Mellon University.
+
+\bibitem{wmasewicz}
+	B.Browning, J.Bruce, M.Bowling, M.Veloso:
+	\emph{Multi-Robot Team Response to a Multi-Robot
+             Opponent Team.}
+	  Carnegie Mellon University.
+	  
+\bibitem{wmasewicz}
+	Oficjalna strona projektu
+	\emph{www.robocup.org}
+
+\end{thebibliography}
+
+\end{document}

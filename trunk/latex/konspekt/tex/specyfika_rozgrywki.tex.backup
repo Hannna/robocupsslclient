@@ -1,0 +1,44 @@
+\chapter{Specyfika rozgrywki Robocup}
+\begin{abstract}
+W rozdziale zostaną zawarte teoretyczne rozważania na temat \\przebiegu pojedynczej 
+rozgrywki drużyny robotów.
+Umotywowana zostanie konieczość planowanie ruchu na dwóch poziomach:
+	\begin{itemize}
+	\item globalnym-strateg
+	\item lokalnym-CVM 
+	\end{itemize}
+Ponadto zaprezentowana zostanie koncepcja robota jako agenta, oraz podejście do pisania algorytmów sterujących takim 
+robotem  bazujące na stanach.
+\end{abstract}
+
+	\section{Zawodnik jako agent (ew Podejście agentowe)}
+	\begin{itemize}
+	 \item Podejście agentowe do dziedziny robotyki
+		\begin{itemize}
+		 \item rodzaje agentów
+		 \item zawodnik ligii F180 jako ślepy agent
+		\end{itemize}
+	 \item Sterowanie agentami
+		\begin{itemize}
+		 \item opis za pomocą  stanów i funkcji przejść
+		 \item zachowanie jako ciąg stanów
+		 \item przykłady zachowań poczas rozgrywki
+		\end{itemize}
+
+	\end{itemize}
+
+	\section{Opis rozwiązania docelowego}
+	W paragrafie zostanie przedstawiony zarys rozwiązania docelowego, a więc  zaprezentowana koncepcja algorytmu
+	do sterowania grupą robotów, składająca sie z dwóch warstw: lokalnej , czyli sterowanie w obrębie jednego
+ 	agenta, polegające jedynie na unikaniu kolizji, oraz globalnej czyli uwzględniającej strategie gry oraz
+	synchronizację pomiędzy agentami.
+		\subsection{Unikanie kolizji}
+		\begin{itemize}
+		 \item  nie wiem co tu mialo byc...
+		\end{itemize}
+
+		\subsection{Planowanie startegii gry}
+		\begin{itemize}
+		\item  Opis budowania strategii oparty na planach
+		\item  Opis trywialnej strategii zastosowanej w eksperymencie
+		\end{itemize}

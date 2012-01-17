@@ -1,0 +1,104 @@
+\begin{thebibliography}{9}
+\bibitem{robocup}
+	Oficjalna strona Ligi \textit{RoboCup} dostępna pod adresem:\\
+	\url{www.robocup.org}
+	
+\bibitem{RRT}
+\emph{Real-Time Randomized Path Planning for Robot Navigation}
+
+\bibitem{dynamo}
+     A. Mackworth:
+	\emph{On Seeing Robots}. University of British Columbia,1993.
+
+\bibitem{trojanek}
+M. Majchrowski, P. Trojanek, W. Szynkiewicz:
+ \emph {Mobile robot control in application to RoboCup League}.
+ 8-th National Conference on Robotics - Advances in Robotics: Industrial and Medical Robotics Systems, volume 2, pages 233-242. Transport and Communication Publishers, Warsaw, 2005.
+
+\bibitem{hamada_inz}
+M.Hamada:
+\emph{Układ sterowania autonomicznym robotem mobilnym}. Praca inżynierska, Politechnika Warszawska, 2006.
+
+\bibitem{hamada_mgr}
+ M.Hamada
+ \emph{Układ sterowania autonomicznym robotem mobilnym}. Praca magisterska, Politechnika Warszawska, 2007.
+
+\bibitem{duleba}
+	I. Dulęba:
+	\emph{Metody i algorytmy planowania ruchu robotów mobilnych i manipulacyjnych}.
+	Warszawa, Akademicka Oficyna Wydawnicza EXIT, 2001.
+
+\bibitem{ISR}
+	C. Zieliński, W. Szynkiewicz:
+	\emph{Konspekt do wykładu: Inteligentne Systemy robotyczne}.
+	Politechnika Warszawska, 2008.
+
+\bibitem{CVM_1}
+	T. Quasn, L.Pyeatt, J.Moore:
+	\emph{Curvature-Velocity Method for Differentially Steered Robots}.
+	AI Robotics Lab
+	Computer Science Department,
+	Texas Tech University, 2003.
+
+\bibitem{CVM_2}
+	R. Simmons:
+	\emph{The Curvature-Velocity Method for Local Obstacle Avoidance}.
+	School of Computer Science,
+	Carnegie Mellon University, 1996.
+\bibitem{majchrowski}
+	M. Majchrowski:
+	\emph{Algorytm unikania kolizji przez robota mobilnego bazujący na przeszukiwaniu
+	przestrzeni prędkości}.
+	Praca Magisterska, Politechnika Warszawska, 2006.
+
+\bibitem{VFH_1}
+	J. Borenstein, Y. Koren:
+	\emph{ The vector field histogram -- fast obstacle avoidance for mobile robots}.
+	IEEE Transaction on Robotics and Automation, 1991.
+
+\bibitem{VFH_2}
+	J. Borenstein,Y. Koren:
+	\emph{Histogramic in-motion mapping
+	for mobile robot obstacle avoidance}.
+	Department of Mechanical Engineering and Applied Mechanics,
+	The University of Michigan, 1991.
+
+\bibitem{dynamic_window}
+	D. Fox, W. Burgard, S. Thrun:
+	\emph{The Dynamic Window Approach to Collision Avoidance}.
+	Department of Computer Science, University of Bonn;
+	Department of Computer Science, Carnegie Mellon University, Pittsburgh, 1991.
+
+\bibitem{michalewicz1}
+	J. Xiao, Z. Michalewicz:
+	\emph{Path Evaluation in Evolutionary Planner/Navigator}.
+	University of North Carolina, 1995.
+\bibitem{michalewicz2}
+
+	J. Xiao, Z. Michalewicz, L. Zhang:
+	\emph{Evolutionary Planner/Navigator: Operator Performance and Self-Tuning}.
+	University of North Carolina, 1996
+
+\bibitem{smierzchalski}
+	R. Śmierzchalski:
+	\emph{Mutacja prędkości w ewolucyjnym zadaniu unikania kolizji na morzu}.
+	Akademia Morska w Gdyni, 1999.
+	
+\bibitem{gazebo_experts}
+	N. Koenig:
+	\emph{Gazebo. The Instant Expert's Guide}.
+	Player Summer School on Cognitive Robotics, Monachium 2007.
+	
+	
+\bibitem{player_story_arch} 
+	B. Gerkey, R. T. Vaughan, A. Howard:
+	\emph{The Player/Stage Project: Tools for Multi-Robot and Distributed Sensor Systems}.
+	Proceedings of the 11th International Conference on Advanced Robotics, pages 317-323, 
+	Coimbra, Portugal, 2003.
+	
+\bibitem{AI}
+	S. Russell, P. Norvig:
+	\emph{Artifical Intelligence: A Modern Approach}.
+	Prentice Hall, New Jersey, 1995.
+	
+\end{thebibliography}

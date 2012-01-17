@@ -1,0 +1,92 @@
+\section{Opis implementacji algorytmu RRT}
+W trakcie testów wersji podstawowej algorytmu \textit{RRT} opisanej w \ref{sec:RRT:basic} zdecydowano się na dodatkowe modifikacje algorytmu, część zaczerpnięto z 
+\ref{sec:RRT:extend} dodano też własne modyfikacje, które miały na celu poprawienie wydajności algorytmu i skrócenie czasu obliczeń.
+Zdecydowano się na implementację algorytmy w wersji z zapamiętywaniem części węzłów ze ścieżki wyznaczonej w poprzednim uruchomieniu algorytmu (pod warunkiem, że punkt docelowy nie
+uległ zmianie) i traktowanie ich jako tak zwanych \texttt{way points}. Jednak z uwagi na specyfikę eksplorowanego środowiska (brak wąskich korytarzy, przeszkody są wypukłe)
+zdecydowano się na eliminowanie z zapamiętanej ścieżki węzłów których odległość między sąsiadami jest mniejsza niż $5cm$.
+
+Dodatkowo wprowadzono ograniczenie na maksymalną liczbę węzłów algorytmu. Sytuacja na planszy podczas rozgrywki szybko ulega zmianie, stąd nie ma sensu wyznaczanie kompletnej 
+ścieżki do celu jeśli ma to być czasochłonne. Przy ponowym uruchomieniu algorytmu sytuacja może wyglądać inaczej i algorytm szybciej wyznaczy ścieżkę.
+Jeśli uruchomienie algorytmu nie zakończyło się wyznaczeniem kompletnej ścieżki do celu jako punkt docelowy dla robota wybierany jest węzeł znajdujący się najliżej celu.
+
+Zauważono także, że przy małym prawdopodobieństwie budowy ścieżki do celu, drzewo może ulegać nadmiernemu rozbudowaniu przy samym korzeniu. Ma to miejsce w sytuacji, gdy
+tymczasowe punkty losowane są z otoczenia korzenia, kolejne wylosowane węzły mogą powodować poszerzenie gałęzi, a tak rozbudowane gałęzie mogą znajdować się w podobnej 
+odległości od celu. Sytuację taką dla dwóch gałęzi przedstawiono na rysunku \ref{fig:many_root_child}.
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{./imp_rrt/many_root_child.png}
+\caption{ Drzewo wyznaczające ścieżkę do celu .} \label{fig:many_root_child}
+\end{figure} 
+W zaimplementowanej wersji ograniczono liczbę wezłów potomnych korzenia do $4$.
+
+Podobnie jak w pracy inżynierskiej \cite{inzynierka} zdecydowano się na naiwną predykcję położenia dynamicznych przeszkód. Ponieważ baza jezdna robota zbliżona jest do okręgu
+w algorytmie jest ona analizowana jako okrąg o środku znajdującym się w danym położeniu robota (przeszkody) i promieniu $r=2*(r_{base} + l_{dribbler})$, gdzie $r_{base}$ jest
+promieniem bazy jezdnej robota, a $l_{dribbler}$ długością dribblera.
+Do zbioru rzeczywistych przeszkód dodawne są przeszkody, których  środek przesunięty jest o drogę jaką może pokonać dana przeszkoda w czasie trwania algorytmu.
+Podczas planowania ścieżki promienie przeszkód powiększane są dodatkowo o margines bezpieczeństwa, ma on za zadanie wyeliminować ewentualne kolizje wynikające z poślizgu robota
+podczas hamowania, czy opóżnienia przy zmianie kierunku jazdy.
+
+W zaimplementowanej formie algorytm ma następujący przebieg:
+  \begin{algorithm}[H]
+	\caption{ Wersja \texttt{RRT} z wprowadzonymi modyfikacjami }
+	\label{alg:myRRT}
+	\begin{algorithmic}
+	\STATE ogranicz maksymalną przestrzeń do rozmiarów boiska
+	\IF{punkt docelowy jest poza dopuszczalnymi współrzędnymi} \STATE zwróć błąd \textit{waypoints} \ENDIF
+	\IF{w poprzednim uruchomieniu znaleziono ścieżkę do celu} \STATE zainicjuj listę \textit{waypoints} \ENDIF
+	\STATE dodaj statyczne oraz dynamiczne przeszkody;
+	\IF{robot uległ kolizji (nie są brane pod uwagę przewidywane położenia przeszkód)} \STATE tak zwróć błąd;\ENDIF
+	\IF{robot dojechał do celu} \STATE tak zwróć sukces;\ENDIF
+	\IF{punkt docelowy jest w obrębie przeszkody} \STATE zwróć błąd;\ENDIF
+	\IF{punkt docelowy jest bezpośrednio osiągalny} \STATE zwróć go jako wynik działania algorytmu;\ENDIF
+	\WHILE { \texttt{goalState.distance(nextState)} $>$ \texttt{minimalDistance}
+	  \&\& \texttt{treeSize}< \texttt{maxNodeNumber} }
+	  \STATE wybierz tymczasowy cel: \texttt{tmp\_target} =  \texttt{chooseTarget(goalState)}
+	  \STATE nearestState $=$ \texttt{ nearest(tree, target) }
+	  \STATE \texttt{extendedState} $=$ \texttt{extend(env, nearest, target)}
+	  \IF { \texttt{extendedState} $!=$ \texttt{NULL} }
+	    \STATE odblokuj ustawianie \texttt{tmp\_target} jako texttt{goalState}
+	    \STATE \texttt{addNode(tree, extended)}
+	  \ELSIF{ \texttt{tmp\_target} należy do zbioru \textit{waypoints}}
+	    \STATE usuń punkt ze zbioru \textit{waypoints}
+	  \ELSIF{ \texttt{tmp\_target} jest właściwym punktem docelowym}
+	    \STATE zablokuj ustawianie \texttt{tmp\_target} jako texttt{goalState}
+	  \ENDIF
+	\ENDWHILE
+	\IF { \texttt{nearestState.distance(goalState)} $>$ \texttt{minimalDistance} }
+	\RETURN węzeł znajdujący się najbliżej celu
+	\ELSE
+	  \STATE zapamiętaj ścieżkę do celu
+	  \RETURN  węzeł bezpośrednio osiągalny znajdujący się najbliżej celu;
+	\ENDIF 
+	\end{algorithmic}
+  \end{algorithm}
+
+
+Parametry zastosowowewanego algorytmu
+\begin{enumerate}
+ \item przewidywanie przeszkod true/false
+ \item rodzaj metody do predykcji ruchu przesuniete okręgi/ilosc okregow /elipsa 
+ \item toTargetLikelyHood, WayPointsLikelyHood
+ \item maxX, minX, maxY, minY rozmiary dopuszczalnej przestrzeniu z jakiej losujemy węzeł, wynikajace z rozmiaru swiata
+ \item ograniczenia na przestrzen przeszukiwan wynikajace z zaistnialej sytuacji na planszy, badz z rodzaju zadania
+ \item minDistance - odleglosci z jaką uznajemy, że robot dojechał do celu
+ \item path -> ścieżka z poprzedniego wywołania algorytmu, przekazywana tylko wtedy gdy pkt docelowy nie zmienił się
+ \item maksymalna liczba węzłów drzewa RRT
+ \item maksymalna liczba dzieci korzenia
+ \item odległośc miedzy wayPoints, z przekazanej ścieżki scalamy te między którymi odległość jest mniejsza niż... ( ew ograniczyć rozmiar zbioru wayPoints)
+ \item rrtStep odległość o jaką rozszerzamy węzeł najbliżej tymczasowego celu w jego kierunku
+ \item odleglosc punktu startowego od najblizszej przeszkody , brane sa pod uwage jedynie biezace polozenia robotow 
+\end{enumerate}
+
+Wprowadzone modyfikacje
+\begin{enumerate}
+ \item jeśli nie można rozszerzyć drzewa w kierunku danego wayPointa to wyrzucamy go z listy ( założenie naiwne, bo późniejsze drzewo może się dać rozszerzyć w jego kierunku,
+dojdą nowe węzły)
+
+ \item jeśli cel jest bezpośrednio osiągalny to jedź do celu
+
+ \item odleglosc punktu startowego od najblizszej przeszkody, brane sa pod uwage jedynie biezace polozenia robotow, jesli robot jest blizej przeszkody 
+ to wywolywana jest funkcja powodujaca rozproszenie
+\end{enumerate}
+

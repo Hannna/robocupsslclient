@@ -1,0 +1,157 @@
+\documentclass[11pt,onecolumn,a4paper,final]{article}
+
+\usepackage[left=2.5cm,top=2.5cm,right=2.5cm,bottom=1.5cm,includehead,includefoot]{geometry}
+\usepackage[MeX]{polski}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[justification=centering]{caption}
+\graphicspath{{./}}
+\usepackage{subfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage[utf8]{inputenc}
+
+\linespread{1.3}
+
+\begin{document}
+ 
+
+\begin{flushright}
+	Warszawa, dn. 24.01.2010
+\end{flushright}
+
+\vspace{-1.45cm}
+
+\begin{flushleft}
+	Maciej Gąbka \\  nr indeksu: 198404 \\ \url{M.Gabka@stud.elka.pw.edu.pl}
+\end{flushleft}
+
+\vspace{0.5cm}
+
+\begin{center}
+	\LARGE \bfseries Plan eksperymentów do pracy magisterskiej \\
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+\textbf{Temat pracy}: Zcentralizowany algorytm sterowania drużyną robotów w rozgrywkach RoboCup\\
+\textbf{Promotor}: dr hab. in. Jarosław Arabas\
+\end{center}
+
+\section*{Eliminacje do mistrzostw świata SSL}
+Każda zgłoszona do rozgrywek drużyna, przed przystąpieniem do turnieju głównego musi przejść eliminacje sprawdzające jej poziom.
+Poniżej zostały zaprezentowwane wybrane problemy techniczne, których rozwiązanie było ocenianie podczas eliminacji do turnieju głównego na przestrzeni
+kilku ostatnich lat\cite{robocup_www}.
+\subsection*{ Nawigacja w dynamicznym środowisku (rok 2011)}
+Celem próby jest sprawdzenie zdolności robotów do bezpiecznego poruszania się w dynamicznym środowisku. Poniżej zamieszczono rysunek przedstawiający 
+środowisko testowe. Znajduje się na nim 6 robotów pełniących role przeszkód. Dwa z pośród nich są nieruchome, a pozostałe cztery poruszają się wzdłuż
+zaznaczonej linii prostej.
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.3]{./test_area}
+\caption{Plan środowiska testowego} \label{fig:arch}
+\end{figure}
+Zasady eksperymentu są następujące:
+\begin{enumerate}
+\item Liczba robotów jest ograniczona do trzech.
+\item Uczestniczące roboty muszą poruszać sie pomiędzy dwoma nieruchomymi przeszkodami.
+\item Każdorazowo kiedy robot dotknie przeszkody otrzymuje punkt ujemny.
+\item Każdy uczestnik, który pokona z powodzeniem trasę otrzymuje punkt.
+\item Robot, który wykona okrążenie z piłką otrzymuje 3 punkty.
+\item Test trwa 2 minuty.
+\end{enumerate}
+
+\subsection*{ Mixed Team Challenge - Shooting and Passing (rok 2010)}
+Podczas tego zadania w skład jednej drużyny wchodzą roboty z różnych zespołów. Zawodnicy nie mają zatem dostępu do informacji o stanie pozstałych 
+uczestników meczu. Celem eksperymentu jest stworzenie scenariusza wymagającego prawdziwej kooperacji pomiędzy robotami.
+Podczas rozgrywek w 2010 drużyny składały się z 4 robotów(po 2 roboty z różnych zespołów).
+Każda para robotów była sterowana za pomocą własnego algorytmu. 
+Zabroniono komunikacji w obrębie jednej drużyny pomiędzy zawodnikami z różnych zespołów(sterowanych przez rózne algorytmy).
+
+Eksperyment polega na umieszczeniu robotów z dwóch różnych drużyn na boisku i zdobyciu jak największej ilości bramek w ciągu 120 sekund.
+Punkty przyznawane są następująco: 
+\begin{enumerate}
+    \item drużyna zdobywa 1 punkt za strzelenie gola po podaniu. ( roboty z różnych podezespołów musza dotknać piłkę). 
+    \item drużyna zdobywa 2 punkty gdy przed zdobyciem bramki piłka dotknie co najmniej 3 razy różnych zawodników.
+\end{enumerate}
+Przy czym podanie uważa się za ważne jedynie wtedy, gdy dotyczy robotów pochodzących z 2 różnych zespołów.
+
+Zasady eksperymentu są następujące:
+To start, the mixed team chooses a side of the field. All robots must be placed within 1m from their team's goal line. Opponent robots will be placed on the field as obstacles. 
+A ball will be placed near one of the corners at the mixed team's own side of the field. 
+A goal can be scored only when the kicking robot is in the opponent's half.
+Once a goal is scored or the ball has left the field, it will be placed again near one of the corners at the own side of the field.
+\begin{enumerate}
+    \item  To start, all robots must be placed within 1m from the own goal line.
+    
+    \item  Opponent robots will be placed on the field as obstacles.
+    
+    \item  A ball will be placed near one of the corners at the own side of the field.
+    
+    \item  A goal can be scored only when the kicking robot is in the opponent's half.
+    
+    \item  Once a goal is scored or the ball has left the field, it will be placed again near one of the corners at the own side of the field.
+\end{enumerate}
+
+\subsection*{ Basic Challenge 1 - Shooting and Passing(rok 2009)}
+
+Put up two to three robots on the field and score as many goals as possible within 120 seconds. Points are awarded as follows:
+
+\begin{enumerate}
+    \item  1 Point: Scoring a goal after two robots have touched the ball (i.e. after a pass)
+    \item  2 Points: Scoring a goal after the ball has been touched at least three times by alternating robots (i.e. after at least two passes)
+\end{enumerate}
+
+The rules for this challenge:
+\begin{enumerate}
+    \item  To start, all robots must be placed within 1m from the own goal line.
+    \item  Opponent robots will be placed on the field as obstacles.
+    \item  A ball will be placed near one of the corners at the own side of the field.
+    \item  A goal can be scored only when the kicking robot is in the opponent's half.
+    \item  Once a goal is scored or the ball has left the field, it will be placed again near one of the corners at the own side of the field.
+\end{enumerate}
+
+\subsection*{Challenge 2 - Navigation 2009}
+Two sets of obstacles (see attached sketch) are placed at each side of the field. One robot starts at
+the center of the field and must drive from one penalty mark of the field to the other as many times as possible within 120s.
+Every lap (from one set of obstacles to the other and back) counts as one point.
+Each time it has to drive through the gap between two obstacles.
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.9]{./tcfield}
+\caption{Środowisko testowe} \label{fig:arch}
+\end{figure}
+If it touches an obstacle, it gets a penalty of -1 points.
+Additionally, teams are allowed to use up to three robots in parallel and sum up their laps.
+If two robots touch each other, the penalty also applies (per touching event, not per robot, of course).
+If a robot has driven at least one lap (independently of the number of collisions), the team's minimum number of points will be 1. 
+
+\begin{thebibliography}{9}
+ \bibitem{stp}
+	B.Browning, J.Bruce, M.Bowling, M.Veloso:
+	\emph{STP: Skills, tactics and plays for multi-robot control
+             in adversarial environments.}
+	  Carnegie Mellon University, 2004.
+
+\bibitem{errt}
+	J.Bruce, M.Veloso: 
+	\emph{Real-Time Randomized Path Planning for Robot Navigation.}
+	  Carnegie Mellon University.
+
+\bibitem{wmasewicz}
+	B.Browning, J.Bruce, M.Bowling, M.Veloso:
+	\emph{Multi-Robot Team Response to a Multi-Robot
+             Opponent Team.}
+	  Carnegie Mellon University.
+	  
+\bibitem{wmasewicz}
+	Oficjalna strona projektu
+	\emph{www.robocup.org}
+
+\end{thebibliography}
+
+\end{document}

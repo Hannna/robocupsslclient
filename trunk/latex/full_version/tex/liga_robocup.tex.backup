@@ -1,0 +1,56 @@
+\chapter{Liga Robocup \label{chap:robocup}}
+\section{Opis projektu Robocup \label{sec:opis_robocup}}
+	Projekt Robocup, jego idea jak i historia zostały opisane w pracy inżynierskiej \cite{inzynierka}, więcej informacji na temat mistrzost można także znaleźć na oficjalnej stronie projektu
+	\mbox{\url{http://www.robocup.org}}. W niniejszej pracy problematyka rozgrywek robotów w piłkę nożną zostanie przedstawiona jedynie skrótowo ze szczególnym uwzględnieniem
+	budowy robota wykorzystywanego w lidze na której wzorowano się podczas prac.
+	Głównym celem przedsięwzięcia jest stworzenie do 2050 roku drużyny w pełni autonomicznych robotów humanoidalnych zdolnych wygrać rozgrywkę z aktualnymi mistrzami 
+	świata.
+	Aby osiągnąć zamierzony cel należy połączyć osiągnięcia z różnych dziedzin nauki. Przede wszystkim ważna jest konstrukcja zarówno mechaniczna jak i elektroniczna
+	robota. Zawodnik powinien być wyposażony w odpowiedni zestaw czujników umożliwiających osiągnięcie pełnej autonomiczności. 
+	Z drugiej strony natomiast należy dysponować funkcjonalnym oprogramowaniem umożliwiającym współpracę wielu robotów.
+	Projekt jest realizowany nieprzerwanie od września 1993 roku. Początkowo brali w nim udział jedynie przedstawiciele środowisk naukowych z Japonii.
+	Rozgrywki toczone są w kilku niezależnych od siebie ligach.
+	Aktualnie wyróżnione zostały nastepujące ligi:
+		\begin{itemize}
+ 		\item liga symulacyjna
+		\item \emph{Small-size League}
+		\item \emph{Middle-size League}
+		\item \emph{Standard Platform League }
+		\item \emph{Humanoid League}
+		\end{itemize}
+\section{Budowa robota \label{sec:budowa_robota} w \emph{Small-size League}}
+	W oficjalnym regulaminie ligi nie zostały narzucone konkretne modele robotów, które mogą brać udział w
+	rozgrywkach, jednak, obserwując kolejne mistrzostwa, łatwo zauważyć, że wśród zgłaszanych drużyn dominuje jedna konstrukcja mechaniczna. Została ona zaprezentowana na  rysunkach \ref{fig:F180_budowa}.
+ 	\begin{figure}
+	\centering
+	\subfloat[]{\label{fig:F180_budowa1}\includegraphics[ scale=0.34]{./liga_robocup/F180_budowa1}}
+	\subfloat[]{\label{fig:F180_budowa2}\includegraphics[ scale=0.38]{./liga_robocup/F180_budowa2}}
+	\subfloat[]{\label{fig:F180_budowa3}\includegraphics[ scale=0.38]{./liga_robocup/F180_budowa3}}
+	\caption{Popularny model robota wykorzystywany w \mbox{lidze \emph{F180}}\newline(źródło: \texttt{www.robocup.org}) }
+	\label{fig:F180_budowa}
+	\end{figure}
+	Podczas gry w piłkę nożną często wynika potrzeba zmiany orientacji w miejscu. W prezentowanym rozwiązaniu
+	zdecydowano się na omnikierunkową bazę jezdną. Składa się ona z trzech kół szwedzkich, w tym dwóch niezależnie
+	napędzanych. Koło szwedzkie posiada taką zaletę, iż dodatkowo poza obrotem wokół własnej osi umożliwia obrót
+	wokół punktu styczności koła z podłożem oraz wokół osi rolek umieszczonych na kole.
+	\begin{wrapfigure}{r}{0.42\textwidth}
+	\vspace{-30pt}
+	\begin{center}	
+	\includegraphics[width=0.38\textwidth]{./liga_robocup/znacznik}
+	\end{center}
+	\vspace{-10pt}	
+	\caption{Znacznik umożliwiający systemowi wizyjnemu identyfikację robotów \label{fig:znacznik}}
+	\vspace{-10pt}
+	\end{wrapfigure}
+	Dzięki zastosowaniu takiego rozwiązania uzyskano w pełni holonomiczną budową robota.
+	Robot biorący udział w rozgrywkach musi być zdolny do prowadzenia piłki. Zastosowana konstrukcja jest wyposażona w urządzenie do dryblowania widoczne na rysunkach \ref{fig:F180_budowa1} oraz \ref{fig:F180_budowa3}. 
+	Zbudowane jest ono z walca nadającego piłce wsteczną rotację, przez co nie odbija się ona od robota, a także nie traci on nad nią kontroli w momencie hamowania lub obracania się.
+	W regulaminie rozgrywek dopuszczono do stosowania jedynie urządzenia do dryblowania 
+	działające na piłkę siłą
+	prostopadłą do podłoża rys.~\ref{fig:F180_budowa1} (we wcześniejszych latach w użyciu były  urządzenia, w których obracany walec był umieszczony pionowo).
+
+	Ostatnim ważnym elementem, w który musi być wyposażony robot, jest znacznik (rys.~\ref{fig:znacznik}).
+	Znajduje się on w takim miejscu, aby kamera umieszczona centralnie nad boiskiem mogła go zarejestrować (przykrywa robota od góry).
+	Znaczniki umożliwiają systemowi wizyjnemu określenie, do której drużyny należy dany robot, a także poprawne rozpoznanie jego pozycji, orientacji oraz prędkości
+	na boisku.
+

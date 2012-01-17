@@ -1,0 +1,30 @@
+\chapter{Architektura aplikacji sterującej drużyną robotów}
+W rozdziale zostanie zaprezentowana architektura \mbox{\texttt{STP - Skill Tactics Play}} szerzej opisana 
+w \cite{stp}. Podejście to zakłada istnienie następujących modułów:
+\begin{enumerate}
+  \item moduł zawierający informacje o świecie,
+  \item moduł umożliwiający ocenę sytuacji na planszy (pozwalający na ocenę atrakcyjności zachowań, punktów docelowych etc),
+  \item moduł sztucznej inteligencji,
+  \item moduł nawigacji robota; 
+  moduł ten powinien być odpowiedzialny za tworzenie bezkolizyjnej ścieżki prowadzącej do zadanego celu,
+  \item moduł sterowania ruchem robota;
+  moduł ten powinien wyznaczyć optymalne prędkości prowadzące do zadanego punktu (problem bezwładności robota,
+  wyhamowanie przed punktem docelowym etc.),
+  \item moduł bezpośrednio odpowiedzialny za sterowanie warstwą fizyczną robota (zadawanie prędkości liniowej kątowej, uruchamianie urządzenia do prowadzenia 
+  piłki(\textit{dribbler-a}), kopnięcie piłki).
+\end{enumerate}
+
+Zostanie opisana rola każdego z modułów, ze szczególnym uwzględnieniem modułu sztucznej inteligencji.
+Architektura \texttt{STP} zakłada planowanie działań drużyny na 3 poziomach.
+\begin{enumerate}
+ \item Poziom położony najwyżej w hierachii: \texttt{Play}.
+ \item \texttt{Tactics}
+ \item \texttt{Skills} 
+     \begin{itemize}
+    \item doprowadzenie piłki do celu piłki,
+    \item przemieszczenie robota do celu,
+    \item podążanie za innym robotem,
+    \end{itemize}
+\end{enumerate}
+
+

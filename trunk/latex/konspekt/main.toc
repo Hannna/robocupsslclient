@@ -1,0 +1,42 @@
+\contentsline {chapter}{\numberline {1}Wst\IeC {\k e}p}{4}
+\contentsline {chapter}{\numberline {2}Liga Robocup}{5}
+\contentsline {section}{\numberline {2.1}Om\IeC {\'o}wienie projektu robocup}{5}
+\contentsline {subsection}{\numberline {2.1.1}Kr\IeC {\'o}tki opis genezy}{5}
+\contentsline {subsection}{\numberline {2.1.2}Podzia\IeC {\l } na ligi robot\IeC {\'o}w}{5}
+\contentsline {section}{\numberline {2.2}Specyfika ligi small-size (F180)}{6}
+\contentsline {subsection}{\numberline {2.2.1}Zasady}{6}
+\contentsline {subsection}{\numberline {2.2.2}Budowa robota}{6}
+\contentsline {chapter}{\numberline {3}Za\IeC {\l }o\IeC {\.z}enia projektowe}{7}
+\contentsline {chapter}{\numberline {4}Projekt Player/Stage/Gazebo}{8}
+\contentsline {section}{\numberline {4.1}Koncepcja projektu}{8}
+\contentsline {section}{\numberline {4.2}Architektura}{8}
+\contentsline {subsection}{\numberline {4.2.1}Stage}{9}
+\contentsline {subsection}{\numberline {4.2.2}Gazebo}{9}
+\contentsline {subsection}{\numberline {4.2.3}Player}{9}
+\contentsline {section}{\numberline {4.3}Modelowanie obiekt\IeC {\'o}w}{9}
+\contentsline {section}{\numberline {4.4}Zasady modelowania w Gazebo 0.10}{9}
+\contentsline {section}{\numberline {4.5}Realizacja \IeC {\'s}rodowiska ligi Robocup}{9}
+\contentsline {chapter}{\numberline {5}Architektura aplikacji steruj\IeC {\k a}cej dru\IeC {\.z}yn\IeC {\k a} robot\IeC {\'o}w}{10}
+\contentsline {chapter}{\numberline {6}Sterowanie modelem robota z \emph {Small-size League} }{12}
+\contentsline {section}{\numberline {6.1}Om\IeC {\'o}wienie omnikierunkowej bazy jezdnej}{12}
+\contentsline {subsection}{\numberline {6.1.1}Opis po\IeC {\l }o\IeC {\.z}enia k\IeC {\'o}\IeC {\l }}{12}
+\contentsline {subsection}{\numberline {6.1.2}Opis kinematyki oraz dynamiki bazy}{12}
+\contentsline {section}{\numberline {6.2}Dryblowanie z pi\IeC {\l }k\IeC {\k a}}{12}
+\contentsline {chapter}{\numberline {7}Algorytmy unikania kolizji}{13}
+\contentsline {section}{\numberline {7.1}Kr\IeC {\'o}tki przegl\IeC {\k a}d algorytm\IeC {\'o}w unikania kolizji}{13}
+\contentsline {section}{\numberline {7.2}Zalety algorytmy RRT w stosunku \\do CVM}{14}
+\contentsline {section}{\numberline {7.3}Szczeg\IeC {\'o}\IeC {\l }owa zasada algorytmu RRT}{14}
+\contentsline {section}{\numberline {7.4}Szczeg\IeC {\'o}\IeC {\l }y implementacji zastosowanego \\algorytmu }{14}
+\contentsline {section}{\numberline {7.5}Wyznaczanie pr\IeC {\k e}dko\IeC {\'s}ci prowadz\IeC {\k a}cej do punktu docelowego}{15}
+\contentsline {chapter}{\numberline {8}Testy algorytmu nawigacji robota}{16}
+\contentsline {section}{\numberline {8.1}Zachowanie algorytmu RRT w \IeC {\'s}rodowisku statycznym}{16}
+\contentsline {section}{\numberline {8.2}\IeC {\'S}rodowisko dynamiczne}{17}
+\contentsline {section}{\numberline {8.3}Prowadzenie pi\IeC {\l }ki}{17}
+\contentsline {chapter}{\numberline {9}Testy algorytmu planowania i koordynacji dzia\IeC {\l }a\IeC {\'n}}{18}
+\contentsline {section}{\numberline {9.1}Testy planowania dzia\IeC {\l }a\IeC {\'n} na poziomie pojedynczego robota (Tactics)}{18}
+\contentsline {section}{\numberline {9.2}Testy planowania dzia\IeC {\l }a\IeC {\'n} na poziomie dru\IeC {\.z}yny}{18}
+\contentsline {section}{\numberline {9.3}\IeC {\'S}rodowisko dynamiczne}{18}
+\contentsline {chapter}{\numberline {10}Podsumowanie}{19}
+\contentsline {chapter}{\numberline {11}Dodatek}{20}
+\contentsline {section}{\numberline {11.1}Instrukcja konfiguracji Gazebo}{20}
+\contentsline {section}{\numberline {11.2}Kod \IeC {\'z}r\IeC {\'o}d\IeC {\l }owy modeli}{20}

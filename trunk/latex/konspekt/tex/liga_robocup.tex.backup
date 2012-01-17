@@ -1,0 +1,75 @@
+\chapter{Liga Robocup}
+
+\begin{abstract}
+ Rozdział zostanie w całości poświęcony opisowi projektu Robocup.
+Więcej informacji na ten temat należy poszukiwać na oficjalnej stronie projektu \url{http://www.robocup.org}
+Zaprezentowana zostanie pokrótce historia samej idei projektu, jej rozwój oraz  poszczególne ligi wchodzące w skład całego projektu.
+\end{abstract}
+
+
+
+	\section{Geneza}
+		\begin{itemize}
+		\item rok 1992 pierwsze pomysły dotyczące robotów grających w piłkę nożną
+ 		\item rok 1993 powstanie J-League 
+		\item rok 1995 Itsuki Noda tworzy pierwszy symulator rozgrywek
+		\item rok 1996 organizacja zawodów pre-Robocup
+		\item rok 1997 Nagoya pierwsze rozgrywki 
+		\end{itemize}
+	\section{Podział na ligi robotów}
+		\begin{itemize}
+ 		\item Najstarsza z lig, liga symulacyjna
+		\item Omówienie ligi \emph{Small-size League}
+		\item Omówienie ligi \emph{Middle-size League}
+		\item Omówienie ligi \emph{Standard Platform League }
+		\item Omówienie ligi \emph{Humanoid League}
+		\item \emph{RoboCupRescue} - wykorzystanie dorobku robotyki w służbie ludziom
+			\begin{itemize}
+ 			\item cel projektu
+			\item krótki opis \emph{RoboCupRescue League} oraz \emph{RoboCupRescue Simulation League}
+			\end{itemize}
+		\end{itemize}
+
+
+	\section{Specyfika ligi small-size (F180)}
+	Na wstępie zostanie podane w bardzo ogólnej formie uzasadnienie wyboru ligi(główne powody to: rozmiar boiska,
+ 	konstrukcja robotów,najprostszy algorytm sterowania- sterowanie centralne). Rozwinięcie tej myśli nastąpi w 
+	rozdziale 3.
+	 Ponadto w paragrafie zostaną zaprezentowane główne zasady ligi, które nie zmieniły się na przestrzeni lat.
+	(ewentualnie można uwzględnić  modyfikacje zasad wprowadzone na najbliższych zawodach tj. w 2008 roku).
+	\subsection{Zasady}
+		\begin{itemize}
+		 \item zaprezentowanie wymogów technicznych dotyczących :
+			\begin{itemize}
+ 			\item{wymiarów robota}
+			\item{wymiarów boiska}
+			\item{liczby robotów}
+			\item{sposobów prowadzenia piłki}  
+			\end{itemize}
+ 		\item omówienie podstawowych zasad takich jak:
+			\begin{itemize}
+			 \item sygnalizowanie przewinień
+			 \item rola arbitra podczas rozgrywki
+			\end{itemize}
+		\end{itemize}
+
+	\subsection{Schemat komunikacji}
+	W paragrafie zostanie zaprezentowany schemat komunikacji miedzy robotem, a aplikacją sterującą drużyną
+	\begin{itemize}
+	 \item kamera umieszczona nad boiskiem
+	 \item videoserwer
+	 \item aplikacja sterująca
+	 \item komunikacja z robotami drogą radiową
+	\end{itemize}
+
+	\subsection{Budowa robota}
+		\begin{itemize}
+	 	\item Zaprezentowanie konstrukcji robotów z ligi \emph{small-size}
+			\begin{itemize}
+			\item omówienie bazy jezdnej
+			\item zaprezentowanie urządzenia umożliwiającego prowadzenie piłki
+ 			\item rola znaczników umieszczonych na konstrukcji mechanicznej robota
+			\item dostępne czujniki (określone przez regulamin)
+			\end{itemize}
+ 
+		\end{itemize}
