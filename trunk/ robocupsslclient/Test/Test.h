@@ -19,6 +19,8 @@ typedef struct threadArg{
 	Robot* robot;
 } * threadArgPtr;
 
+void testRound();
+
 //testuje zachowanie dribblera
 //1. podjazd do pilki
 //2. jazda do przodu z pilka

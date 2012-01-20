@@ -63,7 +63,7 @@ void FollowLine::execute(void *){
 
 		//robotNewVel=calculateVelocity( robotCurrentVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
 
-		Vector2D robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currPose, goalPose);
+		Vector2D robotNewGlobalVel=this->robot.calculateVelocity( robotCurrentGlobalVel, currPose, goalPose);
 		//double w = robot->calculateAngularVel(*currGameState,robot->getRobotID(), goalPose);
 		bool haveBall = false;
 		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose, gameState->getSimTime(), haveBall );

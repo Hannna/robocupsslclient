@@ -156,6 +156,8 @@ public:
 	class RobotParams{
 	public:
         double mainCylinderRadious;
+        double acc;
+        double dcc;
 	};
 	static Config* config;
 	static pthread_mutex_t  mutex;
@@ -166,6 +168,15 @@ public:
 	static bool end;
 	bool load(std::string configFileName);
     double getRobotMainCylinderRadious() const ;
+
+    double getRobotDcc() const {
+    	return robotParams.dcc;
+    }
+
+    double getRobotAcc() const {
+    	return robotParams.acc;
+    }
+
 	const std::vector<std::string> getRedTeam()const;
 	const int getRedTeamSize()const{
 		return this->redTeam.size();

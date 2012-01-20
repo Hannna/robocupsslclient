@@ -150,7 +150,7 @@ void Videoserver::update(){
 						vx = posIface->second->data->velocity.pos.x;
 						vy = posIface->second->data->velocity.pos.y;
 						//TODO:poprawic pobieranie predkosci katowej robota
-						w = posIface->second->data->cmdVelocity.yaw;
+						w = posIface->second->data->velocity.yaw;
 						speeds[model_name].push_front( Vector2D(vx,vy) );
 						if(speeds[model_name].size( ) > 3)
 							speeds[model_name].pop_back();

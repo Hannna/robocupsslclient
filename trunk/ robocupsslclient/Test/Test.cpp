@@ -30,6 +30,52 @@
 
 const std::string ifaceName="::position_iface";
 
+
+void testRound(){
+	//while( haveBall && (  t.get<1>() < 0 ) ){
+	//Vector2D oy( 0.0,1.0 );
+	//double angle = oy.angleTo( t.getPosition( ) );
+	double lastSimTime =0;
+	double currSimTime = 0;
+	Videoserver& video = Videoserver::getInstance();
+	GameStatePtr currGameState(new GameState() );
+	Robot robot(std::string("blue0"),ifaceName);
+	currSimTime = video.updateGameState(currGameState);
+	Pose currRobotPose=(*currGameState).getRobotPos( robot.getRobotID() );
+	Pose nextRobotPose(currRobotPose.get<0>(),currRobotPose.get<1>()-1.0,currRobotPose.get<2>());
+	while(1){
+		while( ( lastSimTime - currSimTime ) >= 0 ){
+			currSimTime = video.updateGameState(currGameState);
+		}
+		currRobotPose=(*currGameState).getRobotPos( robot.getRobotID() );
+		double robotRotation = currRobotPose.get<2>();
+		RotationMatrix rm(robotRotation);
+		Pose t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
+
+		double angle = convertAnglePI(atan2(t.get<1>(),t.get<0>()) -M_PI/2.0);
+		//LOG_FATAL( log, "currRobotPose "<< currRobotPose <<" globalNextPose "<<nextRobotPose << " relative nextRobotPose  "<<t<<" angle "<<angle );
+		double maxW = fabs(angle)/video.getUpdateDeltaTime() ;//> 2*M_PI ? 2*M_PI : fabs(angle)/video.getUpdateDeltaTime() ;
+		double ball_radious = 0.02;
+
+		//double angle = t.getPosition().angleTo( Vector2D( 0.0,1.0 ) );
+
+		boost::tuple< double, double, double > vel = calculateCurwatureVelocity( ball_radious*sgn(angle) , maxW );
+		Vector2D v = Vector2D( vel.get<0>(), vel.get<1>() );
+		double w = vel.get<2>();
+		robot.setRelativeSpeed( v, w );
+
+		lastSimTime = currSimTime;
+		//currSimTime = video.updateGameState(currGameState) ;
+		currRobotPose=(*currGameState).getRobotPos( robot.getRobotID() );
+		robotRotation = currRobotPose.get<2>();
+		rm = RotationMatrix(robotRotation);
+		//t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
+		//haveBall = this->evaluationModule.isRobotOwnedBall( this->robot );
+
+		//LOG_FATAL( log, "haveBall "<<haveBall );
+	}
+}
+
 void testPose(Robot& robot,Pose newPose){
 #ifdef GAZEBO
 	Pose pose;
@@ -163,7 +209,7 @@ void testMotion(const Pose goalPose,Videoserver & video,Robot& robot){
 		bool haveBall = false;
 		double w = robot.calculateAngularVel( gameState->getRobotPos( robot.getRobotID() ), goalPose ,(*gameState).getSimTime(), haveBall);
 		//speed=calculateVelocity( robotVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
-		speed=calculateVelocity( robotVel,currRobotPose, goalPose);
+		speed=robot.calculateVelocity( robotVel,currRobotPose, goalPose);
 
 		std::cout<<"set speed "<<speed<<" w "<<w<<std::endl;
 

@@ -401,8 +401,8 @@ void FollowLineAndAvoidObs::execute(void *){
 				robot.disperse(0.05);
 				double tmp = SimControl::getInstance().getSimTime();
 				double diffTime = tmp - lastSimTime;
-				lastSimTime = tmp;
-				if( (lastSimTime - startSimTime) < exTime ){
+				//lastSimTime = tmp;
+				if( (tmp - startSimTime) < exTime ){
 					file<<-1<<"\t"<<diffTime<<std::endl;
 					file.flush();
 				}

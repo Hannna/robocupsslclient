@@ -94,7 +94,7 @@ Task::status GetBall::run(void * arg, int steps){
 					LOG_INFO(log, "GetBall ballPos wo prediction "<<ballPos<<" ball v "<<currGameState->getBallGlobalVelocity()  );
 					Vector2D t =ballPos +  ( currGameState->getBallGlobalVelocity() * ( 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) ) );
 					LOG_INFO(log, "GetBall ballPos after prediction "<<t );
-					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, Pose( t,0 ) );
+					Vector2D robotNewVel=this->robot->calculateVelocity( robotCurrentVel, currRobotPose, Pose( t,0 ) );
 					robot->setGlobalSpeed( robotNewVel, 0, currRobotPose.get<2>() );
 					LOG_INFO(log, "GetBall podjedz do pilki o "<<distanceToBall );
 					return Task::not_completed;
@@ -137,7 +137,7 @@ Task::status GetBall::run(void * arg, int steps){
 					Pose ballPose ( ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) ),0 );
 					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ballPos "<<ballPos<<" with prediction ball position "<< ballPose);
 
-					Vector2D robotNewVel=calculateVelocity( robotCurrentVel, currRobotPose, ballPose );
+					Vector2D robotNewVel=this->robot->calculateVelocity( robotCurrentVel, currRobotPose, ballPose );
 					robot->setGlobalSpeed( robotNewVel, w, currRobotPose.get<2>() );
 					LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose);
 					LOG_INFO(log," obrot robota do pilki o currAlfaToCel "<<currAlfaToCel<<"  set w "<< w<<" i dojazd do pilki speed "<<robotNewVel  );

@@ -117,11 +117,11 @@ bool Config::load(std::string filename){
 
 	    for(;ii!=robots.end();ii++){
 	    	if(strncmp(ii->c_str(),"red",3)==0 ){
-	    		this->redTeam.push_back(*ii);
+	    		this->redTeam.push_back(ii->substr(0,4));
 	    		std::cout<<*ii<<std::endl;
 	    	}
-	    	else if (strncmp(ii->c_str(),"blue",3)==0 ){
-	    	    this->blueTeam.push_back(*ii);
+	    	else if (strncmp(ii->c_str(),"blue",4)==0 ){
+	    	    this->blueTeam.push_back(ii->substr(0,5));
 	    	    std::cout<<*ii<<std::endl;
 	    	}
 	    }
@@ -266,12 +266,28 @@ bool Config::loadRobotParams(xmlNodePtr node,xmlDocPtr config){
 			xmlFree(str);
 			//this->redTeam.push_back(data);
 		}
+		else if(!xmlStrcmp(current->name,(const xmlChar *) "dcc")){
+				xmlChar * str;
+				str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
+				std::string data = std::string((const char*) str);
+				from_string<double>(this->robotParams.dcc,data,std::dec);
+				xmlFree(str);
+				//this->redTeam.push_back(data);
+			}
+		else if(!xmlStrcmp(current->name,(const xmlChar *) "acc")){
+				xmlChar * str;
+				str = xmlNodeListGetString(config,current->xmlChildrenNode,1);
+				std::string data = std::string((const char*) str);
+				from_string<double>(this->robotParams.acc,data,std::dec);
+				xmlFree(str);
+				//this->redTeam.push_back(data);
+			}
 		current = current->next;
 	}
 	return status;
 }
 
-
+/*
 bool Config::loadRedTeam(xmlNodePtr node,xmlDocPtr config){
 	bool status=true;
 	xmlNodePtr current = node->xmlChildrenNode;
@@ -305,7 +321,7 @@ bool Config::loadBlueTeam(xmlNodePtr node,xmlDocPtr config){
 	}
 	return status;
 }
-
+*/
 bool Config::loadRRTCfg(xmlNodePtr node,xmlDocPtr config){
 	bool status=true;
 	xmlNodePtr current = node->xmlChildrenNode;

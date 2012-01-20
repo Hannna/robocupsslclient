@@ -194,7 +194,7 @@ int main(int argc, char*argv[],char *envp[]){
 
 
     Videoserver::getInstance().start(NULL);
-
+    //testRound();
     //poczekaj az videoserwer pobierze pozycje robotow z symulatora
     GameStatePtr gameState( new GameState() );
 
