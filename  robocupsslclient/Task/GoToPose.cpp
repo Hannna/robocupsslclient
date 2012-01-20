@@ -243,7 +243,7 @@ Task::status GoToPose::run(void* arg, int steps){
 				bool haveBall = this->evaluationModule.isRobotOwnedBall( this->robot );
 				double w = 0;
 
-				robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
+				robotNewGlobalVel=this->robot->calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
 
 				// odleglosc punktu startowego od najblizszej przeszkody, brane sa pod uwage jedynie biezace polozenia robotow, jesli robot jest blizej przeszkody
 				// to wywolywana jest funkcja powodujaca rozproszenie
@@ -326,7 +326,7 @@ Task::status GoToPose::run(void* arg, int steps){
 							Vector2D v = Vector2D( vel.get<0>(), vel.get<1>() );
 							double w = vel.get<2>();
 							robot->setRelativeSpeed( v, w );
-							while( lastSimTime - currSimTime >= 0 ){
+							while( ( lastSimTime - currSimTime ) >= 0 ){
 								currSimTime = video.updateGameState(currGameState);
 							}
 							lastSimTime = currSimTime;
@@ -341,7 +341,7 @@ Task::status GoToPose::run(void* arg, int steps){
 						}
 						LOG_FATAL( log, "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 						robotCurrentGlobalVel=(*currGameState).getRobotGlobalVelocity( robot->getRobotID() );
-						robotNewGlobalVel=calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
+						robotNewGlobalVel=this->robot->calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
 
 						//jesli robot mam miec szczegolna rotacje w punckie docelowym
 						//if(this->spec_rot){
@@ -403,6 +403,7 @@ Task::status GoToPose::run(void* arg, int steps){
 			}
 			else if(status==RRTPlanner::RobotReachGoalPose){
                 LOG_DEBUG(log,"From rrtPlanner: RobotReachGoalPose");
+                robot->setRelativeSpeed(Vector2D(0.0,0.0),0);
                 delete rrt;
                 rrt = NULL;
                 return Task::ok;

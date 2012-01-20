@@ -85,7 +85,8 @@ Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robo
 		log( getLoggerPtr( robotName_.c_str() ) ), fileName(robotName), file( robotName_.c_str( ), ios_base::in | ios_base::trunc ),
 		file_teta_name( robotName_ +"teta" ), file_teta( file_teta_name.c_str() , ios_base::in | ios_base::trunc ),
 		file_xy_name( robotName_ +"xy" ), file_xy( file_xy_name.c_str() , ios_base::in | ios_base::trunc ),
-		file_v_name( robotName_ +"v" ), file_v( file_v_name.c_str() , ios_base::in | ios_base::trunc )
+		file_v_name( robotName_ +"v" ), file_v( file_v_name.c_str() , ios_base::in | ios_base::trunc ), maxAcc( Config::getInstance().getRobotAcc() )
+		, maxDcc( Config::getInstance().getRobotDcc() )
 {
 
 
@@ -312,6 +313,7 @@ bool Robot::disperse( const double dist){
 		goalPose = Videoserver::getInstance().getBlueGoalMidPosition();
 	}
 	bool onlyDisperse = true;
+	return true;
 	return navigateToPose( dist, &goalPose , onlyDisperse );
 }
 bool Robot::navigateToPose( const double dist, const Vector2D* goalPose, const bool onlyDisperse ){
@@ -883,7 +885,7 @@ void Robot::stop(  ){
 		#ifdef GAZEBO
 			posIface->Lock(1);
 			err=( pow( posIface->data->velocity.pos.x, 2 ) + pow( posIface->data->velocity.pos.y, 2 ) );
-			posIface->data->cmdEnableMotors = 0;
+			posIface->data->cmdEnableMotors = 1;
 			posIface->Unlock();
 		#endif
 			usleep(10000);
@@ -1256,12 +1258,12 @@ Vector2D calculateVelocity(const Vector2D &currVel, const Pose& currPose,const  
 */
 
 
-double calculateVelocity(const double vel, const double currPosition,const  double targetPosition){
+double Robot::calculateVelocity(const double vel, const double currPosition,const  double targetPosition){
 	double newV;
 	//przyspieszenie
-	double acc=1.87;//7.5;//[m/s2]
+	//double acc=Config:://2.26305;//1.87;//2.26305//7.5;//[m/s2]
 	//hamowanie
-	double dec=0.6;//0.5 bylo //9;//[m/s2]
+	//double dec=//3.5;//0.6;//3.5//0.5 bylo //9;//[m/s2]
 	//jesli predkosc powoduje powiekszanie sie odleglosci miedzy cuur.x oraz target.x to zatrzymaj
 	/*Uwaga
 	 *
@@ -1275,7 +1277,7 @@ double calculateVelocity(const double vel, const double currPosition,const  doub
 		//	newV=0;
 		//}
 		//jesli poruszajac sie z aktualna predkoscia przekroczymy cel
-		/*else*/ if( fabs(targetPosition-currPosition)<= pow(vel,2)/(2*dec)  ){
+		/*else*/ if( fabs(targetPosition-currPosition)<= pow(vel,2)/(2*this->maxDcc)  ){
 			newV=0;
 		}
 		//jesli aktualna predkosci jest wieksza niz max
@@ -1288,13 +1290,17 @@ double calculateVelocity(const double vel, const double currPosition,const  doub
 		else{
 			//std::cout<<"trapez"<<std::endl;
 			double s=fabs(targetPosition - currPosition);
-			double v=sqrt( (3*dec*pow(vel,2)+2*acc*dec*s)/(acc+dec));
+			double v=sqrt( (3*this->maxDcc*pow(vel,2)+2*this->maxAcc*this->maxDcc*s)/(this->maxAcc+this->maxDcc));
 
 			//v=fmin(v,Config::getInstance().getRRTMaxVel());
 			double signum=-1;
 			if( targetPosition - currPosition > 0 )
 				signum=1;
 			newV=v*signum;
+
+			if(fabs(newV)>Config::getInstance().getRRTMaxVel()){
+				newV=Config::getInstance().getRRTMaxVel()*signum;
+			}
 			//std::cout<<"newV="<<newV<<std::endl;
 
 /*
@@ -1361,7 +1367,7 @@ Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,
 }
 */
 
-Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose){
+Vector2D Robot::calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose){
 
 	//RotationMatrix rmY( currGlobalPose.get<2>() );
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
@@ -1376,7 +1382,7 @@ Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,
 	if( scale > Config::getInstance().getRRTMaxVel() )
 		scale=Config::getInstance().getRRTMaxVel()/scale;
 	//Vector2D v=newVel*scale;
-	return newVel*scale;
+	return newVel;//*scale;
 
 }
 

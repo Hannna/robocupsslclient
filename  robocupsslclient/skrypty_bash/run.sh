@@ -27,7 +27,7 @@ elif [ "$1" = "--profile" ];	then
 	echo $CPUPROFILE 
 	sleep 10
 	echo "start magisterka"
-	TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/test_task_new_gazebo.world"	
+	TEST_WORLD="/home/maciek/magisterka/test_task_new_gazebo.world"	
 	echo "creating world"
 	echo $TEST_WORLD
 	gazebo $TEST_WORLD > /dev/null &
@@ -39,7 +39,7 @@ elif [ "$1" = "--debug" ];	then
 	echo "start "
 	echo $1
 		
-	TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/dribblerTest.world"	
+	TEST_WORLD="/home/maciek/magisterka/dribblerTest.world"	
 	echo "creating world"
 	echo $TEST_WORLD
 	#arg = "play"
@@ -54,7 +54,7 @@ else
 	string="$1"
 	if [ "$1" = "--task" ] || [ "$1" = "--rrt" ] || [ "$1" = "--multirrt" ];	then	
 		echo "start magisterka"
-		TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/test_task_new_gazebo.world"	
+		TEST_WORLD="/home/maciek/magisterka/test_task_new_gazebo.world"	
 		echo "creating world"
 		echo $TEST_WORLD
 		gazebo $TEST_WORLD > /dev/null &
@@ -62,7 +62,7 @@ else
 	
 	elif [ "$1" = "--velocity" ] || [ "$1" = "--acc" ] || [ "$1" = "--motion" ]  || [ "$1" = "--rotation" ] ; then	
 	#	echo "start velocity test"
-		TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/test_velocity.world"		
+		TEST_WORLD="/home/maciek/magisterka/test_velocity.world"		
 		echo "creating world"
 		echo $TEST_WORLD
 		gazebo $TEST_WORLD > gazebo_logi &	
@@ -76,7 +76,7 @@ else
 		echo "start "
 		echo $1
 			
-		TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/dribblerTest.world"	
+		TEST_WORLD="/home/maciek/magisterka/dribblerTest.world"	
 		echo "creating world"
 		echo $TEST_WORLD
 		gazebo $TEST_WORLD | tee  gazebo_logi &	
@@ -91,7 +91,7 @@ else
 		echo "start "
 		echo $1
 			
-		TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/test_worlds/test_world_1.world"	
+		TEST_WORLD="/home/maciek/magisterka/test_worlds/test_world_1.world"	
 		echo "creating world"
 		echo $TEST_WORLD
 		gazebo $TEST_WORLD | tee  gazebo_logi &	
@@ -105,7 +105,7 @@ else
 		echo "start "
 		echo $1
 			
-		TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/test_worlds/test_world_1.world"	
+		TEST_WORLD="/home/maciek/magisterka/test_worlds/test_world_1.world"	
 		echo "creating world"
 		echo $TEST_WORLD
 		gazebo $TEST_WORLD | tee  gazebo_logi &	
@@ -118,7 +118,7 @@ else
 		echo "start "
 		echo $1
 			
-		TEST_WORLD="/home/maciek/mgr/mgr/my_plansza/test_worlds/test_rrt_world.world"
+		TEST_WORLD="/home/maciek/magisterka/test_worlds/test_rrt_world.world"
 			
 		sit="empty"
 	

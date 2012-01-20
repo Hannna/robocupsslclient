@@ -246,6 +246,36 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		return RRTPlanner::Success;
 	}
 
+	if(this->path){
+	//jesli w poprzednim kroku znaleziono sciezke
+	checkAddObstacles = true;
+	std::list<Pose>::iterator ii=this->path->begin();
+	Pose tmp=*ii;
+	//wayPoints.push_back(tmp);
+		for(; ii!=this->path->end();ii++){
+			tmp=*ii;
+			if( tmp.distance(startRobotPose) > goalPose.distance(tmp)){
+
+				if(this->checkTargetAttainability(startRobotPose,tmp,checkAddObstacles)){
+					//std::cout<<"root->state"<<(*(root->state))<<std::endl;
+					//double boost_ms = timer.elapsed()*1000.0;
+					double ms = measureTime(stop_measure, &startTime);
+					LOG_FATAL(logger,"RRT, robot goes directly to goal. RRT time "<<ms<<" [ms] " );
+					GameStatePtr gameState( new GameState( *this->root->getGameState() ) );
+					gameState->updateRobotData( this->robotName,tmp );
+					RRTNodePtr node(new RRTNode(gameState,this->robotId));
+					node->setFinal();
+					this->root->addNode( node );
+					this->goDirectToTarget=true;
+					this->path->erase(ii);
+					return RRTPlanner::Success;
+				}
+			}
+		}
+	}
+
+
+
 	//pozycja robota w kolejnym kroku algorytmu
     Pose nextRobotPose=nearest->getRobotPos(this->robotId);
 
@@ -254,13 +284,13 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 	//robotReach = std::max<double>( fabs( robotReach ), Config::getInstance().getRRTRobotReach() );
     //zasieg robota w 1 kroku algorytmu, o tyle poszerzamy w extendState
     double robotReach = Config::getInstance().getRRTRobotReach();
-    double minRobotReach = (distanceToTarget/this->maxNodeNumber);
+    double minRobotReach = (distanceToTarget/this->maxNodeNumber) > robotReach ? (distanceToTarget/this->maxNodeNumber) : robotReach;
     //double minRobotReach = Config::getInstance().getRRTRobotReach();
 
     LOG_TRACE( logger,"robotReach "<<robotReach<<" minRobotReach"<<minRobotReach );
 
 	//odleglosc do najblizszej przeszkody
-	double toNearestObstacleDist=0;
+	//double toNearestObstacleDist=0;
 	//tymczasowy cel w koljenym kroku algorytmu
 	Pose temporaryTarget;
 	//numer ostatnio dodanego wezla
@@ -285,8 +315,8 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 		}*/
 
 
-		if( measureTime(stop_measure, &startTime) > 400 ){
-			LOG_FATAL(logger," FATAL RRT take over than 400 ms");
+		if( measureTime(stop_measure, &startTime) > 100 ){
+			LOG_FATAL(logger," FATAL RRT take over than 100 ms");
 			break;
 		}
 
@@ -351,7 +381,7 @@ RRTPlanner::ErrorCode RRTPlanner::run(double deltaSimTime){
 					nearest->addNode(node);
 					nextRobotPose=node->getMyRobotPos();
 					//toNearestObstacleDist=this->distanceToNearestObstacle( extendedGameState,nextRobotPose);
-					toNearestObstacleDist=this->distanceToNearestObstacle(nextRobotPose);
+					//toNearestObstacleDist=this->distanceToNearestObstacle(nextRobotPose);
 				//}
 			}
 		}
@@ -707,7 +737,7 @@ Pose RRTPlanner::getRandomPose( ){
 
 		std::pair<double, double> c = *this->xConstraints;
 		Vector2D m( c.first > this->minXvalue ?  c.first : this->minXvalue, c.second < this->maxXvalue ?  c.second : this->maxXvalue   );
-		LOG_TRACE( logger, "uniform_int for X xmin ="<<m.x<< "xmax ="<<m.y );
+		//LOG_FATAL( logger, "uniform_int for X xmin ="<<m.x*10<< "xmax ="<<m.y*10 );
 		boost::uniform_int<int> uni_distX(m.x*10,m.y*10);
 		static boost::variate_generator<boost::mt19937, boost::uniform_int<int> >
 			genX(rngX, uni_distX);
@@ -716,16 +746,17 @@ Pose RRTPlanner::getRandomPose( ){
 
 		c = *this->yConstraints;
 		m = Vector2D ( c.first > this->minYvalue ?  c.first : this->minYvalue, c.second < this->maxYvalue ?  c.second : this->maxYvalue   );
-		LOG_TRACE( logger, "uniform_int for Y xmin ="<<m.x<< "xmax ="<<m.y );
+		//LOG_FATAL( logger, "uniform_int for Y ymin ="<<m.x*10<< " ymax ="<<m.y*10 );
 		boost::uniform_int<int> uni_distY(m.x*10,m.y*10);
 		static boost::variate_generator<boost::mt19937, boost::uniform_int<int> >
-					genY(rngY, uni_distX);
+					genY(rngY, uni_distY);
 		genY.distribution( ) = uni_distY;
 
 
 		double x=genX();
 		double y=genY();
 
+		//LOG_FATAL( logger, "random pose x "<<x<< " y "<<y );
 		Pose randomPose(x/10.0,y/10.0,0);
 
 		return randomPose;
@@ -951,23 +982,36 @@ void RRTPlanner::evaluateEnemyPositions(const GameStatePtr & currState,const dou
 	std::list<Vector2D> speeds;
 	std::list<Vector2D>::iterator ii;
 
+	int pred_amount = 2;
+	int pred_steps = 5;
+
 	BOOST_FOREACH(std::string modelName,blueTeam){
+		//LOG_FATAL(logger,"robot "<<modelName);
 		if(modelName.compare(this->robotName)!=0){
 			Pose rPose=(*currState).getRobotPos( Robot::getRobotID(modelName) );
-			for(int i=1;i<=21;i+=5){
-			//czemu jest jeszcze obrot
-			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
-
-			std::list<Vector2D>::iterator ii = speeds.begin();
 			speeds = obs_speeds[modelName];
-			Vector2D globalV;
-			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
-			globalV.y = 0;
+			std::list<Vector2D>::iterator ii = speeds.begin();
+			//LOG_FATAL(logger,"robot "<<modelName<<" speeds size "<<speeds.size());
 			for(;ii!=speeds.end();ii++){
-				globalV=*ii;
-				Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime*i,rPose.get<1>()+globalV.y*deltaSimTime*i,0);
-				this->predictedObstaclesPos.push_back(newPose);
-			}
+				LOG_FATAL(logger,"robot "<<modelName<<" deltaSimTime "<<deltaSimTime<<" original obs "<<rPose<<" v = "<<*ii);
+				if(ii->length() > 0.05)
+					for(int i=0;i<pred_amount;i++){
+						//if( (ii->length() > 0.05) || (i==0) )
+						{
+							//czemu jest jeszcze obrot
+							//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
+
+
+							Vector2D globalV;
+							//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
+							globalV.y = 0;
+
+							globalV=*ii;
+							Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime*i*pred_steps,rPose.get<1>()+globalV.y*deltaSimTime*i*pred_steps,0);
+							LOG_FATAL(logger,"add predicted obs "<<newPose);
+							this->predictedObstaclesPos.push_back(newPose);
+						}
+					}
 			//std::cout<<"add obstacle blue "<<" robot velocity "<<v<<std::endl;
 			//(*currState).updateRobotData(modelName,newPose,v,0);
 			}
@@ -978,20 +1022,30 @@ void RRTPlanner::evaluateEnemyPositions(const GameStatePtr & currState,const dou
 	BOOST_FOREACH(std::string modelName,redTeam){
 		if(modelName.compare(this->robotName)!=0){
 			Pose rPose=(*currState).getRobotPos( Robot::getRobotID(modelName) );
-			for(int i=1;i<=21;i+=5){
-			//czemu jest jeszcze obrot
-			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
-
-			std::list<Vector2D>::iterator ii = speeds.begin();
 			speeds = obs_speeds[modelName];
-			Vector2D globalV;
-			//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
-			globalV.y = 0;
+			std::list<Vector2D>::iterator ii = speeds.begin();
+
+
 			for(;ii!=speeds.end();ii++){
-				globalV=*ii;
-				Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime*i,rPose.get<1>()+globalV.y*deltaSimTime*i,0);
-				this->predictedObstaclesPos.push_back(newPose);
-			}
+				LOG_FATAL(logger,"robot "<<modelName<<" deltaSimTime "<<deltaSimTime<<" original obs "<<rPose<<" v = "<<*ii);
+				if(ii->length() > 0.05)
+					for(int i=0;i<pred_amount;i++){
+						//if( (ii->length() > 0.05) || (i==0) )
+						{
+							//czemu jest jeszcze obrot
+							//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) ).rotate( rPose.get<2>() );
+
+
+							Vector2D globalV;
+							//Vector2D globalV=(*currState).getRobotGlobalVelocity( Robot::getRobotID(modelName) );
+							globalV.y = 0;
+
+							globalV=*ii;
+							Pose newPose(rPose.get<0>()+globalV.x*deltaSimTime*i*pred_steps,rPose.get<1>()+globalV.y*deltaSimTime*i*pred_steps,0);
+							LOG_FATAL(logger,"add predicted obs "<<newPose);
+							this->predictedObstaclesPos.push_back(newPose);
+						}
+					}
 			//std::cout<<"add obstacle blue "<<" robot velocity "<<v<<std::endl;
 			//(*currState).updateRobotData(modelName,newPose,v,0);
 			}

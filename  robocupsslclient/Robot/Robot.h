@@ -126,10 +126,18 @@ public:
 	double calculateAngularVel( const  Pose & globalRobotPose, const  Pose & globalTargetPose, const double simTime, const bool haveBall );
 	double calculateAngularVel( const  Pose & globalRobotPose, const double rotation, const double simTime, const bool haveBall );
 	void stop( );
+	/*@brief oblicza predkosci konieczne do przemieszczenia sie do zadanego celu
+	 *
+	 * @param [in] currVel predkosci robota w ukladzie odniesienia zwiazanym z robotem
+	 * @param [in] targetPose polozenie celu w ukladzie odniesienia zwiazanym z robotem
+	 */
+	Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose);
 
 
 private :
 	bool navigateToPose( const double dist, const Vector2D* goalPose, const bool onlyDisperse = false );
+	double calculateVelocity(const double vel, const double currPosition,const  double targetPosition);
+
 	//Vector2D repulsivePotentialField( Vector2D positionCoordinate,  std::list< Vector2D > obstacles );
 
 	PidRegulator pidRegulator;
@@ -144,6 +152,8 @@ private :
 	///nazwa interfejsu do pobierania pozycji
 	std::string posIfaceName;
 	const log4cxx::LoggerPtr log;
+	const double maxAcc;
+	const double maxDcc;
 	///pozycje dlugofalowe ustalane przez stratega
 	//Vector2D goTo;
 #ifdef GAZEBO
@@ -189,12 +199,6 @@ private :
 
 };
 
-/*@brief oblicza predkosci konieczne do przemieszczenia sie do zadanego celu
- *
- * @param [in] currVel predkosci robota w ukladzie odniesienia zwiazanym z robotem
- * @param [in] targetPose polozenie celu w ukladzie odniesienia zwiazanym z robotem
- */
-Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose);
 boost::tuple< double, double, double > calculateCurwatureVelocity( const double radious,const double maxW );
 std::ostream& operator<<(std::ostream& os,const Robot::robotID& id);
 

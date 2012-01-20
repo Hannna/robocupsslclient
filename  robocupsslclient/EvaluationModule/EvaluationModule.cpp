@@ -363,7 +363,8 @@ bool EvaluationModule::isRobotOwnedBall(const Robot & robot, const GameStatePtr&
 
 bool EvaluationModule::isRobotOwnedBall(const Robot::robotID & robotID, const GameStatePtr& currGameState,double& distanceToBall, double& angleToBall){
 	const Pose currRobotPose = currGameState->getRobotPos( robotID );
-	const Pose ballPose = Pose( currGameState->getBallPos().getPosition() + currGameState->getBallGlobalVelocity()*this->video.getUpdateDeltaTime(),0);
+	//const Pose ballPose = Pose( currGameState->getBallPos().getPosition() + currGameState->getBallGlobalVelocity()*this->video.getUpdateDeltaTime(),0);
+	const Pose ballPose = Pose( currGameState->getBallPos().getPosition(),0);
 	Vector2D ballPosition = ballPose.getPosition();
 
 	//dystans do pilki
