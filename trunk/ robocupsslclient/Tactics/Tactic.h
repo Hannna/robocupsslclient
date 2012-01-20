@@ -59,13 +59,13 @@ position hcoordinatei hthetai
 
 #include "../Task/Task.h"
 #include "../Robot/Robot.h"
-#include "../Thread/Thread.h"
+//#include "../Thread/Thread.h"
 #include "../Lock/Lock.h"
 
 
 class EvaluationModule;
 
-class Tactic : public Thread
+class Tactic //: public Thread
 {
     public:
 		typedef
@@ -76,8 +76,9 @@ class Tactic : public Thread
 
         Tactic(Robot & robot_);
         virtual bool isFinish()=0;
+        void waitForFinish();
         void stopTactic(){
-
+        	LockGuard m(mutex);
         	this->stop = true;
         }
 
@@ -87,10 +88,12 @@ class Tactic : public Thread
     	*/
     	void unmarkParam(predicate p);
 
+    	void start();
+
         virtual ~Tactic();
     protected:
 
-        Mutex mutex;
+        //Mutex mutex_;
         bool stop;
         virtual void execute(void*) = 0;
         EvaluationModule& evaluation;
@@ -101,6 +104,8 @@ class Tactic : public Thread
         int predicates;
         bool finished;
 
+    	Mutex  mutex;
+    	pthread_cond_t finish_cv;
 
 };
 

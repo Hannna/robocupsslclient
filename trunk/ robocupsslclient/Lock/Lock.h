@@ -1,7 +1,6 @@
 #ifndef _PTHREAD_HPP
 #define _PTHREAD_HPP
 
-#ifdef __cplusplus
 
 #include <pthread.h>
 #include <signal.h>
@@ -22,6 +21,9 @@ class Mutex
   friend class LockGuard;
 
   public:
+  	pthread_mutex_t* get(){
+  		return &mutex;
+  	}
     inline Mutex();
 
     inline ~Mutex();
@@ -86,7 +88,5 @@ inline LockGuard & LockGuard::operator=( Mutex & mutex )
     pthread_mutex_lock( pmutex = &mutex.mutex );
     return *this;
 }
-
-#endif
 
 #endif

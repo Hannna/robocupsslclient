@@ -75,7 +75,7 @@ Task::status GetBall::run(void * arg, int steps){
 
 
 			//jedz do pilki
-			//robot->goToBall( this->maxDistanceToBall );
+			robot->goToBall( this->maxDistanceToBall );
 			if( strcmp( this->robot->getRobotName().c_str(), "blue0" ) == 0 ){
 				double reference = 0;
 				file<<reference<<";"<<angleToBall<<";"<<std::endl;

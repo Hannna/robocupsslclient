@@ -112,7 +112,7 @@ Robot::Robot(const std::string robotName_,const std::string posIfaceName) : robo
 	//std::string appendix(".txt");
 	//std::string fileName = this->robotName + appendix;
 	//this->file = std::fstream( fileName.c_str( ), ios_base::in | ios_base::trunc );
-	file<<"vx"<<";"<<"vy"<<";"<<'w'<<std::endl;
+	//file<<"vx"<<";"<<"vy"<<";"<<'w'<<std::endl;
 	//alokowanie interfejsu do zmiany pozycji
 #ifdef GAZEBO
     #ifdef OLD
@@ -243,8 +243,8 @@ void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const dou
 
     if(this->robotName.compare("red0")==0){
     	//file<<speed.x<<";"<<speed.y<<";"<<angularV<<";"<<this->w<<";"<<vx<<";"<<vy<<";"<<ww<<"\n" ;
-    	file<<v.x<<";"<<v.y<<";"<<angularV<<";"<<this->w<<";"<<vx<<";"<<vy<<";"<<ww<<"\n" ;
-    	file.flush();
+    	//file<<v.x<<";"<<v.y<<";"<<angularV<<";"<<this->w<<";"<<vx<<";"<<vy<<";"<<ww<<"\n" ;
+    	//file.flush();
     }
     LOG_INFO(log,"simTime "<<simTime<<" set global speed "<<v<<" angular "<<angularV<<" relative vel  "<<" vx="<<this->v.x<<" vy="<<this->v.y<<" w "<<angularV<<" from filter "<<this->w );
 	//LOG_TRACE(getLoggerPtr("path"),"set vel       name="<<this->robotName.c_str()<<"\t vx="<<speed.x<<"\t vy="<<speed.y<<"\t" );
@@ -1026,7 +1026,7 @@ double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & 
     }
 
     if(this->robotName.compare("blue0")==0){
-
+    	/*
     	this->file_v<<gx<<";"<<gy<<";"<<rx<<";"<<ry<<std::endl;
     	this->file_v.flush();
 
@@ -1035,6 +1035,7 @@ double Robot::calculateAngularVel( const  Pose & globalRobotPose, const  Pose & 
 
     	this->file_xy<<globalRobotPose.get<0>()<<";"<<globalRobotPose.get<1>()<<";"<<globalTargetPose.get<0>()<<";"<<globalTargetPose.get<1>()<<std::endl;
     	this->file_xy.flush();
+    	*/
     }
 
     return  w_;
@@ -1110,8 +1111,8 @@ double Robot::calculateAngularVel( const  Pose & globalRobotPose, const double r
     	//this->file_v<<gx<<";"<<gy<<";"<<rx<<";"<<ry<<std::endl;
     	//this->file_v.flush();
 
-    	this->file_teta<<last_teta<<";"<<teta<<";"<<tetad<<";"<<dteta<<";"<<dtetad<<";"<<c<<";"<<delta<<std::endl;
-    	this->file_teta.flush();
+    	//this->file_teta<<last_teta<<";"<<teta<<";"<<tetad<<";"<<dteta<<";"<<dtetad<<";"<<c<<";"<<delta<<std::endl;
+    	//this->file_teta.flush();
 
     	//this->file_xy<<globalRobotPose.get<0>()<<";"<<globalRobotPose.get<1>()<<";"<<globalTargetPose.get<0>()<<";"<<globalTargetPose.get<1>()<<std::endl;
     	//this->file_xy.flush();

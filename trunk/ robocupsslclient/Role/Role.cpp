@@ -23,7 +23,7 @@ void Role::stop( ) {
 	if( this->currentTactic )
 		this->currentTactic->stopTactic();
 
-	this->currentTactic->join();
+	this->currentTactic->waitForFinish();
 
 	if(this->robot){
 		//roboty odjezdzaja od siebie podczas kolizji
@@ -81,7 +81,7 @@ void Role::execute(){
 	}
 
 	if( currentTactic )
-		currentTactic->start(NULL);
+		currentTactic->start( );
 
 	//delete currentTactic;
 
@@ -93,7 +93,7 @@ void Role::execute(){
 void Role::disperse( ){
 
 	currentTactic = new DisperseTactic( *this->robot );
-	currentTactic->start(NULL);
+	currentTactic->start( );
 
 }
 

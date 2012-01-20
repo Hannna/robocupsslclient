@@ -20,9 +20,9 @@
 #include "../RRT/SimAnnealing.h"
 
 
-FollowLineAndAvoidObs::FollowLineAndAvoidObs(Robot & robot_, const Vector2D p1_, const Vector2D p2_ ): Tactic(robot_),
+FollowLineAndAvoidObs::FollowLineAndAvoidObs(Robot & robot_, const Vector2D p1_, const Vector2D p2_ , const std::string iter): Tactic(robot_),
 				p1( p1_ ), p2( p2_ ),
-				file_name( this->robot.getRobotName()+std::string("_points") ),file( file_name.c_str( ), ios_base::in | ios_base::app ) {
+				file_name( this->robot.getRobotName()+std::string("_points") + iter ),file( file_name.c_str( ), ios_base::in | ios_base::app ) {
 
 	LOG_INFO(log,"create FollowLineAndAvoidObs tactic for robot "<<robot_.getRobotName()<< " Line "<<p1<<" "<<p2);
 
@@ -296,6 +296,7 @@ void FollowLineAndAvoidObs::execute(void *){
 	bool newGoalPose = true;;
 
 	double startSimTime = SimControl::getInstance().getSimTime();
+	double lapStartTime = startSimTime;
 	double lastSimTime = startSimTime;
 	const double exTime = 120;
 	while( (lastSimTime - startSimTime) < exTime ){
@@ -303,6 +304,7 @@ void FollowLineAndAvoidObs::execute(void *){
 
 	   if( Videoserver::getInstance().updateGameState( gameState ) < 0)
 		   throw SimulationException("FollowLineAndAvoidObs::execute");
+	   lastSimTime = gameState->getSimTime();
 
 	   //odleglosc od pkt docelowego przy jakiej stwierdzamy ze robot dojechal do celu
 	   const double minDist = 0.1;
@@ -341,6 +343,11 @@ void FollowLineAndAvoidObs::execute(void *){
 	   bool iAmCloserToBall;
 	   while( taskStatus!=Task::ok  && ( (lastSimTime - startSimTime) < exTime ) ){
 
+		   {
+			   LockGuard l(this->mutex);
+			   if(this->stop)
+				   break;
+		   }
 			bzero(&startTime, sizeof( startLoopTime ) );
 			measureTime(start_measure, &startLoopTime);
 
@@ -400,13 +407,16 @@ void FollowLineAndAvoidObs::execute(void *){
 				robot.stop();
 				robot.disperse(0.05);
 				double tmp = SimControl::getInstance().getSimTime();
-				double diffTime = tmp - lastSimTime;
+				double diffTime = tmp - lapStartTime;
 				//lastSimTime = tmp;
 				if( (tmp - startSimTime) < exTime ){
 					file<<-1<<"\t"<<diffTime<<std::endl;
 					file.flush();
+					continue;
 				}
-				continue;
+				else
+					break;
+
 				//return;
 			}
 
@@ -417,8 +427,16 @@ void FollowLineAndAvoidObs::execute(void *){
 				continue;
 			//taskStatus!=Task::ok  /*&& !gettingBall */
 	   }
+
+	   {
+		   LockGuard l(this->mutex);
+		   if(this->stop)
+			   break;
+	   }
+
 		if( Videoserver::getInstance().updateGameState( gameState ) < 0)
 			   throw SimulationException("FollowLineAndAvoidObs::execute");
+	   lastSimTime = gameState->getSimTime();
 
 	   currPose = gameState->getRobotPos(robot.getRobotID());
 	   if(control_points[goalPoint].distance(currPose.getPosition()) < 0.2 ){
@@ -428,8 +446,8 @@ void FollowLineAndAvoidObs::execute(void *){
 	   if( goalPoint > 5 ){
 		   goalPoint = 0;
 		   double tmp = SimControl::getInstance().getSimTime();
-		   double diffTime = tmp - lastSimTime;
-		   lastSimTime = tmp;
+		   double diffTime = tmp - lapStartTime;
+		   //lastSimTime = tmp;
 		   if( (lastSimTime - startSimTime) < exTime ){
 				if( evaluation.getBallState(  this->robot.getRobotID( ) ) == EvaluationModule::mine)
 					file<<3<<"\t"<<diffTime<<std::endl;
@@ -438,7 +456,10 @@ void FollowLineAndAvoidObs::execute(void *){
 
 				file.flush();
 				LOG_FATAL(log,"################ loop sim Time  "<< diffTime <<"###########################");
+				lapStartTime = tmp;
 		   }
+		   else
+			   break;
 	   }
 
 	   //goalPose = control_points[goalPoint++];
@@ -449,7 +470,7 @@ void FollowLineAndAvoidObs::execute(void *){
 
 	file.close();
 
-	LOG_DEBUG( log,"############# TACTIC COMPLETED #############" );
+	LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
 	robot.stop();
 	LockGuard m(mutex);
 	this->finished = true;
