@@ -695,18 +695,18 @@ void testPassTacticFunc(void * arg){
 	while(true){
 
 		Tactic * receive_pass= new Receive_pass(*recv);
-		receive_pass->start(NULL);
+		receive_pass->start( );
 
 		Tactic * pass_tactic= new Pass(*pass, recv->getRobotID());
 
-		pass_tactic->start(NULL);
+		pass_tactic->start( );
 
-		pass_tactic->join();
+		pass_tactic->waitForFinish();
 		std::cout<<" after join pass_tactic "<<std::endl;
 //		receive_pass->join();
 
 		receive_pass->stopTactic();
-		receive_pass->join();
+		receive_pass->waitForFinish();
 		std::cout<<" after join receive_pass "<<std::endl;
 
 		delete receive_pass;
@@ -774,8 +774,8 @@ void testShootTacticFunc(void * arg){
 */
     Tactic * shootTactic= new ShootTactic(*robot);
     //shootTactic->execute(NULL);
-    shootTactic->start(NULL);
-    shootTactic->join();
+    shootTactic->start( );
+    shootTactic->waitForFinish();
     sleep(1);
     robot->stop();
 
@@ -808,28 +808,42 @@ void testKick(){
 
 void run_experiment_1(){
 
-	log4cxx::LoggerPtr log = getLoggerPtr ("app_debug");
-	LOG_INFO(log, "starting experiment 1" );
-
-	struct timespec req;
-	req.tv_sec = 0;
-	req.tv_nsec = 10000000;//10ms;
-	struct timespec rem;
-	bzero(&rem, sizeof(rem) );
-
-	//RefereeClient & referee = RefereeClient::getInstance();
 	boost::shared_ptr<Play> redPlay ( new ObstaclesPlay("red", 6) );
-
-	boost::shared_ptr<Play> bluePlay ( new Experiment_1("blue",3) );
-
-	bluePlay->execute();
 	redPlay->execute();
+	log4cxx::LoggerPtr log = getLoggerPtr ("app_debug");
+	for(int i=0;i<20;i++){
+		std::ostringstream ois;
+		ois<<i;
 
-	bluePlay->waitForFinish();
+		LOG_INFO(log, "starting experiment 1" );
 
+		struct timespec req;
+		req.tv_sec = 0;
+		req.tv_nsec = 10000000;//10ms;
+		struct timespec rem;
+		bzero(&rem, sizeof(rem) );
+
+		//RefereeClient & referee = RefereeClient::getInstance();
+
+
+		boost::shared_ptr<Play> bluePlay ( new Experiment_1("blue",3, ois.str() ) );
+
+		bluePlay->execute();
+
+
+		//sleep(5);
+		//bluePlay->stop();
+		bluePlay->waitForFinish();
+		LOG_FATAL(log, "blue Play finished" );
+		//redPlay->stop();
+		//redPlay->waitForFinish();
+		//LOG_FATAL(log, "red Play finished" );
+		SimControl::getInstance().restart();
+		SimControl::getInstance().moveBall( Config::getInstance().field.FIELD_MIDDLE_POSE );
+
+	}
+	redPlay->stop();
 	redPlay->waitForFinish();
 
-	SimControl::getInstance().moveBall( Config::getInstance().field.FIELD_MIDDLE_POSE );
 	LOG_INFO(log, "end from experiment 1" );
-
 }

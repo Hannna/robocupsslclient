@@ -2,10 +2,14 @@
 #include <iostream>
 #include "../Exceptions/SimulationException.h"
 
+
 Thread::Thread() {
 	joined = false;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	stopTask_ = true;
+	stopThread_ = false;
+	arg_ = NULL;
 }
 
 int Thread::start(void * arg_)
@@ -25,8 +29,35 @@ void Thread::join(){
 
 int Thread::run(void * arg_)
 {
-    setup();
-    execute( arg_ );
+	bool stop = false;
+	Tactic* tactic = NULL;
+	while(!stop){
+		setup();
+
+		{
+			LockGuard l( mutex );
+			tactic = (Tactic*)this->arg_;
+		}
+		if(!tactic){
+			sleep(1);
+			//continue;
+		}
+		else if(!tactic->isFinish()){
+
+			( tactic->*((this)->taskPtr) )(NULL);
+
+			LockGuard l( mutex );
+			this->arg_=NULL;
+		}
+
+		{
+			LockGuard l( mutex );
+			if(this->stopThread_){
+				stop =true;
+			}
+		}
+    //execute( arg_ );
+	}
     return 0;
 }
 
@@ -36,6 +67,7 @@ void Thread::killThread(){
 
 void * Thread::threadFunction(void * pthis)
 {
+	std::cout<<"start from thread "<<std::endl;
    Thread * pt = (Thread*)pthis;
    try{
 	   pt->run( pt->arg() );
@@ -43,6 +75,8 @@ void * Thread::threadFunction(void * pthis)
    catch(SimulationException& e){
 	   std::cout<<"exit from thread " << e.what()<<std::endl;
    }
+
+   std::cout<<"exit from thread "<<std::endl;
    return 0;
 }
 
@@ -50,12 +84,12 @@ void Thread::setup()
 {
     // Do any setup here
 }
-
+/*
 void Thread::execute(void* arg)
 {
         // Your code goes here
 }
-
+*/
 Thread::~Thread(){
     pthread_attr_destroy(&attr);
 }

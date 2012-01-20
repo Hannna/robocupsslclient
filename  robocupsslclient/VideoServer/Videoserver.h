@@ -9,13 +9,12 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include "../Thread/SingleThread.h"
 #include "../additional.h"
 #include "../SimControl/SimControl.h"
 #include "../GameState/GameState.h"
 #include "../Logger/Logger.h"
-#include "../Thread/Thread.h"
 #include "../Lock/Lock.h"
-#include "../Logger/Logger.h"
 
 /**
  *  @author Kamil Muszynski i Maciej Gąbka
@@ -24,7 +23,7 @@
  *
  */
 
-class Videoserver : public Thread
+class Videoserver : public SingleThread
 {
 
 friend void updateVideo(int);

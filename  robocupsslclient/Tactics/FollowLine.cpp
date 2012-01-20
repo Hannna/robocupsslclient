@@ -44,6 +44,11 @@ void FollowLine::execute(void *){
 
 
     while(true){
+       {
+    	LockGuard l(this->mutex);
+    	if(this->stop)
+    		break;
+       }
 	   taskStatus = Task::not_completed;
 
 	   if( Videoserver::getInstance().updateGameState( gameState ) < 0)

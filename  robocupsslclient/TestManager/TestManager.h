@@ -15,6 +15,7 @@
 #include "../Logger/Logger.h"
 #include "../Thread/Thread.h"
 
+
 namespace Tests{
  typedef   enum TestKind_{
             none = -1,

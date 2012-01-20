@@ -11,7 +11,7 @@
 #include "../Robot/Robot.h"
 #include "../VideoServer/Videoserver.h"
 #include "../EvaluationModule/EvaluationModule.h"
-#include "../Thread/Thread.h"
+//#include "../Thread/Thread.h"
 
 #include <boost/thread/mutex.hpp>
 

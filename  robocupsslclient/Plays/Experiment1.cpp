@@ -10,7 +10,7 @@
 #include "../VideoServer/Videoserver.h"
 #include "../Tactics/FollowLineAndAvoidObs.h"
 
-Experiment_1::Experiment_1( std::string teamColor, const int nrOfROles): Play( teamColor, nrOfROles ) {
+Experiment_1::Experiment_1( std::string teamColor, const int nrOfROles, const std::string iter_): Play( teamColor, nrOfROles ),iter(iter_) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -28,14 +28,18 @@ void Experiment_1::execute( ){
 	RoleIterator ii = this->roles.begin();
 	for( ; ii != this->roles.end();ii++){
 		ii->second->addTactic( new
-			FollowLineAndAvoidObs( ii->second->getRobot(), startPostion, endPostion ) );
+			FollowLineAndAvoidObs( ii->second->getRobot(), startPostion, endPostion, this->iter ) );
 		ii->second->execute();
 	}
 
 }
 
 void Experiment_1::stop(){
-
+	Play::RoleIterator ii = this->roles.begin();
+	for(;ii != this->roles.end();ii++ ){
+		if( ii->second->getCurrentTactic() )
+			ii->second->getCurrentTactic()->stopTactic();
+	}
 }
 
 void Experiment_1::waitForFinish( ){
@@ -44,11 +48,12 @@ void Experiment_1::waitForFinish( ){
 	Play::RoleIterator ii = this->roles.begin();
 	for(;ii != this->roles.end();ii++ ){
 		if( ii->second->getCurrentTactic() )
-			while( ii->second->getCurrentTactic()->isFinish() ){
+			while( !ii->second->getCurrentTactic()->isFinish() ){
 				usleep(100);
 
 			}
 	}
+	LOG_INFO(log,"all Roles finished  " <<this->teamColor);
 }
 
 void Experiment_1::reset(){

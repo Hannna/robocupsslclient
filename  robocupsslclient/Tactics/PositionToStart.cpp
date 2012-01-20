@@ -72,6 +72,6 @@ PositionToStart::~PositionToStart() {
 	this->stop = true;
 
 	std::cout<<" exit from positionToStart "<<std::endl;
-	this->join();
+	this->waitForFinish();
 	// TODO Auto-generated destructor stub
 }

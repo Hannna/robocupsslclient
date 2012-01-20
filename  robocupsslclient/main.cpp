@@ -219,9 +219,9 @@ int main(int argc, char*argv[],char *envp[]){
     	if( experimentKind == Experiments::navigation_2011 ){
     		//uruchomienie experymentu
     		run_experiment_1();
-    		while(Videoserver::getInstance().updateGameState( gameState ) > 0.001){
-    			sleep_status=nanosleep(&req,&rem);
-    		};
+    		//while(Videoserver::getInstance().updateGameState( gameState ) > 0.001){
+    		//	sleep_status=nanosleep(&req,&rem);
+    		//};
     	}
     	else if( experimentKind == Experiments::rrtTest  ){
     		//ExperimentConfig config("/home/maciek/workspace/magisterka/sytuacje/worlds.txt","tmp.txt");
@@ -254,7 +254,7 @@ int main(int argc, char*argv[],char *envp[]){
 	*/
         if( testKind == Tests::play ){
         	//uruchom klienta sslbox
-        	RefereeClient::getInstance().start();
+        	//RefereeClient::getInstance().start();
         	//sleep(1000);
         	//uruchom glowny algorytm sterujacy
         	run_stp();
@@ -272,16 +272,17 @@ int main(int argc, char*argv[],char *envp[]){
 				};
 			}
         }
-        RefereeClient::getInstance().stop();//killThread();
-        RefereeClient::getInstance().join();
-        Videoserver::getInstance().killThread();
+       //RefereeClient::getInstance().stop();//killThread();
+       //RefereeClient::getInstance().join();
+       Videoserver::getInstance().killThread();
 
-        //Videoserver::getInstance().join();
+       Videoserver::getInstance().join();
     }
 
     Play::free();
     xmlCleanupParser();
 
+    LOG_ERROR(getLoggerPtr ("app_debug"), "exit from application");
     return 0;
 }
 

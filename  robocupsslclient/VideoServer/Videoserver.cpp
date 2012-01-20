@@ -140,7 +140,7 @@ void Videoserver::update(){
 			if(model_name.compare("ball")==0){
 				Vector2D speed = SimControl::getInstance().getBallSpeed();
 				Videoserver::gameState->updateBallData(Vector2D((*ii).second.get<0>(),(*ii).second.get<1>()),speed);
-				LOG_FATAL(log,"model "<<model_name<<" speed "<<speed);
+				//LOG_FATAL(log,"model "<<model_name<<" speed "<<speed);
 			}
 			else{
 				posIface=this->posIfaces.find(model_name);
@@ -154,7 +154,7 @@ void Videoserver::update(){
 						speeds[model_name].push_front( Vector2D(vx,vy) );
 						if(speeds[model_name].size( ) > 3)
 							speeds[model_name].pop_back();
-						LOG_FATAL(log,"model "<<model_name<<" vx "<<vx<<" vy "<<vy<<" w "<<w<<" time "<<posIface->second->data->head.time);
+						//LOG_FATAL(log,"model "<<model_name<<" vx "<<vx<<" vy "<<vy<<" w "<<w<<" time "<<posIface->second->data->head.time);
 						//std::cout<<model_name<<" vx "<<vx<<" vy "<<vy<<" w "<<w<<std::endl;
 						posIface->second->Unlock();
 					}

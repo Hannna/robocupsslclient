@@ -26,27 +26,28 @@ void ObstaclesPlay::execute( ){
 	//this->roles[0]->addTactic( new PositionToStart( robot0GoalPose, roles[0]->getRobot( ) ) );
 
 	Vector2D startPostion = gameState->getRobotPos( this->roles[1]->getRobot().getRobotID( ) ).getPosition();
+	//Vector2D startPostion
 	//rola 1 jazda wzdluz linii w gore
 	this->roles[1]->addTactic( new
-			FollowLine( this->roles[1]->getRobot(), startPostion, startPostion + Vector2D(1.0,0) ) );
+			FollowLine( this->roles[1]->getRobot(), startPostion, startPostion + Vector2D(2.525,0) ) );
 	this->roles[1]->execute();
 
 	//rola 2 jazda wzdluz linii w dol
 	startPostion = gameState->getRobotPos( this->roles[2]->getRobot().getRobotID( ) ).getPosition();
 	this->roles[2]->addTactic( new
-			FollowLine( this->roles[2]->getRobot(), startPostion, startPostion - Vector2D(1.0,0) ) );
+			FollowLine( this->roles[2]->getRobot(), startPostion, startPostion + Vector2D(2.525,0) ) );
 	this->roles[2]->execute();
 
 	//rola 3 jazda wzdluz linii w gore
 	startPostion = gameState->getRobotPos( this->roles[3]->getRobot().getRobotID( ) ).getPosition();
 	this->roles[3]->addTactic( new
-			FollowLine( this->roles[3]->getRobot(), startPostion, startPostion + Vector2D(1.0,0) ) );
+			FollowLine( this->roles[3]->getRobot(), startPostion, startPostion + Vector2D(2.525,0) ) );
 	this->roles[3]->execute();
 
 	//rola 4 jazda wzdluz linii w dol
 	startPostion = gameState->getRobotPos( this->roles[4]->getRobot().getRobotID( ) ).getPosition();
 	this->roles[4]->addTactic( new
-			FollowLine( this->roles[4]->getRobot(), startPostion, startPostion - Vector2D(1.0,0) ) );
+			FollowLine( this->roles[4]->getRobot(), startPostion, startPostion + Vector2D(2.525,0) ) );
 	this->roles[4]->execute();
 
 	//rola 5 jazda wzdluz linii w gore
@@ -62,7 +63,11 @@ void ObstaclesPlay::execute( ){
 }
 
 void ObstaclesPlay::stop(){
-
+	Play::RoleIterator ii = this->roles.begin();
+	for(;ii != this->roles.end();ii++ ){
+		if( ii->second->getCurrentTactic() )
+			ii->second->getCurrentTactic()->stopTactic();
+	}
 }
 
 void ObstaclesPlay::waitForFinish( ){
