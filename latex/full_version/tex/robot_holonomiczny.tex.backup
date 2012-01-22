@@ -1,14 +1,9 @@
-\chapter[Sterowanie modelem robota z \emph{Small-size League} (\textit{Maciej Gąbka})]{Sterowanie modelem robota z \emph{Small-size League} \label{chap:holonomic}}
-\chaptermark{holonomic}
-\begin{abstract}
-W rozdziale zostanie zaprezentowana trójkołowa holonomiczna baza jezdna. Wyjaśniony zostanie sposób w jaki osiągnieto omnikierunkowość robota.
-Dodatkowo zostanie omówiony algorytm wyznaczania prędkośći kół robota przy zadanej prędkości liniowej i kątowej robota.
-Wyjaśniony także zostanie algorytm wyznaczający prędkość liniową robota przy poruszaniu się do konretnego punktu.
-Na samym końcu poruszony zostanie problem poruszania się robota z piłką i ograniczenia z niego wynikające.
-\end{abstract}
+\chapter[Sterowanie modelem robota z \emph{Small-size League}]{Sterowanie modelem robota z \emph{Small-size League} \label{chap:holonomic}}
+%\chaptermark{holonomic}
 Budowę i napęd robota należy dobrać odpowiednio do postawionego zadania. W przypadku ligi \emph{Small-size League}, najważniejszym elementem jest prostota i mobilność
-takiej jednostki, w pracy inżynierskiej \cite{inzynierka} posługiwano się robotem modelem robota o napędzie różnicowym( dwa niezależnie napędzane koła), jednak
-zrezygnowano z tego modelu, ponieważ nie był wystarczająco funkcjonalny.  
+takiej jednostki, w pracy inżynierskiej \cite{inzynierka} posługiwano się robotem modelem robota o napędzie różnicowym (dwa niezależnie napędzane koła). Decyzję o odwzorowaniu takiego robota
+w symulatorze motywowano wtedy próbą odzwierciedlenia rzeczywistego robota \texttt{HMT} \cite{hamada_mgr} stworzonego w ramach koła robotyki \texttt{Bionik} działającego na Wydziale Elektroniki i Technik Informacyjnych Politechniki
+Warszawskiej. W niniejszej pracy zrezygnowano jednak z tego modelu, ponieważ nie był wystarczająco funkcjonalny. Zdecydowano się natomiast na zbudowanie modelu wzorowanego na rzeczywistym zawodniku \emph{Small-size League}.  
 \section{Omówienie omnikierunkowej bazy jezdnej}
 Analogicznie jak podczas rzeczywistej rozgrywki, decydującym elementem jest budowa anatomiczna i zdolności motoryczne zawodników, tak samo podczas
 rozgrywek robotów istotna rolę odgrywa baza jezdna zawodników. W pracy inżynierskiej testom poddawany był robot o napędzie różnicowym. Baza ta posiadała jednak 
@@ -51,7 +46,7 @@ Ma_x=-f_1sin\theta_1 - f_2sin\theta_2 - f_3sin\theta_3
 Ma_y=f_1cos\theta_1 + f_2cos\theta_2 + f_3cos\theta_3
 \end{equation}
 Dla jednolitego cylindra moment bezwładności obliczany jest ze wzoru $I=\frac{1}{2}MR^2$, natomiast dla obręczy $I=MR^2$, gdzie $R$ jest odpowiednio promieniem
-cylindra/obręczy natomiast $M$ masą. Dla obiektów o rozkładzie masy pomiędzy
+\mbox{cylindra/obręczy} natomiast $M$ masą. Dla obiektów o rozkładzie masy pomiędzy
 obręczą, a cylindrem wprowadzany jest dodatkowy parametr $\alpha$. Wzór przyjmuje wtedy postać: $I=\alpha MR^2$, gdzie $0<\alpha<1$.
 Używając zapisu macierzowego równania można przedstawić w postaci:
 \begin{equation}
@@ -101,7 +96,7 @@ Rozważmy jedno z kół, tak jak to przedstawiono na rysunku \ref{fig:linear_spe
 obrotowym dużego koła, a drugą zgodną z ruchem małych, poprzecznych kółek otrzymujemy odpowiednio prędkości $\upsilon=-sin\theta$ $\upsilon_{y}=cos\theta$.
 Przy wyznaczaniu prędkośći koła przyjęto założenie, że prędkość dodatnia powoduje obrót w kierunku wyznaczonym przez kciuk prawej dłoni, gdy pokrywa się ona z osią 
 silnika.
-Otrzymyjemy zatem następujące powiązanie pomiędzy prędkościami robota, a prędkościami poszczególnych silników:
+Otrzymujemy zatem następujące powiązanie pomiędzy prędkościami robota, a prędkościami poszczególnych silników:
  \begin{equation}
  \begin{pmatrix}
   \upsilon_1\\
@@ -126,17 +121,24 @@ Otrzymyjemy zatem następujące powiązanie pomiędzy prędkościami robota, a p
 \caption{ Prędkość liniowa dużego koła szwedzkiego i małych kółek, gdy robot porusza się wzdłuż osi OX }\label{fig:linear_speed}
 \end{figure}
 
-\section{Opis algorytmu wyznaczającego prędkość liniową robota}
+\section{Planowanie prędkości liniowej robota}
 
 Znając już powiązanie pomiędzy prędkościa obrotową kół, a prędkością liniową i obrotową robota, ostatnim elementem jest wyznaczenie prędkości prowadzących 
 robota do zadanego punktu. Należy przy tym wziąć pod uwagę takie parametry robota jak przyspieszenie i opóźnienie. W tym celu skorzystano z metody opisanej w 
 \cite{trapezy1} oraz \cite{trapezy2}. Polega ona na dekompozycji dwuwymiarowego problemu sterowania robotem, do dwóch problemów jednowymiarowych, tak jak to zaprezentowano
-na rysunku \ref{trapezoid_rule}. Ruch robota w kierunku osi OX i w kierunku osi OY jest rozpatrywany osobno. 
+na rysunku \ref{fig:trapezoid_rule}. Ruch robota w kierunku osi OX i w kierunku osi OY jest rozpatrywany osobno. 
 Podejście to jest znane w robotyce pod nazwą trapezoidalnego profilu prędkości.
 Zaczynając od punktu w którym robot się znajduje przyspiesza on
-ze swoim stałym przyspieszeniem, aż do osiągnięcia maksymalnej predkosci, następnie zaczyna hamować, tak aby zatrzymać się w punkcie docelowym.
+ze swoim stałym przyspieszeniem, aż do osiągnięcia maksymalnej prędkości, następnie zaczyna hamować, tak aby zatrzymać się w punkcie docelowym.
 W szczególnym przypadku profil prędkości może przybrać formę trójkąta.
- 
+Prędkość obliczana jest według następujących reguł:
+\begin{enumerate}
+\item Jeśli bieżąca prędkość spowoduje oddalenie się robota od celu to wyhamuj do 0.
+\item Jeśli robot poruszając się z bieżąca prędkością przejedzie cel to także należy zatrzymać go.
+\item Gdy bieżąca prędkość przekracza maksymalną wyhamuj do prędkości maksymalnej.
+\item Oblicz trójkątny profil prędkości prowadzącej do celu.
+\item Jeśli w obliczonym rozkładzie prędkość przekracza w jakimkolwiek momencie maksimum to należy obliczyć trapezoidalny profil. 
+\end{enumerate} 
 
 \begin{figure}[h]
 \centering
@@ -151,6 +153,7 @@ W szczególnym przypadku profil prędkości może przybrać formę trójkąta.
 \end{itemize}
 
 \section{Dryblowanie z piłką}
+\todo{opiać matematykę dryblowania z piłką}
 \begin{itemize}
  \item ograniczenia wynikające z budowy \texttt{dribblera},
  \item wyznaczanie dopuszczalnych prędkośći.

@@ -1,26 +1,20 @@
 \chapter[Player/Stage/Gazebo ]{Player/Stage/Gazebo \label{chap:gazebo}}
 \chaptermark{Player/Stage/Gazebo}
 	Symulator \mbox{\texttt{Player/Stage/Gazebo}} został już opisany w pracy inżynierskiej \cite{inzynierka} jednak z uwagi na jego ważną rolę i zmiany jakie zdecydowano się wprowadzić w symulowanym
-	środowkisku podczas rozwijania aplikiacji zdecydowano się na krótkie przypomnienie koncepcji projektu.
+	środowisku podczas rozwijania aplikiacji zdecydowano się na krótkie przypomnienie koncepcji projektu.
 
 	\section{Koncepcja}
-	Początki oprogramowania nazwanego \textit{Project Player} (oznaczającego zestaw trzech aplikacji: \textit{Player}, \textit{Stage} oraz \textit{Gazebo}) 
-	sięgają 1998 roku, kiedy to
- 	na Uniwersytecie Południowej Kaliforni w Los Angeles rozpoczęto prace nad stworzeniem oprogramowania pozwalającego 
- 	na sterowanie grupą robotów mobilnych \textit{Pioneer~2} firmy ActivMedia, będących na wyposażeniu tamtejszego laboratorium robotyki. 
-	Twórcami projektu byli Brian Gerkey i Richard Vaughan, później dołaczyli do nich Kasper St{\o}y oraz Andrew Howard.
-	Do tego czasu w skład stworzonego oprogramowania wchodziły: \textit{Golem} (pozwalający na sterowanie
-	robotem \textit{Pioneer}) oraz \textit{Arena} (symulator). W toku prac narodziła się idea opracowania uniwersalnego zestawu aplikacji, umożliwiającego kontrolę nad robotami niezależnie od zastosowanych rozwiązań sprzętowych, 
-	dobrze współpracującego z symulatorem oraz dostępnego za darmo (zgodnie z GNU GPL). 
-	Tak powstały aplikacje \textit{Player} oraz \textit{Stage}. \textit{Player} miał za zadanie dostarczać narzędzi do sterowania podzespołami robota, 
-	a \textit{Stage} stanowił prosty dwuwymiarowy symulator. Oprogramowanie to znalazło szeroko stosowane 
-	zarówno w uczelnianych laboratoriach, jak i wśród indywidualnych użytkowników. W 2002 roku rozpoczęto prace
-	nad nowym symulatorem \textit{Gazebo}, który miał służyć do modelowania zachowań robotów w trójwymiarowym świecie 
-	z uwzględnieniem rzeczywistych oddziaływań fizycznych między obiektami. Całość projektu jest w dalszym ciągu intensywnie rozwijana przez
-	deweloperów oraz aktywną społeczność użytkowników. Oprogramowanie działa na systemach Linux, Solaris, *BSD oraz Mac OSX. 
-	Szczegółowe informacje, dokumentacja oraz kody źródłowe każdej z aplikacji dostępne są pod adresem \url{http://playerstage.sourceforge.net/}.
-	W trakcie prac nad opisywaną aplikacją wydana została stabilna wersja symulatora i zmieniona strona internetowa projektu, obecnie jest on dostępny pod \url{http://gazebosim.org/}.
-	
+	Oprogramowanie składa się z trzech niezależnych aplikacji \textit{Player}, \textit{Stage} oraz \textit{Gazebo}.
+	\textit{Gazebo} oraz \textit{Stage} są środowiskami symulacyjnymi. Z tą różnicą, że \textit{Stage} jest środowiskiem dwuwymiarowym, dedykowanym do symulowanie dużych populacji robotów
+	mobilnych. Natomiast \textit{Gazebo} zapewnia pełną trójwymiarową symulację, uwzględniając również oddziaływania fizyczne pomiędzy stosowanymi obiektami.
+	W trakcie realizacji niniejszej pracy wydana została pierwsza stabilna wersja oprogramowanie dostępna pod adresem \url{http://gazebosim.org}.
+	Wcześniej wszelkie dane dotyczące wszystkich aplikacji wchodzących w skład projektu dostępne były na stronie \url{http://playerstage.sourceforge.net}. Z uwagi na trudności związane z adaptacją
+	symulatora zdecydowano się na kontynuację prac na wersji pobranej ze starego repozytorium.
+	Ostatnia aplikacja wchodząca w skład projektu, czyli \textit{Player} jest serwerem sieciowym służącym do sterowania rzeczysiwtymi robotami. Dostarcza prosty interfejs, wspierający komunikację z wieloma 
+	typami powszechnie stosowanych czujników i aktuatorów.
+	Oprogramowanie jest kompatybilne z systamami Linux, Solaris, *BSD oraz Mac OSX.
+	W niniejszej pracy zdecydowano się na wykorzystanie jedynie symulatora \textit{Gazebo}.
+
 	\section{Architektura symulatora}
 	\begin{figure}[!b]
 	\centering
@@ -28,49 +22,49 @@
 	\caption{Schemat komunikacji w środowisku \textit{Player/Stage/Gazebo} \label{fig:arch}}
 	\end{figure}
 	
-	Schemat zależności pomiędzy komponentami \textit{Player/Stage/Gazebo} został przedstawiony na 
+	Wymiana informacji pomiędzy elementami środowiska symulacyjnego \textit{Player/Stage/Gazebo} została przedstawiona na 
 	rysunku~\ref{fig:arch}.
-	Dobrze obrazuje on rolę programu \textit{Player}, pełniącego funkcję pośrednika pomiędzy aplikacją klienta 
-	(odpowiadającą za algorytm sterowania robotem) a rzeczywistym robotem lub symulatorami modelującymi jego zachowanie (\textit{Stage} oraz \textit{Gazebo}). Do komunikacji 
-	pomiędzy komponentami wykorzystywany jest protokół TCP/IP. Aplikacja kliencka łączy się z ``serwerem'', którego
-	rolę pełni \textit{Player}. Z punktu widzenia klienta nie ma znaczenia, czy interfejsy dostarczane przez \textit{Playera} sterują robotem rzeczywistym,
-	czy tylko jego wirtualnym odpowiednikiem (modelem) w jednym z symulatorów. Ponadto, przeniesienie kontroli
-	pomiędzy symulowanym a rzeczywistym robotem wymaga tylko nieznacznych modyfikacji kodu.
-
-	Istnieje jeszcze druga opcja -- do każdego z symulatorów (\textit{Stage} lub \textit{Gazebo}) można odwoływać się bezpośrednio w przypadku,
-	gdy korzystanie z \textit{Playera} nie jest uzasadnione, lub gdy chce się dokonać pewnych modyfikacji w sposobie
-	działania symulatora. Do tego celu zostały stworzone biblioteki (\textit{libstage} oraz \textit{libgazebo}), 
-	które dostarczają funkcji służących do komunikacji między aplikacją kliencką, a symulatorami.
+	Po zapoznaniu się z nim , można lepiej zrozumieć rolę programu \textit{Player}. Pełni on funckję pośrednika pomiędzy aplikacją klienta, stworzona przez użytkownika
+	a rzeczywistym robotem lub symulatorami modelującymi jego zachowanie w tym przypadku (\textit{Stage} lub \textit{Gazebo}). 
+	Komunikacja pomiędzy \textit{Player-em}, robotem oraz aplikacją kliencką realizowana jest za pomocą protokołu TCP/IP.
+	Dzięki takiej architekturze z punktu widzenia klienta nie istotne jest, czy interfejsy udostępnione przez \textit{Player-a} sterują rzeczywistym robotem, czy symulowanym odpowiednikiem.
+	
+	Z samym symulatorem, zarówno \textit{Stage} jak i \textit{Gazebo} można komunikować się poprzez pamięć współdzieloną (rysunek \ref{fig:wybrana_arch}), bez wykorzystywania aplikacji \textit{Player}. Rozwiązanie to jest 
+	preferowane w sytuacji gdy korzystanie z \textit{Playera} nie jest uzasadnione, lub kiedy użytkownik dokonał modyfikacji działania symulatora, których nie implementuje \textit{Player}. 
+	Aplikacja \textit{Gazebo} udostepnia w tym celu  bibliotekę \textit{libgazebo}, dostarczającą zestaw funkcji do komunikacji.
 	\begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.3]{./gazebo/wybrana_architektura}
 	\caption{Zrealizowany schemat komunikacji w środowisku \textit{Player/Stage/Gazebo} \label{fig:wybrana_arch}}
 	\end{figure}
-	Podsumowując, struktura pakietu oprogramowania \mbox{\textit{Player/Stage/Gazebo}} umożliwia tworzenie aplikacji sterujących robotami w sposób, który zapewnia przenośność stworzonych programów i ich działanie zarówno na symulatorach robotów, jaki i na rzeczywistych obiektach.
+	Z tego właśnie rozwiązania zdecydowano się skorzystać w niniejszej pracy. Po pierwsze, dlatego iż zmniejsza to nakład niezbędnych prac, po drugie iż nie posiadano rzeczywistego modelu
+	zawodnika. Wprowadzone poprawki podczas opracowania środowiska testowego oraz przygotowanie własnego sterownika robota, także nasunęły to rozwiązanie.
+
+	Podsumowując, struktura pakietu oprogramowania \mbox{\textit{Player/Stage/Gazebo}} umożliwia tworzenie aplikacji sterujących robotami w sposób,
+	który zapewnia przenośność stworzonych programów i ich działanie zarówno na symulatorach robotów, jaki i na rzeczywistych obiektach.
 	
  	\subsection{Gazebo}
  	
- 	Program \textit{Gazebo}, podobnie jak \textit{Stage}, umożliwia symulację grup robotów mobilnych. Różnica polega na tym, że symulowane
- 	środowisko jest trójwymiarowe, uwzględnia dynamikę, cechy fizyczne oraz oddziaływania między modelami. Wiąże się
- 	to oczywiście ze wzrostem potrzebnej mocy obliczeniowej, dlatego też symulowane grupy robotów nie
- 	mogą być tak liczne, jak w przypadku \textit{Stage}.
+ 	Symulator \textit{Gazebo} jak wynika z wcześniejszego tekstu, umożliwia symulację grup robotów mobilnych. Symulowane
+ 	środowisko jest w pełni trójwymiarowe, uwzględniona jest dynamika brył oraz obliczane rzeczywiste oddziaływania między komponentami symulowanego świata.
+	Okupione jest to oczywiście większym niż w przypadku \textit{Stage} zużyciem mocy obliczeniowej, dlatego symulowane populacje robotów nie powinny być zby liczne.
  	 	
- 	\textit{Gazebo} zostało oparte na nastepujących komponentach:
+ 	Trzy najistotniejsze kompnenty wykorzystywane przez rogram \textit{Gazebo} to:
  	\begin{itemize}
- 	 \item ODE\footnote{Open Dynamics Engine, \url{http://www.ode.org}}, bibliotece  odpowiadającej za symulację
- 	 	cech fizycznych brył oraz detekcję kolizji,
+ 	 \item ODE\footnote{Open Dynamics Engine, \url{http://www.ode.org}}, biblioteka  odpowiadająca za symulację
+ 	 	zależności fizycznych pomiędzy bryłami oraz detekcję kolizji,
  	 \item OGRE\footnote{Object-Oriented Graphics Rendering Engine, \url{http://www.ogre3d.org/}}, 
-		silniku graficznym umożliwiającym tworzenie wspomaganej sprzętowo grafiki 3D,
- 	 \item FLTK\footnote{Fast Light Toolkit, \url{http://www.fltk.org/}}, bibliotece dostarczającej 
-		przenośny interfejs użytkownika dla Gazebo,
-	 \item libXML2\footnote{ \url{http://xmlsoft.org/}}, parserze XML (stworzonym oryginalnie dla środowiska graficznego GNOME), umożliwiającym Gazebo proste wczytywanie plików konfiguracyjnych.
+		silnik graficzny umożliwiający tworzenie wspomaganej sprzętowo grafiki 3D,
+ 	 \item FLTK\footnote{Fast Light Toolkit, \url{http://www.fltk.org/}}, biblioteka dostarczająca 
+		przenośny interfejs użytkownika dla \textit{Gazebo}.
  	\end{itemize}
 
-	\textit{Gazebo} pozwala na symulację standardowych sensorów (m.in. czujniki odległości, kamery, GPS). Dostarcza gotowe modele 
-	popularnych robotów (jak np. \textit{Pioneer2DX}, \textit{Pioneer 2AT} oraz \textit{SegwayRMP}). Pozwala ponadto na tworzenie własnych modeli
-	i definiowanie ich własności fizycznych (takich jak np. masa, współczynnik tarcia, sztywność), co zapewnia odpowiedni realizm
-	symulacji i pozwala na interakcję z innymi obiektami (podnoszenie, przesuwanie brył itp.). Co więcej, dla każdego z modeli
-	dostępne są kontrolery pozwalające na ich sterowanie, ale nic nie stoi na przeszkodzie, żeby zdefiniować własne według potrzeb i dodać je do \textit{Gazebo}. 
+	W \textit{Gazebo} możliwe jest symulowanie standardowych sensorów stosowanych w robotyce (m.in. czujniki odległości, kamery, GPS). Symulator wyposażony jest w gotowe modele 
+	popularnych robotów (jak np. \textit{Pioneer2DX}, \textit{Pioneer 2AT} oraz \textit{SegwayRMP}).
+	Dozwolone jest także tworzenie własnych modeli
+	Pozwala ponadto na tworzenie własnych modeli, z możliwością konfigurowania ich właściwości fizycznych (takich jak np. masa, współczynnik tarcia, sztywność).
+	Dzieki temu środowisko może w dużym stopniu odzwierciedlać rzeczywistość. Modele można wyposażyć w jeden ze zdefiniowanych kotrolerów umożliwiających sterowanie (zadawanie prędkości, 
+	czy odczyt danych z sensorów) lub opracować własny.
 	\begin{figure}[!t]
 	\centering
 	\label{fig:gazebo}
@@ -79,13 +73,12 @@
 	\end{figure}
 
 	\section{Modelowanie obiektów w Gazebo}
-	Filozofia modelowania w \textit{Gazebo} opiera się na tworzeniu opisu świata (o parametrach określonych 
-	w pliku \textit{.world} za pomocą języka XML), w którym umieszczone zostają symulowane obiekty. Plik zawiera informacje o dodanych do świata modelach, ale także parametry określające przebieg symulacji, takie 
-	jak krok pracy symulatora czy sposób detekcji kolizji. 
+	Tworzenie symulowanego środowiska w \textit{Gazebo} polega na opracowaniu opisu świata w pliku z rozszerzeniem \textit{.world} za pomocą języka XML. W pliku powinny zostać zamieszczone parametry
+	określające przebieg symulacji oraz informacje o występujących w danym świecie modelach.
+	
 	\subsection{Zasady modelowania w Gazebo 0.10}
-	Opis modelowanego świata powinien zawierać się w pliku głównym z rozszerzeniem \textit{.world}.
-	W pliku muszą być zapisane informacje związane z konfiguracją interfejsu użytkownika, sposobem renderowania sceny oraz fizyką symulacji.
-	Elementy przykładowego pliku \textit{.world} zostały zaprezentowane na listingach poniżej.
+	Forma pliku \textit{.world} zawierającego opis symulowanego środowiska daje użytkownikowi możliwość konfiguracji wielu kluczowych elementów takich jak: konfiguracja graficznego interfejsu użytkownika,
+	zmianę sposobu renderowania sceny, wybór metody detekcji kolizji, zmianę wartości globalnych parametrów symulacji (m.in krok pracy symulatora). Elementy przykładowego pliku \textit{.world} zostały zaprezentowane na listingach poniżej.
 	%\small
 	%\lstset{language=XML,  basicstyle=\ttfamily\footnotesize,
 	\lstset{language=XML,  basicstyle=\ttfamily\scriptsize, 
@@ -141,8 +134,8 @@ jest rzędu $m^2$, gdzie $m$ określa ilość wierszy (ograniczeń) analizowanej
 	 \item \texttt{stepW} określa czas relaksacji metody Gaussa–Seidela, 
 	 \item \texttt{contactSurfaceLayer} określa głębokość na jaką może wnikać bryła w podłoże, ustawienie parametru na małą wartość dodatnią zapobiega jitterowi w momencie, gdy ograniczenia są nieustannie tworzone
 	  i zrywane (na przykład podczas ruchu koła po podłożu),
-	 \item \texttt{contactMaxCorrectingVel} jest maksymalną korektą prędkości jaka może wynikać z utworzonych tymczasowo kontaktów; domyślnie parametr przyjmuje nieskończoną wartość.
-	  \todo{przetlumaczyc na polski}Reducing this value can help prevent "popping" of deeply embedded objects. 
+	 \item \texttt{contactMaxCorrectingVel} jest maksymalną korektą prędkości jaka może wynikać z utworzonych tymczasowo kontaktów; domyślnie parametr przyjmuje nieskończoną wartość zmniejszanie jego
+	   wartości może zapobiec tworzeniu się zagnieżdzonych kontaktów. 
 	\end {enumerate}
 	Warto wspomnieć, że niektóre parametry można zmieniać dla poszczególnych modeli lub połączeń \textit{joints}.\newline
 	Ustawienia interfejsu: typ (dostępne tylko \textit{fltk}), rozmiaru okna i jego pozycja początkowej:
@@ -229,7 +222,7 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	\end{figure}
 	Błędy tego typu można redukować za pomocą parametru \texttt{erp} ustawianego globalnie lub dla każdego z połączeń indywidualnie.
 	\subsubsection{Sterowniki modeli }
-	Sterowanie zaprojektowanym modelem jest możliwe po uprzednim wyposażeniu go w sterownik (\textit{controller}). Sterowniki implentowane są przez użytkownika w $C++$ jako klasa dziedzicząca
+	Sterowanie zaprojektowanym modelem jest możliwe po uprzednim wyposażeniu go w sterownik (\textit{controller}). Sterowniki implentowane są przez użytkownika w C++ jako klasa dziedzicząca
 	po zdefiniowanym w \textit{libgazebo} interfejsie. Klasa odpowiada za przetwarzanie danych z sensorów robota oraz pozwala
 	na zadawanie prędkości bryłom połączonym wiązaniami. Komunikuje się on z programem sterującym za pośrednictwem interfejsów (bezpośrednio korzystając z \textit{libgazebo} lub poprzez \textit{Playera}).
 	\textit{Gazebo} oczywiście dostarcza gotowe sterowniki, pozwalające na kontrolowanie np. robota z napędem różnicowym, w wersji $0.10$ dodano także przykładowy model robota holonomicznego zawarty
@@ -256,30 +249,15 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	\subsection{Realizacja środowiska Ligi RoboCup \label{subsect:realizacjaROBOCUP} }
 	
 	W celu realizacji niniejszej pracy stworzono dla symulatora \textit{Gazebo} modele odpowiadające robotom biorącym udział w \emph{Small-size League}. 
-	Boisko zostało stworzone z wykorzystaniem rzeczywistych wymiarów($5.4[m] x 7.4[m]$). 
-	Zgodnie z regułami Ligi z 2007 roku\protect\footnote{\url{http://small-size.informatik.uni-bremen.de/rules/f180rules2007.html}} utworzono również linie boiska, 
-	pozostawiając wystarczającą dla robota przestrzeń przy bandach tak, żeby było możliwe np. wykonywanie zagrań z autu. 
-	Model piłki odpowiada piłce do golfa, której używa się w oficjalnych rozgrywkach.
-	
-	\begin{figure}[!b]
-	\centering
-	\includegraphics[scale=0.4]{./gazebo/roboty}
-	\caption{Opracowane modele robotów (oparte na konstrukcji HMT)}
-	\end{figure}
+	Boisko zostało stworzone z wykorzystaniem rzeczywistych wymiarów $5.4[m] x 7.4[m]$, obowiązujących w lidze w 2011 roku 
+	\protect\footnote{\url{http://small-size.informatik.uni-bremen.de/_media/rules:ssl-rules-2011.pdf}}. Wszystkie linie boiska są także zgodne obowiązującymi w tych mistrzostwach.
+	Margines na auty jest równy $675$[mm].
+	Model piłki odpowiada piłce do golfa, która używana jest w oficjalnych rozgrywkach.
 
-	Wykonane modele robotów wzorowano na konstrukcji rzeczywistych robotów wykorzystywanych w \emph{Small-size League}.
+	Wykonane modele robotów wzorowano na konstrukcji rzeczywistych robotów wykorzystywanych w \emph{Small-size League}. Otrzymane modele zaprezentowane są na rysunku \ref{fig:robots}.
 	Główna częścią robota jest walec o promieniu $6[cm]$ i wysokości $4[cm]$, umieszczony na trzech kołach rozmieszczonych symetrycznie na podstawie walca.
-	Robot został dodatkowo wyposażony w \textit{dribbler}\protect\footnote{urządzenie opisano w par.~\ref{sec:budowa_robota}} pomagający utrzymać kontrolę nad piłką.
-	Mimo że \textit{Gazebo} udostepnia sterownik dla napędu holonomicznego, sterowanie robotem wymagało napisania nowego kontrolera, ponieważ nie uwzględniał on obsługi
-	\textit{dribblera}. Kod źródłowy sterownika został zamieszczony na płycie CD razem z kodem źródłowym wykorzystywanej wersji symulatora.	
-	\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.4]{./gazebo/boisko.png}
-	\caption{Model boiska}
-	\end{figure}
-
-	W trakcie prac nad modelowaniem Ligi wprowadzono kilka poprawek w symulatorze. Aby zamodelować w pełni koło szwedzkie należało dodać możliwośc określenia
-	w jakim kierunku dla danej bryły występuje tarcie. W tym celu w skecji opisującej bryłę dodano nowy parametr:
+	Koła symulują zachowanie stosowanych w robotyce kół szwedzkich. Zachowanie takie osiągnięto poprzez dodanie nowego parametru do sekcji opisującej bryłę w symulatorze,
+	określającego kierunek siły tarcia dla danej bryły:
 	\lstset{language=XML,  basicstyle=\ttfamily\footnotesize, 
 	commentstyle={}, xleftmargin=20pt, numbers=left, numberstyle=\footnotesize,
 	caption={Parametr określający kierunek siły tarcia},
@@ -290,4 +268,27 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	<fDir1>1 0 0</fDir1>
 	\end{lstlisting}
 	Powyższa wartość oznacza, że tarcie występuje jedynie w kierunku osi $OX$ danej bryły.
-	\todo{opisac jak zaimplentowano w ode brak tarcia}
+	Należało także wprowadzić poprawkę w silniku fizycznym symulatora, tak aby \texttt{ODE} uwzględniało ten parametr. W strukturze opisującej punkt kontaktowy pomiędzy bryłami
+	ustawiono flagę \textit{dContactMu2}\protect\footnote{\url{http://www.ode.org/ode-latest-userguide.html}} w sytuacji kiedy dla bryły określony jest kierunek tarcia. Rozwiązanie takie umożliwiło ustawienie dla koła dużego tarcia w kierunku ruchu obrotowego oraz małego
+	w kierunku prostopadłym, czyli osiągnięto zachowanie typowe dla kół szwedzkich.
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{./gazebo/roboty}
+	\caption{Opracowane modele robotów  \label{fig:robots}}
+	\end{figure}
+	Robot został dodatkowo wyposażony w \textit{dribbler}\protect\footnote{urządzenie opisano w par.~\ref{sec:budowa_robota}} pomagający utrzymać kontrolę nad piłką.
+	Mimo że \textit{Gazebo} udostępnia sterownik dla napędu holonomicznego, sterowanie robotem wymagało napisania nowego kontrolera, ponieważ nie uwzględniał on obsługi
+	\textit{dribblera}, ani nie umożliwiał oddawania strzałów. Sterownik został zrealizowany w oparciu o teorię zawartą w rozdziale \ref{chap:holonomic}. Użytkownik  Dodatkowo zaimplementowano
+	programowy regulator \texttt{PID}, sterujący siłą przykładana do kół robota. Dzięki temu uzyskano lepszą dokładość sterowania robotem. Parametry regulatora początkowo dobrano posługując się metodą \texttt{Zieglera-Nicholsa}, a następnie eksperymentalnie dokonano ich korekty.
+	W pliku opisującym model robota istnieje możliość ich ręcznego modyfikowania.
+	Kod źródłowy sterownika został zamieszczony na płycie CD razem z kodem źródłowym wykorzystywanej wersji symulatora.	
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{./gazebo/boisko.png}
+	\caption{Model boiska}
+	\end{figure}
+	W trakcie symulacji opracowanych modeli zauważono, że piłka raz wprawiona w ruch nie hamuje. Sytuacja taka była spowodowana brakiem tarcia tocznego. Zaimplementowano zatem kolejną modyfikację w 
+	symulatorze, tak aby dla każdej bryły istniała możliwaść konfigurowania tego parametru (\textit{angularDamping}) w pliku opisującym model.
+
+	Ponieważ korzystano z niestabilnej wersji oprogramowania (inne nie było jeszcze dostępne), pobranego bezpośrednio z repozytorium deweloperów, należało poprawić jeszcze kilka innych błędów symulatora,
+	miedzy innymi niepoprawną pracę interfesju umożliwiającego komunikację pomiędzy symulatrem a aplikacją kliencką.

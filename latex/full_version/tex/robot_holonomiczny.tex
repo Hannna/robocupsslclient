@@ -1,8 +1,9 @@
 \chapter[Sterowanie modelem robota z \emph{Small-size League}]{Sterowanie modelem robota z \emph{Small-size League} \label{chap:holonomic}}
 %\chaptermark{holonomic}
 Budowę i napęd robota należy dobrać odpowiednio do postawionego zadania. W przypadku ligi \emph{Small-size League}, najważniejszym elementem jest prostota i mobilność
-takiej jednostki, w pracy inżynierskiej \cite{inzynierka} posługiwano się robotem modelem robota o napędzie różnicowym (dwa niezależnie napędzane koła), jednak
-zrezygnowano z tego modelu, ponieważ nie był wystarczająco funkcjonalny. Zdecydowano się natomiast na zbudowanie modelu wzorowanego na rzeczywistym zawodniku \emph{Small-size League}.  
+takiej jednostki, w pracy inżynierskiej \cite{inzynierka} posługiwano się robotem modelem robota o napędzie różnicowym (dwa niezależnie napędzane koła). Decyzję o odwzorowaniu takiego robota
+w symulatorze motywowano wtedy próbą odzwierciedlenia rzeczywistego robota \texttt{HMT} \cite{hamada_mgr} stworzonego w ramach koła robotyki \texttt{Bionik} działającego na Wydziale Elektroniki i Technik Informacyjnych Politechniki
+Warszawskiej. W niniejszej pracy zrezygnowano jednak z tego modelu, ponieważ nie był wystarczająco funkcjonalny. Zdecydowano się natomiast na zbudowanie modelu wzorowanego na rzeczywistym zawodniku \emph{Small-size League}.  
 \section{Omówienie omnikierunkowej bazy jezdnej}
 Analogicznie jak podczas rzeczywistej rozgrywki, decydującym elementem jest budowa anatomiczna i zdolności motoryczne zawodników, tak samo podczas
 rozgrywek robotów istotna rolę odgrywa baza jezdna zawodników. W pracy inżynierskiej testom poddawany był robot o napędzie różnicowym. Baza ta posiadała jednak 
@@ -120,12 +121,16 @@ Otrzymujemy zatem następujące powiązanie pomiędzy prędkościami robota, a p
 \caption{ Prędkość liniowa dużego koła szwedzkiego i małych kółek, gdy robot porusza się wzdłuż osi OX }\label{fig:linear_speed}
 \end{figure}
 
-\section{Opis algorytmu wyznaczającego prędkość liniową robota}
-
-Znając już powiązanie pomiędzy prędkościa obrotową kół, a prędkością liniową i obrotową robota, ostatnim elementem jest wyznaczenie prędkości prowadzących 
-robota do zadanego punktu. Należy przy tym wziąć pod uwagę takie parametry robota jak przyspieszenie i opóźnienie. W tym celu skorzystano z metody opisanej w 
+\section{Obliczanie profilu prędkości liniowej robota}
+Znając już powiązanie pomiędzy prędkością obrotową kół a prędkością liniową i obrotową robota, ostatnim elementem jest wyznaczenie prędkości prowadzących 
+robota do zadanego punktu. Należy przy tym uwzględnić takie parametry robota jak przyspieszenie i opóźnienie. W tym celu skorzystano z metody opisanej w 
 \cite{trapezy1} oraz \cite{trapezy2}. Polega ona na dekompozycji dwuwymiarowego problemu sterowania robotem, do dwóch problemów jednowymiarowych, tak jak to zaprezentowano
 na rysunku \ref{fig:trapezoid_rule}. Ruch robota w kierunku osi OX i w kierunku osi OY jest rozpatrywany osobno. 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{./holonomic/trapezoid_rule}
+\caption{ Dekompozycja sterowania robotem w 2D na dwa niezależne zadania w 1D }\label{fig:trapezoid_rule}
+\end{figure}
 Podejście to jest znane w robotyce pod nazwą trapezoidalnego profilu prędkości.
 Zaczynając od punktu w którym robot się znajduje przyspiesza on
 ze swoim stałym przyspieszeniem, aż do osiągnięcia maksymalnej prędkości, następnie zaczyna hamować, tak aby zatrzymać się w punkcie docelowym.
@@ -134,22 +139,10 @@ Prędkość obliczana jest według następujących reguł:
 \begin{enumerate}
 \item Jeśli bieżąca prędkość spowoduje oddalenie się robota od celu to wyhamuj do 0.
 \item Jeśli robot poruszając się z bieżąca prędkością przejedzie cel to także należy zatrzymać go.
-\item Gdy bieżąca prędkość przekracza maksymalną wyhamuj do prędkości maksymalnej.
+\item Gdy bieżąca prędkość przekracza maksymalną, wyhamuj do prędkości maksymalnej.
 \item Oblicz trójkątny profil prędkości prowadzącej do celu.
 \item Jeśli w obliczonym rozkładzie prędkość przekracza w jakimkolwiek momencie maksimum to należy obliczyć trapezoidalny profil. 
 \end{enumerate} 
-
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.7]{./holonomic/trapezoid_rule}
-\caption{ Dekompozycja sterowania robotem w 2D na dwa niezależne zadania w 1D }\label{fig:trapezoid_rule}
-\end{figure}
-
-
-\begin{itemize}
- \item ograniczenia wynikające z budowy \texttt{dribblera},
- \item wyznaczanie dopuszczalnych prędkośći.
-\end{itemize}
 
 \section{Dryblowanie z piłką}
 \todo{opiać matematykę dryblowania z piłką}

@@ -1,72 +1,10 @@
-\chapter{Algorytmy unikania kolizji}
-\begin{abstract}
+\chapter{Algorytmy unikania kolizji \label{chap:algorytmy}}
  W rozdziale zostanie szerzej zaprezentowany jeden z algorytmów unikania kolizji jakim jest RRT(\texttt{Rapidly-Exploring Random Tree}).
-Poruszona zostanie kwestia powodów, dla których wybrano tę, a nie inną metodę. Uzasadnione zostenie odejscie od algorytmu opracowanego w ramach pracy 
-inżynierskiej(CVM \texttt{Curvature Velocity Method}). Ponadto opisane zostaną inne metody planowania ścieżki, omówione zostaną ich właściwości. Na tej podsatwie zostanie 
-uzasadniony wybór algorytmu RRT. Omówione zostaną także szczegóły implementacji algorytmu.\\
-
-  \begin{minipage}{0.9\textwidth}
-  \Large Krótki przegląd algorytmów unikania kolizji
-  \\
-  \end{minipage}
-
-Krótki przegląd metod unikania kolizji  z odsyłaczami do literatury szerzej opisującej problem. 
-Wstępne odrzucenie globalnych metod planowania ruchu, ze względu na dużą złożoność obliczeniową,
-a co z tym idzie  niską efektywność w dynamicznym środowisku.
-\begin{itemize}
-\item algorytm BUG
-\item algorytm FH
-\item technika dynamicznego okna	
-\item algorytm CVM
-\item metoda pól potencjałowych
-\item algorytm RRT
-\end{itemize}
-{\Large Zalety algorytmy RRT w stosunku \\do CVM} \\
-\begin{itemize}
-  \item Pokazanie zalet algorytmu oraz prostoty jego wykorzystania w przypadku robotów o napędzie holonomicznym.
-  \item Szybka możliwość sterownania czasem trwania algorytmu, poprzez sterowanie liczbą węzłow drzewa.
-  \item Proste modyfikacje algorytmu uwzględniające ograniczenia wynikające z dynamiki oraz kinematyki robota.
-\end{itemize}
-{\Large Szczegółowa zasada algorytmu RRT}
-\\ 
-\begin{itemize}
-	\item opis algorytmu budującego drzewo
-	\item opis sposobu określania przestrzeni osiągalnych stanów robota w zależnośći rozpatrywanego węzła w drzewie
-	\begin{itemize}
-		\item uwzglednianie kolizji na drodze od położenia bierzącego punktu docelowego	
-		\item przeszkody opisywane za pomocą okręgów( promień okręgu przeszkody podczas planowania ścieżki jest
-		wiekszy niz podczas wykrywania kolizji)
-	\end{itemize}
-
-	\item modyfikacje wprowadzone do podstawowej wersji algorytmu
-	\begin{itemize}
-	\item \texttt{waypoints}
-	\item ograniczenie na maksymalna liczbę wezłów
-	\item uwzględnienie prędkośći przeszkód
-	\end{itemize}
-\end{itemize}
-
-
-{\Large Szczegóły implementacji zastosowanego \\algorytmu }
-\\
-\begin{itemize}
-  \item opis wykorzystywanych struktur danych
-  \item omówienienie funkcji losującej stan docelowy
-\end{itemize}
-
-{\Large Wyznaczanie prędkości prowadzącej do punktu docelowego} \\
-Wyznaczeniee punktu znajdującego się na bezkolizyjnej ścieżcze prowadzącej do celu nie rozwiązuje problemu nawigacji robota, kolejnym krokiem
-jest wyznaczenie prędkości prowadzących robota do celu.
-W paragrafie zostanie opisany mechanizm zastosowany do wyznaczania prędkości robota w dwóch przypadkach:
-\begin{itemize}
-  \item dojazd do celu,
-  \item poruszanie się do celu z piłką.
-\end{itemize}
-
-\end{abstract}
+Poruszona zostanie także kwestia powodów, dla których wybrano tę, a nie inną metodę. Uzasadnione zostanie odejście od algorytmu opracowanego w ramach pracy 
+inżynierskiej (CVM \texttt{Curvature Velocity Method}). Ponadto opisane zostaną inne metody planowania ścieżki oraz omówione zostaną ich właściwości. Na tej podsatwie zostanie 
+uzasadniony wybór algorytmu RRT.
 
 \section{Krótki przegląd algorytmów unikania kolizji}
-
 Jednym z podstawowych problemów podczas poruszania się każdej jednostki mobilnej jest wyznaczenie bezkolizijnej ścieżki prowadzącej do celu.
 Współczesna robotyka zna wiele algorytmów rozwiązujących z mniejszym bądź większym sukcesem to zadanie. Użycie wielu z nich jest jednak w pełni uzasadnione tylko w
 szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znane algorytmy unikania kolizji (omówione także w pracy inżynierskiej \cite{inzynierka}
@@ -113,7 +51,7 @@ szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znan
 	\includegraphics[scale=0.44]{./algorytmy/VFH_siatka}
 	\caption{ Zasada tworzenia dwuwymiarowego histogramu \newline(na podstawie \cite{VFH_2})}\label{fig:VFH_siatka}
 	\end{figure}
-	Tak skonstruowana mapa redukowana jest do jednowymiarowego histogramu biegunowego (rysunek \ref{fig:VFH_hist_biegunowy}),który dodatkowo wygładzany jest przez
+	Tak skonstruowana mapa redukowana jest do jednowymiarowego histogramu biegunowego (rysunek \ref{fig:VFH_hist_biegunowy}), który dodatkowo wygładzany jest przez
 	filtr dolnoprzepustowy. W ten sposób otrzymuje się informację o poziomie ufności wystąpienia przeszkody poruszając się w danym kierunku (świadomomie rezygnuje się z informacji o odległości od przeszkody).
 	Na podstawie tego histogramu wyznaczane są sterowania dla robota. Histogram jest analizowany w poszukowaniu minimów lokalnych, wszystkie doliny, których poziom ufności
 	znajduję się poniżej ustalonego umownie progu są rozważane przy wyznaczaniu kierunku jazdy robota. Jeśli minimów jest kilka wybierane jest to, którego kierunek prowadzi najbliżej
@@ -128,7 +66,7 @@ szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znan
 
 	\subsection{Technika dynamicznego okna} \label{subsec:dynamic_window}
 	Popularną, stosowaną w robotyce metodą unikania kolizji jest także technika dynamicznego okna. Algorytm ten analizuje jedynie możliwe do osiągnięcia w danej sytuacji prędkości.
-	Więcej informacji na temat algorytmu można znaleźć w publikacji \cite{dynamic_window} lub w pracy inżynierskiej.
+	Więcej informacji na temat algorytmu można znaleźć w publikacji \cite{dynamic_window} lub w pracy inżynierskiej \cite{inzynierka}.
 	Ujmując w jedym zdaniu algorytm polega na przeszukiwaniu zbioru dopuszczalnych prędkości liniowych i kątowych, tak aby maksymalizować funkcję celu. Sposób konstrukcji funkcji celu
 	gwarantuje, że wybrane prędkości będą prowadzić robota w zamierzonym kierunku oraz, że nie natrafi na przeszkodę.
 \subsection{Algorytmy pól potencjałowych}
@@ -168,7 +106,7 @@ szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znan
 	błądzenia losowego.
 \subsubsection{Funkcja nawigacji}
 	Istnieje jednak pewna szczególna funkcja, która posiada tylko globalne minimum, została ona zdefiniowana w publikacjach \cite{navi_func1},\cite{navi_func2}.
-	Przykładowy wykres funkcji nawigacji jest zamieszczony poniżej (rysunek ~\ref{fig:func_navi}). Siła przyciągania tego minimum zależy od kilku istotnych parametrów, które zawarte są 
+	Przykładowy wykres funkcji nawigacji jest zamieszczony poniżej (rysunek ~\ref{fig:func_navi}). Zasięg oddziaływania minimum globalnego zależy od kilku istotnych parametrów, które zawarte są 
 	we wzorze opisującym rozkład sztucznego potencjału.
 		\begin{figure}[!h]
 		\centering
@@ -209,10 +147,10 @@ szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znan
 	\item funkcja nawigacji została wykreślona z krokiem $0.1$.
 	\end{enumerate}
 
-\subsection{Algorytm CVM \texttt{Curvature Velocity Method}}
+\subsection{Algorytm CVM (\texttt{Curvature Velocity Method})}
 	W pracy inżynierskiej \cite{inzynierka} jako docelowy algorytm unikania kolizji wybrany został właśnie \texttt{CVM}.
 	Metoda krzywizn i prędkości (ang. \textit{Curvature Velocity Method}) została zaproponowana przez R. Simmonsa w
-	\cite{CVM_2}. Należy ona do grupy metod bazujących na przeszukiwaniu przestrzeni prędkości, a jej działanie
+	\cite{CVM_2}, należy ona do grupy metod bazujących na przeszukiwaniu przestrzeni prędkości, a jej działanie
 	jest zbliżone do techniki dynamicznego okna zaprezentowanej w \ref{subsec:dynamic_window}.
 
 	Spośród wszystkich par $(v,\omega)$ wybierana jest taka, która osiąga największą wartość funkcji celu.
@@ -411,27 +349,7 @@ szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znan
 	\includegraphics[scale=0.34]{./algorytmy/CVM_segmentacja2_new}
 	\caption{ Efekt podziału okręgu na części} \label{fig:CVM_segmentacja2}
 	\end{figure} 
-
-
-
-% \section{Uzasadnienie wyboru metody CVM}
-% 
-% 	Przedstawiony powyżej krótki przegląd metod unikania kolizji nie wyczerpuje całej tematyki. Zaprezentowane zostały jedynie wybrane metody unikania kolizji stosowane w robotyce, jednakże pozwala on na pewne rozeznanie w tej dziedzinie.
-% 	Do zastosowania w dynamicznym środowisku rozgrywek w piłkę nożną należy zastosować algorytm o niskich nakładach obliczeniowych oraz uwzględniający specyfikę bazy jezdnej. Ponadto, sterowany robot powinien szybko reagować na zmiany w swoim otoczeniu, oraz sprawnie omijać przeszkody. Spośród wymienionych wcześniej algorytmów, najlepiej spełnia te wymagania algorytm \textit{CVM}.
-% 	
-% 	Omawiany na samym początku algorytm \emph{Bug} przytoczony został jedynie jako ciekawostka. Głównym powodem bezużyteczności tego algorytmu w docelowym rozwiązaniu jest fakt, iż próba okrążenia dynamicznej przeszkody może w wielu przypadkach doprowadzić do kolizji. Po drugie boisko, na którym toczone są rozgrywki otoczone jest bandami, czyli przeszkodami, których okrążenie jest niemożliwe.
-% 	Algorytm ewolucyjny, pomimo że pozwala na optymalizowanie ścieżki robota pod kątem wielu kryteriów, jest z kolei metodą dość czasochłonną.
-% 	Z kolei algorytm \textit{VFH} wyznacza jedynie kierunek ruchu robota, co  wymaga kłopotliwych przekształceń w celu otrzymania sterowania silników.
-% 	Z kolei w technice dynamicznego okna, należy wyznaczyć dodatkowe ograniczenia na maksymalne prędkości robota.
-% 
-% 	Metoda \textit{CVM} nie wymaga dużych nakładów obliczeniowych, można także łatwo sterować zasięgiem algorytmu,
-% 	który w oczywisty sposób wpływa na złożoność. Jej idea jest bardzo podobna do technik dynamicznego okna, jednak nie wprowadza dodatkowego ograniczenia na maksymalną predkość.\footnote{Technika dynamicznego okna wymaga, aby w każdym kroku robot był zdolny do wyhamowania przed najbliższą przeszkodą.}
-% 	Zachowanie robota ściśle zależy od doboru współczynników wagowych. Poprzez modyfikowanie wag można zatem w szczególnych sytuacjach w prosty sposób zmusić robota do wykonania konkretnego manewru. Przykładem może być zachęcenie robota do wykonania obrotu w stronę celu poprzez znaczące zwiększenie wagi $\alpha_3$ w sytuacji kiedy jest do niego zwrócony tyłem.
-% 
-% 	Wykorzystując informację o prędkości poruszającej się przeszkody można także dokonać modyfikacji algorytmu w przypadku działania w środowisku dynamicznym. Ponieważ przeszkody są opisywane za pomocą okręgów można przesunąć środek okręgu opisującego przeszkodę zgodnie z wektorem prędkości tego obiektu.
-
-
-\subsection{Algorytm RRT(\texttt{Rapidly-Exploring Random Tree}) \label{sec:RRT:basic}}
+\section{Algorytm RRT\\(\texttt{Rapidly-Exploring Random Tree}) \label{sec:RRT:basic}}
 Kolejnym zupełnie odmiennym podejściem w planowaniu bezkolizyjnej ścieżki jest losowe przeszukiwanie dopuszczalnej przestrzeni położeń robota. Szczegółowe informacje na
 jego temat można znaleźć w \cite{RRT} oraz w \cite{RRT2}.
 Algorytm \texttt{RRT} jest wydajnym algorytmem, który w czasie rzeczywistym może wyznaczyć drogę do celu, jednak nie jest ona optymalna pod względem dynamiki, kinematyki ani długości.
@@ -484,7 +402,7 @@ W opisie algorytmu \ref{alg:RRT} użyte zostały nie omówione jeszcze funkcje, 
 Tak zaimplementowana wersja algorytmu może być zastosowana jako skuteczne narzędzie do bezkolizyjnej nawigacji robotem, jednak jego wydajność można poprawić poprzez
 modyfikacje opisane w kolejnym podrozdziale.
 
-\subsubsection{Modyfikacje algorytmu, czyli przejście z \texttt{RRT} do \texttt{ERRT}}
+\subsubsection{Modyfikacje algorytmu, czyli przejście z \texttt{RRT} do \texttt{ERRT} \label{sec:RRT:extend} }
 Omawiany algorytm można zmodyfikować pod kątem szybkości działania. Po pierwsze elementy drzewa można przechowywać w strukturach ułatwiających przeszukiwanie drzewa,
 w literaturze stosowane są w tym celu \texttt{KD-drzewa}. Kolejną modyfikacją jest zapamiętywanie losowo wybranych węzłów ze ścieżki znalezionej w poprzednim uruchomieniu
 algorytmu. W takim wariancie tymczasowy punkt docelowy obierany jest następująco:
@@ -494,7 +412,7 @@ algorytmu. W takim wariancie tymczasowy punkt docelowy obierany jest następują
 	\begin{algorithmic}
 	\STATE \texttt{function} \textit{chooseTargetExt}(\textit{goal:state}) \textit{state};
 	\STATE p = \texttt{uniformRandom in}$[0.0 ...1.0]$
-	\STATE i = \texttt{uniformRandom in}$[0 ...number_of_waypoints -1]$
+	\STATE i = \texttt{uniformRandom in}$[0 ...number\_of\_waypoints -1]$
 	\IF{$0.0<p<goalProb$} 
 	  \RETURN  \texttt{goal};
 	\ELSIF{ $goalProb<p<goalProb+wayPointProb$}
@@ -523,8 +441,8 @@ tree, multiplied by some gain value.
 Podczas kontynuacji prac nad rozgrywkami \textit{RoboCup} zdecydowano się na zmianę algorytmu wyznaczającego bezkolizyjną ścieżkę. Zmiana została wymuszona decyzją o zmianie
 modelu sterowanego robota. Bazę jezdną o napędzie różnicowym zastąpiono holonomiczną. Algorytm \textit{CVM} jest algorytmem dedykowanym do robotów o napędzie różnicowym, doskonale
 można ująć w nim ograniczenia na dopuszczalne prędkości. Jednak sterowanie za jego pomocą robotem holonomicznym nie pozwala na pełne wykorzystanie możliwości robota.
-Dodatkowo jak zostało udowodnione w pracy inżynierskiej \cite{inzynierka}, \textit{CVM} w przypadku przeszkód dynamicznych osiągał skuteczność na poziomie $80\%$. Kolizje miały miejsce 
-głównie w sytacjach, kiedy przeszkoda uderzała w robota z boku lub z tyłu. Wynikało to z faktu, żetrajektoria ruchu takiej przeszkody znajdowała się poniżej osi $OY$ w układzie współrzędnych
+Dodatkowo jak zostało udowodnione w pracy inżynierskiej \cite{inzynierka}, \textit{CVM} w przypadku środowisk z przeszkodami dynamicznymi osiągał skuteczność na poziomie $80\%$. Kolizje miały miejsce 
+głównie w sytacjach, kiedy przeszkoda uderzała w robota z boku lub z tyłu. Wynikało to z faktu, że trajektoria ruchu takiej przeszkody znajdowała się poniżej osi $OY$ w układzie współrzędnych
 związanym ze sterowanym robotem. Przeszkody takiego typu nie były uwzględnianie przez algorytm.
 \textit{RRT} pozwala na uwzględnianie przeszkód rozsianych po całej planszy. Dodatkowo umożliwia poruszanie się po bardziej złożonych trajektoriach.
 Kolejną zaletą \textit{RRT} jest prostota w ograniczaniu przestrzeni z której losowane są tymczasowe punkty docelowe. Dzięki temu w prosty sposób można ograniczyć poruszanie
