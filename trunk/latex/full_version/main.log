@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  22 JAN 2012 01:22
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  22 JAN 2012 23:58
 entering extended mode
  %&-line parsing enabled.
 **main.tex
@@ -832,25 +832,28 @@ Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
 LaTeX Warning: Label `eq:CVM_dv' multiply defined.
 
 
+LaTeX Warning: Label `alg:STP' multiply defined.
+
+
 LaTeX Warning: Label `fig:arch' multiply defined.
 
 )
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
 
 *geometry auto-detecting driver*
 *geometry detected driver: pdftex*
@@ -908,7 +911,7 @@ driver: pdftex
 )
 Package caption Info: Begin \AtBeginDocument code.
 Package caption3 Info: subfig package 1.2 or 1.3 is loaded.
-LaTeX Info: Redefining \subref on input line 46.
+LaTeX Info: Redefining \subref on input line 53.
 Package caption Info: listings package is loaded.
 Package caption Info: longtable package is loaded.
  (/usr/share/texmf-texlive/tex/latex/caption/ltcaption.sty
@@ -1088,17 +1091,18 @@ File: ./grafika/./gazebo/boisko.png Graphic file (type png)
 
 <use ./grafika/./gazebo/boisko.png> [26 <./grafika/./gazebo/roboty.png (PNG cop
 y)>]) (./tex/robot_holonomiczny.tex [27 <./grafika/./gazebo/boisko.png>]
+[28]
 Rozdzia\PlPrIeC {\l } 4.
-<./grafika/./holonomic/holonomic_base.png, id=137, 441.90094pt x 350.05782pt>
+<./grafika/./holonomic/holonomic_base.png, id=141, 441.90094pt x 350.05782pt>
 File: ./grafika/./holonomic/holonomic_base.png Graphic file (type png)
 
 <use ./grafika/./holonomic/holonomic_base.png>
-<./grafika/./holonomic/omnidirectional_wheel.png, id=138, 189.70876pt x 194.727
+<./grafika/./holonomic/omnidirectional_wheel.png, id=142, 189.70876pt x 194.727
 5pt>
 File: ./grafika/./holonomic/omnidirectional_wheel.png Graphic file (type png)
- <use ./grafika/./holonomic/omnidirectional_wheel.png> [28
+ <use ./grafika/./holonomic/omnidirectional_wheel.png> [29
 
-] [29 <./grafika/./holonomic/holonomic_base.png (PNG copy)> <./grafika/./holono
+] [30 <./grafika/./holonomic/holonomic_base.png (PNG copy)> <./grafika/./holono
 mic/omnidirectional_wheel.png>]
 Overfull \hbox (17.49245pt too wide) in paragraph at lines 47--52
 \OT4/cmr/m/n/12 na-to-miast dla ob-r¦-czy $\OML/plm/m/it/12 I \OT4/cmr/m/n/12 =
@@ -1106,12 +1110,12 @@ Overfull \hbox (17.49245pt too wide) in paragraph at lines 47--52
 n/12 jest od-po-wied-nio pro-mie-niem []
  []
 
-[30]
-<./grafika/./holonomic/linear_speed.png, id=152, 300.3722pt x 146.79843pt>
+[31]
+<./grafika/./holonomic/linear_speed.png, id=155, 300.3722pt x 146.79843pt>
 File: ./grafika/./holonomic/linear_speed.png Graphic file (type png)
 
 <use ./grafika/./holonomic/linear_speed.png>
-<./grafika/./holonomic/trapezoid_rule.png, id=153, 644.4075pt x 402.50375pt>
+<./grafika/./holonomic/trapezoid_rule.png, id=156, 644.4075pt x 402.50375pt>
 File: ./grafika/./holonomic/trapezoid_rule.png Graphic file (type png)
 
 <use ./grafika/./holonomic/trapezoid_rule.png>
@@ -1119,7 +1123,7 @@ Overfull \hbox (24.29083pt too wide) in paragraph at lines 131--132
  [][] 
  []
 
-[31 <./grafika/./holonomic/linear_speed.png (PNG copy)>] [32 <./grafika/./holon
+[32 <./grafika/./holonomic/linear_speed.png (PNG copy)>] [33 <./grafika/./holon
 omic/trapezoid_rule.png (PNG copy)>]
 Overfull \hbox (1.0303pt too wide) in paragraph at lines 148--148
 []\OT4/cmr/m/n/12 opia¢ 
@@ -1131,232 +1135,177 @@ Overfull \hbox (1.0303pt too wide) in paragraph at lines 148--148
  []
 
 
-LaTeX Warning: Marginpar on page 33 moved.
+LaTeX Warning: Marginpar on page 34 moved.
 
-) (./tex/algorytmy.tex [33]
+) (./tex/algorytmy.tex [34]
 Rozdzia\PlPrIeC {\l } 5.
-[34
+[35
 
-] <./grafika/./algorytmy/Bug1.png, id=166, 364.36125pt x 177.66376pt>
+] <./grafika/./algorytmy/Bug1.png, id=169, 364.36125pt x 177.66376pt>
 File: ./grafika/./algorytmy/Bug1.png Graphic file (type png)
 
 <use ./grafika/./algorytmy/Bug1.png>
-<./grafika/./algorytmy/Bug2.png, id=167, 358.33875pt x 200.75pt>
+<./grafika/./algorytmy/Bug2.png, id=170, 358.33875pt x 200.75pt>
 File: ./grafika/./algorytmy/Bug2.png Graphic file (type png)
 
 <use ./grafika/./algorytmy/Bug2.png>
-<./grafika/./algorytmy/VFH_siatka.png, id=168, 803.0pt x 602.25pt>
+<./grafika/./algorytmy/VFH_siatka.png, id=171, 803.0pt x 602.25pt>
 File: ./grafika/./algorytmy/VFH_siatka.png Graphic file (type png)
 
-<use ./grafika/./algorytmy/VFH_siatka.png> [35 <./grafika/./algorytmy/Bug1.png 
-(PNG copy)>] [36 <./grafika/./algorytmy/Bug2.png (PNG copy)>]
-<./grafika/./algorytmy/VFH_hist_biegunowy.png, id=176, 349.305pt x 491.8375pt>
+<use ./grafika/./algorytmy/VFH_siatka.png> [36 <./grafika/./algorytmy/Bug1.png 
+(PNG copy)>] [37 <./grafika/./algorytmy/Bug2.png (PNG copy)>]
+<./grafika/./algorytmy/VFH_hist_biegunowy.png, id=179, 349.305pt x 491.8375pt>
 File: ./grafika/./algorytmy/VFH_hist_biegunowy.png Graphic file (type png)
 
-<use ./grafika/./algorytmy/VFH_hist_biegunowy.png> [37 <./grafika/./algorytmy/V
-FH_siatka.png>] [38 <./grafika/./algorytmy/VFH_hist_biegunowy.png>]
-<./grafika/./algorytmy/navigation_func_k_10.png, id=185, 1204.5pt x 903.375pt>
+<use ./grafika/./algorytmy/VFH_hist_biegunowy.png> [38 <./grafika/./algorytmy/V
+FH_siatka.png>] [39 <./grafika/./algorytmy/VFH_hist_biegunowy.png>]
+<./grafika/./algorytmy/navigation_func_k_10.png, id=188, 1204.5pt x 903.375pt>
 File: ./grafika/./algorytmy/navigation_func_k_10.png Graphic file (type png)
 
 <use ./grafika/./algorytmy/navigation_func_k_10.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[39] [40 <./grafika/./algorytmy/navigation_func_k_10.png (PNG copy)>]
+[40] [41 <./grafika/./algorytmy/navigation_func_k_10.png (PNG copy)>]
 
 LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <14.4> not available
 (Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 150.
 
-[41] [42]
-<./grafika/./algorytmy/CVM_dist_new.pdf, id=204, 591.20876pt x 633.36626pt>
+[42] [43]
+<./grafika/./algorytmy/CVM_dist_new.pdf, id=207, 591.20876pt x 633.36626pt>
 File: ./grafika/./algorytmy/CVM_dist_new.pdf Graphic file (type pdf)
 
-<use ./grafika/./algorytmy/CVM_dist_new.pdf> [43]
-<./grafika/./algorytmy/CVM_styczne_new.pdf, id=208, 674.52pt x 633.36626pt>
+<use ./grafika/./algorytmy/CVM_dist_new.pdf> [44]
+<./grafika/./algorytmy/CVM_styczne_new.pdf, id=211, 674.52pt x 633.36626pt>
 File: ./grafika/./algorytmy/CVM_styczne_new.pdf Graphic file (type pdf)
 
-<use ./grafika/./algorytmy/CVM_styczne_new.pdf> [44 <./grafika/./algorytmy/CVM_
-dist_new.pdf>] [45 <./grafika/./algorytmy/CVM_styczne_new.pdf>]
-<./grafika/./algorytmy/CVM_segmentacja_new.pdf, id=219, 565.11125pt x 430.60875
+<use ./grafika/./algorytmy/CVM_styczne_new.pdf> [45 <./grafika/./algorytmy/CVM_
+dist_new.pdf>] [46 <./grafika/./algorytmy/CVM_styczne_new.pdf>]
+<./grafika/./algorytmy/CVM_segmentacja_new.pdf, id=222, 565.11125pt x 430.60875
 pt>
 File: ./grafika/./algorytmy/CVM_segmentacja_new.pdf Graphic file (type pdf)
- <use ./grafika/./algorytmy/CVM_segmentacja_new.pdf> [46]
-<./grafika/./algorytmy/CVM_segmentacja2_new.pdf, id=224, 674.52pt x 573.14125pt
+ <use ./grafika/./algorytmy/CVM_segmentacja_new.pdf> [47]
+<./grafika/./algorytmy/CVM_segmentacja2_new.pdf, id=227, 674.52pt x 573.14125pt
 >
 File: ./grafika/./algorytmy/CVM_segmentacja2_new.pdf Graphic file (type pdf)
- <use ./grafika/./algorytmy/CVM_segmentacja2_new.pdf> [47 <./grafika/./algorytm
+ <use ./grafika/./algorytmy/CVM_segmentacja2_new.pdf> [48 <./grafika/./algorytm
 y/CVM_segmentacja_new.pdf>]
 
 LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <17.28> not available
 (Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 352.
 
-[48 <./grafika/./algorytmy/CVM_segmentacja2_new.pdf>] [49]
-Overfull \hbox (4.83241pt too wide) in paragraph at lines 400--404
+[49 <./grafika/./algorytmy/CVM_segmentacja2_new.pdf>] [50]
+Overfull \hbox (4.83241pt too wide) in paragraph at lines 401--405
 \OT4/cmr/m/n/12 zwra-ca-j¡-ca od-le-gªo±¢ w sen-sie eu-kli-de-so-wym mi¦-dzy dw
 o-ma w¦-zªa-mi drze-wa, \OT4/cmtt/m/n/12 addNode
  []
 
-[50]
-<./grafika/./algorytmy/tree_with_waypoints.png, id=242, 338.26375pt x 377.41pt>
+[51]
+<./grafika/./algorytmy/tree_with_waypoints.png, id=245, 338.26375pt x 377.41pt>
 File: ./grafika/./algorytmy/tree_with_waypoints.png Graphic file (type png)
-<use ./grafika/./algorytmy/tree_with_waypoints.png>
-Overfull \hbox (48.38884pt too wide) in paragraph at lines 435--435
-[]\OT4/cmr/m/n/12 przetªumaczy¢ 
- []
-
-
-Overfull \hbox (48.38884pt too wide) in paragraph at lines 435--435
-[]\OT4/cmr/m/n/12 przetªumaczy¢ 
- []
-
-) [51 <./grafika/./algorytmy/tree_with_waypoints.png (PNG copy)>]
-(./tex/opis_testy_rrt.tex [52]
+<use ./grafika/./algorytmy/tree_with_waypoints.png>) [52 <./grafika/./algorytmy
+/tree_with_waypoints.png (PNG copy)>] (./tex/opis_testy_rrt.tex [53]
 Rozdzia\PlPrIeC {\l } 6.
 
 LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <24.88> not available
 (Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 1.
 
-<./grafika/./imp_rrt/many_root_child.png, id=249, 288.07625pt x 239.89626pt>
+<./grafika/./imp_rrt/many_root_child.png, id=252, 288.07625pt x 239.89626pt>
 File: ./grafika/./imp_rrt/many_root_child.png Graphic file (type png)
 
-<use ./grafika/./imp_rrt/many_root_child.png> [53
+<use ./grafika/./imp_rrt/many_root_child.png> [54
 
-] [54 <./grafika/./imp_rrt/many_root_child.png (PNG copy)>] [55] [56]
-<./grafika/./testy_rrt/mgr_debug.png, id=263, 853.1875pt x 658.46pt>
+] [55 <./grafika/./imp_rrt/many_root_child.png (PNG copy)>] [56] [57]
+<./grafika/./testy_rrt/mgr_debug.png, id=266, 853.1875pt x 658.46pt>
 File: ./grafika/./testy_rrt/mgr_debug.png Graphic file (type png)
 
-<use ./grafika/./testy_rrt/mgr_debug.png> [57] [58 <./grafika/./testy_rrt/mgr_d
-ebug.png (PNG copy)>] [59]
-Overfull \hbox (2.06044pt too wide) in paragraph at lines 172--172
+<use ./grafika/./testy_rrt/mgr_debug.png> [58] [59 <./grafika/./testy_rrt/mgr_d
+ebug.png (PNG copy)>] [60]
+Overfull \hbox (2.06044pt too wide) in paragraph at lines 173--173
 []\OT4/cmr/bx/n/17.28 Wyniki eks-pe-ry-men-tów w ±ro-do-wi-sku sta-tycz-
  []
 
-<./grafika/./testy_rrt/static/sukcesy.png, id=273, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/static/sukcesy.png, id=277, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/sukcesy.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/static/sukcesy.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 178--179
+Overfull \hbox (30.92342pt too wide) in paragraph at lines 183--185
  [][] 
  []
 
-<./grafika/./testy_rrt/static/czas_dojazdu.png, id=274, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/static/czas_dojazdu.png, id=278, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/czas_dojazdu.png Graphic file (type png)
 
-<use ./grafika/./testy_rrt/static/czas_dojazdu.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 183--184
- [][] 
- []
-
-[60] <./grafika/./testy_rrt/static/czas_rrt.png, id=279, 1204.5pt x 903.375pt>
+<use ./grafika/./testy_rrt/static/czas_dojazdu.png> [61]
+<./grafika/./testy_rrt/static/czas_rrt.png, id=282, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/czas_rrt.png Graphic file (type png)
 
-<use ./grafika/./testy_rrt/static/czas_rrt.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 188--189
- [][] 
- []
-
-[61 <./grafika/./testy_rrt/static/sukcesy.png (PNG copy)>]
-<./grafika/./testy_rrt/static/liczba_sciezek.png, id=283, 1204.5pt x 903.375pt>
+<use ./grafika/./testy_rrt/static/czas_rrt.png> [62 <./grafika/./testy_rrt/stat
+ic/sukcesy.png (PNG copy)>]
+<./grafika/./testy_rrt/static/liczba_sciezek.png, id=286, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/liczba_sciezek.png Graphic file (type png)
 <use ./grafika/./testy_rrt/static/liczba_sciezek.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 193--194
- [][] 
- []
-
-[62 <./grafika/./testy_rrt/static/czas_dojazdu.png (PNG copy)>]
 <./grafika/./testy_rrt/static/max_sciezka.png, id=287, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/max_sciezka.png Graphic file (type png)
 
-<use ./grafika/./testy_rrt/static/max_sciezka.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 198--199
- [][] 
- []
-
-[63 <./grafika/./testy_rrt/static/czas_rrt.png (PNG copy)>]
+<use ./grafika/./testy_rrt/static/max_sciezka.png> [63 <./grafika/./testy_rrt/s
+tatic/czas_dojazdu.png (PNG copy)> <./grafika/./testy_rrt/static/czas_rrt.png (
+PNG copy)>]
 <./grafika/./testy_rrt/static/max_tree.png, id=291, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/max_tree.png Graphic file (type png)
 
-<use ./grafika/./testy_rrt/static/max_tree.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 203--204
- [][] 
- []
-
-[64 <./grafika/./testy_rrt/static/liczba_sciezek.png (PNG copy)>] [65 <./grafik
-a/./testy_rrt/static/max_sciezka.png (PNG copy)>]
-Overfull \hbox (21.98425pt too wide) in paragraph at lines 206--206
+<use ./grafika/./testy_rrt/static/max_tree.png> [64 <./grafika/./testy_rrt/stat
+ic/liczba_sciezek.png (PNG copy)> <./grafika/./testy_rrt/static/max_sciezka.png
+ (PNG copy)>]
+Overfull \hbox (21.98425pt too wide) in paragraph at lines 212--212
 []\OT4/cmr/m/n/12 zamiescic 
  []
 
 
-Overfull \hbox (0.70392pt too wide) in paragraph at lines 206--206
+Overfull \hbox (0.70392pt too wide) in paragraph at lines 212--212
 \OT4/cmr/m/n/12 przy- 
  []
 
 
-Overfull \hbox (21.98425pt too wide) in paragraph at lines 206--206
+Overfull \hbox (21.98425pt too wide) in paragraph at lines 212--212
 []\OT4/cmr/m/n/12 zamiescic 
  []
 
 
-Overfull \hbox (0.70392pt too wide) in paragraph at lines 206--206
+Overfull \hbox (0.70392pt too wide) in paragraph at lines 212--212
 \OT4/cmr/m/n/12 przy- 
  []
 
 
-Overfull \hbox (4.6524pt too wide) in paragraph at lines 207--207
+Overfull \hbox (4.6524pt too wide) in paragraph at lines 213--213
 []\OT4/cmr/bx/n/17.28 Wyniki eks-pe-ry-men-tów ±ro-do-wi-sku dy-na-micz-
  []
 
+[65 <./grafika/./testy_rrt/static/max_tree.png (PNG copy)>]
 <./grafika/./testy_rrt/dynamic/sukcesy.png, id=298, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/sukcesy.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/sukcesy.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 213--214
- [][] 
- []
-
-
 <./grafika/./testy_rrt/dynamic/czas_dojazdu.png, id=299, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/czas_dojazdu.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/czas_dojazdu.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 218--219
- [][] 
- []
-
 <./grafika/./testy_rrt/dynamic/czas_rrt.png, id=300, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/czas_rrt.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/czas_rrt.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 223--224
- [][] 
- []
-
-
 <./grafika/./testy_rrt/dynamic/liczba_sciezek.png, id=301, 1204.5pt x 903.375pt
 >
 File: ./grafika/./testy_rrt/dynamic/liczba_sciezek.png Graphic file (type png)
  <use ./grafika/./testy_rrt/dynamic/liczba_sciezek.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 228--229
- [][] 
- []
-
 <./grafika/./testy_rrt/dynamic/max_sciezka.png, id=302, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/max_sciezka.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/max_sciezka.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 233--234
- [][] 
- []
-
 <./grafika/./testy_rrt/dynamic/max_tree.png, id=303, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/max_tree.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/max_tree.png>
-Overfull \hbox (30.92342pt too wide) in paragraph at lines 238--239
- [][] 
- []
-
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
@@ -1373,124 +1322,71 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Overfull \hbox (21.98425pt too wide) in paragraph at lines 242--242
+Overfull \hbox (21.98425pt too wide) in paragraph at lines 261--261
 []\OT4/cmr/m/n/12 zamiescic 
  []
 
 
-Overfull \hbox (0.70392pt too wide) in paragraph at lines 242--242
+Overfull \hbox (0.70392pt too wide) in paragraph at lines 261--261
 \OT4/cmr/m/n/12 przy- 
  []
 
 
-Overfull \hbox (1.68307pt too wide) in paragraph at lines 242--242
+Overfull \hbox (1.68307pt too wide) in paragraph at lines 261--261
 \OT4/cmr/m/n/12 micz- 
  []
 
 
-Overfull \hbox (21.98425pt too wide) in paragraph at lines 242--242
+Overfull \hbox (21.98425pt too wide) in paragraph at lines 261--261
 []\OT4/cmr/m/n/12 zamiescic 
  []
 
 
-Overfull \hbox (0.70392pt too wide) in paragraph at lines 242--242
+Overfull \hbox (0.70392pt too wide) in paragraph at lines 261--261
 \OT4/cmr/m/n/12 przy- 
  []
 
 
-Overfull \hbox (1.68307pt too wide) in paragraph at lines 242--242
+Overfull \hbox (1.68307pt too wide) in paragraph at lines 261--261
 \OT4/cmr/m/n/12 micz- 
  []
 
-) [66 <./grafika/./testy_rrt/static/max_tree.png (PNG copy)>]
-
-LaTeX Warning: Marginpar on page 67 moved.
-
-(./tex/stp.tex [67 <./grafika/./testy_rrt/dynamic/sukcesy.png (PNG copy)>]
-[68 <./grafika/./testy_rrt/dynamic/czas_dojazdu.png (PNG copy)>] [69 <./grafika
-/./testy_rrt/dynamic/czas_rrt.png (PNG copy)>] [70 <./grafika/./testy_rrt/dynam
-ic/liczba_sciezek.png (PNG copy)>] [71 <./grafika/./testy_rrt/dynamic/max_sciez
-ka.png (PNG copy)>] [72 <./grafika/./testy_rrt/dynamic/max_tree.png (PNG copy)>
-]
+) (./tex/stp.tex [66 <./grafika/./testy_rrt/dynamic/sukcesy.png (PNG copy)>]
+[67 <./grafika/./testy_rrt/dynamic/czas_dojazdu.png (PNG copy)> <./grafika/./te
+sty_rrt/dynamic/czas_rrt.png (PNG copy)>] [68 <./grafika/./testy_rrt/dynamic/li
+czba_sciezek.png (PNG copy)> <./grafika/./testy_rrt/dynamic/max_sciezka.png (PN
+G copy)>] [69 <./grafika/./testy_rrt/dynamic/max_tree.png (PNG copy)>]
 Rozdzia\PlPrIeC {\l } 7.
 
-Overfull \hbox (0.21248pt too wide) in paragraph at lines 4--8
+Overfull \hbox (0.21248pt too wide) in paragraph at lines 10--14
 \OT4/cmtt/m/n/12 and plays for multi-robot control in adversarial environments 
 \OT4/cmr/m/n/12 [[]] stwo-
  []
 
-[73
+[70
 
-] <./grafika/./stp/stp.png, id=330, 635.37375pt x 567.11874pt>
+] <./grafika/./stp/stp.png, id=320, 635.37375pt x 567.11874pt>
 File: ./grafika/./stp/stp.png Graphic file (type png)
 
-<use ./grafika/./stp/stp.png>
+<use ./grafika/./stp/stp.png> [71] [72 <./grafika/./stp/stp.png (PNG copy)>]
+(/usr/share/texmf-texlive/tex/latex/base/utf8.def
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+) [73] [74] [75] [76]
+<./grafika/./testy_stp/navigation_test.png, id=340, 401.5pt x 269.005pt>
+File: ./grafika/./testy_stp/navigation_test.png Graphic file (type png)
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+<use ./grafika/./testy_stp/navigation_test.png>
 
-[74] [75 <./grafika/./stp/stp.png (PNG copy)>]
-Overfull \hbox (26.81476pt too wide) in paragraph at lines 80--80
-[]\OT4/cmr/m/n/12 dokonczyc 
- []
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-
-Overfull \hbox (26.81476pt too wide) in paragraph at lines 80--80
-[]\OT4/cmr/m/n/12 dokonczyc 
- []
-
-
-Overfull \hbox (5.66498pt too wide) in paragraph at lines 81--81
-[]\OT4/cmr/m/n/12 opisa¢ 
- []
-
-
-Overfull \hbox (5.66498pt too wide) in paragraph at lines 81--81
-[]\OT4/cmr/m/n/12 opisa¢ 
- []
-
-
-Overfull \hbox (5.66498pt too wide) in paragraph at lines 82--82
-[]\OT4/cmr/m/n/12 opisa¢ 
- []
-
-
-Overfull \hbox (5.66498pt too wide) in paragraph at lines 82--82
-[]\OT4/cmr/m/n/12 opisa¢ 
- []
-
-
-Overfull \hbox (30.14389pt too wide) in paragraph at lines 83--83
-[]\OT4/cmr/m/n/12 wspomniec 
- []
-
-
-Overfull \hbox (30.14389pt too wide) in paragraph at lines 83--83
-[]\OT4/cmr/m/n/12 wspomniec 
- []
-
-
-LaTeX Warning: Marginpar on page 76 moved.
-
-
-LaTeX Warning: Marginpar on page 76 moved.
-
-
-LaTeX Warning: Marginpar on page 76 moved.
-
-[76] <./grafika/./testy_stp/test_area_1.png, id=340, 401.5pt x 259.97125pt>
-File: ./grafika/./testy_stp/test_area_1.png Graphic file (type png)
-
-<use ./grafika/./testy_stp/test_area_1.png> [77 <./grafika/./testy_stp/test_are
-a_1.png>]) (./tex/podsumowanie.tex [78]
+[77] [78 <./grafika/./testy_stp/navigation_test.png>] [79])
+(./tex/podsumowanie.tex [80]
 Rozdzia\PlPrIeC {\l } 8.
-) (./tex/dodatek.tex [79
+) (./tex/dodatek.tex [81
 
 ]
 Dodatek A.
-[80
+[82
 
 ]
 Dodatek B.
@@ -1515,150 +1411,150 @@ Overfull \hbox (12.78018pt too wide) in paragraph at lines 18--18
  []
 
 
-LaTeX Warning: Marginpar on page 81 moved.
+LaTeX Warning: Marginpar on page 83 moved.
 
-(./tex/dodatek_eksp.tex [81
+(./tex/dodatek_eksp.tex [83
 
 ]
 Dodatek C.
 
-<./grafika/./eksperymenty/srodowiska/legenda.pdf, id=358, 438.63875pt x 148.555
+<./grafika/./eksperymenty/srodowiska/legenda.pdf, id=364, 438.63875pt x 148.555
 pt>
 File: ./grafika/./eksperymenty/srodowiska/legenda.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/legenda.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment00.pdf, id=359, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment00.pdf, id=365, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment00.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment00.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment01.pdf, id=360, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment01.pdf, id=366, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment01.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment01.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment05.pdf, id=361, 314.17375pt x 4
+<./grafika/./eksperymenty/srodowiska/eksperyment05.pdf, id=367, 314.17375pt x 4
 45.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment05.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment05.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment06.pdf, id=362, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment06.pdf, id=368, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment06.pdf Graphic file (type 
 pdf)
- <use ./grafika/./eksperymenty/srodowiska/eksperyment06.pdf> [82
+ <use ./grafika/./eksperymenty/srodowiska/eksperyment06.pdf> [84
 
  <./grafika/./eksperymenty/srodowiska/legenda.pdf (PNG copy)>]
-<./grafika/./eksperymenty/srodowiska/eksperyment09.pdf, id=366, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment09.pdf, id=373, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment09.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment09.pdf>
-<./grafika/./eksperymenty/srodowiska/korytarz.pdf, id=367, 315.1775pt x 445.665
+<./grafika/./eksperymenty/srodowiska/korytarz.pdf, id=374, 315.1775pt x 445.665
 pt>
 File: ./grafika/./eksperymenty/srodowiska/korytarz.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/korytarz.pdf>
-<./grafika/./eksperymenty/srodowiska/prosta.pdf, id=368, 315.1775pt x 445.665pt
+<./grafika/./eksperymenty/srodowiska/prosta.pdf, id=375, 315.1775pt x 445.665pt
 >
 File: ./grafika/./eksperymenty/srodowiska/prosta.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/prosta.pdf>
-<./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf, id=369, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf, id=376, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf>
-<./grafika/./eksperymenty/srodowiska/atak1.pdf, id=370, 315.1775pt x 445.665pt>
+<./grafika/./eksperymenty/srodowiska/atak1.pdf, id=377, 315.1775pt x 445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/atak1.pdf Graphic file (type pdf)
 <use ./grafika/./eksperymenty/srodowiska/atak1.pdf>
-<./grafika/./eksperymenty/srodowiska/atak2.pdf, id=371, 315.1775pt x 445.665pt>
+<./grafika/./eksperymenty/srodowiska/atak2.pdf, id=378, 315.1775pt x 445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/atak2.pdf Graphic file (type pdf)
-<use ./grafika/./eksperymenty/srodowiska/atak2.pdf> [83 <./grafika/./eksperymen
+<use ./grafika/./eksperymenty/srodowiska/atak2.pdf> [85 <./grafika/./eksperymen
 ty/srodowiska/eksperyment00.pdf (PNG copy)> <./grafika/./eksperymenty/srodowisk
 a/eksperyment01.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/eksperymen
 t05.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/eksperyment06.pdf (PNG
  copy)>]
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf, id=375, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf, id=382, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf, id=376, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf, id=383, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf, id=377, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf, id=384, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf, id=378, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf, id=385, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf, id=379, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf, id=386, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf, id=380, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf, id=387, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf>
-[84 <./grafika/./eksperymenty/srodowiska/eksperyment09.pdf (PNG copy)> <./grafi
+[86 <./grafika/./eksperymenty/srodowiska/eksperyment09.pdf (PNG copy)> <./grafi
 ka/./eksperymenty/srodowiska/korytarz.pdf (PNG copy)> <./grafika/./eksperymenty
 /srodowiska/prosta.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/waskie_
 przejscie.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/atak1.pdf (PNG c
 opy)> <./grafika/./eksperymenty/srodowiska/atak2.pdf (PNG copy)>]
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf, id=385, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf, id=391, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf, id=386, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf, id=392, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf, id=387, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf, id=393, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf, id=388, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf, id=394, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf>
-[85 <./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf (PNG copy)> <./gr
+[87 <./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf (PNG copy)> <./gr
 afika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf (PNG copy)> <./grafika/./e
 ksperymenty/srodowiska/dynamiczne/eks03.pdf (PNG copy)> <./grafika/./eksperymen
 ty/srodowiska/dynamiczne/eks04.pdf (PNG copy)> <./grafika/./eksperymenty/srodow
 iska/dynamiczne/eks05.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/dyna
-miczne/eks06.pdf (PNG copy)>])) [86 <./grafika/./eksperymenty/srodowiska/dynami
+miczne/eks06.pdf (PNG copy)>])) [88 <./grafika/./eksperymenty/srodowiska/dynami
 czne/eks07.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks0
 8.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf (PN
 G copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf (PNG copy)>]
-(./tex/bibliografia.tex [87] [88
+(./tex/bibliografia.tex [89] [90
 
-]) (./main.tdo [89])
+]) (./main.tdo [91])
 \tf@tdo=\write5
 \openout5 = `main.tdo'.
 
- [90] (./main.aux)
+ [92] (./main.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 13591 strings out of 495026
- 226740 string characters out of 1181802
- 329907 words of memory out of 3000000
- 16332 multiletter control sequences out of 15000+50000
+ 13612 strings out of 495026
+ 226574 string characters out of 1181802
+ 329908 words of memory out of 3000000
+ 16351 multiletter control sequences out of 15000+50000
  22848 words of font info for 69 fonts, out of 3000000 for 9000
  48 hyphenation exceptions out of 8191
- 54i,12n,92p,588b,1199s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 54i,12n,92p,588b,1389s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/share/texmf-texlive/fonts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-texli
 ve/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plm
 s.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plme.enc}{/usr/share/texmf-t
@@ -1680,9 +1576,9 @@ pl/plsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy8.pfb></usr/sh
 are/texmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/texmf-texlive/fo
 nts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/
 pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.pfb>
-Output written on main.pdf (91 pages, 2836439 bytes).
+Output written on main.pdf (93 pages, 2839491 bytes).
 PDF statistics:
- 485 PDF objects out of 1000 (max. 8388607)
+ 491 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  358 words of extra memory for PDF output out of 10000 (max. 10000000)
 

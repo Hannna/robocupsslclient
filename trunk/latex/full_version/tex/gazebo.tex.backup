@@ -287,5 +287,8 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	\includegraphics[scale=0.4]{./gazebo/boisko.png}
 	\caption{Model boiska}
 	\end{figure}
-	W trakcie symulacji opracowanych modeli zauważono, że piłka raz wprawiona w ruch nie hamuje. Sytuacja taka była spowodowana brakiem tarcia tocznego. Zaimplementowano zatem kolejną modyfikację w symulat
-	orze, tak aby dla każdel bryły istniała możliowść konfigurowania tego parametru (\textit{angularDamping}) w pliku opisującym model.
+	W trakcie symulacji opracowanych modeli zauważono, że piłka raz wprawiona w ruch nie hamuje. Sytuacja taka była spowodowana brakiem tarcia tocznego. Zaimplementowano zatem kolejną modyfikację w 
+	symulatorze, tak aby dla każdej bryły istniała możliwaść konfigurowania tego parametru (\textit{angularDamping}) w pliku opisującym model.
+
+	Ponieważ korzystano z niestabilnej wersji oprogramowania (inne nie było jeszcze dostępne), pobranego bezpośrednio z repozytorium deweloperów, należało poprawić jeszcze kilka innych błędów symulatora,
+	miedzy innymi niepoprawną pracę interfesju umożliwiającego komunikację pomiędzy symulatrem a aplikacją kliencką.
