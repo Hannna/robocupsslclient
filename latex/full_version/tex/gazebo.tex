@@ -278,9 +278,14 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	\end{figure}
 	Robot został dodatkowo wyposażony w \textit{dribbler}\protect\footnote{urządzenie opisano w par.~\ref{sec:budowa_robota}} pomagający utrzymać kontrolę nad piłką.
 	Mimo że \textit{Gazebo} udostępnia sterownik dla napędu holonomicznego, sterowanie robotem wymagało napisania nowego kontrolera, ponieważ nie uwzględniał on obsługi
-	\textit{dribblera}, ani nie umożliwiał oddawania strzałów. Sterownik został zrealizowany w oparciu o teorię zawartą w rozdziale \ref{chap:holonomic}. Użytkownik  Dodatkowo zaimplementowano
-	programowy regulator \texttt{PID}, sterujący siłą przykładana do kół robota. Dzięki temu uzyskano lepszą dokładość sterowania robotem. Parametry regulatora początkowo dobrano posługując się metodą \texttt{Zieglera-Nicholsa}, a następnie eksperymentalnie dokonano ich korekty.
-	W pliku opisującym model robota istnieje możliość ich ręcznego modyfikowania.
+	\textit{dribblera}, ani nie umożliwiał oddawania strzałów. Sterownik został zrealizowany w oparciu o teorię zawartą w rozdziale \ref{chap:holonomic}. Z punktu widzenia użytkownika
+	sterowanie robotem odbywa się poprzez ustawianie odpowiedniej prędkości liniowej i kątowej. Sterownik przekształca je na odpowiednie prędkości obrotowe poszczególnych kół.
+	Dodatkowo zaimplementowano programowy regulator \texttt{PID}, sterujący siłą przykładana do kół robota. Dzięki temu uzyskano lepszą dokładość sterowania robotem.
+	Parametry regulatora początkowo dobrano posługując się metodą \texttt{Zieglera-Nicholsa}. Przy wyłączonych członach całkującym i różniczkującym analizowano wykresy rozkładu
+	prędkości obrotowych kół robota w czasie przy ustalonej zadanej prędkości liniowej. Stopniowo zwiększano współczynnik wzmocnienia proporcjonalnego. Wyznaczono wartość wzmocnienia
+	przy której układ zbliżył się do granicy stabilności (wzmocnienie krytyczne $K_k$) oraz wyznaczono okres drgań $T_k$. 
+	Wartości właściwych wzmocnień poszczególnych  członów wyznaczono zgodnie z procedurą: $K=0.6K_k$, $T_i=T_k$, $T_d=0.12T_k$. Następnie eksperymentalnie dokonano ich korekty.
+	W pliku opisującym model robota istnieje możliość ręcznego modyfikowania nastaw regulatora.
 	Kod źródłowy sterownika został zamieszczony na płycie CD razem z kodem źródłowym wykorzystywanej wersji symulatora.	
 	\begin{figure}[H]
 	\centering
