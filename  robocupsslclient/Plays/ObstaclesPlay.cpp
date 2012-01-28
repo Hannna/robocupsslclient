@@ -86,7 +86,9 @@ void ObstaclesPlay::waitForFinish( ){
 void ObstaclesPlay::reset(){
 
 }
-
+bool ObstaclesPlay::isFinished(){
+	return false;
+}
 ObstaclesPlay::~ObstaclesPlay() {
 	// TODO Auto-generated destructor stub
 }

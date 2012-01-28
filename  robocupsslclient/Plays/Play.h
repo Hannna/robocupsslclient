@@ -36,7 +36,7 @@ class Play
 		typedef std::map<int, Role*>::iterator RoleIterator;
 
 		Play(std::string teamColor, const int nrOfRoles);
-        bool isFinished();
+		virtual bool isFinished();
         virtual void execute()=0;
         virtual void reset()=0;
         virtual ~Play();

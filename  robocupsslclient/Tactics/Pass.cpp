@@ -22,7 +22,14 @@ void Pass::execute(void*){
     GameStatePtr gameState ( new GameState() );
     Pose goalPose;
 
+	LOG_INFO(log,"START Tactic pass for robot  " <<robot.getRobotName()<<" to robot "<<targetRobotID);
     while(true){
+ 	   {
+ 		   LockGuard l(this->mutex);
+ 		   if(this->stop)
+ 			   break;
+ 	   }
+
     	if( Videoserver::getInstance().updateGameState( gameState ) < 0 ){
     		std::ostringstream s;
     		s<<__FILE__<<":"<<__LINE__;
@@ -59,18 +66,31 @@ void Pass::execute(void*){
 
 			if( taskStatus == Task::error ){
 				LOG_ERROR(log,"Tactic error taskStatus " <<taskStatus );
+
 				break;
 			}
 
 			if( taskStatus == Task::collision ){
 				robot.stop();
 				LOG_FATAL(log,"Tactic error taskStatus " <<taskStatus );
+
+				LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
+				robot.stop();
+				LockGuard m(mutex);
+				this->finished = true;
+
 				return;
 			}
 
 			if( taskStatus == Task::kick_ok ){
 				robot.stop();
 				LOG_FATAL(log,"Tactic error taskStatus " <<taskStatus );
+
+				LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
+				robot.stop();
+				LockGuard m(mutex);
+				this->finished = true;
+
 				return;
 			}
 
@@ -83,7 +103,9 @@ void Pass::execute(void*){
 }
 
 bool Pass::isFinish(){
-	return true;
+	LockGuard m(mutex);
+	this->finished;
+	return this->finished;
 }
 
 Pass::~Pass() {

@@ -17,6 +17,7 @@ public:
 	virtual void reset( );
 	virtual void stop( );
 	virtual void waitForFinish( );
+	virtual bool isFinished( );
 	virtual ~Experiment_1( );
 
 private:

@@ -104,6 +104,10 @@ void Play::halt(){
 	//role3->getRobot()->stop();
 }
 
+bool Play::isFinished(){
+	return false;
+}
+
 Play::~Play()
 {
     //dtor
