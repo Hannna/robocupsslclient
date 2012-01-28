@@ -31,7 +31,7 @@ void Tactic::waitForFinish(){
 }
 
 void Tactic::start(){
-	//std::cout<<" Tactic start "<<std::endl;
+	LOG_INFO(log,"Start tactic for robot "<<this->robot.getRobotName() );
 	{
 		LockGuard l(mutex);
 		if(finished)
@@ -39,6 +39,7 @@ void Tactic::start(){
 	}
 
 	ThreadPool::getInstance().setThreadTask( Thread::ThreadTaskPtr(&Tactic::execute),this,this->robot.getRobotID());
+	LOG_INFO(log,"Tactic for robot "<<this->robot.getRobotName()<<" added to thread pool" );
 	//std::cout<<" Tactic end "<<std::endl;
 }
 

@@ -833,7 +833,16 @@ void run_experiment_1(){
 
 		//sleep(5);
 		//bluePlay->stop();
-		bluePlay->waitForFinish();
+		GameStatePtr gameState( new GameState() );
+		while( !bluePlay->isFinished() ){
+			//bluePlay->waitForFinish();
+			Videoserver::getInstance().updateGameState( gameState );
+			EvaluationModule::ballState bs = EvaluationModule::getInstance().getBallState(Robot::blue0);
+			if( bs == EvaluationModule::out || bs == EvaluationModule::in_goal ){
+				SimControl::getInstance().setSimPos("ball",Config::getInstance().field.FIELD_MIDDLE_POSE);
+			}
+			sleep(1);
+		}
 		LOG_FATAL(log, "blue Play finished" );
 		//redPlay->stop();
 		//redPlay->waitForFinish();

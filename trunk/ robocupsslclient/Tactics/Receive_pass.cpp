@@ -22,7 +22,13 @@ void Receive_pass::execute(void*){
     GameStatePtr gameState ( new GameState() );
     Pose goalPose;
 
-    while( !this->stop ){
+	LOG_INFO(log,"START Tactic Receive_pass for robot  " <<robot.getRobotName() );
+    while( true ){
+	   {
+		   LockGuard l(this->mutex);
+		   if(this->stop)
+			   break;
+	   }
     	//jesli pilke maja nasi
     	EvaluationModule::ballState bs = evaluation.getBallState( robot.getRobotID() );
 
@@ -48,7 +54,11 @@ void Receive_pass::execute(void*){
     		this->currentTask = TaskSharedPtr( new Rotate( goalPose.getPosition(), &robot  ) );
 
 			Task* newTask;
-			while(taskStatus!=Task::ok && !this->stop){
+			while(taskStatus!=Task::ok){
+				LockGuard l(this->mutex);
+				if(this->stop)
+					break;
+
 				newTask = this->currentTask->nextTask();
 
 				if(newTask){
@@ -65,6 +75,12 @@ void Receive_pass::execute(void*){
 				if( taskStatus == Task::collision ){
 					robot.stop();
 					LOG_FATAL(log,"Tactic error taskStatus " <<taskStatus );
+
+					LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
+					robot.stop();
+					LockGuard m(mutex);
+					this->finished = true;
+
 					return;
 				}
 			}
@@ -78,8 +94,8 @@ void Receive_pass::execute(void*){
 }
 
 bool Receive_pass::isFinish(){
-
-	return true;
+	LockGuard m(mutex);
+	return this->finished;
 }
 
 Receive_pass::~Receive_pass() {

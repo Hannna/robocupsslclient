@@ -39,11 +39,12 @@ int Thread::run(void * arg_)
 			tactic = (Tactic*)this->arg_;
 		}
 		if(!tactic){
+			std::cout<<" tactic is null "<<std::endl;
 			sleep(1);
 			//continue;
 		}
 		else if(!tactic->isFinish()){
-
+			std::cout<<" start tactic "<<std::endl;
 			( tactic->*((this)->taskPtr) )(NULL);
 
 			LockGuard l( mutex );

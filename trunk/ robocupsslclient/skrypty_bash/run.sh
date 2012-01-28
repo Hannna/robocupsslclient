@@ -80,7 +80,7 @@ else
 		echo "creating world"
 		echo $TEST_WORLD
 		gazebo $TEST_WORLD | tee  gazebo_logi &	
-		/home/maciek/sslrefbox-2010.2/sslrefbox -C /home/maciek/sslrefbox-2010.2/referee.conf &
+#		/home/maciek/sslrefbox-2010.2/sslrefbox -C /home/maciek/sslrefbox-2010.2/referee.conf &
 		sleep 5
 		 ./magisterka test ${string:2} | tee run.log
 #		valgrind --leak-check=yes --log-file=/home/maciek/workspace/mgr/Debug/valgrind.log /home/maciek/workspace/mgr/Debug/mgr test ${string:2}  | tee run.log 

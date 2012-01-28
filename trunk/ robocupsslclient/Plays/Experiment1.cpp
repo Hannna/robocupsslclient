@@ -60,6 +60,17 @@ void Experiment_1::reset(){
 
 }
 
+bool Experiment_1::isFinished( ){
+	Play::RoleIterator ii = this->roles.begin();
+	for(;ii != this->roles.end();ii++ ){
+		if( ii->second->getCurrentTactic() )
+			if( !ii->second->getCurrentTactic()->isFinish() ){
+				return false;
+			}
+	}
+	return true;
+}
+
 Experiment_1::~Experiment_1() {
 	// TODO Auto-generated destructor stub
 }
