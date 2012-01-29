@@ -19,7 +19,8 @@ void ShootTactic::execute(void *){
 
 	LOG_INFO(log,"Start Shoot tactic " );
     EvaluationModule& evaluation=EvaluationModule::getInstance();
-    std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName());
+    double angleToGoal=0;
+    std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName(),angleToGoal);
 
     Pose goalPose;
     //TODO: sprawdzic rotacje inna powinna byc w przypadku jazdy na bramke dolna
@@ -27,47 +28,15 @@ void ShootTactic::execute(void *){
     if(robot.getRobotName().compare(0,3,"red")==0){
     	goalPose = Pose( Videoserver::getBlueGoalMidPosition().x,
     						Videoserver::getBlueGoalMidPosition().y, 0.0 );
-
-    	//if(Videoserver::redGoal==bottom){
-    	//	goalPose = Pose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
-    	//	    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0.0 );
-    	//}
-    	//else{
-         //   goalPose = Pose(Config::getInstance().field.TOP_GOAL_MID_POSITION.x,
-    	//	    		Config::getInstance().field.TOP_GOAL_MID_POSITION.y - 0.01, 0);
-    	//}
     }
     else{
     	goalPose = Pose( Videoserver::getRedGoalMidPosition().x,
     	    		Videoserver::getRedGoalMidPosition().y, 0.0 );
-
-    	//if(Videoserver::blueGoal==bottom){
-    	//	goalPose = Pose(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.x,
-    	//	    		Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y, 0);
-    	//}
-    	//else{
-    	//	goalPose = Pose(Config::getInstance().field.TOP_GOAL_MID_POSITION.x,
-    	//	    		Config::getInstance().field.TOP_GOAL_MID_POSITION.y, 0);
-    	//}
     }
 
-    ////
 
-	double score = 0;
-	double sign = 1.0;
+	LOG_INFO(log,"angle to goal "<<ang.first<<" "<<ang.second );
 
-	if( ang.first * ang.second > 0.0  ){
-		score = ang.second - ang.first;
-	}
-	else{
-		if( fabs(ang.second )  + fabs( ang.first) > M_PI ){
-			score = fabs( M_PI - fabs(ang.second )  + M_PI- fabs( ang.first) );
-			sign = -1;
-		}
-		else{
-			score = fabs(ang.second )  + fabs( ang.first);
-		}
-	}
 
 	//jesli warto strzelic na bramke
 	//if( fabs(score) > EvaluationModule::minOpenAngle   ){
@@ -77,17 +46,16 @@ void ShootTactic::execute(void *){
 
     ////
 
-	double angleToGoal = ang.first + sign*score/2.0;
 
-    //goalPose.get<2>() = ( ang.first + ang.second )/2 ;
+
 
 	goalPose = Pose( goalPose.get<0>(), goalPose.get<1>(), angleToGoal  );
 	//goalPose.get<2>() = angleToGoal;
 
     Task::status taskStatus = Task::not_completed;
     //double score =0;
-    score =0;
-    double bestScore = 0;
+    //score =0;
+    //double bestScore = 0;
 
     //(score, target) ← evaluation.aimAtGoal()
     //if (was kicking at goal) then
@@ -101,7 +69,7 @@ void ShootTactic::execute(void *){
 		Task::predicate p = Task::kick_if_we_can;
 		this->currentTask->markParam(p);
 		this->currentTask->markParam(predicates);
-		bestScore = score;
+		//bestScore = score;
 		Task* newTask;
 		int steps=1;
 		while( taskStatus!=Task::ok && !this->stop ){

@@ -42,7 +42,7 @@ public:
      score aimAtGoal(const GameStatePtr & gameState, std::string robotName);
      /*@brief zwraca przedzial kata x=min;y=max
      */
-     std::pair<double, double> aimAtGoal(const std::string& robotName);
+     std::pair<double, double> aimAtGoal(const std::string& robotName,double& angleToShoot);
 
      /*@brief zwraca przedzial kata x=min;y=max
       *
@@ -71,7 +71,7 @@ public:
 
      void test(Pose currRobotPose,Pose targetPosition);
 
-     static const double minOpenAngle=0.52; //30 stopni
+     static const double minOpenAngle=0.33; //30 stopni
     private:
         static EvaluationModule * ptr;
         const Videoserver& video;

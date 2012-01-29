@@ -159,10 +159,10 @@ Task::status KickBall::run(void * arg, int steps ){
     	else if( this->kickNow ){
     		LOG_INFO(log,"kick now set. Try to kick ball.");
     	}
-    	double maxForce = 30.0;
+    	double maxForce = 5.0;
     	double dist = currPose.distance( this->targetPose );
     	LOG_INFO(log,"dist to target "<< dist);
-    	double force = dist*maxForce/4.0;
+    	double force = dist*maxForce/9.16;
     	this->robot->kick( force );
 
     	if( this->evaluationModule.isRobotOwnedBall( this->robot->getRobotID() ) ){

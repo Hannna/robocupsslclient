@@ -81,7 +81,8 @@ Task* GoToPose::nextTask(){
 		//jesli ustawiono flage zezwalajaca na strzal
 		if( (this->predicates & Task::kick_if_we_can) > 0){
 			//oblicz czy wato strzelic na bramke
-			std::pair<double,double> ang=evaluationModule.aimAtGoal( robot->getRobotName() );
+			double angleToShoot=0;
+			std::pair<double,double> ang=evaluationModule.aimAtGoal( robot->getRobotName(),angleToShoot );
 
 			double score =
 			( (ang.first * ang.second) > 0 ) ? fabs( ang.first + ang.second ) : fabs( ang.first) + fabs(ang.second );
