@@ -69,10 +69,10 @@ bool ThreadPool::setThreadTask( Thread::ThreadTaskPtr  task, Tactic* ptr, Robot:
 	//if( this->workers.size() < this->maxThreadsNr ){
 		//task->start();
 		//workers.push_back(task_id(task,joinable));
-		workers[id].first->stopTask();
+		//workers[id].first->stopTask();
 		std::cout<<" set thread func for robot "<<id<<std::endl;
 		workers[id].first->setThreadFunc( task, ptr );
-		workers[id].first->startTask();
+		//workers[id].first->startTask();
 		return true;
 	//}
 	return false;

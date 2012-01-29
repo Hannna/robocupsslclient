@@ -75,7 +75,7 @@ Task::status GetBall::run(void * arg, int steps){
 
 
 			//jedz do pilki
-			robot->goToBall( this->maxDistanceToBall );
+			//robot->goToBall( this->maxDistanceToBall );
 			if( strcmp( this->robot->getRobotName().c_str(), "blue0" ) == 0 ){
 				double reference = 0;
 				file<<reference<<";"<<angleToBall<<";"<<std::endl;
@@ -110,21 +110,25 @@ Task::status GetBall::run(void * arg, int steps){
 				double currGlobalRobotRot = currRobotPose.get<2>();
 
 				// ten kawalek kodu wyznacza kat o jaki robot musi sie obrocic zeby byc skierowanym na cel
-				RotationMatrix rm0(0);
+
 				//Pose ballPose( ballPos,0 );
 				ballPose = Pose(ballPose.getPosition() + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) ),0);
 				//ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
 
 				ballPos = ballPose.getPosition();
 
-				Pose reltargetPose_ = ballPose.transform( currRobotPose.getPosition(),rm0 );
-				Pose reltargetPose = reltargetPose_*100;
-				double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;
+				double rotacjaDocelowa = calculateProperAngleToTarget(currRobotPose,ballPose );
+				//RotationMatrix rm0(0);
+				//Pose reltargetPose_ = ballPose.transform( currRobotPose.getPosition(),rm0 );
+				//Pose reltargetPose = reltargetPose_*100;
+				//double rotacjaDocelowa=-atan2(reltargetPose.get<0>(),reltargetPose.get<1>()) ;
 
 				assert( fabs(rotacjaDocelowa) < M_PI);
 
 				//obrot jaki trzeba wykonac w biezacym kroku
-				double currAlfaToCel = convertAnglePI( rotacjaDocelowa - currGlobalRobotRot );
+				//double currAlfaToCel = convertAnglePI( rotacjaDocelowa - currGlobalRobotRot );
+
+				double currAlfaToCel=calculateAngleToTarget(currRobotPose, ballPose );
 
 				double angularVel=Ko*( convertAnglePI(rotacjaDocelowa-currGlobalRobotRot) )+ Ker*( convertAnglePI(oldAlfaToCel - currAlfaToCel) );
 

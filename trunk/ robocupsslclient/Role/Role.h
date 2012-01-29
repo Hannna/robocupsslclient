@@ -41,13 +41,17 @@ public:
 		return currentTactic;
 	}
 
+	void executeNextTactic();
+
 	virtual ~Role();
 
 private:
+	typedef std::list<Tactic* >::iterator TacticIterator;
 	Mutex mutex;
 	Robot* robot;
 	std::list<Tactic* > tactics;
 	Tactic* currentTactic;
+	TacticIterator currentTacticIter;
 	log4cxx::LoggerPtr log;
 };
 

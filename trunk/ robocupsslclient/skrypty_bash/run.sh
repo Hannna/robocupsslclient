@@ -98,20 +98,7 @@ else
 		sleep 5
 		 ./magisterka test ${string:2} | tee run.log
 	
-	elif [ "$1" = "--experiment_1" ]; then	
-		
-		sleep 1
-		
-		echo "start "
-		echo $1
-			
-		TEST_WORLD="/home/maciek/magisterka/test_worlds/test_world_1.world"	
-		echo "creating world"
-		echo $TEST_WORLD
-		gazebo $TEST_WORLD | tee  gazebo_logi &	
-		sleep 5
-		 ./magisterka ${string:2} | tee run.log
-	elif [ "$1" = "--experiment_2" ] ; then	
+	elif [ "$1" = "--experiment_1" ] ; then	
 		
 		sleep 1
 		
@@ -136,6 +123,37 @@ else
 		gazebo $TEST_WORLD  | tee  gazebo_logi &	
 		sleep 5
 		 ./magisterka ${string:2} $sit | tee run.log
+
+	elif [ "$1" = "--experiment_2" ]; then	
+		
+		sleep 1
+		
+		echo "start "
+		echo $1
+			
+		TEST_WORLD="/home/maciek/magisterka/test_worlds/test_world_1.world"	
+		echo "creating world"
+		echo $TEST_WORLD
+		gazebo $TEST_WORLD | tee  gazebo_logi &	
+		sleep 5
+		 ./magisterka ${string:2} | tee run.log
+
+
+
+	elif [ "$1" = "--experiment_3" ]; then	
+		
+		sleep 1
+		
+		echo "start "
+		echo $1
+			
+		TEST_WORLD="/home/maciek/magisterka/dribblerTest.world"	
+		echo "creating world"
+		echo $TEST_WORLD
+		gazebo $TEST_WORLD | tee  gazebo_logi &	
+		sleep 5
+		 ./magisterka ${string:2} | tee run.log
+
 	else
 	printf " \nusage: --kill \t--mem-check
 	\n\t--profile \t--debug

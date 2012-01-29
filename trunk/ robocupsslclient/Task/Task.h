@@ -32,7 +32,8 @@ public:
 		pass = 0x02,
 		should_have_ball = 0x04,
 		analyse_all_field = 0x08,
-		got_ball
+		got_ball = 0x10,
+		go_to_ball = 0x20,
 	} predicate;
 
 	enum status{

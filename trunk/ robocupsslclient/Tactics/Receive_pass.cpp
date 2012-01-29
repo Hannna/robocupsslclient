@@ -7,12 +7,14 @@
 #include "Receive_pass.h"
 #include "../EvaluationModule/EvaluationModule.h"
 #include "../Task/GoToPose.h"
+#include "../Task/GoToBall.h"
 #include "../Task/Rotate.h"
 #include "../Exceptions/SimulationException.h"
 
 
 Receive_pass::Receive_pass(Robot& robot_):Tactic(robot_) {
 	LOG_INFO(log,"Tactic Receive_pass for robot  " <<robot_.getRobotName() );
+	this->active = true;
 
 }
 
@@ -22,75 +24,70 @@ void Receive_pass::execute(void*){
     GameStatePtr gameState ( new GameState() );
     Pose goalPose;
 
-	LOG_INFO(log,"START Tactic Receive_pass for robot  " <<robot.getRobotName() );
-    while( true ){
-	   {
-		   LockGuard l(this->mutex);
-		   if(this->stop)
-			   break;
-	   }
-    	//jesli pilke maja nasi
-    	EvaluationModule::ballState bs = evaluation.getBallState( robot.getRobotID() );
+	LOG_INFO( log,"START Tactic receive pass for robot  " <<robot.getRobotName() );
+    bool passRcv=false;
+	while(!passRcv){
+ 	   {
+ 		   LockGuard l(this->mutex);
+ 		   if(this->stop)
+ 			   break;
+ 	   }
 
-    	if(  bs == EvaluationModule::occupied_our || bs == EvaluationModule::mine ){
-    		//jesli pilke mam ja
-    		//if( evaluation.isRobotOwnedBall(robot) ){
-    		if( bs == EvaluationModule::mine ){
-    			robot.stop();
-    			break;
-    		}
+ 		if( evaluation.getBallState(this->robot.getRobotID()) == EvaluationModule::mine ){
+ 			 passRcv=true;
+ 			 continue;
+ 		}
 
-    	    //Videoserver::getInstance().updateGameState( gameState );
-    		if( Videoserver::getInstance().updateGameState( gameState ) < 0 ){
-        		std::ostringstream s;
-        		s<<__FILE__<<":"<<__LINE__;
-    			throw SimulationException( s.str() );
-    		}
+    	if( Videoserver::getInstance().updateGameState( gameState ) < 0 ){
+    		std::ostringstream s;
+    		s<<__FILE__<<":"<<__LINE__;
+    		throw SimulationException(s.str());
+    	}
 
-    		goalPose = gameState->getBallPos();
+		Task::status taskStatus = Task::not_completed;
+		Task* newTask;
 
-    		Task::status taskStatus = Task::not_completed;
+		this->currentTask = TaskSharedPtr( new GoToBall( &robot  ) );
+		this->currentTask->markParam(Task::analyse_all_field);
 
-    		this->currentTask = TaskSharedPtr( new Rotate( goalPose.getPosition(), &robot  ) );
+		while(taskStatus!=Task::ok){
+			newTask = this->currentTask->nextTask();
 
-			Task* newTask;
-			while(taskStatus!=Task::ok){
-				LockGuard l(this->mutex);
-				if(this->stop)
-					break;
-
-				newTask = this->currentTask->nextTask();
-
-				if(newTask){
-					this->currentTask = TaskSharedPtr( newTask );
-				}
-				int steps=-1;
-				taskStatus = this->currentTask->execute(NULL,steps);
-
-				if( taskStatus == Task::error ){
-					LOG_ERROR(log,"Tactic error taskStatus " <<taskStatus );
-					break;
-				}
-
-				if( taskStatus == Task::collision ){
-					robot.stop();
-					LOG_FATAL(log,"Tactic error taskStatus " <<taskStatus );
-
-					LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
-					robot.stop();
-					LockGuard m(mutex);
-					this->finished = true;
-
-					return;
-				}
+			if(newTask){
+				this->currentTask = TaskSharedPtr( newTask );
 			}
-			//Nie jest potrzebne bo wskaznik jest przechowywany w smartPtr currentTask
-			//if(newTask)
-			//	delete newTask;
+			int steps=1;
+			taskStatus = this->currentTask->execute(NULL,steps);
+
+			if( taskStatus == Task::error ){
+				LOG_ERROR(log,"Tactic error taskStatus " <<taskStatus );
+
+				break;
+			}
+
+			if( taskStatus == Task::collision ){
+				robot.stop();
+				LOG_FATAL(log,"Tactic error taskStatus " <<taskStatus );
+
+				LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
+				robot.stop();
+				LockGuard m(mutex);
+				this->finished = true;
+				pthread_cond_broadcast(&this->finish_cv);
+				return;
+			}
+
+			if( taskStatus == Task::get_ball ){
+				robot.stop();
+				break;
+			}
 		}
-    	//else
-    	//	LOG_FATAL(log,"Nasz zawodnik nie ma pilki" );
     }
+
+	LockGuard m(mutex);
+	this->finished = true;
+	robot.stop();
+	pthread_cond_broadcast(&this->finish_cv);
 }
 
 bool Receive_pass::isFinish(){

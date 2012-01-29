@@ -77,8 +77,10 @@
 namespace Experiments{
 	enum ExperimentKind{
 		none = -1,
-		navigation_2011 = 1,
-		rrtTest = 2
+		rrtTest = 1,
+		navigation_2011 = 2,
+		shootin_passing = 3,
+
 	};
 }
 
@@ -134,15 +136,20 @@ int main(int argc, char*argv[],char *envp[]){
             Config::getInstance().setTestMode(true);
         }
         else if( strncmp(argv[1],"experiment_1",12)==0 ){
-        	experimentKind = Experiments::navigation_2011;
-        	Play::init();
-        }
-        else if( strncmp(argv[1],"experiment_2",12)==0 ){
         	experimentKind = Experiments::rrtTest;
         	std::cout<<" !!!!!@@@@@@@@@@"<<argv[2]<<std::endl;
         	situations = std::string(argv[2]);
         	Play::init();
         }
+        else if( strncmp(argv[1],"experiment_2",12)==0 ){
+        	experimentKind = Experiments::navigation_2011;
+        	Play::init();
+        }
+        else if( strncmp(argv[1],"experiment_3",12)==0 ){
+           	experimentKind = Experiments::shootin_passing;
+           	Play::init();
+        }
+
         if( Config::getInstance().isTestMode( ) && (argc>2) && ( experimentKind == Experiments::none ) ){
             if(strncmp(argv[2],"velocity",8)==0)
                 testKind=Tests::velocity;
@@ -231,6 +238,11 @@ int main(int argc, char*argv[],char *envp[]){
     		config.display();
     		config.doEx();
     	}
+    	else if( experimentKind == Experiments::shootin_passing ){
+    	   //uruchomienie experymentu
+    	   run_experiment_2();
+    	}
+
 
     }
     else if(Config::getInstance().isTestMode()){

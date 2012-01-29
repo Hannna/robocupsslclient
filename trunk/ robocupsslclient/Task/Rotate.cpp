@@ -47,7 +47,7 @@ Task::status Rotate::run(void * arg, int steps){
 			LOG_INFO(log,"move robot from"<<currRobotPose<<" to "<<targetPosition<<" setVel w "<<w<<" angle to target "<<angle);
 
 			if( fabs(w) < 0.1 ){
-				LOG_INFO(this->log,"Rotation OK");
+				LOG_INFO(this->log,"Rotation OK return "<<Task::ok);
 				return Task::ok;
 			}
 			robot->setRelativeSpeed( Vector2D(0,0), w );

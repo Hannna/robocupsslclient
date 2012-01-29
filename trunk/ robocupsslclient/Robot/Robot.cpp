@@ -293,12 +293,13 @@ bool Robot::kickerReady()const{
 	return ready;
 }
 
-bool Robot::kick()const {
+bool Robot::kick( const double force )const {
 	if (!kickerReady()) return false;
+	LOG_INFO(log,"robot "<<this->robotName<<" try to kick with force "<<force);
 #ifdef GAZEBO
 	posIface->Lock(1);
 	//this is never used by other methods, so will be used to fire kicker
-	posIface->data->cmdVelocity.pos.z = 1;
+	posIface->data->cmdVelocity.pos.z = force;
 	posIface->Unlock();
 #endif
 	return true;
@@ -802,6 +803,15 @@ bool Robot::isRed(Robot::robotID id_){
 	else
 		return false;
 }
+
+bool Robot::isRed( ){
+	if( this->id < 0){
+		return true;
+	}
+	else
+		return false;
+}
+
 bool Robot::isBlue(Robot::robotID id_){
 	if(id_ > 0){
 		return true;
@@ -809,6 +819,15 @@ bool Robot::isBlue(Robot::robotID id_){
 	else
 		return false;
 }
+
+bool Robot::isBlue( ){
+	if( this->id > 0 ){
+		return true;
+	}
+	else
+		return false;
+}
+
 Robot::robotID Robot::getRobotID() const {
 	return this->id;
 }
@@ -886,6 +905,7 @@ void Robot::stop(  ){
 			posIface->Lock(1);
 			err=( pow( posIface->data->velocity.pos.x, 2 ) + pow( posIface->data->velocity.pos.y, 2 ) );
 			posIface->data->cmdEnableMotors = 1;
+
 			posIface->Unlock();
 		#endif
 			usleep(10000);
@@ -1281,14 +1301,26 @@ double Robot::calculateVelocity(const double vel, const double currPosition,cons
 		/*else*/ if( fabs(targetPosition-currPosition)<= pow(vel,2)/(2*this->maxDcc)  ){
 			newV=0;
 		}
-		//jesli aktualna predkosci jest wieksza niz max
+		//jesli aktualna predkosc jest wieksza niz max
 		else if(fabs(vel)>Config::getInstance().getRRTMaxVel()){
 			double signum=-1;
 			if(vel>0)
 				signum=1;
 			newV=Config::getInstance().getRRTMaxVel()*signum;
 		}
+
 		else{
+			//28 styczen 2012
+			//rozklad trojkatny
+			double s=fabs(targetPosition - currPosition);
+			double vmax=sqrt( (this->maxAcc*this->maxDcc*s+0.5*pow(vel,2) )*(2.0/3.0) );
+			double v=fmin(vmax,Config::getInstance().getRRTMaxVel());
+			double signum=-1.0;
+			if( targetPosition - currPosition > 0 )
+				signum=1;
+			newV=v*signum;
+			//28 styczen 2012
+			/*
 			//std::cout<<"trapez"<<std::endl;
 			double s=fabs(targetPosition - currPosition);
 			double v=sqrt( (3*this->maxDcc*pow(vel,2)+2*this->maxAcc*this->maxDcc*s)/(this->maxAcc+this->maxDcc));
@@ -1303,7 +1335,7 @@ double Robot::calculateVelocity(const double vel, const double currPosition,cons
 				newV=Config::getInstance().getRRTMaxVel()*signum;
 			}
 			//std::cout<<"newV="<<newV<<std::endl;
-
+			*/
 /*
 			//jesli mozemy rozpedzic sie do predkosci maksymalnej oblicz trapezoidalny rozklad predkosci
 			if(fabs(target-curr)>= pow(Config::getInstance().getRRTMaxVel(),2)/dec ){
@@ -1378,10 +1410,10 @@ Vector2D Robot::calculateVelocity(const Vector2D &currVel,const  Pose & currGlob
 	newVel.x=calculateVelocity(currVel.x, currGlobalPose.get<0>(),targetGlobalPose.get<0>() );
 	newVel.y=calculateVelocity(currVel.y, currGlobalPose.get<1>(),targetGlobalPose.get<1>() );
 
-	double scale = fabs(newVel.x) > fabs(newVel.y) ? fabs(newVel.x) : fabs(newVel.y) ;
+	//double scale = fabs(newVel.x) > fabs(newVel.y) ? fabs(newVel.x) : fabs(newVel.y) ;
 	//17 12 2011 zaremowane
-	if( scale > Config::getInstance().getRRTMaxVel() )
-		scale=Config::getInstance().getRRTMaxVel()/scale;
+	//if( scale > Config::getInstance().getRRTMaxVel() )
+	//	scale=Config::getInstance().getRRTMaxVel()/scale;
 	//Vector2D v=newVel*scale;
 	return newVel;//*scale;
 

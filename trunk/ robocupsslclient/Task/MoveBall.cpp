@@ -53,7 +53,17 @@ Task* MoveBall::nextTask(){
 			//jesli warto strzelic na bramke
 			if( fabs(score) > EvaluationModule::minOpenAngle   ){
 				LOG_INFO(this->log,"MoveBall -> KickBall score "<<score<<"  ang.first"<<ang.first<<" ang.second "<<ang.second );
-				return new KickBall( robot,  convertAnglePI( ang.first + sign*score/2.0 )  ) ;
+				//return new KickBall( robot,  convertAnglePI( ang.first + sign*score/2.0 )  ) ;
+				Pose targetPose;
+				if( this->robot->isBlue() )
+					targetPose = Pose( Videoserver::getBlueGoalMidPosition(), ( ang.first + ang.second )/2.0 );
+
+				if( this->robot->isRed() )
+					targetPose = Pose( Videoserver::getRedGoalMidPosition(), ( ang.first + ang.second ) /2.0 );
+
+				return new KickBall( robot,targetPose);
+
+
 			}
 			else{
 				LOG_INFO(this->log,"MoveBall, change to KickBall not permitted. Score "<<score);

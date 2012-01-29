@@ -90,7 +90,15 @@ Task* GoToPose::nextTask(){
 			//jesli warto strzelic na bramke
 			if( score > EvaluationModule::minOpenAngle ){
 				LOG_INFO(this->log," GoToPose -> KickBall ");
-				return new KickBall( robot, ( ang.first + ang.second )/2  ) ;
+				Pose targetPose;
+				if( this->robot->isBlue() )
+					targetPose = Pose( Videoserver::getBlueGoalMidPosition(), ( ang.first + ang.second )/2.0 );
+
+				if( this->robot->isRed() )
+					targetPose = Pose( Videoserver::getRedGoalMidPosition(), ( ang.first + ang.second ) /2.0 );
+
+				return new KickBall( robot,targetPose);
+				//return new KickBall( robot, ( ang.first + ang.second )/2  ) ;
 			}
 		}
 	}
@@ -102,6 +110,13 @@ Task* GoToPose::nextTask(){
 
 Task::status GoToPose::run(void* arg, int steps){
 	bool obsPredictionEnable=true;
+
+	//jesli jedziemy do pilki ogranicz
+	if( this->predicates & Task::go_to_ball){
+		this->robot->setMaxDcc( Config::getInstance().getRobotDcc()*0.5 );
+	}
+	else
+		this->robot->setMaxDcc( Config::getInstance().getRobotDcc() );
 
 	//pozycja do ktorej ma dojechac robot w kolejnym kroku
 	Pose nextRobotPose;

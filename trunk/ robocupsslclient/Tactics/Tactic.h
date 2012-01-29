@@ -61,6 +61,7 @@ position hcoordinatei hthetai
 #include "../Robot/Robot.h"
 //#include "../Thread/Thread.h"
 #include "../Lock/Lock.h"
+#include "../Plays/Play.h"
 
 
 class EvaluationModule;
@@ -75,8 +76,13 @@ class Tactic //: public Thread
 			} predicate;
 
         Tactic(Robot & robot_);
+
         virtual bool isFinish()=0;
+
         void waitForFinish();
+
+        void reset();
+
         void stopTactic(){
         	LockGuard m(mutex);
         	this->stop = true;
@@ -90,22 +96,30 @@ class Tactic //: public Thread
 
     	void start();
 
+    	bool isActiveTactic(){
+    		LockGuard m(mutex);
+    		return active;
+    	}
+
         virtual ~Tactic();
     protected:
 
-        //Mutex mutex_;
-        bool stop;
         virtual void execute(void*) = 0;
-        EvaluationModule& evaluation;
-        Robot& robot;
-        TaskSharedPtr currentTask;
-        double bestScore;
-        const log4cxx::LoggerPtr log;
-        int predicates;
-        bool finished;
 
-    	Mutex  mutex;
-    	pthread_cond_t finish_cv;
+	EvaluationModule& evaluation;
+	Robot& robot;
+	TaskSharedPtr currentTask;
+	const log4cxx::LoggerPtr log;
+
+	bool stop;
+	double bestScore;
+	int predicates;
+	bool finished;
+	//czy jest to aktywna taktyka
+	bool active;
+
+	Mutex  mutex;
+	pthread_cond_t finish_cv;
 
 };
 

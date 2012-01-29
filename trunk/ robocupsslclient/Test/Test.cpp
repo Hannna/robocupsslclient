@@ -26,6 +26,7 @@
 #include "../Tactics/Pass.h"
 #include "../Plays/ObstaclesPlay.h"
 #include "../Plays/Experiment1.h"
+#include "../Plays/Experiment2.h"
 
 
 const std::string ifaceName="::position_iface";
@@ -800,8 +801,8 @@ void testKick(){
 	Videoserver::getInstance().start(NULL);
 	Videoserver::getInstance().updateGameState(gameState);
 
-    TaskSharedPtr task( new KickBall(&redRobot0, 0) );
-    task->execute( NULL );
+    //TaskSharedPtr task( new KickBall(&redRobot0, 0) );
+    //task->execute( NULL );
 
 #endif
 }
@@ -855,4 +856,44 @@ void run_experiment_1(){
 	redPlay->waitForFinish();
 
 	LOG_INFO(log, "end from experiment 1" );
+}
+
+void run_experiment_2(){
+
+	log4cxx::LoggerPtr log = getLoggerPtr ("app_debug");
+
+	LOG_INFO(log, "starting experiment 1" );
+
+	struct timespec req;
+	req.tv_sec = 0;
+	req.tv_nsec = 10000000;//10ms;
+	struct timespec rem;
+	bzero(&rem, sizeof(rem) );
+
+	while(1){
+		boost::shared_ptr<Play> bluePlay ( new Experiment_2("blue",2 ) );
+
+		bluePlay->execute();
+		bluePlay->waitForFinish();
+	}
+/*
+	GameStatePtr gameState( new GameState() );
+	while( !bluePlay->isFinished() ){
+		//bluePlay->waitForFinish();
+		Videoserver::getInstance().updateGameState( gameState );
+		EvaluationModule::ballState bs = EvaluationModule::getInstance().getBallState(Robot::blue0);
+		if( bs == EvaluationModule::out || bs == EvaluationModule::in_goal ){
+			SimControl::getInstance().setSimPos("ball",Config::getInstance().field.FIELD_MIDDLE_POSE);
+		}
+		sleep(1);
+	}
+	*/
+	LOG_FATAL(log, "blue Play finished" );
+	//redPlay->stop();
+	//redPlay->waitForFinish();
+	//LOG_FATAL(log, "red Play finished" );
+	SimControl::getInstance().restart();
+	SimControl::getInstance().moveBall( Config::getInstance().field.FIELD_MIDDLE_POSE );
+
+	LOG_INFO(log, "end from experiment 2" );
 }

@@ -73,4 +73,6 @@ void testKick();
 
 void run_experiment_1();
 
+void run_experiment_2();
+
 #endif /* TEST_H_ */

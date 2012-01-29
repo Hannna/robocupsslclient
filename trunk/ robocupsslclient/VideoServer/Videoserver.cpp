@@ -85,6 +85,14 @@ double Videoserver::getUpdateDeltaTime()const{
 	return 	updateT;
 }
 
+double Videoserver::getCurrentSimTime( )const{
+	double t;
+	pthread_mutex_lock (&Videoserver::mutex);
+	t=lastUpdateTime;
+	pthread_mutex_unlock (&Videoserver::mutex);
+	return t;
+}
+
 void Videoserver::getSpeeds(std::map<std::string,std::list<Vector2D> >& speeds){
 	pthread_mutex_lock (&Videoserver::mutex);
 	speeds=this->speeds;

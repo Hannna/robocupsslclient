@@ -17,8 +17,8 @@ public:
     /*@brief kopnij pilke w zadanym kierunku
     *
     */
-	KickBall(Robot * robot, double rotation);
-	KickBall( Robot * robot );
+	KickBall( Robot * robot, const Pose targetPose );
+	//KickBall( Robot * robot );
 	Task* nextTask();
 	//TaskSharedPtr& nextTask();
 	virtual ~KickBall();
@@ -30,6 +30,8 @@ protected:
 	const double rotation;
 	virtual Task::status run(void*, int steps=-1);
 	double calculateAngularVel2(const Pose & currRobotPose, const double goalRotation);
+
+	const Pose targetPose;
 
 
 };
