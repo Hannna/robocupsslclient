@@ -28,7 +28,8 @@ Task* MoveBall::nextTask(){
 		//jesli ustawiono flage zezwalajaca na strzal
 		if( (this->predicates & Task::kick_if_we_can) > 0){
 			//oblicz czy wato strzelic na bramke
-			std::pair<double,double> ang=evaluationModule.aimAtGoal( robot->getRobotName() );
+		    double angleToGoal=0;
+		    std::pair<double, double> ang=this->evaluationModule.aimAtGoal(robot->getRobotName(),angleToGoal);
 
 			//double score = fabs( ang.first - ang.second );
 			double score;
@@ -48,7 +49,7 @@ Task* MoveBall::nextTask(){
 			}
 			//( (ang.first * ang.second) > 0.0 ) ?  ang.second - ang.first   : fabs( fabs(ang.second )  + M_PI- fabs( ang.first)   );
 
-			//LOG_INFO(log, "current position score = "<<score<<" ang.first "<<ang.first<<" ang.second "<<ang.second );
+			LOG_INFO(log, "current position score = "<<score<<" ang.first "<<ang.first<<" ang.second "<<ang.second );
 
 			//jesli warto strzelic na bramke
 			if( fabs(score) > EvaluationModule::minOpenAngle   ){

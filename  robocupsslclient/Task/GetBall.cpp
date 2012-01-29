@@ -112,7 +112,7 @@ Task::status GetBall::run(void * arg, int steps){
 				// ten kawalek kodu wyznacza kat o jaki robot musi sie obrocic zeby byc skierowanym na cel
 
 				//Pose ballPose( ballPos,0 );
-				ballPose = Pose(ballPose.getPosition() + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) ),0);
+				ballPose = Pose(ballPose.getPosition() + ( this->currGameState->getBallGlobalVelocity() * 2.0* Videoserver::getInstance().getUpdateDeltaTime( ) ),0);
 				//ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
 
 				ballPos = ballPose.getPosition();

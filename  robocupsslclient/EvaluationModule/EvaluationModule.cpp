@@ -287,7 +287,7 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bo
 	if( ballState_ != EvaluationModule::out){
 		ballState_ = EvaluationModule::out;
 		this->positionForThrowIn = ballPose.getPosition();
-		 LOG_INFO( log,"!!!!!!!!!!!!!this->positionForThrowIn "<<this->positionForThrowIn);
+		//LOG_INFO( log,"!!!!!!!!!!!!!this->positionForThrowIn "<<this->positionForThrowIn);
 	}
 	return EvaluationModule::out;
 }
@@ -484,7 +484,7 @@ bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
 /*
 *@ zwraca najwiekszy otwarty kat prowadzacy do celu
 */
-std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName){
+std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName, double& angleToShoot){
 	//SimControl::getInstance().pause();
 
 	GameStatePtr currGameState( new GameState() );
@@ -507,9 +507,9 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
      */
     //wersor osi oy
     Vector2D oy(0,1);
-    double alfa1;
-    double alfa2;
-    double dist;
+    double alfa1=0;
+    double alfa2=0;
+    double dist=0;
     double additionalRotation = 0;
 
     double realMinAng;
@@ -609,16 +609,20 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 	    Vector2D v2 = Videoserver::getRedGoalRightCornerPosition() - robotPose.getPosition();
 
 	    additionalRotation = -M_PI;
-	    LOG_INFO( log," for robot "<<robotName<<" v1 "<<v1<<" v2 "<<v2 );
+	    LOG_INFO( log," for robot "<<robotName<<" v1 "<<v1<<" v2 "<<v2<<" angle between "<<v1.angleTo(v2) );
 
 
-    	alfa1 = v1.angleTo(oy);
-	    alfa2 = v2.angleTo(oy);
+    	//alfa1 = v1.angleTo(oy);
+	    //alfa2 = v2.angleTo(oy);
+	    Pose p1(Videoserver::getRedGoalLeftCornerPosition(),0);
+	    Pose p2(Videoserver::getRedGoalRightCornerPosition(),0);
+	    alfa1 = calculateProperAngleToTarget( robotPose,p1 );
+	    alfa2 = calculateProperAngleToTarget( robotPose,p2 );
 
 	    double tmp2 = alfa2;
 	  	double tmp1 = alfa1;
 
-        LOG_DEBUG( log,"dist to goal "<<dist<<" open angle to the red goal min "<<alfa1<<" max "<<alfa2 );
+        LOG_INFO( log,"dist to goal "<<dist<<" open angle to the red goal min "<<alfa1<<" max "<<alfa2 );
 
 	    realMinAng = alfa1 < alfa2 ? alfa1 : alfa2;
 	    realMaxAng = alfa1 > alfa2 ? alfa1 : alfa2;
@@ -745,6 +749,25 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 
     //SimControl::getInstance().resume();
     LOG_INFO(log, "exit from aimToGoal ang min "<<alfamin<<" ang max "<<alfamax  );
+
+	double score = 0;
+	double sign = 1.0;
+
+	if( alfamin * alfamax > 0.0  ){
+		score = alfamax - alfamin;
+	}
+	else{
+		if( fabs( alfamax )  + fabs( alfamin ) > M_PI ){
+			score = fabs( M_PI - fabs( alfamax )  + M_PI- fabs( alfamin ) );
+			sign = -1;
+		}
+		else{
+			score = fabs( alfamax )  + fabs( alfamin );
+		}
+	}
+
+	angleToShoot = alfamin + sign*score/2.0;
+
     return std::pair<double,double>( alfamin , alfamax );
 }
 
@@ -916,7 +939,7 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 void EvaluationModule::test(Pose currRobotPose,Pose targetPosition){
 	//findObstacleCoverAngles(currRobotPose,targetPosition);
 	const std::string robotName("red0");
-	aimAtGoal(robotName);
+	//aimAtGoal(robotName);
 
 }
 

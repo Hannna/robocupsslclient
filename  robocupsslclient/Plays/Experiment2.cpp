@@ -14,6 +14,7 @@
 #include "../Tactics/Receive_pass.h"
 #include "../Tactics/PositionToPass.h"
 #include "../Tactics/Pass.h"
+#include "../Tactics/ShootTactic.h"
 
 Experiment_2::Experiment_2( std::string teamColor, const int nrOfROles): Play( teamColor, nrOfROles ) {
 	// TODO Auto-generated constructor stub
@@ -51,7 +52,7 @@ void Experiment_2::execute( ){
 
 	//rola 1 jazda wzdluz linii w gore
 	RoleIterator ii = this->roles.begin();
-
+	ii->second->addTactic( new ShootTactic( ii->second->getRobot()) );
 	ii->second->addTactic( new Receive_pass( ii->second->getRobot()) );
 	ii->second->addTactic( new PositionToPass( ii->second->getRobot()) );
 	ii->second->execute();
