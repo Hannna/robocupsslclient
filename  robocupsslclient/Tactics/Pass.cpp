@@ -13,6 +13,7 @@
 
 Pass::Pass( Robot& robot_, const Robot::robotID targetRobotID_ ): Tactic(robot_),targetRobotID(targetRobotID_) {
 	LOG_INFO(log,"Tactic pass for robot  " <<robot_.getRobotName()<<" to robot "<<targetRobotID_ );
+	this->active = true;
 
 }
 
@@ -39,9 +40,11 @@ void Pass::execute(void*){
 		Task::status taskStatus = Task::not_completed;
 		Task* newTask;
 
+		double rotationToTarget = 0;
 		if( evaluation.isRobotOwnedBall(robot) ){
-			if( evaluation.aimAtTeamMate( robot.getRobotID(), targetRobotID ) > 0.5 ){
-				this->currentTask = TaskSharedPtr( new KickBall( &robot ) );
+			if( evaluation.aimAtTeamMate( robot.getRobotID(), targetRobotID, &rotationToTarget ) > 0.5 ){
+				Pose target = Pose( gameState->getRobotPos( targetRobotID ).getPosition(),rotationToTarget) ;
+				this->currentTask = TaskSharedPtr( new KickBall( &robot, target ) );
 			}
 			else{
 				LOG_INFO(log," aim at team mate return "<< evaluation.aimAtTeamMate( robot.getRobotID(), targetRobotID ) );
@@ -76,21 +79,22 @@ void Pass::execute(void*){
 
 				LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
 				robot.stop();
-				LockGuard m(mutex);
-				this->finished = true;
-
-				return;
+				//LockGuard m(mutex);
+				//this->finished = true;
+				//pthread_cond_broadcast(&this->finish_cv);
+				//return;
+				break;
 			}
 
 			if( taskStatus == Task::kick_ok ){
 				robot.stop();
-				LOG_FATAL(log,"Tactic error taskStatus " <<taskStatus );
+				LOG_FATAL(log,"Tactic taskStatus " <<taskStatus );
 
 				LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
 				robot.stop();
 				LockGuard m(mutex);
 				this->finished = true;
-
+				pthread_cond_broadcast(&this->finish_cv);
 				return;
 			}
 
@@ -100,6 +104,10 @@ void Pass::execute(void*){
 			}
 		}
 	}
+
+	LockGuard m(mutex);
+	this->finished = true;
+	pthread_cond_broadcast(&this->finish_cv);
 }
 
 bool Pass::isFinish(){

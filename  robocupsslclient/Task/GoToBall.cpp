@@ -14,6 +14,8 @@ GoToBall::GoToBall(Robot * robot_):Task(robot_) {
 	this->ballPose = this->currGameState->getBallPos();
 	this->goToPose =  new GoToPose( this->ballPose.getPosition(), robot);
 
+	this->goToPose->markParam(Task::go_to_ball);
+
 	LOG_INFO(log, "create GetBall task for "<<robot->getRobotName() );
 
 }
@@ -32,13 +34,13 @@ Task* GoToBall::nextTask(){
 	}
 
 	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::mine ){
-		LOG_INFO(log,"i've got the ball. GoToBall -> kickBall");
+		//LOG_INFO(log,"i've got the ball. GoToBall -> kickBall");
 		//Pose nextBallPose = ballPose + ( this->currGameState->getBallGlobalVelocity()*10.0*this->video.getUpdateDeltaTime() );
 		//double dist = ballPose.distance( this->currGameState->getRobotPos( robot->getRobotID()) );
 		//jesli pilka jest bliska to chwyc ja
 		//if( dist  <= GetBall::maxDistanceToBall ){
-		LOG_INFO(log,"change GoToBall -> GetBall");
-		return new GetBall(robot);
+		//LOG_INFO(log,"change GoToBall -> GetBall");
+		return NULL;//new GetBall(robot);
 		//}
 
 		//return NULL;
@@ -69,6 +71,11 @@ Task* GoToBall::nextTask(){
 
 Task::status GoToBall::run(void * arg, int steps){
 
+
+	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::mine ){
+		return Task::ok;
+	}
+
 	this->video.updateGameState( this->currGameState );
 
 	//jesli pilka jest na oucie to czekaj
@@ -86,9 +93,9 @@ Task::status GoToBall::run(void * arg, int steps){
 		ballPose = this->currGameState->getBallPos();
 		//LOG_FATAL(log, "ballPos "<<ballPos<<" ballPos with prediction ");
 		Vector2D ballPos = this->currGameState->getBallPos().getPosition();
-		ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
+		ballPos = ballPos + ( this->currGameState->getBallGlobalVelocity() * 2.0* Videoserver::getInstance().getUpdateDeltaTime( ) );
 
-		LOG_FATAL(log, " ballPos "<<this->currGameState->getBallPos().getPosition()<<" ballPos with prediction "<<ballPos );
+		LOG_FATAL(log, " ballPos "<<this->currGameState->getBallPos().getPosition()<<" ball velocity "<<this->currGameState->getBallGlobalVelocity()<<" ballPos with prediction "<<ballPos );
 
 		if( ( this->predicates & Task::analyse_all_field ) > 0){
 			if( this->goToPose )

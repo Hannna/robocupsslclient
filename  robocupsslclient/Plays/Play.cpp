@@ -28,7 +28,7 @@ std::map<int, Robot*> Play::blueTeam;
 
 Play::Play(std::string teamColor, const int nrOfROles): appConfig( Config::getInstance() ), log( getLoggerPtr ( "app_debug" ) )
 {
-
+	//predicates=0;
 	this->teamColor = teamColor;
 
 	if( teamColor.compare("red") == 0 ){
@@ -103,7 +103,19 @@ void Play::halt(){
 	roles[2]->getRobotPtr()->stop();
 	//role3->getRobot()->stop();
 }
+/*
+void Play::markParam(predicate p){
+	LockGuard l(mutex);
+	this->predicates |=p;
 
+}
+
+void Play::unmarkParam(predicate p){
+	LockGuard l(mutex);
+	this->predicates &= ~p;
+
+}
+*/
 bool Play::isFinished(){
 	return false;
 }

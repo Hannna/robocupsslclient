@@ -38,7 +38,7 @@ EvaluationModule::EvaluationModule():video(Videoserver::getInstance()), appConfi
 
 }
 
-score EvaluationModule::aimAtTeamMate(Robot::robotID shootingRobotID, Robot::robotID goalRobotID){
+score EvaluationModule::aimAtTeamMate(Robot::robotID shootingRobotID, Robot::robotID goalRobotID, double * rotationToTarget){
 	GameStatePtr gameState( new GameState() );
 
 	if( video.updateGameState( gameState ) < 0){
@@ -57,14 +57,22 @@ score EvaluationModule::aimAtTeamMate(Robot::robotID shootingRobotID, Robot::rob
 
 	Pose recvPassRelPos = goalRobotPose.transform( shootingRobotPose.getPosition() , rm );
 
+	if( rotationToTarget )
+		*rotationToTarget = calculateProperAngleToTarget( shootingRobotPose, goalRobotPose );
+
+
+
 	//jesli wsp x jest bliska 0 i roboty maja przeciwna rotace to mozna zrealizowac podanie
 	if( pow(recvPassRelPos.get<0>(),2) < 0.05 ){
 		//roboty maja rotacje odpowiednia do siebie gdy roznica jest rowna -M_PI
-		double deviation = pow(  fabs( shootingRobotPose.get<2>() - goalRobotPose.get<2>() )  - M_PI, 2 ) ;
-		if( deviation < 0.05   ){
+		//double deviation = pow(  fabs( shootingRobotPose.get<2>() - goalRobotPose.get<2>() )  - M_PI, 2 ) ;
+		double deviation = fabs( shootingRobotPose.get<2>() - goalRobotPose.get<2>() )  - M_PI ;
+
+
+		if( deviation < 0.05   ){// 2 stopnie
 			LOG_DEBUG( log," mozna podac deviation="<<deviation );
 			//std::cout<<" mozna podac deviation="<<deviation<<std::endl;
-			score_ = 1.0 -deviation;
+			score_ = 1.0 - deviation;
 		}
 		else{
 			LOG_INFO(log, "deviation "<<deviation );
@@ -332,6 +340,7 @@ bool EvaluationModule::isRobotOwnedBall(const Robot::robotID & robotId){
 	double distanceToBall;
 	double angleToBall;
     GameStatePtr currGameState(new GameState());
+    currGameState->setSimTime( video.getCurrentSimTime() );
 
 	if( video.updateGameState(currGameState) < 0 ){
 		std::ostringstream s;

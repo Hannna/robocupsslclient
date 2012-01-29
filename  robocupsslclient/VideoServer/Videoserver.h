@@ -59,6 +59,8 @@ public:
 	 */
 	double getUpdateDeltaTime() const;
 
+	double getCurrentSimTime( ) const;
+
 	void getSpeeds(std::map<std::string,std::list<Vector2D> >& speeds);
 	/**
 	@brief rejestruje dany interfejs robota

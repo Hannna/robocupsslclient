@@ -32,6 +32,12 @@ class Role;
 
 class Play
 {
+	typedef
+		enum predicate_{
+			null = 0x00,
+			pass_was_done = 0x01,
+		} predicate;
+
     public:
 		typedef std::map<int, Role*>::iterator RoleIterator;
 
@@ -62,6 +68,19 @@ class Play
          */
         virtual void stop()=0;
 
+        virtual void updateState(){
+
+        };
+
+    	/*@brief ustawia dany parametr
+    	 *
+    	 */
+    	//void markParam(predicate p);
+    	/*@brief zdejmuje dany parametr
+    	 *
+    	*/
+    	//void unmarkParam(predicate p);
+
         Config & appConfig;
         static void init();
         static void free();
@@ -74,6 +93,8 @@ class Play
 
     static std::map<int, Robot*> redTeam;
     static std::map<int, Robot*> blueTeam;
+  	Mutex  mutex;
+	//int predicates;
 
 };
 

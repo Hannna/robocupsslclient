@@ -47,7 +47,7 @@ public:
      /*@brief zwraca przedzial kata x=min;y=max
       *
       */
-     score aimAtTeamMate(Robot::robotID myRobotID, Robot::robotID goalRobotID);
+     score aimAtTeamMate( Robot::robotID myRobotID, Robot::robotID goalRobotID, double * rotationToTarget = NULL );
 
      ballState getBallState(Robot::robotID, bool * iAmCloserToBall = NULL);
 
@@ -58,7 +58,6 @@ public:
      Pose findBestDribbleTarget();
 
      //bool haveBall_1( const Robot & robot);
-
 
      bool isRobotOwnedBall(const Robot::robotID & robotId);
 

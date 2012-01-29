@@ -67,6 +67,40 @@ void Role::addTactic( Tactic * tactic){
 	tactics.push_front(tactic);
 }
 
+void Role::executeNextTactic(){
+	LockGuard lock(mutex);
+	std::cout<<"executeNextTactic for "<<this->robot->getRobotName()<<std::endl;
+	LOG_INFO(log,"executeNextTactic for "<<this->robot->getRobotName());
+
+	(*this->currentTacticIter)->stopTactic();
+	LOG_INFO(log,"tactic is going to stop for "<<this->robot->getRobotName());
+
+	(*this->currentTacticIter)->waitForFinish();
+	LOG_INFO(log,"tactic is finished for "<<this->robot->getRobotName());
+	(*this->currentTacticIter)->reset( );
+
+	if( !tactics.empty() ){
+		if( currentTacticIter!=tactics.end() ){
+			currentTacticIter++;
+			LOG_INFO(log,"go to next tactic for "<<this->robot->getRobotName());
+		}
+		else{
+			currentTactic = NULL;
+			return;
+		}
+
+	}
+
+	if( currentTacticIter!=tactics.end() ){
+		currentTactic = *currentTacticIter;
+		if( currentTactic ){
+			//currentTactic->reset();
+			currentTactic->start( );
+		}
+	}
+
+}
+
 size_t Role::getTacticsSize(){
 	if(this->currentTactic)
 	 return this->tactics.size() + 1;
@@ -77,7 +111,8 @@ void Role::execute(){
 	LockGuard lock(mutex);
 	if( !tactics.empty() ){
 		currentTactic = tactics.front();
-		tactics.pop_front();
+		currentTacticIter = tactics.begin();
+		//tactics.pop_front();
 	}
 
 	if( currentTactic )

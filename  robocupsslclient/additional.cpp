@@ -185,6 +185,14 @@ double calculateAngleToTarget(const Pose &currRobotPose,const Pose &targetPose )
 	//const double angle = eb.angleTo( oy );
 	return convertAnglePI(atan2(targetRelativePose.get<1>(),targetRelativePose.get<0>()) -M_PI/2.0);
 }
+
+double calculateProperAngleToTarget(const Pose &currRobotPose,const Pose &targetPose ){
+	const double robotRotation = currRobotPose.get<2>();
+	RotationMatrix rm0(0);
+	//pozycja celu w ukladzie wsp zw z robotem
+	Pose targetRelativePose = targetPose.transform( currRobotPose.getPosition() , rm0);
+	return convertAnglePI(atan2(targetRelativePose.get<1>(),targetRelativePose.get<0>()) -M_PI/2.0);
+}
 double sgn(double d){
 	if (d > 0) return 1.0;
 	if (d == 0) return 0.0;

@@ -72,8 +72,12 @@ public:
 	std::string getRobotName() const ;
 	robotID getRobotID() const;
 	static robotID getRobotID(const std::string & robotName);
+
 	static bool isRed(robotID id);
+	bool isRed( );
+
 	static bool isBlue(robotID id);
+	bool isBlue( );
 
 	static std::list<robotID> getAllRobots();
 	static std::list<robotID> getBlueTeam();
@@ -104,7 +108,7 @@ public:
 	std::pair<Vector2D,double> getDesiredVel() const;
 	/// zwraca aktualnie  predkosci z jakimi faktycznie porusza sie robot robota first = V  second = w
 	std::pair<Vector2D,double> getGlobalVelocity() const;
-	bool kick() const ;
+	bool kick( const double force ) const ;
 	bool kickerReady()const;
 	/// double dist wymagana odleglosc od przeszkody
 	bool disperse( const double dist );
@@ -133,7 +137,9 @@ public:
 	 */
 	Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose);
 
-
+	void setMaxDcc( const double dcc ){
+		this->maxDcc = dcc;
+	}
 private :
 	bool navigateToPose( const double dist, const Vector2D* goalPose, const bool onlyDisperse = false );
 	double calculateVelocity(const double vel, const double currPosition,const  double targetPosition);
@@ -152,8 +158,8 @@ private :
 	///nazwa interfejsu do pobierania pozycji
 	std::string posIfaceName;
 	const log4cxx::LoggerPtr log;
-	const double maxAcc;
-	const double maxDcc;
+	double maxAcc;
+	double maxDcc;
 	///pozycje dlugofalowe ustalane przez stratega
 	//Vector2D goTo;
 #ifdef GAZEBO

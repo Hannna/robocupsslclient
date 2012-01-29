@@ -9,16 +9,16 @@
 #include "GoToBall.h"
 
 
-KickBall::KickBall(Robot * robot_, double rotation_): Task(robot_), kickNow(false), rotation(rotation_) {
-	LOG_INFO(log," Create KickBall task. Angle to shoot "<<rotation_);
+KickBall::KickBall(Robot * robot_, const Pose targetPose_): Task(robot_), kickNow(false), rotation( targetPose_.get<2>( ) ), targetPose(targetPose_) {
+	LOG_INFO(log," Create KickBall task. Angle to shoot "<<rotation);
 
 }
-
+/*
 KickBall::KickBall(Robot * robot_): Task(robot_), kickNow(true),rotation(0) {
 	LOG_INFO(log," Create KickBall task. Shoot now");
 
 }
-
+*/
 Task* KickBall::nextTask(){
 
 	//jesli pilka jest za daleko to podjedz do pilku
@@ -159,12 +159,20 @@ Task::status KickBall::run(void * arg, int steps ){
     	else if( this->kickNow ){
     		LOG_INFO(log,"kick now set. Try to kick ball.");
     	}
-    	this->robot->kick();
+    	double maxForce = 30.0;
+    	double dist = currPose.distance( this->targetPose );
+    	LOG_INFO(log,"dist to target "<< dist);
+    	double force = dist*maxForce/4.0;
+    	this->robot->kick( force );
 
-    	if( this->evaluationModule.isRobotOwnedBall( this->robot->getRobotID() ) )
+    	if( this->evaluationModule.isRobotOwnedBall( this->robot->getRobotID() ) ){
+     		LOG_INFO(log,"Robot still have ball");
     		return Task::not_completed;
-    	else
+    	}
+    	else{
+    		LOG_INFO(log,"Was ball kicked");
     		return Task::kick_ok;
+    	}
     }
     else
     	return Task::not_completed;

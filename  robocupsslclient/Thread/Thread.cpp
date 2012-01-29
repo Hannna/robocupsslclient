@@ -7,7 +7,8 @@ Thread::Thread() {
 	joined = false;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-	stopTask_ = true;
+    pthread_cond_init (&change_tactic_cv, NULL);
+	//stopTask_ = true;
 	stopThread_ = false;
 	arg_ = NULL;
 }
@@ -40,15 +41,19 @@ int Thread::run(void * arg_)
 		}
 		if(!tactic){
 			std::cout<<" tactic is null "<<std::endl;
-			sleep(1);
+			usleep(10);
 			//continue;
 		}
 		else if(!tactic->isFinish()){
+			LockGuard ll(changeTacticmutex);
 			std::cout<<" start tactic "<<std::endl;
 			( tactic->*((this)->taskPtr) )(NULL);
 
-			LockGuard l( mutex );
-			this->arg_=NULL;
+			{
+				LockGuard l( mutex );
+				this->arg_=NULL;
+			}
+			pthread_cond_wait(&change_tactic_cv,changeTacticmutex.get());
 		}
 
 		{

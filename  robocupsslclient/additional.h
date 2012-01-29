@@ -222,8 +222,20 @@ double convertAnglePI(double angle);
 ///@return kąt w radianach z przedziału 0..+2*M_PI
 double convertAngle2PI(double angle);
 
+//oblicza jaka rotacje musi miec robot aby byc skierowanym na cel
+double calculateProperAngleToTarget(const Pose &currRobotPose,const Pose &targetPose );
+
 //oblicza kat o jaki trzeba sie obrocic do celu
 double calculateAngleToTarget( const Pose &currRobotPose,const Pose &targetPose );
+
+/*
+Pose transformCoordinatesToRobot(currRobotPose){
+	currRobotPose=(*currGameState).getRobotPos( robot->getRobotID() );
+		robotRotation = currRobotPose.get<2>();
+		rm = RotationMatrix(robotRotation);
+		t = nextRobotPose.transform( currRobotPose.getPosition() , rm);
+}
+*/
 
 template <class T>
 double euclideanNorm(T t1, T t2 ){

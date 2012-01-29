@@ -23,21 +23,23 @@ class Thread
          	stopThread_ = true;
          }
 
-        void stopTask(){
-        	LockGuard l(mutex);
-        	stopTask_ = true;
-        }
+        //void stopTask(){
+        //	LockGuard l(mutex);
+        //	stopTask_ = true;
+        //}
         void setThreadFunc( ThreadTaskPtr taskPtr_, Tactic * ptr){
+        	LockGuard ll(changeTacticmutex);
         	std::cout<<" set thread func 1"<<std::endl;
         	LockGuard l(mutex);
         	taskPtr = taskPtr_;
         	arg( (void *) ptr );
         	std::cout<<" set thread func 2"<<std::endl;
+        	pthread_cond_signal(&change_tactic_cv);
         }
-        void startTask(){
+        /*void startTask(){
         	LockGuard l(mutex);
             stopTask_ = false;
-        }
+        }*/
         void killThread();
         void join();
 
@@ -63,8 +65,10 @@ class Thread
       ThreadTaskPtr taskPtr;
       THREADID threadId_;
       Mutex mutex;
+      Mutex changeTacticmutex;
+      pthread_cond_t change_tactic_cv;
       bool stopThread_;
-      bool stopTask_;
+     // bool stopTask_;
       pthread_attr_t attr;
       bool joined;
       void * arg_;
