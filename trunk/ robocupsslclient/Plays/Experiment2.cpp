@@ -27,20 +27,24 @@ void Experiment_2::updateState( ){
 	bool changeTactics = false;
 
 	for(;ii != this->roles.end();ii++ ){
-		if( ii->second->getCurrentTactic()->isActiveTactic() ){
-			if( ii->second->getCurrentTactic()->isFinish( ) ){
-				changeTactics = true;
-				std::cout<<"changeTactics"<<std::endl;
+		if(ii->second->getCurrentTactic()){
+			if( ii->second->getCurrentTactic()->isActiveTactic() ){
+				if( ii->second->getCurrentTactic()->isFinish( ) ){
+					changeTactics = true;
+					//std::cout<<"changeTactics"<<std::endl;
+				}
 			}
 		}
 	}
 	if(changeTactics){
+		LOG_TRACE(log,"active tactic finished, change tactics");
 		ii = this->roles.begin();
 		for(;ii != this->roles.end();ii++ ){
-			std::cout<<"executeNextTactic"<<std::endl;
+			//std::cout<<"executeNextTactic"<<std::endl;
 			ii->second->executeNextTactic();
 		}
 	}
+	//LOG_INFO(log,"exit from updateState");
 }
 
 void Experiment_2::execute( ){
@@ -61,15 +65,6 @@ void Experiment_2::execute( ){
 	ii++;
 	ii->second->addTactic( new Pass(ii->second->getRobot(), recvID ) );
 	ii->second->execute();
-
-
-	while(true){
-		updateState( );
-	}
-	//receive_pass->stopTactic();
-	//receive_pass->waitForFinish();
-
-
 }
 
 void Experiment_2::stop(){
@@ -85,10 +80,8 @@ void Experiment_2::waitForFinish( ){
 
 	Play::RoleIterator ii = this->roles.begin();
 	for(;ii != this->roles.end();ii++ ){
-		if( ii->second->getCurrentTactic() )
-			while( !ii->second->getCurrentTactic()->isFinish() ){
+			while( !ii->second->isFinished() ){
 				usleep(100);
-
 			}
 	}
 	LOG_INFO(log,"all Roles finished  " <<this->teamColor);
@@ -101,10 +94,10 @@ void Experiment_2::reset(){
 bool Experiment_2::isFinished( ){
 	Play::RoleIterator ii = this->roles.begin();
 	for(;ii != this->roles.end();ii++ ){
-		if( ii->second->getCurrentTactic() )
-			if( !ii->second->getCurrentTactic()->isFinish() ){
+		if( !ii->second->isFinished() ){
+			//LOG_INFO(log," role for robot "<<ii->second->getRobot().getRobotName()<<" not finished");
 				return false;
-			}
+		}
 	}
 	return true;
 }

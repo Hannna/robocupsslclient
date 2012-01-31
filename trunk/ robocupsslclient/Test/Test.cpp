@@ -870,30 +870,23 @@ void run_experiment_2(){
 	struct timespec rem;
 	bzero(&rem, sizeof(rem) );
 
-	while(1){
+	while(true){
+		Vector2D v( Config::getInstance().field.FIELD_MARIGIN*2.0,Config::getInstance().field.FIELD_MARIGIN*2.0);
+
+		//Config::getInstance().field.
+		SimControl::getInstance().moveBall( Pose( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER-v,0) );
 		boost::shared_ptr<Play> bluePlay ( new Experiment_2("blue",2 ) );
 
 		bluePlay->execute();
-		bluePlay->waitForFinish();
-	}
-/*
-	GameStatePtr gameState( new GameState() );
-	while( !bluePlay->isFinished() ){
-		//bluePlay->waitForFinish();
-		Videoserver::getInstance().updateGameState( gameState );
-		EvaluationModule::ballState bs = EvaluationModule::getInstance().getBallState(Robot::blue0);
-		if( bs == EvaluationModule::out || bs == EvaluationModule::in_goal ){
-			SimControl::getInstance().setSimPos("ball",Config::getInstance().field.FIELD_MIDDLE_POSE);
-		}
-		sleep(1);
-	}
-	*/
-	LOG_FATAL(log, "blue Play finished" );
-	//redPlay->stop();
-	//redPlay->waitForFinish();
-	//LOG_FATAL(log, "red Play finished" );
-	SimControl::getInstance().restart();
-	SimControl::getInstance().moveBall( Config::getInstance().field.FIELD_MIDDLE_POSE );
 
+		while( !bluePlay->isFinished() ){
+			bluePlay->updateState( );
+			usleep(1000);
+		}
+		sleep(2);
+		//bluePlay->waitForFinish();
+		LOG_FATAL(log, "blue Play finished" );
+	}
+	//SimControl::getInstance().restart();
 	LOG_INFO(log, "end from experiment 2" );
 }

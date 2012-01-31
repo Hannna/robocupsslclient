@@ -40,8 +40,8 @@ int Thread::run(void * arg_)
 			tactic = (Tactic*)this->arg_;
 		}
 		if(!tactic){
-			std::cout<<" tactic is null "<<std::endl;
-			usleep(10);
+			//std::cout<<" tactic is null "<<std::endl;
+			usleep(100);
 			//continue;
 		}
 		else if(!tactic->isFinish()){

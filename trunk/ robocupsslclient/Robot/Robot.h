@@ -55,13 +55,13 @@ public:
 		red6 = -1,
 		unknown = 0,
 		blue0 = 1,
-		blue1,
-		blue2,
-		blue3,
-		blue4,
-		blue5,
-		blue6,
-		blue
+		blue1 = 2,
+		blue2 = 3,
+		blue3 = 4,
+		blue4 = 5,
+		blue5 = 6,
+		blue6 = 7,
+		blue = 8
 	};
 
 	Robot(const std::string robotName,const std::string posIfaceName);

@@ -39,10 +39,12 @@ public:
     public:
      static EvaluationModule & getInstance();
 
-     score aimAtGoal(const GameStatePtr & gameState, std::string robotName);
+     score aimAtGoal(const GameStatePtr & gameState, std::string robotName) const;
      /*@brief zwraca przedzial kata x=min;y=max
      */
-     std::pair<double, double> aimAtGoal(const std::string& robotName,double& angleToShoot);
+     std::pair<double, double> aimAtGoal(const std::string& robotName,double& angleToShoot,double & score) const;
+
+     std::pair<double, double> aimAtGoal(const GameStatePtr & gameState,const std::string& robotName,double& angleToShoot,double & score) const;
 
      /*@brief zwraca przedzial kata x=min;y=max
       *
@@ -55,7 +57,7 @@ public:
     	 return Pose(this->positionForThrowIn,0);
      }
 
-     Pose findBestDribbleTarget();
+     Pose findBestDribbleTarget(const std::string robotName,Robot::robotID rid);
 
      //bool haveBall_1( const Robot & robot);
 
@@ -88,8 +90,8 @@ public:
         /*@brief dla zadanej przeszkody znajduje przedział katowy z nia zwiazany
          *  jesli przeszkoda znajduje sie za robotem zwraca std::pair(-INF, -INF)
          */
-        Set findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition, double rotation);
-        bool addToList(Set &set,std::list<Set> &sets);
+        Set findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition, double rotation) const;
+        bool addToList(Set &set,std::list<Set> &sets) const;
 };
 
 std::ostream & operator<<(std::ostream & os, const EvaluationModule::ballState & bState );

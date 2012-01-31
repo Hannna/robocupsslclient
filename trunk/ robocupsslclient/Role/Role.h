@@ -43,6 +43,11 @@ public:
 
 	void executeNextTactic();
 
+	bool isFinished(){
+		LockGuard lock(mutex);
+		return finished;
+	}
+
 	virtual ~Role();
 
 private:
@@ -53,6 +58,7 @@ private:
 	Tactic* currentTactic;
 	TacticIterator currentTacticIter;
 	log4cxx::LoggerPtr log;
+	bool finished;
 };
 
 #endif /* ROLE_H_ */

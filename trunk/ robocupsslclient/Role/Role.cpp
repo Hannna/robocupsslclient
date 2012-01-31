@@ -16,6 +16,7 @@
 Role::Role( Robot* robot_ ): log( getLoggerPtr( robot_!=NULL ? robot_->getRobotName().c_str() : "app_debug" ) ) {
 	this->robot = robot_;
 	currentTactic = NULL;
+	this->finished = false;
 }
 
 void Role::stop( ) {
@@ -69,23 +70,25 @@ void Role::addTactic( Tactic * tactic){
 
 void Role::executeNextTactic(){
 	LockGuard lock(mutex);
-	std::cout<<"executeNextTactic for "<<this->robot->getRobotName()<<std::endl;
+	//std::cout<<"executeNextTactic for "<<this->robot->getRobotName()<<std::endl;
 	LOG_INFO(log,"executeNextTactic for "<<this->robot->getRobotName());
-
-	(*this->currentTacticIter)->stopTactic();
-	LOG_INFO(log,"tactic is going to stop for "<<this->robot->getRobotName());
-
-	(*this->currentTacticIter)->waitForFinish();
-	LOG_INFO(log,"tactic is finished for "<<this->robot->getRobotName());
-	(*this->currentTacticIter)->reset( );
 
 	if( !tactics.empty() ){
 		if( currentTacticIter!=tactics.end() ){
+			(*this->currentTacticIter)->stopTactic();
+			//LOG_INFO(log,"tactic is going to stop for "<<this->robot->getRobotName());
+
+			(*this->currentTacticIter)->waitForFinish();
+			LOG_INFO(log,"tactic is finished for "<<this->robot->getRobotName());
+			(*this->currentTacticIter)->reset( );
+
 			currentTacticIter++;
-			LOG_INFO(log,"go to next tactic for "<<this->robot->getRobotName());
+			//LOG_INFO(log,"go to next tactic for "<<this->robot->getRobotName());
 		}
 		else{
+			currentTacticIter=tactics.end();
 			currentTactic = NULL;
+			finished =true;
 			return;
 		}
 
@@ -97,6 +100,11 @@ void Role::executeNextTactic(){
 			//currentTactic->reset();
 			currentTactic->start( );
 		}
+	}
+	else{
+		currentTacticIter=tactics.end();
+		currentTactic = NULL;
+		finished =true;
 	}
 
 }

@@ -6,6 +6,8 @@
 #include "../Robot/Robot.h"
 #include "../Exceptions/SimulationException.h"
 
+#include "SimAnnealing2.h"
+
 #include <math.h>
 #include <limits>
 
@@ -69,7 +71,7 @@ score EvaluationModule::aimAtTeamMate(Robot::robotID shootingRobotID, Robot::rob
 		double deviation = fabs( shootingRobotPose.get<2>() - goalRobotPose.get<2>() )  - M_PI ;
 
 
-		if( deviation < 0.05   ){// 2 stopnie
+		if( deviation < 0.1   ){// 4 stopnie
 			LOG_DEBUG( log," mozna podac deviation="<<deviation );
 			//std::cout<<" mozna podac deviation="<<deviation<<std::endl;
 			score_ = 1.0 - deviation;
@@ -296,9 +298,18 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bo
 *
 * implementacja naiwna, najbardziej atrakcyjny jest srodek planszy
 */
-Pose EvaluationModule::findBestDribbleTarget(){
+Pose EvaluationModule::findBestDribbleTarget( const std::string robotName,Robot::robotID rid ){
 
-    return appConfig.field.FIELD_MIDDLE_POSE;
+	GameStatePtr currGameState(new GameState());
+
+    if( video.updateGameState(currGameState) < 0){
+		std::ostringstream s;
+		s<<__FILE__<<":"<<__LINE__;
+    	throw SimulationException( s.str() );
+    }
+	SimAnnealing2 sim(currGameState, robotName,rid);
+	Vector2D s = sim.simAnnnealing2();
+    return Pose(s,0);//appConfig.field.FIELD_MIDDLE_POSE;
 
 }
 
@@ -484,7 +495,7 @@ bool EvaluationModule::isRobotOwnedBall(const Robot & robot){
 /*
 *@ zwraca najwiekszy otwarty kat prowadzacy do celu
 */
-std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName, double& angleToShoot){
+std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotName, double& angleToShoot, double & score) const{
 	//SimControl::getInstance().pause();
 
 	GameStatePtr currGameState( new GameState() );
@@ -494,8 +505,14 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 		s<<__FILE__<<":"<<__LINE__;
     	throw SimulationException( s.str() );
     }
-    Pose robotPose=currGameState->getRobotPos( Robot::getRobotID(robotName) );
-    LOG_DEBUG(log, "Wyznaczam katy do strzalu. Pozycja strzalu " << robotPose );
+
+    return aimAtGoal( currGameState, robotName, angleToShoot, score);
+}
+
+std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currGameState,const std::string& robotName,double& angleToShoot,double & score_) const{
+
+	Pose robotPose=currGameState->getRobotPos( Robot::getRobotID(robotName) );
+    LOG_INFO(log, "Wyznaczam katy do strzalu. Pozycja strzalu " << robotPose );
 
     //pozycje wszystkich robotow poza zadanym
     std::vector<Pose> enemyPositions=currGameState->getEnemyRobotsPos(Robot::getRobotID(robotName));
@@ -621,7 +638,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 
 	    double tmp2 = alfa2;
 	  	double tmp1 = alfa1;
-
+	    dist = Videoserver::getRedGoalMidPosition().distance( robotPose.getPosition() );
         LOG_INFO( log,"dist to goal "<<dist<<" open angle to the red goal min "<<alfa1<<" max "<<alfa2 );
 
 	    realMinAng = alfa1 < alfa2 ? alfa1 : alfa2;
@@ -748,7 +765,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
     }
 
     //SimControl::getInstance().resume();
-    LOG_INFO(log, "exit from aimToGoal ang min "<<alfamin<<" ang max "<<alfamax  );
+
 
 	double score = 0;
 	double sign = 1.0;
@@ -766,12 +783,17 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 		}
 	}
 
-	angleToShoot = alfamin + sign*score/2.0;
+	score_=score;
+	angleToShoot = convertAnglePI(alfamin + sign*score/2.0);
+
+
+
+	LOG_INFO(log, "exit from aimToGoal ang min "<<alfamin<<" ang max "<<alfamax<<" score "<<score<<" angleToShoot "<<angleToShoot  );
 
     return std::pair<double,double>( alfamin , alfamax );
 }
 
-bool EvaluationModule::addToList(Set &set, std::list<Set> &sets){
+bool EvaluationModule::addToList(Set &set, std::list<Set> &sets) const{
 	BOOST_ASSERT(sets.size()>0);
 	LOG_DEBUG(log,"add set To list "<<set);
 	bool result = false;
@@ -832,7 +854,7 @@ bool EvaluationModule::addToList(Set &set, std::list<Set> &sets){
 }
 
 
-Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition, double rotation){
+Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePosition, double rotation) const{
 
 	//std::cout<<"robotPose "<<currRobotPose<<std::endl;
 	//std::cout<<"obstaclePosition "<<obstaclePosition<<std::endl;
@@ -845,6 +867,8 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 
 	double x=reltargetPose.getPosition().x;
 	double y=reltargetPose.getPosition().y;
+
+	LOG_INFO(log, "relObsPosition "<<reltargetPose.getPosition()<<" obsPosition "<<obstaclePosition<<" currRobotPose "<<currRobotPose );
 
 	if(y<=0){
 		return Set( -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity() , -std::numeric_limits<double>::infinity());
@@ -878,9 +902,9 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 		double a1= ( -x*y - obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
 		double a2= ( -x*y + obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
 
-		LOG_DEBUG(log, "a1 "<<a1<<" reltargetPose"<<reltargetPose);
+		LOG_INFO(log, "a1 "<<a1<<" reltargetPose"<<reltargetPose);
 
-		LOG_DEBUG(log, "a2 "<<a2<<" reltargetPose"<<reltargetPose);
+		LOG_INFO(log, "a2 "<<a2<<" reltargetPose"<<reltargetPose);
 
 		if( !boost::math::isnormal(a1) ){
 			double a1= ( -x*y - obstacleRadious*sqrt( y*y + x*x -obstacleRadious*obstacleRadious ) )/ (obstacleRadious*obstacleRadious-x*x);

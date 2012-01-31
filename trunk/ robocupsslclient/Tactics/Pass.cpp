@@ -90,11 +90,11 @@ void Pass::execute(void*){
 				robot.stop();
 				LOG_FATAL(log,"Tactic taskStatus " <<taskStatus );
 
-				LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
 				robot.stop();
 				LockGuard m(mutex);
 				this->finished = true;
 				pthread_cond_broadcast(&this->finish_cv);
+				LOG_FATAL( log,"############# TACTIC COMPLETED #############" );
 				return;
 			}
 
@@ -112,7 +112,7 @@ void Pass::execute(void*){
 
 bool Pass::isFinish(){
 	LockGuard m(mutex);
-	this->finished;
+	//this->finished;
 	return this->finished;
 }
 
