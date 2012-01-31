@@ -82,10 +82,11 @@ Task* GoToPose::nextTask(){
 		if( (this->predicates & Task::kick_if_we_can) > 0){
 			//oblicz czy wato strzelic na bramke
 			double angleToShoot=0;
-			std::pair<double,double> ang=evaluationModule.aimAtGoal( robot->getRobotName(),angleToShoot );
+			double score = 0;
+			std::pair<double,double> ang=evaluationModule.aimAtGoal( robot->getRobotName(),angleToShoot,score );
 
-			double score =
-			( (ang.first * ang.second) > 0 ) ? fabs( ang.first + ang.second ) : fabs( ang.first) + fabs(ang.second );
+			//double score =
+			//( (ang.first * ang.second) > 0 ) ? fabs( ang.first + ang.second ) : fabs( ang.first) + fabs(ang.second );
 			LOG_INFO(log, "current position score = "<<score<<" ang.first "<<ang.first<<" ang.second "<<ang.second );
 
 			//jesli warto strzelic na bramke
@@ -93,10 +94,10 @@ Task* GoToPose::nextTask(){
 				LOG_INFO(this->log," GoToPose -> KickBall ");
 				Pose targetPose;
 				if( this->robot->isBlue() )
-					targetPose = Pose( Videoserver::getBlueGoalMidPosition(), ( ang.first + ang.second )/2.0 );
+					targetPose = Pose( Videoserver::getBlueGoalMidPosition(), angleToShoot );
 
 				if( this->robot->isRed() )
-					targetPose = Pose( Videoserver::getRedGoalMidPosition(), ( ang.first + ang.second ) /2.0 );
+					targetPose = Pose( Videoserver::getRedGoalMidPosition(), angleToShoot );
 
 				return new KickBall( robot,targetPose);
 				//return new KickBall( robot, ( ang.first + ang.second )/2  ) ;

@@ -6,12 +6,9 @@
 #include "../Task/GoToBall.h"
 #include "../Task/MoveBall.h"
 
-
-
-
 ShootTactic::ShootTactic(Robot & robot): Tactic(robot)
 {
-
+	this->active = true;
 }
 
 
@@ -20,11 +17,12 @@ void ShootTactic::execute(void *){
 	LOG_INFO(log,"Start Shoot tactic " );
     EvaluationModule& evaluation=EvaluationModule::getInstance();
     double angleToGoal=0;
-    std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName(),angleToGoal);
+    //std::pair<double, double> ang=evaluation.aimAtGoal(robot.getRobotName(),angleToGoal);
 
-    Pose goalPose;
+    //Pose goalPose  = evaluation.findBestDribbleTarget(robot.getRobotName(), robot.getRobotID());
     //TODO: sprawdzic rotacje inna powinna byc w przypadku jazdy na bramke dolna
     //a inna w przypadku jazdy na gorna
+    /*
     if(robot.getRobotName().compare(0,3,"red")==0){
     	goalPose = Pose( Videoserver::getBlueGoalMidPosition().x,
     						Videoserver::getBlueGoalMidPosition().y, 0.0 );
@@ -33,9 +31,9 @@ void ShootTactic::execute(void *){
     	goalPose = Pose( Videoserver::getRedGoalMidPosition().x,
     	    		Videoserver::getRedGoalMidPosition().y, 0.0 );
     }
+*/
 
-
-	LOG_INFO(log,"angle to goal "<<ang.first<<" "<<ang.second );
+	//LOG_INFO(log,"angle to goal "<<ang.first<<" "<<ang.second );
 
 
 	//jesli warto strzelic na bramke
@@ -49,7 +47,7 @@ void ShootTactic::execute(void *){
 
 
 
-	goalPose = Pose( goalPose.get<0>(), goalPose.get<1>(), angleToGoal  );
+	//goalPose = Pose( goalPose.get<0>(), goalPose.get<1>(), angleToGoal  );
 	//goalPose.get<2>() = angleToGoal;
 
     Task::status taskStatus = Task::not_completed;
@@ -64,6 +62,9 @@ void ShootTactic::execute(void *){
 
     Task::predicate predicates = Task::null;
     while( !this->stop ){
+    	LOG_INFO(log,"start calculate best dribble target " );
+    	Pose goalPose  = evaluation.findBestDribbleTarget(robot.getRobotName(), robot.getRobotID());
+    	LOG_INFO(log,"end calculate best dribble target " );
     	taskStatus = Task::not_completed;
 		this->currentTask = TaskSharedPtr( new MoveBall( goalPose, &robot ) );
 		Task::predicate p = Task::kick_if_we_can;
@@ -89,7 +90,8 @@ void ShootTactic::execute(void *){
 
 			if( taskStatus == Task::collision ){
 				robot.stop();
-				LOG_FATAL(log,"Shoot tactic Task::collision " );
+				LOG_FATAL(log,"Shoot tactic Task::collision. exit from tactic " );
+				LockGuard m(mutex);
 				finished = true;
 				return;
 			}
@@ -97,7 +99,9 @@ void ShootTactic::execute(void *){
 			if( taskStatus == Task::kick_ok ){
 				robot.stop();
 				LOG_FATAL(log," Shoot tactic Task::kick_ok " );
+				LockGuard m(mutex);
 				finished = true;
+				 LOG_INFO(log,"exit from shoot tactic " );
 				return;
 			}
 
@@ -114,12 +118,13 @@ void ShootTactic::execute(void *){
 		//if(newTask)
 		//	delete newTask;
     }
+    LockGuard m(mutex);
     finished = true;
     LOG_INFO(log,"exit from shoot tactic " );
 }
 
 bool  ShootTactic::isFinish(){
-
+	LockGuard m(mutex);
     return this->finished;
 }
 
