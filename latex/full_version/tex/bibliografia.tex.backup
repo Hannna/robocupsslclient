@@ -7,6 +7,10 @@
 J. Bruce, M. Veloso:
 \emph{Real-Time Randomized Path Planning for Robot Navigation}. Carnegie Mellon University
 
+\bibitem{RRT2}
+J.Kim J.M. Esposito, V. Kumar:
+\emph{An RRT-Based algorithm for testing and validating multi-robot controllers}. University of Pennsylvania, US Naval Academy
+
 \bibitem{duleba}
 	I. Dulęba:
 	\emph{Metody i algorytmy planowania ruchu robotów mobilnych i manipulacyjnych}.
@@ -83,12 +87,24 @@ J. Bruce, M. Veloso:
 
 \bibitem{navi_func1}
 	D. E. Koditschek, and E.Rimon 
-	\emph{Robot navigation functions on manifolds with boundary, Advances in Applied Mathematics } 1990.
+	\emph{ Robot navigation functions on manifolds with boundary }
+	Advances in Applied Mathematics
+	Volume 11 Issue 4, Dec. 1990.
 
 \bibitem{navi_func2}
-
- Rimon, Elon and Koditschek, Daniele; Exact robot navigation using
-artificial potential functions IEEE Transactions on Robotics and Automation.
-Vol. 8, no. 5, pp. 501-518. Oct. 1992
-
+	D. E. Koditschek, and E.Rimon 
+	\emph{Exact robot navigation using artificial potential functions }
+	IEEE Transactions on Robotics and Automation.
+	Vol. 8, no. 5, pp. 501-518. Oct. 1992
+\bibitem{ISR}
+	C. Zieliński, W. Szynkiewicz:
+	\emph{Konspekt do wykładu: Inteligentne Systemy robotyczne}.
+	Politechnika Warszawska, 2008.
+\bibitem{gazebo_experts}
+	N. Koenig:
+	\emph{Gazebo. The Instant Expert's Guide}.
+	Player Summer School on Cognitive Robotics, Monachium 2007.
+\bibitem{hamada_mgr}
+ M.Hamada
+ \emph{Układ sterowania autonomicznym robotem mobilnym}. Praca magisterska, Politechnika Warszawska, 2007.
 \end{thebibliography}

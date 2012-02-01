@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  22 JAN 2012 23:58
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  1 FEB 2012 21:08
 entering extended mode
  %&-line parsing enabled.
 **main.tex
@@ -1538,7 +1538,7 @@ czne/eks07.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks0
 G copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf (PNG copy)>]
 (./tex/bibliografia.tex [89] [90
 
-]) (./main.tdo [91])
+] [91]) (./main.tdo)
 \tf@tdo=\write5
 \openout5 = `main.tdo'.
 
@@ -1548,10 +1548,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 13612 strings out of 495026
- 226574 string characters out of 1181802
+ 13613 strings out of 495026
+ 226585 string characters out of 1181802
  329908 words of memory out of 3000000
- 16351 multiletter control sequences out of 15000+50000
+ 16352 multiletter control sequences out of 15000+50000
  22848 words of font info for 69 fonts, out of 3000000 for 9000
  48 hyphenation exceptions out of 8191
  54i,12n,92p,588b,1389s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1576,7 +1576,7 @@ pl/plsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy8.pfb></usr/sh
 are/texmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/texmf-texlive/fo
 nts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/
 pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.pfb>
-Output written on main.pdf (93 pages, 2839491 bytes).
+Output written on main.pdf (93 pages, 2839889 bytes).
 PDF statistics:
  491 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
