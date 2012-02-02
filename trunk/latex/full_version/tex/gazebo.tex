@@ -1,7 +1,7 @@
 \chapter[Player/Stage/Gazebo ]{Player/Stage/Gazebo \label{chap:gazebo}}
 \chaptermark{Player/Stage/Gazebo}
 	Symulator \mbox{\texttt{Player/Stage/Gazebo}} został już opisany w pracy inżynierskiej \cite{inzynierka} jednak z uwagi na jego ważną rolę i zmiany jakie zdecydowano się wprowadzić w symulowanym
-	środowisku podczas rozwijania aplikiacji zdecydowano się na krótkie przypomnienie koncepcji projektu.
+	środowisku podczas rozwijania aplikacji zdecydowano się na krótkie przypomnienie koncepcji projektu.
 
 	\section{Koncepcja}
 	Oprogramowanie składa się z trzech niezależnych aplikacji \textit{Player}, \textit{Stage} oraz \textit{Gazebo}.
@@ -10,9 +10,9 @@
 	W trakcie realizacji niniejszej pracy wydana została pierwsza stabilna wersja oprogramowanie dostępna pod adresem \url{http://gazebosim.org}.
 	Wcześniej wszelkie dane dotyczące wszystkich aplikacji wchodzących w skład projektu dostępne były na stronie \url{http://playerstage.sourceforge.net}. Z uwagi na trudności związane z adaptacją
 	symulatora zdecydowano się na kontynuację prac na wersji pobranej ze starego repozytorium.
-	Ostatnia aplikacja wchodząca w skład projektu, czyli \textit{Player} jest serwerem sieciowym służącym do sterowania rzeczysiwtymi robotami. Dostarcza prosty interfejs, wspierający komunikację z wieloma 
+	Ostatnia aplikacja wchodząca w skład projektu, czyli \textit{Player} jest serwerem sieciowym służącym do sterowania rzeczywistymi robotami. Dostarcza prosty interfejs, wspierający komunikację z wieloma 
 	typami powszechnie stosowanych czujników i aktuatorów.
-	Oprogramowanie jest kompatybilne z systamami Linux, Solaris, *BSD oraz Mac OSX.
+	Oprogramowanie jest kompatybilne z systemami Linux, Solaris, *BSD oraz Mac OSX.
 	W niniejszej pracy zdecydowano się na wykorzystanie jedynie symulatora \textit{Gazebo}.
 
 	\section{Architektura symulatora}
@@ -24,14 +24,14 @@
 	
 	Wymiana informacji pomiędzy elementami środowiska symulacyjnego \textit{Player/Stage/Gazebo} została przedstawiona na 
 	rysunku~\ref{fig:arch}.
-	Po zapoznaniu się z nim , można lepiej zrozumieć rolę programu \textit{Player}. Pełni on funckję pośrednika pomiędzy aplikacją klienta, stworzona przez użytkownika
+	Po zapoznaniu się z nim , można lepiej zrozumieć rolę programu \textit{Player}. Pełni on funkcję pośrednika pomiędzy aplikacją klienta, stworzona przez użytkownika
 	a rzeczywistym robotem lub symulatorami modelującymi jego zachowanie w tym przypadku (\textit{Stage} lub \textit{Gazebo}). 
 	Komunikacja pomiędzy \textit{Player-em}, robotem oraz aplikacją kliencką realizowana jest za pomocą protokołu TCP/IP.
 	Dzięki takiej architekturze z punktu widzenia klienta nie istotne jest, czy interfejsy udostępnione przez \textit{Player-a} sterują rzeczywistym robotem, czy symulowanym odpowiednikiem.
 	
 	Z samym symulatorem, zarówno \textit{Stage} jak i \textit{Gazebo} można komunikować się poprzez pamięć współdzieloną (rysunek \ref{fig:wybrana_arch}), bez wykorzystywania aplikacji \textit{Player}. Rozwiązanie to jest 
 	preferowane w sytuacji gdy korzystanie z \textit{Playera} nie jest uzasadnione, lub kiedy użytkownik dokonał modyfikacji działania symulatora, których nie implementuje \textit{Player}. 
-	Aplikacja \textit{Gazebo} udostepnia w tym celu  bibliotekę \textit{libgazebo}, dostarczającą zestaw funkcji do komunikacji.
+	Aplikacja \textit{Gazebo} udostępnia w tym celu  bibliotekę \textit{libgazebo}, dostarczającą zestaw funkcji do komunikacji.
 	\begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.3]{./gazebo/wybrana_architektura}
@@ -47,9 +47,9 @@
  	
  	Symulator \textit{Gazebo} jak wynika z wcześniejszego tekstu, umożliwia symulację grup robotów mobilnych. Symulowane
  	środowisko jest w pełni trójwymiarowe, uwzględniona jest dynamika brył oraz obliczane rzeczywiste oddziaływania między komponentami symulowanego świata.
-	Okupione jest to oczywiście większym niż w przypadku \textit{Stage} zużyciem mocy obliczeniowej, dlatego symulowane populacje robotów nie powinny być zby liczne.
+	Okupione jest to oczywiście większym niż w przypadku \textit{Stage} zużyciem mocy obliczeniowej, dlatego symulowane populacje robotów nie powinny być zbyt liczne.
  	 	
- 	Trzy najistotniejsze kompnenty wykorzystywane przez rogram \textit{Gazebo} to:
+ 	Trzy najistotniejsze komponenty wykorzystywane przez program \textit{Gazebo} to:
  	\begin{itemize}
  	 \item ODE\footnote{Open Dynamics Engine, \url{http://www.ode.org}}, biblioteka  odpowiadająca za symulację
  	 	zależności fizycznych pomiędzy bryłami oraz detekcję kolizji,
@@ -63,7 +63,7 @@
 	popularnych robotów (jak np. \textit{Pioneer2DX}, \textit{Pioneer 2AT} oraz \textit{SegwayRMP}).
 	Dozwolone jest także tworzenie własnych modeli
 	Pozwala ponadto na tworzenie własnych modeli, z możliwością konfigurowania ich właściwości fizycznych (takich jak np. masa, współczynnik tarcia, sztywność).
-	Dzieki temu środowisko może w dużym stopniu odzwierciedlać rzeczywistość. Modele można wyposażyć w jeden ze zdefiniowanych kotrolerów umożliwiających sterowanie (zadawanie prędkości, 
+	Dzięki temu środowisko może w dużym stopniu odzwierciedlać rzeczywistość. Modele można wyposażyć w jeden ze zdefiniowanych kontrolerów umożliwiających sterowanie (zadawanie prędkości, 
 	czy odczyt danych z sensorów) lub opracować własny.
 	\begin{figure}[!t]
 	\centering
@@ -118,10 +118,10 @@
 	 \item \texttt{erp} rozwija się na \textit{error reduction parameter}, przyjmuje on wartości z przedziału od $0$ do $1$ i jest odpowiedzialny za redukcję błędów w połączeniach pomiędzy bryłami
 	  (problematyka zostanie szerzej poruszona na stronie \pageref{fig:joints}); \texttt{erp} ustawione na $0$ powoduje, że żadna dodatkowa siła nie jest przykładana do danej bryły, natomiast wartość $1$
 	 powoduje, że wszytskie błędy połączeń zostaną naprawione w kolejnym kroku symulatora,
-	 \item \texttt{cfm} jest skrótem od \textit{constraint force mixing} i odpowiada za sztywność ograniczeń występujacych w kolizjach między bryłami, gdy wartość jest równa $0$ ograniczenie wynikające z fizyki
+	 \item \texttt{cfm} jest skrótem od \textit{constraint force mixing} i odpowiada za sztywność ograniczeń występujących w kolizjach między bryłami, gdy wartość jest równa $0$ ograniczenie wynikające z fizyki
 nie może zostać złamane, ustawienie parametru na wartość dodatnią powoduje, że ograniczenie staje się ``miękkie'', sprężyste,
 	  
-	 \item \texttt{stepType} odpowiada za rodzaj używanej funkcji z \texttt{ODE} do detekcji kolizji, użytkownik może dokonać wybrou jednej z dwóch wartości:
+	 \item \texttt{stepType} odpowiada za rodzaj używanej funkcji z \texttt{ODE} do detekcji kolizji, użytkownik może dokonać wyboru jednej z dwóch wartości:
 	      \begin{itemize}
 	       \item \textit{world}, używana jest wtedy funkcja \texttt{dWorldStep}, operująca na macierzy zawierającej wszystkie ograniczenia, złożoność obliczeniowa tej metody wynosi $m^3$, natomiast pamięciowa
 jest rzędu $m^2$, gdzie $m$ określa ilość wierszy (ograniczeń) analizowanej macierzy,
@@ -135,7 +135,7 @@ jest rzędu $m^2$, gdzie $m$ określa ilość wierszy (ograniczeń) analizowanej
 	 \item \texttt{contactSurfaceLayer} określa głębokość na jaką może wnikać bryła w podłoże, ustawienie parametru na małą wartość dodatnią zapobiega jitterowi w momencie, gdy ograniczenia są nieustannie tworzone
 	  i zrywane (na przykład podczas ruchu koła po podłożu),
 	 \item \texttt{contactMaxCorrectingVel} jest maksymalną korektą prędkości jaka może wynikać z utworzonych tymczasowo kontaktów; domyślnie parametr przyjmuje nieskończoną wartość zmniejszanie jego
-	   wartości może zapobiec tworzeniu się zagnieżdzonych kontaktów. 
+	   wartości może zapobiec tworzeniu się zagnieżdżonych kontaktów. 
 	\end {enumerate}
 	Warto wspomnieć, że niektóre parametry można zmieniać dla poszczególnych modeli lub połączeń \textit{joints}.\newline
 	Ustawienia interfejsu: typ (dostępne tylko \textit{fltk}), rozmiaru okna i jego pozycja początkowej:
@@ -213,8 +213,8 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	\includegraphics[scale=0.43]{./gazebo/joints}
 	\caption{Typy połączeń \textit{joints} (Źródło: dokumentacja ODE) \label{fig:joints}}
 	\end{figure}
-	Jak wspomniano wcześniej, w czasie realizowanej symulacji połączenia pomiędzy bryłami moga ulec wypaczeniu, na skutek sił działających na model. Może to być tarcie,
-	siła powodująca obrót bryły czy siły działające na model podczas kolizji. Sytacje taką przedstawiono na rysunku \ref{fig:bad_joint}.
+	Jak wspomniano wcześniej, w czasie realizowanej symulacji połączenia pomiędzy bryłami mogą ulec wypaczeniu, na skutek sił działających na model. Może to być tarcie,
+	siła powodująca obrót bryły czy siły działające na model podczas kolizji. Sytuację taką przedstawiono na rysunku \ref{fig:bad_joint}.
 	\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.43]{./gazebo/bad_joint}
@@ -222,7 +222,7 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	\end{figure}
 	Błędy tego typu można redukować za pomocą parametru \texttt{erp} ustawianego globalnie lub dla każdego z połączeń indywidualnie.
 	\subsubsection{Sterowniki modeli }
-	Sterowanie zaprojektowanym modelem jest możliwe po uprzednim wyposażeniu go w sterownik (\textit{controller}). Sterowniki implentowane są przez użytkownika w C++ jako klasa dziedzicząca
+	Sterowanie zaprojektowanym modelem jest możliwe po uprzednim wyposażeniu go w sterownik (\textit{controller}). Sterowniki implementowane są przez użytkownika w C++ jako klasa dziedzicząca
 	po zdefiniowanym w \textit{libgazebo} interfejsie. Klasa odpowiada za przetwarzanie danych z sensorów robota oraz pozwala
 	na zadawanie prędkości bryłom połączonym wiązaniami. Komunikuje się on z programem sterującym za pośrednictwem interfejsów (bezpośrednio korzystając z \textit{libgazebo} lub poprzez \textit{Playera}).
 	\textit{Gazebo} oczywiście dostarcza gotowe sterowniki, pozwalające na kontrolowanie np. robota z napędem różnicowym, w wersji $0.10$ dodano także przykładowy model robota holonomicznego zawarty
@@ -280,12 +280,12 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	Mimo że \textit{Gazebo} udostępnia sterownik dla napędu holonomicznego, sterowanie robotem wymagało napisania nowego kontrolera, ponieważ nie uwzględniał on obsługi
 	\textit{dribblera}, ani nie umożliwiał oddawania strzałów. Sterownik został zrealizowany w oparciu o teorię zawartą w rozdziale \ref{chap:holonomic}. Z punktu widzenia użytkownika
 	sterowanie robotem odbywa się poprzez ustawianie odpowiedniej prędkości liniowej i kątowej. Sterownik przekształca je na odpowiednie prędkości obrotowe poszczególnych kół.
-	Dodatkowo zaimplementowano programowy regulator \texttt{PID}, sterujący siłą przykładana do kół robota. Dzięki temu uzyskano lepszą dokładość sterowania robotem.
+	Dodatkowo zaimplementowano programowy regulator \texttt{PID}, sterujący siłą przykładana do kół robota. Dzięki temu uzyskano lepszą dokładność sterowania robotem.
 	Parametry regulatora początkowo dobrano posługując się metodą \texttt{Zieglera-Nicholsa}. Przy wyłączonych członach całkującym i różniczkującym analizowano wykresy rozkładu
 	prędkości obrotowych kół robota w czasie przy ustalonej zadanej prędkości liniowej. Stopniowo zwiększano współczynnik wzmocnienia proporcjonalnego. Wyznaczono wartość wzmocnienia
 	przy której układ zbliżył się do granicy stabilności (wzmocnienie krytyczne $K_k$) oraz wyznaczono okres drgań $T_k$. 
 	Wartości właściwych wzmocnień poszczególnych  członów wyznaczono zgodnie z procedurą: $K=0.6K_k$, $T_i=T_k$, $T_d=0.12T_k$. Następnie eksperymentalnie dokonano ich korekty.
-	W pliku opisującym model robota istnieje możliość ręcznego modyfikowania nastaw regulatora.
+	W pliku opisującym model robota istnieje możliwość ręcznego modyfikowania nastaw regulatora.
 	Kod źródłowy sterownika został zamieszczony na płycie CD razem z kodem źródłowym wykorzystywanej wersji symulatora.	
 	\begin{figure}[H]
 	\centering
@@ -293,7 +293,7 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	\caption{Model boiska}
 	\end{figure}
 	W trakcie symulacji opracowanych modeli zauważono, że piłka raz wprawiona w ruch nie hamuje. Sytuacja taka była spowodowana brakiem tarcia tocznego. Zaimplementowano zatem kolejną modyfikację w 
-	symulatorze, tak aby dla każdej bryły istniała możliwaść konfigurowania tego parametru (\textit{angularDamping}) w pliku opisującym model.
+	symulatorze, tak aby dla każdej bryły istniała możliwość konfigurowania tego parametru (\textit{angularDamping}) w pliku opisującym model.
 
 	Ponieważ korzystano z niestabilnej wersji oprogramowania (inne nie było jeszcze dostępne), pobranego bezpośrednio z repozytorium deweloperów, należało poprawić jeszcze kilka innych błędów symulatora,
-	miedzy innymi niepoprawną pracę interfesju umożliwiającego komunikację pomiędzy symulatrem a aplikacją kliencką.
+	miedzy innymi niepoprawną pracę interfejsu umożliwiającego komunikację pomiędzy symulatorem a aplikacją kliencką.

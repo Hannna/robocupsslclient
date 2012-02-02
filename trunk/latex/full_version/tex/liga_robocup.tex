@@ -1,6 +1,6 @@
 \chapter{Liga RoboCup \label{chap:robocup}}
 \section{Opis projektu RoboCup \label{sec:opis_robocup}}
-	Projekt RoboCup, jego idea jak i historia szerzej zostały opisane w pracy inżynierskiej \cite{inzynierka}, więcej informacji na temat mistrzost można także znaleźć na oficjalnej stronie projektu
+	Projekt RoboCup, jego idea jak i historia szerzej zostały opisane w pracy inżynierskiej \cite{inzynierka}, więcej informacji na temat mistrzostw można także znaleźć na oficjalnej stronie projektu
 	\mbox{\url{http://www.robocup.org}}. W niniejszej pracy problematyka rozgrywek robotów w piłkę nożną zostanie przedstawiona jedynie skrótowo ze szczególnym uwzględnieniem
 	budowy robota wykorzystywanego w lidze na której wzorowano się podczas prac.
 	Jak już przytoczono we wstępie, głównym celem przedsięwzięcia jest stworzenie do 2050 roku drużyny w pełni autonomicznych robotów humanoidalnych zdolnych wygrać rozgrywkę z aktualnymi mistrzami 
@@ -16,7 +16,7 @@
 	robota. Zawodnik powinien być wyposażony w odpowiedni zestaw czujników umożliwiających osiągnięcie pełnej autonomiczności. 
 	Osobnym problemem jest opracowanie funkcjonalnego oprogramowania umożliwiającego koordynację działań wielu robotów.
 	Projekt jest realizowany nieprzerwanie od września 1993 roku, a mistrzostwa odbywają się regularnie w różnych miejscach na świecie.
-	Rozgrywki toczone są w kilku niezależnych od siebie ligach. Aktualnie wyróżnione zostały nastepujące ligi:
+	Rozgrywki toczone są w kilku niezależnych od siebie ligach. Aktualnie wyróżnione zostały następujące ligi:
 	\begin{itemize}
 	\item liga symulacyjna
 	\item \emph{Small-size League}
@@ -24,9 +24,9 @@
 	\item \emph{Standard Platform League }
 	\item \emph{Humanoid League}
 	\end{itemize}
-	Liga symulacyjna jest pewnego rodzaju grą, w której uczestniczące drużyny implentują program decydujący o zachowaniu zawodników.
+	Liga symulacyjna jest pewnego rodzaju grą, w której uczestniczące drużyny implementują program decydujący o zachowaniu zawodników.
 	Jest ona najstarszą z lig, towarzyszy przedsięwzięciu od samego początku jego istnienia.
-	Zachowanie robotów jest symulowane za pomocą programu zwanego \emph{Robocup Soccer Simulator}.
+	Zachowanie robotów jest symulowane za pomocą programu zwanego \emph{RoboCup Soccer Simulator}.
 
 	Kolejną z lig jest \emph{Small-Size League}. W rozgrywkach tej ligi drużyna składa się maksymalnie z pięciu niewielkich robotów, takich jak widoczne na fotografii \ref{fig:F180}. 
 	Roboty  nie są jednak w pełni autonomiczne, ponieważ nie posiadają własnych sensorów wizyjnych. Algorytm sterujący czerpie informację o~położeniu piłki oraz robotów globalnego systemu
@@ -47,14 +47,14 @@
 	liga robotów humanoidalnych. W tej ostatniej biorę udział roboty przypominające swoją budową ludzi czyli posiadać korpus, nogi, ręce oraz głowę.
 	\section{Szczegółowe omówienie ligi Small-size (F180) \label{sec:F180}}
 	\subsection{Zasady}
-	Corocznie przed nowymi mistrzostwami wydawany jest zmodyfikowany regulamin, który będzie na nich obowiązywać. Zmiany nie są zazwyczaj daleko idące, modyfikacje dotyczą przykłądowo nowego rozmiaru boiska.
+	Corocznie przed nowymi mistrzostwami wydawany jest zmodyfikowany regulamin, który będzie na nich obowiązywać. Zmiany nie są zazwyczaj daleko idące, modyfikacje dotyczą przykładowo nowego rozmiaru boiska.
 	W poprzednich latach dopuszczono możliwość stosowania przez drużyny własnego globalnego systemu udostępniającego informację o położeniu i prędkości zawodników.
-	Jednak od $2010$ roku sprawę systemu wizyjnego ustystematyzowano, storzono sytem o nazwie \textit{SSL-Vision}, który jest obowiązkowym w lidze. 
-	Całkowity rozmiar boiska, wliczając w to pola autowe jest równy 7.4~[m] na 5.4~[m], nastomiast sama plansza na której toczona jest rozgrywka ma wymiary 6.05~[m] na 4.05~[m].
+	Jednak od $2010$ roku sprawę systemu wizyjnego usystematyzowano, stworzono system o nazwie \textit{SSL-Vision}, który jest obowiązkowym w lidze. 
+	Całkowity rozmiar boiska, wliczając w to pola autowe jest równy 7.4~[m] na 5.4~[m], natomiast sama plansza na której toczona jest rozgrywka ma wymiary 6.05~[m] na 4.05~[m].
 	Powierzchnia jest równa i  wyłożona zielonym dywanem lub wykładziną. Podczas meczu wykorzystywana jest standardowa piłka do golfa koloru pomarańczowego. Jej promień jest równy 43~[mm], a masa
 	46~[g].
 	Uczestniczące drużyny mogą składać się z maksymalnie pięciu robotów, jeden z nich może zostać oddelegowany do pełnienia
-	funkcji bramkarza, jednak powinno to zostać zgłoszone przed rozpoczęciem meczu. W trakcie rozgrywki roboty mogą być wynieniane na nowe, tak samo jak w rzeczywistym meczu, jednak 
+	funkcji bramkarza, jednak powinno to zostać zgłoszone przed rozpoczęciem meczu. W trakcie rozgrywki roboty mogą być wymieniane na nowe, tak samo jak w rzeczywistym meczu, jednak 
 	sytuacja taka musi być zgłoszona wcześniej arbitrowi.
 	Konstrukcja mechaniczna robota nie jest mocno ograniczona, głównym zalecenie dotyczy wymiarów. Robot powinien zmieścić się w walcu o średnicy 18~[cm] oraz wysokości 15~[cm].
 	Dodatkowo może on być wyposażony w urządzenie do prowadzenia piłki. Tutaj jednak istnieją pewne ograniczenia dotyczące
@@ -71,7 +71,7 @@
 	\caption{Program wykorzystywany przez sędziego w  \mbox{\emph{Small Size League}}\newline(źródło: \texttt{www.robocup.org}) }
 	\label{fig:referee_box}
 	\end{figure} 
-	Wszystkie akcje sędziego wprowadzone do tego programu są udostępniane specjalnym protokołem zawodnikom, dzieki temu rozgrywka nie wymaga ludzkiej ingerencji.
+	Wszystkie akcje sędziego wprowadzone do tego programu są udostępniane specjalnym protokołem zawodnikom, dzięki temu rozgrywka nie wymaga ludzkiej ingerencji.
 	\subsection{Schemat komunikacji}
 	Kluczową sprawą podczas rzeczywistej rozgrywki jest dostęp do informacji o położeniu piłki
 	i pozostałych robotów. Jak już wspomniano wcześniej organizacja udostępnia drużynom system \textit{SSL-Vision}, z którego drużyny są zobowiązane pobierać te informacje. Uproszczony schemat systemu
@@ -92,7 +92,7 @@
 	jakie zawiera znacznik. Dzięki zastosowaniu dwóch kolorów możliwe jest nie tylko rozróżnianie robotów z różnych drużyn, ale także określanie ich orientacji.
 
 \section{Budowa robota \label{sec:budowa_robota} w \emph{Small-size League}}
-	Oficjalne zasady ligi nie zobowiązują uczestników do używania konkretnych modeli robotów. Określone są jedynie rygory dotyczące maksymalnych wymiarów robota, oraz sposoby porwadzenia piłki.
+	Oficjalne zasady ligi nie zobowiązują uczestników do używania konkretnych modeli robotów. Określone są jedynie rygory dotyczące maksymalnych wymiarów robota, oraz sposoby prowadzenia piłki.
 	Obserwując kolejne mistrzostwa, łatwo zauważyć, że wśród zgłaszanych drużyn dominuje jedna konstrukcja mechaniczna. Została ona zaprezentowana na  rysunkach \ref{fig:F180_budowa}.
  	\begin{figure}
 	\centering

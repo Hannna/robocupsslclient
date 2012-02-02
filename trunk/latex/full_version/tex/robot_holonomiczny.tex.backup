@@ -121,12 +121,16 @@ Otrzymujemy zatem następujące powiązanie pomiędzy prędkościami robota, a p
 \caption{ Prędkość liniowa dużego koła szwedzkiego i małych kółek, gdy robot porusza się wzdłuż osi OX }\label{fig:linear_speed}
 \end{figure}
 
-\section{Planowanie prędkości liniowej robota}
-
-Znając już powiązanie pomiędzy prędkościa obrotową kół, a prędkością liniową i obrotową robota, ostatnim elementem jest wyznaczenie prędkości prowadzących 
-robota do zadanego punktu. Należy przy tym wziąć pod uwagę takie parametry robota jak przyspieszenie i opóźnienie. W tym celu skorzystano z metody opisanej w 
+\section{Obliczanie profilu prędkości liniowej robota \label{sec:trapezoid_vel}}
+Znając już powiązanie pomiędzy prędkością obrotową kół a prędkością liniową i obrotową robota, ostatnim elementem jest wyznaczenie prędkości prowadzących 
+robota do zadanego punktu. Należy przy tym uwzględnić takie parametry robota jak przyspieszenie i opóźnienie. W tym celu skorzystano z metody opisanej w 
 \cite{trapezy1} oraz \cite{trapezy2}. Polega ona na dekompozycji dwuwymiarowego problemu sterowania robotem, do dwóch problemów jednowymiarowych, tak jak to zaprezentowano
 na rysunku \ref{fig:trapezoid_rule}. Ruch robota w kierunku osi OX i w kierunku osi OY jest rozpatrywany osobno. 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{./holonomic/trapezoid_rule}
+\caption{ Dekompozycja sterowania robotem w 2D na dwa niezależne zadania w 1D }\label{fig:trapezoid_rule}
+\end{figure}
 Podejście to jest znane w robotyce pod nazwą trapezoidalnego profilu prędkości.
 Zaczynając od punktu w którym robot się znajduje przyspiesza on
 ze swoim stałym przyspieszeniem, aż do osiągnięcia maksymalnej prędkości, następnie zaczyna hamować, tak aby zatrzymać się w punkcie docelowym.
@@ -135,27 +139,35 @@ Prędkość obliczana jest według następujących reguł:
 \begin{enumerate}
 \item Jeśli bieżąca prędkość spowoduje oddalenie się robota od celu to wyhamuj do 0.
 \item Jeśli robot poruszając się z bieżąca prędkością przejedzie cel to także należy zatrzymać go.
-\item Gdy bieżąca prędkość przekracza maksymalną wyhamuj do prędkości maksymalnej.
+\item Gdy bieżąca prędkość przekracza maksymalną, wyhamuj do prędkości maksymalnej.
 \item Oblicz trójkątny profil prędkości prowadzącej do celu.
 \item Jeśli w obliczonym rozkładzie prędkość przekracza w jakimkolwiek momencie maksimum to należy obliczyć trapezoidalny profil. 
 \end{enumerate} 
 
+\section{Dryblowanie z piłką}
+We wcześniejszym podrozdziale rozwiązano problem sterowania omnikierunkową bazą jezdną. Osobnym zadaniem jest wyznaczanie prędkości robota w sytuacji kiedy posiada on piłkę.
+Robot dryblujący z piłką nie może poruszać się z pełną dowolnością, tak aby nie stracić nad nią kontroli. Problem ten został dokładnie zaprezentowany w \cite{dribbling}. W publikacji co prawda skupiono
+się na modelu robota z rozgrywek \emph{Middle-size League} jednak zaprezentowany algorytm zajduje zastosowanie także w lidze małych robotów.
+Na rysunku \ref{fig:omni_base_dribbling} przedstawiono bazę jezdną z zaznaczonym globalnym układem współrzędnych $[X_w;Y_w]$ oraz związanym ze sterowanym robotem $[X_m;Y_m]$, za pomocą wektora $v_r$ zaznaczono
+prędkość liniową z jaką porusza się robot.
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.7]{./holonomic/trapezoid_rule}
-\caption{ Dekompozycja sterowania robotem w 2D na dwa niezależne zadania w 1D }\label{fig:trapezoid_rule}
+\includegraphics[scale=0.5]{./holonomic/omni_base_dribbling}
+\caption{Omnikierunkowa baza jezdna stosowana w rozgrywkach średnich robotów. Źródło \cite{dribbling}}\label{fig:omni_base_dribbling}
 \end{figure}
-
-
-\begin{itemize}
- \item ograniczenia wynikające z budowy \texttt{dribblera},
- \item wyznaczanie dopuszczalnych prędkośći.
-\end{itemize}
-
-\section{Dryblowanie z piłką}
-\todo{opiać matematykę dryblowania z piłką}
-\begin{itemize}
- \item ograniczenia wynikające z budowy \texttt{dribblera},
- \item wyznaczanie dopuszczalnych prędkośći.
-\end{itemize}
-
+Natomiast na rysunku \ref{fig:dribbling_ball} przedstawiona została sytuacja, gdy robot jest w posiadaniu piłki. Krzywa $P$ oznacza trajektorię po której porusza się zawodnik. Aby nie stracić piłki
+punkt $E$ znajdujący się dokładnie na wprost robota w odległości $L$ równej promieniowi piłki powinien pokrywać się z jej środkiem. Zadaniem algorytmu sterującego dryblującym robotem jest zatem, wyznaczenie
+prędkości obrotowej, takiej aby środek piłki znajdował się w otoczeniu punkt $E$. W przypadku robotów z ligi \emph{Small-size League} $L=r_{ball}+r_{robot} +w_{dribbler}$.
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{./holonomic/dribbling_ball}
+\caption{ Pozycja piłki w układzie współrzędnych związanym z robotem. Źródło \cite{dribbling} }\label{fig:dribbling_ball}
+\end{figure}
+Na rysunku \ref{fig:ball_control} przedstawiono robota wykonującego obrót z piłką. W momencie kiedy robot wraz z piłką poruszają się po łuku $c$, piłka posiada pewne przyspieszenie dośrodkowe,
+$a_b=cv_e$ powodujące jej odchylenie od punktu $E$. Na rysunku symbolem $\Delta\Theta$ zaznaczono odchylenie kątowe, wynikające właśnie z działania siły dośrodkowej, które należy minimalizować,
+ aby robot nie stracił kontroli nad piłką. Odchylenie to można zamodelować jako: $\Delta\Theta=k_{\Theta}cv_{d}^2$ , gdzie $k_{\Theta}$ jest dobranym empirycznie parametrem.
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{./holonomic/ball_control}
+\caption{ Odchylenie piłki od idealnego położenia podcza manewrowania. Źródło \cite{dribbling} }\label{fig:ball_control}
+\end{figure}
