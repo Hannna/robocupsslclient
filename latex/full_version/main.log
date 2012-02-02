@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  2 FEB 2012 21:27
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  2 FEB 2012 22:08
 entering extended mode
  %&-line parsing enabled.
 **main.tex
@@ -1267,27 +1267,7 @@ File: ./grafika/./testy_rrt/static/max_tree.png Graphic file (type png)
 <use ./grafika/./testy_rrt/static/max_tree.png> [67 <./grafika/./testy_rrt/stat
 ic/liczba_sciezek.png (PNG copy)> <./grafika/./testy_rrt/static/max_sciezka.png
  (PNG copy)>]
-Overfull \hbox (21.98425pt too wide) in paragraph at lines 212--212
-[]\OT4/cmr/m/n/12 zamiescic 
- []
-
-
-Overfull \hbox (0.70392pt too wide) in paragraph at lines 212--212
-\OT4/cmr/m/n/12 przy- 
- []
-
-
-Overfull \hbox (21.98425pt too wide) in paragraph at lines 212--212
-[]\OT4/cmr/m/n/12 zamiescic 
- []
-
-
-Overfull \hbox (0.70392pt too wide) in paragraph at lines 212--212
-\OT4/cmr/m/n/12 przy- 
- []
-
-
-Overfull \hbox (4.6524pt too wide) in paragraph at lines 213--213
+Overfull \hbox (4.6524pt too wide) in paragraph at lines 212--212
 []\OT4/cmr/bx/n/17.28 Wyniki eks-pe-ry-men-tów ±ro-do-wi-sku dy-na-micz-
  []
 
@@ -1315,7 +1295,7 @@ File: ./grafika/./testy_rrt/dynamic/max_sciezka.png Graphic file (type png)
 <./grafika/./testy_rrt/dynamic/max_tree.png, id=318, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/max_tree.png Graphic file (type png)
 
-<use ./grafika/./testy_rrt/dynamic/max_tree.png>
+<use ./grafika/./testy_rrt/dynamic/max_tree.png>)
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
@@ -1331,37 +1311,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-
-Overfull \hbox (21.98425pt too wide) in paragraph at lines 261--261
-[]\OT4/cmr/m/n/12 zamiescic 
- []
-
-
-Overfull \hbox (0.70392pt too wide) in paragraph at lines 261--261
-\OT4/cmr/m/n/12 przy- 
- []
-
-
-Overfull \hbox (1.68307pt too wide) in paragraph at lines 261--261
-\OT4/cmr/m/n/12 micz- 
- []
-
-
-Overfull \hbox (21.98425pt too wide) in paragraph at lines 261--261
-[]\OT4/cmr/m/n/12 zamiescic 
- []
-
-
-Overfull \hbox (0.70392pt too wide) in paragraph at lines 261--261
-\OT4/cmr/m/n/12 przy- 
- []
-
-
-Overfull \hbox (1.68307pt too wide) in paragraph at lines 261--261
-\OT4/cmr/m/n/12 micz- 
- []
-
-) (./tex/stp.tex [69 <./grafika/./testy_rrt/dynamic/sukcesy.png (PNG copy)>]
+(./tex/stp.tex [69 <./grafika/./testy_rrt/dynamic/sukcesy.png (PNG copy)>]
 [70 <./grafika/./testy_rrt/dynamic/czas_dojazdu.png (PNG copy)> <./grafika/./te
 sty_rrt/dynamic/czas_rrt.png (PNG copy)>] [71 <./grafika/./testy_rrt/dynamic/li
 czba_sciezek.png (PNG copy)> <./grafika/./testy_rrt/dynamic/max_sciezka.png (PN
@@ -1558,10 +1508,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 13630 strings out of 495026
- 227188 string characters out of 1181802
+ 13626 strings out of 495026
+ 227076 string characters out of 1181802
  329908 words of memory out of 3000000
- 16363 multiletter control sequences out of 15000+50000
+ 16359 multiletter control sequences out of 15000+50000
  23395 words of font info for 70 fonts, out of 3000000 for 9000
  48 hyphenation exceptions out of 8191
  54i,12n,92p,588b,1389s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1586,7 +1536,7 @@ pl/plsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy8.pfb></usr/sh
 are/texmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/texmf-texlive/fo
 nts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/
 pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.pfb>
-Output written on main.pdf (96 pages, 3066884 bytes).
+Output written on main.pdf (96 pages, 3066057 bytes).
 PDF statistics:
  505 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
