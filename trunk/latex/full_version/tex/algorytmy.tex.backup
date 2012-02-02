@@ -150,7 +150,7 @@ szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znan
 \subsection{Algorytm CVM (\texttt{Curvature Velocity Method})}
 	W pracy inżynierskiej \cite{inzynierka} jako docelowy algorytm unikania kolizji wybrany został właśnie \texttt{CVM}.
 	Metoda krzywizn i prędkości (ang. \textit{Curvature Velocity Method}) została zaproponowana przez R. Simmonsa w
-	\cite{CVM_2}, należy ona do grupy metod bazujących na przeszukiwaniu przestrzeni prędkości, a jej działanie
+	\cite{CVM_2}, należy do grupy metod bazujących na przeszukiwaniu przestrzeni prędkości, a jej działanie
 	jest zbliżone do techniki dynamicznego okna zaprezentowanej w \ref{subsec:dynamic_window}.
 
 	Spośród wszystkich par $(v,\omega)$ wybierana jest taka, która osiąga największą wartość funkcji celu.
@@ -356,6 +356,7 @@ Algorytm \texttt{RRT} jest wydajnym algorytmem, który w czasie rzeczywistym mo�
 Podstawową strukturą danych na której operuje algorytm jest drzewo. Jako korzeń przyjmowany jest stan reprezentujący położenie robota w momencie uruchomienia algorytmu.
 Budowa drzewa polega na dodawaniu kolejnych węzłów do drzewa w kierunku punktu obranego w danym kroku jako docelowy. Tymczasowy stan docelowy generowany jest w następujący sposób:
  \begin{algorithm}[H]
+	
 	\caption{ Funkcja obliczająca stan docelowy }
 	\label{alg:chooseTarget}
 	\begin{algorithmic}
@@ -402,7 +403,7 @@ W opisie algorytmu \ref{alg:RRT} użyte zostały nie omówione jeszcze funkcje, 
 Tak zaimplementowana wersja algorytmu może być zastosowana jako skuteczne narzędzie do bezkolizyjnej nawigacji robotem, jednak jego wydajność można poprawić poprzez
 modyfikacje opisane w kolejnym podrozdziale.
 
-\subsubsection{Modyfikacje algorytmu, czyli przejście z \texttt{RRT} do \texttt{ERRT} \label{sec:RRT:extend} }
+\subsection{Modyfikacje algorytmu, czyli przejście z \texttt{RRT} do \texttt{ERRT} \label{sec:RRT:extend} }
 Omawiany algorytm można zmodyfikować pod kątem szybkości działania. Po pierwsze elementy drzewa można przechowywać w strukturach ułatwiających przeszukiwanie drzewa,
 w literaturze stosowane są w tym celu \texttt{KD-drzewa}. Kolejną modyfikacją jest zapamiętywanie losowo wybranych węzłów ze ścieżki znalezionej w poprzednim uruchomieniu
 algorytmu. W takim wariancie tymczasowy punkt docelowy obierany jest następująco:
@@ -423,26 +424,21 @@ algorytmu. W takim wariancie tymczasowy punkt docelowy obierany jest następują
 	\end{algorithmic}
   \end{algorithm}
 W publikacji \cite{RRT} prawdopodobieństwo podążania do właściwego celu ostatecznie ustalane zostało na poziomie $0.1$, natomiast \texttt{wayPointProb} wynosiło $0.7$.
-
-
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.34]{./algorytmy/tree_with_waypoints.png}
 \caption{ \texttt{RRT} z zapamiętanymi węzłami z porzedniego uruchomiena. Linią kropkowaną zaznaczono gałąź dodaną w kierunku losowego punktu,
  linią przerywaną w kierunku jednego z elementów z poprzedniej ścieżki, a linią niebiską w kierunku celu.} \label{fig:tree_with_waypoints}
 \end{figure} 
-
-The distance metric can be modified to
-include not only the distance from the tree to a target
-state, but also the distance from the root of the
-tree, multiplied by some gain value.
+Kolejną modyfikacją jest zmiana sposobu obliczania odległości, standardowo w algorytmie wykorzystywana jest odległość pomiędzy liściem drzewa a punktem docelowym. Aby uniknąć
+nadmiernego rozrastania drzewa, odległość może uwzględniać dodatkowo odległość liścia od korzenia pomnożoną przez określony współczynnik wagowy.
 
 \section{Zalety algorytmu RRT w stosunku \\do CVM}
-Podczas kontynuacji prac nad rozgrywkami \textit{RoboCup} zdecydowano się na zmianę algorytmu wyznaczającego bezkolizyjną ścieżkę. Zmiana została wymuszona decyzją o zmianie
+Podczas kontynuacji prac nad rozgrywkami RoboCup zdecydowano się na zmianę algorytmu wyznaczającego bezkolizyjną ścieżkę. Zmiana została wymuszona decyzją o zmianie
 modelu sterowanego robota. Bazę jezdną o napędzie różnicowym zastąpiono holonomiczną. Algorytm \textit{CVM} jest algorytmem dedykowanym do robotów o napędzie różnicowym, doskonale
 można ująć w nim ograniczenia na dopuszczalne prędkości. Jednak sterowanie za jego pomocą robotem holonomicznym nie pozwala na pełne wykorzystanie możliwości robota.
-Dodatkowo jak zostało udowodnione w pracy inżynierskiej \cite{inzynierka}, \textit{CVM} w przypadku środowisk z przeszkodami dynamicznymi osiągał skuteczność na poziomie $80\%$. Kolizje miały miejsce 
-głównie w sytacjach, kiedy przeszkoda uderzała w robota z boku lub z tyłu. Wynikało to z faktu, że trajektoria ruchu takiej przeszkody znajdowała się poniżej osi $OY$ w układzie współrzędnych
+Dodatkowo jak zostało udowodnione w pracy inżynierskiej \cite{inzynierka}, \textit{CVM} w przypadku środowisk z przeszkodami dynamicznymi osiągał skuteczność na poziomie $80\%$. Kolizje występowały 
+głównie w sytuacjach, kiedy przeszkoda uderzała w robota z boku lub z tyłu. Wynikało to z faktu, że trajektoria ruchu takiej przeszkody znajdowała się poniżej osi $OY$ w układzie współrzędnych
 związanym ze sterowanym robotem. Przeszkody takiego typu nie były uwzględnianie przez algorytm.
 \textit{RRT} pozwala na uwzględnianie przeszkód rozsianych po całej planszy. Dodatkowo umożliwia poruszanie się po bardziej złożonych trajektoriach.
 Kolejną zaletą \textit{RRT} jest prostota w ograniczaniu przestrzeni z której losowane są tymczasowe punkty docelowe. Dzięki temu w prosty sposób można ograniczyć poruszanie
