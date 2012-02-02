@@ -9,10 +9,15 @@
 #include "GoToBall.h"
 #include "KickBall.h"
 
-MoveBall::MoveBall(const Pose & pose,Robot * robot_):Task(robot_),goalPose(pose) {
+MoveBall::MoveBall(const Pose & pose,Robot * robot_):Task(robot_),goalPose(pose),maxRobotDistanceWithBall(Config::getInstance().getMaxRobotDistanceWithBall()) {
 
+    GameStatePtr currGameState( new GameState() );
+    video.updateGameState(currGameState);
+	startPose = currGameState->getRobotPos(this->robot->getRobotID());
+	previousRobotPose = startPose;
 	goToPose = new GoToPose(goalPose.getPosition(),robot_);
 	goToPose->markParam(Task::kick_if_we_can);
+	distanceWithBall=0;
 }
 
 Task* MoveBall::nextTask(){
@@ -22,6 +27,13 @@ Task* MoveBall::nextTask(){
 		LOG_INFO(this->log,"MoveBall -> GoToBall");
 		//jesli robot nie ma pilki to zmieni task na GoToBall
 		return new GoToBall( this->robot );
+	}
+	else if( distanceWithBall >= maxRobotDistanceWithBall ){
+		LOG_INFO(this->log," maxRobotDistanceWithBall exceeded. Change MoveBall -> KickBall");
+		//jesli robot nprzekroczyl maksymalny dystans poruszania sie z pilka kopnij ja do celu i podjedz
+		Task* task = new KickBall( robot, goalPose.getPosition(), goalPose.get<2>() ,Config::getInstance().getDribbleKickForce());
+		task->markParam(Task::kick_for_dribble);
+		return task;
 	}
 	//jesli robot ma pilke to jedz z pilka do celu
 	else{
@@ -38,14 +50,14 @@ Task* MoveBall::nextTask(){
 			if( fabs(score) > EvaluationModule::minOpenAngle   ){
 				LOG_INFO(this->log,"MoveBall -> KickBall score "<<score<<"  ang.first"<<ang.first<<" ang.second "<<ang.second );
 				//return new KickBall( robot,  convertAnglePI( ang.first + sign*score/2.0 )  ) ;
-				Pose targetPose;
+				Vector2D targetPosition;
 				if( this->robot->isBlue() )
-					targetPose = Pose( Videoserver::getBlueGoalMidPosition(), angleToGoal );
+					targetPosition = Videoserver::getBlueGoalMidPosition();
 
 				if( this->robot->isRed() )
-					targetPose = Pose( Videoserver::getRedGoalMidPosition(), angleToGoal );
+					targetPosition = Videoserver::getRedGoalMidPosition();
 
-				return new KickBall( robot,targetPose);
+				return new KickBall( robot, targetPosition, angleToGoal, Config::getInstance().getMaxKickForce());
 
 
 			}
@@ -61,6 +73,18 @@ Task* MoveBall::nextTask(){
 	}
 }
 Task::status MoveBall::run(void * arg, int steps){
+
+    GameStatePtr currGameState( new GameState() );
+    double currSimTime=video.updateGameState(currGameState);
+	Pose currentRobotPose=currGameState->getRobotPos(this->robot->getRobotID());
+
+	distanceWithBall+=currentRobotPose.distance(this->previousRobotPose);
+	previousRobotPose = currentRobotPose;
+	if( distanceWithBall >= maxRobotDistanceWithBall ){
+		LOG_INFO(this->log,"MoveBall, moving with ball forbidden");
+		//robot->stop();
+		return Task::movingBallForbidden;
+	}
 	return goToPose->execute(NULL,steps);
 	//return Task::ok;
 }

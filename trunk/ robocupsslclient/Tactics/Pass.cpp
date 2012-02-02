@@ -43,8 +43,8 @@ void Pass::execute(void*){
 		double rotationToTarget = 0;
 		if( evaluation.isRobotOwnedBall(robot) ){
 			if( evaluation.aimAtTeamMate( robot.getRobotID(), targetRobotID, &rotationToTarget ) > 0.5 ){
-				Pose target = Pose( gameState->getRobotPos( targetRobotID ).getPosition(),rotationToTarget) ;
-				this->currentTask = TaskSharedPtr( new KickBall( &robot, target ) );
+				this->currentTask = TaskSharedPtr( new KickBall( &robot, gameState->getRobotPos( targetRobotID ).getPosition(),
+						rotationToTarget,Config::getInstance().getMaxPassForce() ) );
 			}
 			else{
 				LOG_INFO(log," aim at team mate return "<< evaluation.aimAtTeamMate( robot.getRobotID(), targetRobotID ) );

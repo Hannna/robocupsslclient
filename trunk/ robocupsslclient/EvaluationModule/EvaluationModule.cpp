@@ -308,8 +308,8 @@ Pose EvaluationModule::findBestDribbleTarget( const std::string robotName,Robot:
     	throw SimulationException( s.str() );
     }
 	SimAnnealing2 sim(currGameState, robotName,rid);
-	Vector2D s = sim.simAnnnealing2();
-    return Pose(s,0);//appConfig.field.FIELD_MIDDLE_POSE;
+	std::pair<Vector2D, double> s = sim.simAnnnealing2();
+    return Pose(s.first,s.second);//appConfig.field.FIELD_MIDDLE_POSE;
 
 }
 

@@ -94,7 +94,8 @@ Task::status GetBall::run(void * arg, int steps){
 					LOG_INFO(log, "GetBall ballPos wo prediction "<<ballPos<<" ball v "<<currGameState->getBallGlobalVelocity()  );
 					Vector2D t =ballPos +  ( currGameState->getBallGlobalVelocity() * ( 10.0* Videoserver::getInstance().getUpdateDeltaTime( ) ) );
 					LOG_INFO(log, "GetBall ballPos after prediction "<<t );
-					Vector2D robotNewVel=this->robot->calculateVelocity( robotCurrentVel, currRobotPose, Pose( t,0 ) );
+					bool haveBall=true;
+					Vector2D robotNewVel=this->robot->calculateVelocity( robotCurrentVel, currRobotPose, Pose( t,0 ),haveBall );
 					robot->setGlobalSpeed( robotNewVel, 0, currRobotPose.get<2>() );
 					LOG_INFO(log, "GetBall podjedz do pilki o "<<distanceToBall );
 					return Task::not_completed;

@@ -31,6 +31,9 @@ void DribbleToShoot::execute(void *){
 
     while( !this->stop ){
     	taskStatus = Task::not_completed;
+    	Pose goalPose  = evaluation.findBestDribbleTarget(robot.getRobotName(), robot.getRobotID());
+    	LOG_INFO(log,"end calculate best dribble target " );
+
 		this->currentTask = TaskSharedPtr( new MoveBall( goalPose, &robot ) );
 		Task::predicate p = Task::kick_if_we_can;
 		this->currentTask->markParam(p);
@@ -52,19 +55,22 @@ void DribbleToShoot::execute(void *){
 				robot.stop();
 				break;
 			}
-
+			else
 			if( taskStatus == Task::collision ){
 				robot.stop();
 				LOG_FATAL(log,"Shoot tactic Task::collision " );
 				finished = true;
 				return;
 			}
-
+			else
 			if( taskStatus == Task::kick_ok ){
 				robot.stop();
 				LOG_FATAL(log," Shoot tactic Task::kick_ok " );
 				finished = true;
 				return;
+			}
+			if( taskStatus == Task::movingBallForbidden ){
+				robot.stop();
 			}
 
 			if( taskStatus == Task::get_ball ){

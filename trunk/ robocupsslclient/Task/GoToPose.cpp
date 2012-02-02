@@ -92,14 +92,14 @@ Task* GoToPose::nextTask(){
 			//jesli warto strzelic na bramke
 			if( score > EvaluationModule::minOpenAngle ){
 				LOG_INFO(this->log," GoToPose -> KickBall ");
-				Pose targetPose;
+				Vector2D targetPosition;
 				if( this->robot->isBlue() )
-					targetPose = Pose( Videoserver::getBlueGoalMidPosition(), angleToShoot );
+					targetPosition = Videoserver::getBlueGoalMidPosition();
 
 				if( this->robot->isRed() )
-					targetPose = Pose( Videoserver::getRedGoalMidPosition(), angleToShoot );
+					targetPosition = Videoserver::getRedGoalMidPosition();
 
-				return new KickBall( robot,targetPose);
+				return new KickBall( robot,targetPosition, angleToShoot, Config::getInstance().getMaxKickForce() );
 				//return new KickBall( robot, ( ang.first + ang.second )/2  ) ;
 			}
 		}
@@ -257,10 +257,15 @@ Task::status GoToPose::run(void* arg, int steps){
 				robotCurrentGlobalVel=(*currGameState).getRobotGlobalVelocity( robot->getRobotID() );
 
 				//robotNewVel=calculateVelocity( robotCurrentVel, Pose(targetRelPosition.x,targetRelPosition.y,0));
-				bool haveBall = this->evaluationModule.isRobotOwnedBall( this->robot );
+				bool haveBall= false;
 				double w = 0;
 
-				robotNewGlobalVel=this->robot->calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
+				if( this->predicates & Task::go_to_ball )
+					haveBall=true;
+				else
+					haveBall=this->evaluationModule.isRobotOwnedBall( this->robot );
+
+				robotNewGlobalVel=this->robot->calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose,haveBall);
 
 				// odleglosc punktu startowego od najblizszej przeszkody, brane sa pod uwage jedynie biezace polozenia robotow, jesli robot jest blizej przeszkody
 				// to wywolywana jest funkcja powodujaca rozproszenie
@@ -358,7 +363,10 @@ Task::status GoToPose::run(void* arg, int steps){
 						}
 						LOG_FATAL( log, "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 						robotCurrentGlobalVel=(*currGameState).getRobotGlobalVelocity( robot->getRobotID() );
-						robotNewGlobalVel=this->robot->calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose);
+						if( this->predicates & Task::go_to_ball )
+							haveBall=true;
+
+						robotNewGlobalVel=this->robot->calculateVelocity( robotCurrentGlobalVel, currRobotPose, nextRobotPose,haveBall);
 
 						//jesli robot mam miec szczegolna rotacje w punckie docelowym
 						//if(this->spec_rot){

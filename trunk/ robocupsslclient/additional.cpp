@@ -99,17 +99,20 @@ StraightLine::StraightLine(const Vector2D p1_,const  Vector2D p2_): p1(p1_),p2(p
 	}
 	//rownanie prostej laczacej robota i pkt docelowy
 	else{
-		A = -1.0*( p1.y - p2.y )/(p1.x - p2.x );
-		B = 1.0;
-		C=(-1.0)*A*( p2.x ) - p2.y;
+		//A = -1.0*( p1.y - p2.y )/(p1.x - p2.x );
+		//B = 1.0;
+		//C=(-1.0)*A*( p2.x ) - p2.y;
+		A=( p1.y - p2.y );
+		B=( p2.x - p1.x );
+		C=-p1.y*(p2.x - p1.x )+p1.x*( p2.y - p1.y );
 	}
 
-	if( fabs(A*p1.x +B*p1.y +C) > 0.01 ){
+	if( fabs(A*p1.x +B*p1.y +C) > 0.001 ){
 		std::cout<<"ERROR"<<*this<<" with point "<< p1 <<" err ="<<fabs(A*p1.x +B*p1.y +C) <<std::endl;
 		exit(0);
 	}
 
-	if( fabs(A*p2.x +B*p2.y +C) > 0.01 ){
+	if( fabs(A*p2.x +B*p2.y +C) > 0.001 ){
 		std::cout<<"ERROR"<<*this<<" with point "<< p2 <<" err ="<<fabs(A*p2.x +B*p2.y +C)<<std::endl;
 		exit(0);
 	}

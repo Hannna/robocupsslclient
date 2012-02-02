@@ -153,7 +153,7 @@ class Region{
 
 class StraightLine{
 	public:
-		friend std::ostream& operator<<(std::ostream& os,const Region& region);
+		friend std::ostream& operator<<(std::ostream& os,const StraightLine& line);
 
 		StraightLine(const Vector2D p1,const  Vector2D p2);
 
@@ -197,6 +197,17 @@ class StraightLine{
 			Vector2D w( this->B, -1.0*this->A );
 
 			return w.angleTo( Vector2D(0.0,1.0) );
+		}
+
+		double incline(){
+			if(fabs(this->A) < 0.01)
+				return 0;
+			if(fabs(this->B) < 0.01)
+				return M_PI/2.0;
+			return atan(-this->A/this->B);
+			//return atan2(-this->A,this->B);
+			//return atan2(this->B,-this->A);
+			//return atan2()
 		}
 
 		virtual ~StraightLine();

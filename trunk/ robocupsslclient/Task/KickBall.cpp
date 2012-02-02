@@ -9,8 +9,9 @@
 #include "GoToBall.h"
 
 
-KickBall::KickBall(Robot * robot_, const Pose targetPose_): Task(robot_), kickNow(false), rotation( targetPose_.get<2>( ) ), targetPose(targetPose_) {
-	LOG_INFO(log," Create KickBall task. Angle to shoot "<<rotation);
+KickBall::KickBall( Robot * robot_, Vector2D  targetPosition_, double rotation_, double maxForce ): Task(robot_), kickNow(false), rotation( rotation_ ), targetPosition(targetPosition_),
+maxKickForce( maxForce ) {
+	LOG_INFO(log," Create KickBall task. Angle to shoot "<<rotation<<" position to shoot "<<targetPosition);
 
 }
 /*
@@ -159,10 +160,10 @@ Task::status KickBall::run(void * arg, int steps ){
     	else if( this->kickNow ){
     		LOG_INFO(log,"kick now set. Try to kick ball.");
     	}
-    	double maxForce = 5.0;
-    	double dist = currPose.distance( this->targetPose );
+    	//double maxForce = 5.0;
+    	double dist = currPose.getPosition().distance( this->targetPosition );
     	LOG_INFO(log,"dist to target "<< dist);
-    	double force = dist*maxForce/9.16;
+    	double force = dist*maxKickForce/9.16;
     	this->robot->kick( force );
 
     	if( this->evaluationModule.isRobotOwnedBall( this->robot->getRobotID() ) ){
@@ -170,6 +171,13 @@ Task::status KickBall::run(void * arg, int steps ){
     		return Task::not_completed;
     	}
     	else{
+
+    		if(this->predicates & Task::kick_for_dribble){
+    			LOG_INFO(log,"Was ball kicked for dribble ");
+    			//exit(0);
+    			return Task::ok;
+    		}
+
     		LOG_INFO(log,"Was ball kicked");
     		return Task::kick_ok;
     	}
