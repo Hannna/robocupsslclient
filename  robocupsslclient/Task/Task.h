@@ -34,6 +34,7 @@ public:
 		analyse_all_field = 0x08,
 		got_ball = 0x10,
 		go_to_ball = 0x20,
+		kick_for_dribble=0x30,
 	} predicate;
 
 	enum status{
@@ -44,6 +45,8 @@ public:
 		error,
 		//cel jest przesloniety, lub wew przeszkody
 		target_blocked,
+		//jesli przekroczono maksymalna dopuszczalna odleglosc poruszania sie z pilka
+		movingBallForbidden,
 		ok = 0,
 		kick_ok,
 		get_ball

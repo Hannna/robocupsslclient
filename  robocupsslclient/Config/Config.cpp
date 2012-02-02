@@ -18,7 +18,7 @@ pthread_mutex_t Config::mutex=PTHREAD_MUTEX_INITIALIZER;
 bool Config::end = false;
 
 
-Config::Config(): configFileName("config.xml"),log(getLoggerPtr("app_debug") ) {
+Config::Config(): configFileName("config.xml"),maxRobotDistanceWithBall(0.5),log(getLoggerPtr("app_debug") ) {
 	testMode=false;
 	debug=false;
 }

@@ -158,6 +158,9 @@ public:
         double mainCylinderRadious;
         double acc;
         double dcc;
+        const static double maxKickForce=150;
+        const static double dribbleKickForce=0.05;
+        const static double maxPassForce=100;
 	};
 	static Config* config;
 	static pthread_mutex_t  mutex;
@@ -177,6 +180,18 @@ public:
     	return robotParams.acc;
     }
 
+    double getMaxKickForce() const {
+       	return robotParams.maxKickForce;
+    }
+
+    double getDribbleKickForce() const {
+        return robotParams.dribbleKickForce;
+    }
+
+    double getMaxPassForce() const {
+        return robotParams.maxPassForce;
+    }
+
 	const std::vector<std::string> getRedTeam()const;
 	const int getRedTeamSize()const{
 		return this->redTeam.size();
@@ -184,6 +199,9 @@ public:
 	const std::vector<std::string> getBlueTeam()const;
 	const int getBlueTeamSize()const{
 		return this->blueTeam.size();
+	}
+	double getMaxRobotDistanceWithBall() const{
+		return maxRobotDistanceWithBall;
 	}
 	std::string getTestModelName();
 	bool isDebugMode();
@@ -249,6 +267,9 @@ private:
 	//nazwy modeli druzyny czerwonej
 	std::vector<std::string> redTeam;
 	const std::string configFileName;
+
+	//maksymalna odleglosc jaka moze pokonac robot z pilka, nie odrywajac jej od dribblera
+	const double maxRobotDistanceWithBall;
 
 	bool loadTestMode(xmlNodePtr node,xmlDocPtr config);
 	bool loadSettings(xmlNodePtr node,xmlDocPtr config);

@@ -18,7 +18,7 @@ class SimAnnealing2 {
 
 public:
 	SimAnnealing2( const GameStatePtr& gamestate, const std::string robotName,Robot::robotID rid );
-	Vector2D simAnnnealing2();
+	std::pair<Vector2D, double> simAnnnealing2();
 	virtual ~SimAnnealing2();
 private:
 	const GameStatePtr gameState;

@@ -39,6 +39,7 @@
 typedef
 struct GsimanParams2_{
 	Vector2D answer;
+	double angleToShoot;
 	const EvaluationModule * evaluation;
 	const GameStatePtr* gameState;
 	const std::string* robotName;
@@ -63,6 +64,8 @@ double E2(void *xp)
 	double angleToShoot;
 	double score = 0;
 	std::pair<double, double> ang =gsimanParams->evaluation->aimAtGoal( (*gsimanParams->gameState),*gsimanParams->robotName, angleToShoot,score);
+
+	gsimanParams->angleToShoot = angleToShoot;
 	return -score;
 }
 
@@ -111,7 +114,7 @@ SimAnnealing2::~SimAnnealing2() {
 }
 
 
-Vector2D SimAnnealing2::simAnnnealing2(){
+std::pair<Vector2D, double> SimAnnealing2::simAnnnealing2(){
 	const gsl_rng_type * T;
 	gsl_rng * r;
 
@@ -126,6 +129,7 @@ Vector2D SimAnnealing2::simAnnnealing2(){
 	gsl_rng_env_setup();
 
 	GsimanParams2 initial_state;
+	initial_state.angleToShoot = 0;
 	initial_state.robotName = &this->robotName;
 	initial_state.evaluation = &this->evaluation;
 	initial_state.gameState = &this->gameState;
@@ -148,6 +152,6 @@ Vector2D SimAnnealing2::simAnnnealing2(){
 
 	gsl_rng_free (r);
 
-	return initial_state.answer;
+	return std::pair<Vector2D, double>(initial_state.answer,initial_state.angleToShoot);
 	//std::cout<<" result "<<initial_state.answer<<std::endl;
 }

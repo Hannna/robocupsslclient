@@ -135,7 +135,7 @@ public:
 	 * @param [in] currVel predkosci robota w ukladzie odniesienia zwiazanym z robotem
 	 * @param [in] targetPose polozenie celu w ukladzie odniesienia zwiazanym z robotem
 	 */
-	Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose);
+	Vector2D calculateVelocity( const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose, bool haveBall = false );
 
 	void setMaxDcc( const double dcc ){
 		this->maxDcc = dcc;
@@ -201,6 +201,11 @@ private :
 	 const static int filterSize = 5;
 	 int last_w_index;
 	 double last_angular_vel[filterSize];
+
+	 double tetaE;
+	 double tetaP;
+
+	 bool haveBall;
 
 
 };

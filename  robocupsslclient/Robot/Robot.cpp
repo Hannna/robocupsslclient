@@ -194,6 +194,14 @@ void Robot::setGlobalSpeed(const Vector2D & v,const double & angularV, const dou
 
 	Vector2D speed =v.rotate(-rot);
 
+	if(this->haveBall){
+		speed.x=speed.x*cos(tetaE);
+		speed.y=speed.y*sin(tetaE);
+	}
+	//speed.x=speed.x*sin(tetaE);
+	//speed.y=speed.y*cos(tetaE);
+
+
 	 LOG_INFO(log,"change v "<<v<<" to "<<speed );
 
 	this->last_angular_vel[this->last_w_index] = angularV;
@@ -1400,8 +1408,9 @@ Vector2D calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,
 }
 */
 
-Vector2D Robot::calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose){
+Vector2D Robot::calculateVelocity(const Vector2D &currVel,const  Pose & currGlobalPose,const  Pose & targetGlobalPose, bool haveBall){
 
+	this->haveBall=haveBall;
 	//RotationMatrix rmY( currGlobalPose.get<2>() );
 	//pozycja celu w ukladzie wsp zwiazanych z robotem
 	//Vector2D targetRelPosition=rmY.Inverse()*(targetGlobalPose.getPosition()-currGlobalPose.getPosition());
@@ -1410,6 +1419,23 @@ Vector2D Robot::calculateVelocity(const Vector2D &currVel,const  Pose & currGlob
 	newVel.x=calculateVelocity(currVel.x, currGlobalPose.get<0>(),targetGlobalPose.get<0>() );
 	newVel.y=calculateVelocity(currVel.y, currGlobalPose.get<1>(),targetGlobalPose.get<1>() );
 
+	//double tetaP = calculateAngleToTarget( currGlobalPose,targetGlobalPose );
+	//double tetaP = convertAngle2PI(calculateProperAngleToTarget( currGlobalPose,targetGlobalPose ));
+	StraightLine s(currGlobalPose.getPosition(),targetGlobalPose.getPosition());
+	//double tetaP = s.angleToOX();
+	double tetaP = s.incline();
+	if( fabs(fabs(tetaP) -fabs(this->tetaP) ) >0.1 )
+		this->tetaP=tetaP;
+
+	double kMAX=1.0;
+	double k=kMAX/currGlobalPose.distance(targetGlobalPose);
+	double xn = (currGlobalPose.distance(targetGlobalPose)- 0.02-0.012-0.06);//*sgn( targetGlobalPose.get<0>()-currGlobalPose.get<0>() );
+	double tetaE=atan(-1.0*k*xn)+tetaP;
+	//if( fabs(fabs(tetaE) -fabs(this->tetaE) ) >0.1 )
+		this->tetaE=fabs(tetaE);
+	LOG_FATAL( log, "line "<<s<<" incline "<<tetaP<<" tetaE "<<tetaE );
+	//newVel.x=newVel.x*sin(tetaE);
+	//newVel.y=newVel.y*cos(tetaE);
 	//double scale = fabs(newVel.x) > fabs(newVel.y) ? fabs(newVel.x) : fabs(newVel.y) ;
 	//17 12 2011 zaremowane
 	//if( scale > Config::getInstance().getRRTMaxVel() )
