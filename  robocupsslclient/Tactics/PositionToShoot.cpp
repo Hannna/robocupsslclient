@@ -1,9 +1,11 @@
 /*
- * DribbleToShoot.cpp
+ * PositionToShoot.cpp
  *
- *  Created on: Jan 29, 2012
+ *  Created on: Feb 3, 2012
  *      Author: maciek
  */
+
+#include "PositionToShoot.h"
 #include "../EvaluationModule/EvaluationModule.h"
 #include "../Task/Task.h"
 #include "../Task/GoToPose.h"
@@ -11,35 +13,29 @@
 #include "../Task/GoToBall.h"
 #include "../Task/MoveBall.h"
 
-#include "DribbleToShoot.h"
-
-
-DribbleToShoot::DribbleToShoot(Robot & robot): Tactic(robot)
+PositionToShoot::PositionToShoot(Robot & robot): Tactic(robot)
 {
-	this->active = true;
+	this->active = false;
 }
 
 
-void DribbleToShoot::execute(void *){
+void PositionToShoot::execute(void *){
 
-	LOG_INFO(log,"Start DribbleToShoot tactic " );
+	LOG_INFO(log,"Start PositionToShoot tactic " );
     EvaluationModule& evaluation=EvaluationModule::getInstance();
 
     Task::predicate predicates = Task::null;
     Task::status taskStatus = Task::not_completed;
-    Pose goalPose;
-
+    //Pose goalPose;
+    Pose goalPose  ;//= evaluation.findBestDribbleTarget(robot.getRobotName(), robot.getRobotID());
     while( !this->stop ){
     	taskStatus = Task::not_completed;
-    	//Config::getInstance().field.FIELD_MIDDLE_POSE.getPosition()
-    	Vector2D centerPosition(2.7, 1.875);
-    	//Config::getInstance().field.BOTTOM_GOAL_MID_POSITION
 
-    	Pose goalPose  = evaluation.findBestDribbleTarget(centerPosition,
-    			robot.getRobotName(), robot.getRobotID());
-    	LOG_INFO(log,"end calculate best dribble target " );
+    	//if( goalPose.distance(Config::getInstance().field.FIELD_MIDDLE_POSE)  < 1.0)
+    	//	break;
+    	LOG_INFO(log,"end calculate best dribble target goTo "<<goalPose );
 
-		this->currentTask = TaskSharedPtr( new MoveBall( goalPose, &robot ) );
+		this->currentTask = TaskSharedPtr( new 	GoToPose( goalPose.getPosition(), &robot ) );
 		Task::predicate p = Task::kick_if_we_can;
 		this->currentTask->markParam(p);
 		this->currentTask->markParam(predicates);
@@ -67,22 +63,10 @@ void DribbleToShoot::execute(void *){
 				finished = true;
 				return;
 			}
-			else
-			if( taskStatus == Task::kick_ok ){
-				robot.stop();
-				LOG_FATAL(log," Shoot tactic Task::kick_ok " );
-				finished = true;
-				return;
-			}
-			if( taskStatus == Task::movingBallForbidden ){
-				robot.stop();
-			}
+		}
 
-			if( taskStatus == Task::get_ball ){
-				taskStatus = Task::ok;
-				predicates = Task::got_ball;
-			}
-
+		if( taskStatus == Task::ok ){
+			break;
 		}
 
     }
@@ -90,12 +74,13 @@ void DribbleToShoot::execute(void *){
     LOG_INFO(log,"exit from DribbleToShoot tactic " );
 }
 
-bool  DribbleToShoot::isFinish(){
+bool  PositionToShoot::isFinish(){
 
     return this->finished;
 }
 
-DribbleToShoot::~DribbleToShoot()
+PositionToShoot::~PositionToShoot()
 {
 
 }
+

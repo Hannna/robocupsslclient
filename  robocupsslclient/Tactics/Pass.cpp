@@ -49,8 +49,9 @@ void Pass::execute(void*){
 			else{
 				LOG_INFO(log," aim at team mate return "<< evaluation.aimAtTeamMate( robot.getRobotID(), targetRobotID ) );
 				goalPose = gameState->getRobotPos( targetRobotID );
-				this->currentTask = TaskSharedPtr( new Rotate( goalPose.getPosition(), &robot  ) );
+				this->currentTask = TaskSharedPtr( new Rotate( targetRobotID, &robot  ) );
 				this->currentTask->markParam( Task::should_have_ball );
+				this->currentTask->markParam( Task::pass );
 			}
 		}
 		else{

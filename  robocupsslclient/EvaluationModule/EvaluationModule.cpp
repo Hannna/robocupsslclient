@@ -1,4 +1,5 @@
 #include "EvaluationModule.h"
+#include "EvaluationTypes.h"
 #include "../Lock/Lock.h"
 #include "../additional.h"
 #include "../Config/Config.h"
@@ -7,6 +8,7 @@
 #include "../Exceptions/SimulationException.h"
 
 #include "SimAnnealing2.h"
+#include "FindBestPointToShoot.h"
 
 #include <math.h>
 #include <limits>
@@ -65,14 +67,14 @@ score EvaluationModule::aimAtTeamMate(Robot::robotID shootingRobotID, Robot::rob
 
 
 	//jesli wsp x jest bliska 0 i roboty maja przeciwna rotace to mozna zrealizowac podanie
-	if( pow(recvPassRelPos.get<0>(),2) < 0.05 ){
+	if( pow(recvPassRelPos.get<0>(),2) < 0.05*recvPassRelPos.get<1>() ){
 		//roboty maja rotacje odpowiednia do siebie gdy roznica jest rowna -M_PI
 		//double deviation = pow(  fabs( shootingRobotPose.get<2>() - goalRobotPose.get<2>() )  - M_PI, 2 ) ;
 		double deviation = fabs( shootingRobotPose.get<2>() - goalRobotPose.get<2>() )  - M_PI ;
 
-
-		if( deviation < 0.1   ){// 4 stopnie
-			LOG_DEBUG( log," mozna podac deviation="<<deviation );
+		double threshold = 0.1*recvPassRelPos.get<1>();
+		if( deviation < threshold   ){// 4 stopnie
+			LOG_DEBUG( log," mozna podac deviation="<<deviation<<" threshold "<<threshold );
 			//std::cout<<" mozna podac deviation="<<deviation<<std::endl;
 			score_ = 1.0 - deviation;
 		}
@@ -82,10 +84,27 @@ score EvaluationModule::aimAtTeamMate(Robot::robotID shootingRobotID, Robot::rob
 		}
 	}
 	else{
-		LOG_INFO(log, "recvPassRelPos "<<recvPassRelPos );
+		if(rotationToTarget){
+			LOG_INFO(log, "!!!!!!!!! bad recvPassRelPos "<<recvPassRelPos<<" rotationToTarget "<<*rotationToTarget<<" currRotation "<<shootingRobotPose.get<2>() );
+		}
+		else{
+			LOG_INFO(log, "!!!!!!!!! bad recvPassRelPos "<<recvPassRelPos<<" currRotation "<<shootingRobotPose.get<2>() )
+		}
 	}
 
 	return score_;
+}
+
+bool EvaluationModule::checkAngleToPass(Vector2D targetPosition, Pose currRobotPosition, double & angleToTarget) const{
+
+	angleToTarget = calculateAngleToTarget( currRobotPosition, Pose(targetPosition.x,targetPosition.y,0) );
+	double threshold = 0.017 * currRobotPosition.getPosition().distance(targetPosition);
+	//LOG_INFO(this->log,"set threshold to "<<threshold);
+
+	if( fabs( angleToTarget ) < threshold ){//1stopien
+		return true;
+	}
+	return false;
 }
 
 
@@ -158,7 +177,7 @@ std::pair<double, double> EvaluationModule::aimAtTeamMate(Robot::robotID shootin
 }
 */
 
-EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bool * iAmCloserToBall ){
+BallState::ballState EvaluationModule::getBallState(Robot::robotID id, bool * iAmCloserToBall ){
 
 	GameStatePtr gameState( new GameState() );
 
@@ -169,25 +188,33 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bo
 	}
 
     const std::vector<std::string> blueTeam=Config::getInstance().getBlueTeam();
-    //EvaluationModule::ballState ballState;
-
-	//dla kazdego robota z naszej druzyny sprawdz czy nie jest posiadaczem pilki
-	//dla kazdego robota z druzyny przeciwnej sprawdz czy nie jest posiadaczem pilki
-
-    ballState bs;
-    ballState ballState_;
+    BallState::ballState bs=BallState::free;
+    BallState::ballState ballState_=BallState::free;
 
     Pose p;
     Pose ballPose = gameState->getBallPos();
-    LOG_TRACE( log,"Ball position is  "<<ballPose );
+
+    //pobierz ostatni stan z servera wideo,
+    //wazne w przypadku autu badz zdobycia bramki
+    ballState_ = gameState->getBallState();//getBallState( ballPose.getPosition() );
+    if( ballState_ != BallState::free){
+    	//LOG_FATAL( log,"Ball state is  "<<ballState_ );
+    	LOG_FATAL( log,"Ball 123position is  "<<ballPose<<" ballState "<<ballState_ );
+    	return ballState_;
+    }
+
+
     if( Robot::isBlue( id ) ){
-    	bs = EvaluationModule::occupied_our;
+    	bs = BallState::occupied_our;
     }
     else
-    	bs = EvaluationModule::occupied_theirs;
+    	bs = BallState::occupied_theirs;
 
     double distanceToBall;
     double angleToBall;
+
+	//dla kazdego robota z naszej druzyny sprawdz czy nie jest posiadaczem pilki
+	//dla kazdego robota z druzyny przeciwnej sprawdz czy nie jest posiadaczem pilki
 
     //odleglosc najblizszego robota do pilki
     double shortestDistance = numeric_limits<double>::max( );
@@ -202,7 +229,7 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bo
 		if( this->isRobotOwnedBall( Robot::getRobotID( modelName ), gameState , distanceToBall, angleToBall ) ){
 			ballState_ = bs;
 			if( Robot::getRobotID( modelName) == id )
-				return EvaluationModule::mine;
+				return BallState::mine;
 			else
 				return ballState_;
 		}
@@ -221,11 +248,11 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bo
 
 
     if( Robot::isBlue(id) ){
-    	bs = EvaluationModule::occupied_theirs;
+    	bs = BallState::occupied_theirs;
     	//this->ballState_ = EvaluationModule::occupied_theirs;
     }
     else{
-    	bs = EvaluationModule::occupied_our;
+    	bs = BallState::occupied_our;
     	//this->ballState_ = EvaluationModule::occupied_our;
     }
 	const std::vector<std::string> redTeam=Config::getInstance().getRedTeam();
@@ -239,7 +266,7 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bo
 			LOG_DEBUG(log,"Robot have got Ball p.distance(ballPose) "<< p.distance(ballPose) <<" robot name"<<modelName);
 
 			if( Robot::getRobotID( modelName) == id )
-				return EvaluationModule::mine;
+				return BallState::mine;
 			else
 				return ballState_;
 
@@ -251,53 +278,68 @@ EvaluationModule::ballState EvaluationModule::getBallState(Robot::robotID id, bo
 
 	}
 
-	//sprawdz czy pilka jest w obrebie boiska
-	if( ( ballPose.getPosition().x >= ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.x + Config::getInstance().field.FIELD_MARIGIN ) ) &&
-			( ballPose.getPosition().x  <= ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.x - Config::getInstance().field.FIELD_MARIGIN)  ) ){
-		if( ( ballPose.getPosition().y <= ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.y - Config::getInstance().field.FIELD_MARIGIN  ) ) &&
-				( ballPose.getPosition().y  >= ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.y + Config::getInstance().field.FIELD_MARIGIN ) ) ){
+	//sprawdz czy predkosc pilki nie kieruje jej do bramki
+	Vector2D currBallPosition = gameState->getBallPos().getPosition();
+	Vector2D ballSpeed = gameState->getBallGlobalVelocity();
+	Vector2D predBallPosition = currBallPosition+ballSpeed*10.0;
 
-				bs = EvaluationModule::free;
-				ballState_ = bs;
-				return ballState_;
-		}
+	if( Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.distance(predBallPosition) <
+			Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.distance(currBallPosition) ){
+		bs=BallState::go_to_goal;
 	}
-
-
-	//sprawdz czy nie jest w  dolnej bramce
-	if( ballPose.getPosition().y  <= ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.y +Config::getInstance().field.FIELD_MARIGIN ) ) {
-		if( ( ballPose.getPosition().x >= Config::getInstance().field.BOTTOM_GOAL_LEFT_CORNER.x  ) &&
-				( ballPose.getPosition().x  <= Config::getInstance().field.BOTTOM_GOAL_RIGHT_CORNER.x  ) ){
-
-				ballState_ = EvaluationModule::in_goal;
-				return EvaluationModule::in_goal;
-		}
-	}
-
-	//sprawdz czy nie jest w  gornej bramce
-	if( ballPose.getPosition().y  >= ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.y - Config::getInstance().field.FIELD_MARIGIN ) ) {
-		if( ( ballPose.getPosition().x >= Config::getInstance().field.TOP_GOAL_LEFT_CORNER.x  ) &&
-				( ballPose.getPosition().x  <= Config::getInstance().field.TOP_GOAL_RIGHT_CORNER.x  ) ){
-
-				ballState_ = EvaluationModule::in_goal;
-				return EvaluationModule::in_goal;
-		}
-	}
-
-
-	//pilka jest na aucie
-	if( ballState_ != EvaluationModule::out){
-		ballState_ = EvaluationModule::out;
-		this->positionForThrowIn = ballPose.getPosition();
-		//LOG_INFO( log,"!!!!!!!!!!!!!this->positionForThrowIn "<<this->positionForThrowIn);
-	}
-	return EvaluationModule::out;
+	//bs = getBallState(ballPosition);
+	return ballState_;
 }
 
+BallState::ballState EvaluationModule::getBallState(Vector2D ballPosition){
+	BallState::ballState bs;
+	//sprawdz czy pilka jest w obrebie boiska
+		if( ( ballPosition.x >= ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.x + Config::getInstance().field.FIELD_MARIGIN ) ) &&
+				( ballPosition.x  <= ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.x - Config::getInstance().field.FIELD_MARIGIN)  ) ){
+			if( ( ballPosition.y <= ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.y - Config::getInstance().field.FIELD_MARIGIN  ) ) &&
+					( ballPosition.y  >= ( Config::getInstance().field.FIELD_BOTTOM_LEFT_CORNER.y + Config::getInstance().field.FIELD_MARIGIN ) ) ){
+
+					bs = BallState::free;
+					ballState_ = bs;
+					return ballState_;
+			}
+		}
+
+
+		//sprawdz czy nie jest w  dolnej bramce
+		if( ballPosition.y  <= ( Config::getInstance().field.BOTTOM_GOAL_MID_POSITION.y ) ) {
+			if( ( ballPosition.x >= Config::getInstance().field.BOTTOM_GOAL_LEFT_CORNER.x  ) &&
+					( ballPosition.x  <= Config::getInstance().field.BOTTOM_GOAL_RIGHT_CORNER.x ) ){
+
+					ballState_ = BallState::in_goal;
+					return BallState::in_goal;
+			}
+		}
+
+		//sprawdz czy nie jest w  gornej bramce
+		if( ballPosition.y  >= ( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER.y - Config::getInstance().field.FIELD_MARIGIN ) ) {
+			if( ( ballPosition.x >= Config::getInstance().field.TOP_GOAL_LEFT_CORNER.x  ) &&
+					( ballPosition.x  <= Config::getInstance().field.TOP_GOAL_RIGHT_CORNER.x  ) ){
+
+					ballState_ = BallState::in_goal;
+					return BallState::in_goal;
+			}
+		}
+
+
+		//pilka jest na aucie
+		if( ballState_ != BallState::out){
+			ballState_ = BallState::out;
+			this->positionForThrowIn = ballPosition;
+			//LOG_INFO( log,"!!!!!!!!!!!!!this->positionForThrowIn "<<this->positionForThrowIn);
+		}
+		return BallState::out;
+}
 /*@brief znajduje najbardziej atrakcyjny punkt na planszy
 *
 * implementacja naiwna, najbardziej atrakcyjny jest srodek planszy
 */
+/*
 Pose EvaluationModule::findBestDribbleTarget( const std::string robotName,Robot::robotID rid ){
 
 	GameStatePtr currGameState(new GameState());
@@ -307,8 +349,37 @@ Pose EvaluationModule::findBestDribbleTarget( const std::string robotName,Robot:
 		s<<__FILE__<<":"<<__LINE__;
     	throw SimulationException( s.str() );
     }
-	SimAnnealing2 sim(currGameState, robotName,rid);
-	std::pair<Vector2D, double> s = sim.simAnnnealing2();
+	//SimAnnealing2 sim(currGameState, robotName,rid);
+    //std::pair<Vector2D, double> s = sim.simAnnnealing2();
+    const int distance = 1000;
+    FindBestPointToShoot f(Config::getInstance().field.FIELD_MIDDLE_POSE.getPosition(), distance,
+    		currGameState,robotName,rid);
+    std::pair<Vector2D, double> s =f.bestTarget();
+
+    LOG_INFO( log," FindBestPointToShoot return  "<<s.first );
+    //exit(0);
+    return Pose(s.first,s.second);//appConfig.field.FIELD_MIDDLE_POSE;
+
+}
+*/
+Pose EvaluationModule::findBestDribbleTarget( Vector2D centerPoint,const std::string robotName,Robot::robotID rid ){
+
+	GameStatePtr currGameState(new GameState());
+
+    if( video.updateGameState(currGameState) < 0){
+		std::ostringstream s;
+		s<<__FILE__<<":"<<__LINE__;
+    	throw SimulationException( s.str() );
+    }
+	//SimAnnealing2 sim(currGameState, robotName,rid);
+    //std::pair<Vector2D, double> s = sim.simAnnnealing2();
+    const int distance = 1000;
+    FindBestPointToShoot f(centerPoint, distance,
+    		currGameState,robotName,rid);
+    std::pair<Vector2D, double> s =f.bestTarget();
+
+    LOG_INFO( log," FindBestPointToShoot return  "<<s.first );
+    //exit(0);
     return Pose(s.first,s.second);//appConfig.field.FIELD_MIDDLE_POSE;
 
 }
@@ -418,7 +489,8 @@ bool EvaluationModule::isRobotOwnedBall(const Robot::robotID & robotID, const Ga
     if ( fabs(angle) < 0.33 ){
         //czy pilka jest odpowienio blisko dribblera
         //if ( toBall.length() < ( 0.075+0.012+0.022 ) / cos(angle) ){
-    	if ( toBall.length() < ( 0.075+0.006+0.022 ) / cos(angle) ){
+    	if(eb.length() < 0.015){
+    	//if ( toBall.length() < ( 0.012+0.006+0.02 ) / cos(angle) ){
         	robotHaveBall = true;
         }
     }
@@ -512,7 +584,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const std::string& robotNa
 std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currGameState,const std::string& robotName,double& angleToShoot,double & score_) const{
 
 	Pose robotPose=currGameState->getRobotPos( Robot::getRobotID(robotName) );
-    LOG_INFO(log, "Wyznaczam katy do strzalu. Pozycja strzalu " << robotPose );
+    //LOG_INFO(log, "Wyznaczam katy do strzalu. Pozycja strzalu " << robotPose );
 
     //pozycje wszystkich robotow poza zadanym
     std::vector<Pose> enemyPositions=currGameState->getEnemyRobotsPos(Robot::getRobotID(robotName));
@@ -539,7 +611,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currG
     	Vector2D v1 = Videoserver::getBlueGoalLeftCornerPosition() - robotPose.getPosition();
     	Vector2D v2 = Videoserver::getBlueGoalRightCornerPosition() - robotPose.getPosition();
 
-    	LOG_INFO( log," for robot "<<robotName<<" v1 "<<v1<<" v2 "<<v2 );
+    	//LOG_INFO( log," for robot "<<robotName<<" v1 "<<v1<<" v2 "<<v2 );
 
     	/*
     	alfa1 = p1.getPosition().angleTo(oy);
@@ -563,8 +635,8 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currG
 
 	    dist = Videoserver::getBlueGoalMidPosition().distance( robotPose.getPosition() );
 	    //LOG_DEBUG( log," open angle to the blue goal before translation min "<<tmp1<<" max "<<tmp2 );
-	    LOG_DEBUG( log," open angle to the blue goal before translation min "<<tmp1<<" max "<<tmp2<<" operacja odwrotna "<<" min"<<convertAnglePI(alfa1)<<" max "<<convertAnglePI(alfa2) )
-        LOG_DEBUG( log," open angle to the blue goal min "<<alfa1<<" max "<<alfa2 );
+	   // LOG_DEBUG( log," open angle to the blue goal before translation min "<<tmp1<<" max "<<tmp2<<" operacja odwrotna "<<" min"<<convertAnglePI(alfa1)<<" max "<<convertAnglePI(alfa2) )
+        //LOG_DEBUG( log," open angle to the blue goal min "<<alfa1<<" max "<<alfa2 );
 
         double halfFieldLen = Config::getInstance().field.FIELD_LENGTH / 2.0;
 
@@ -626,7 +698,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currG
 	    Vector2D v2 = Videoserver::getRedGoalRightCornerPosition() - robotPose.getPosition();
 
 	    additionalRotation = -M_PI;
-	    LOG_INFO( log," for robot "<<robotName<<" v1 "<<v1<<" v2 "<<v2<<" angle between "<<v1.angleTo(v2) );
+	    //LOG_INFO( log," for robot "<<robotName<<" v1 "<<v1<<" v2 "<<v2<<" angle between "<<v1.angleTo(v2) );
 
 
     	//alfa1 = v1.angleTo(oy);
@@ -639,7 +711,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currG
 	    double tmp2 = alfa2;
 	  	double tmp1 = alfa1;
 	    dist = Videoserver::getRedGoalMidPosition().distance( robotPose.getPosition() );
-        LOG_INFO( log,"dist to goal "<<dist<<" open angle to the red goal min "<<alfa1<<" max "<<alfa2 );
+        //LOG_INFO( log,"dist to goal "<<dist<<" open angle to the red goal min "<<alfa1<<" max "<<alfa2 );
 
 	    realMinAng = alfa1 < alfa2 ? alfa1 : alfa2;
 	    realMaxAng = alfa1 > alfa2 ? alfa1 : alfa2;
@@ -666,8 +738,8 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currG
 			//return std::pair<double,double>( 0, 0 );
 		}
 
-		LOG_DEBUG( log," open angle to the red goal before translation min "<<tmp1<<" max "<<tmp2<<" operacja odwrotna "<<" min"<<convertAnglePI(alfa1)<<" max "<<convertAnglePI(alfa2) );
-        LOG_DEBUG( log,"open angle to the red bottom goal min "<<alfa1<<" max "<<alfa2 );
+		//LOG_DEBUG( log," open angle to the red goal before translation min "<<tmp1<<" max "<<tmp2<<" operacja odwrotna "<<" min"<<convertAnglePI(alfa1)<<" max "<<convertAnglePI(alfa2) );
+        //LOG_DEBUG( log,"open angle to the red bottom goal min "<<alfa1<<" max "<<alfa2 );
 
     	/*
 		if(currGameState->getBlueGoalArea()==bottom){
@@ -710,11 +782,13 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currG
     LOG_DEBUG(log,"maksymalny kat do celu  "<<maxOpenAngle);
 
     for(ii = enemyPositions.begin(); ii!=enemyPositions.end(); ii++){
-		Set ang = findObstacleCoverAngles(robotPose,*ii, additionalRotation);
-		LOG_DEBUG(log, "obs pose "<<*ii<<" angles "<<ang);
-		if( ang.d > 0 ){
-            addToList( ang , angles);
-		}
+    	if( ii->distance(robotPose) > Config::getInstance().getRRTRobotRadius()){
+			Set ang = findObstacleCoverAngles(robotPose,*ii, additionalRotation);
+			LOG_DEBUG(log, "obs pose "<<*ii<<" angles "<<ang);
+			if( ang.d > 0 ){
+				addToList( ang , angles);
+			}
+    	}
     }
 
     LOG_DEBUG(log,"angles.size()  "<<angles.size());
@@ -788,7 +862,7 @@ std::pair<double, double> EvaluationModule::aimAtGoal(const GameStatePtr & currG
 
 
 
-	LOG_INFO(log, "exit from aimToGoal ang min "<<alfamin<<" ang max "<<alfamax<<" score "<<score<<" angleToShoot "<<angleToShoot  );
+	//LOG_INFO(log, "exit from aimToGoal ang min "<<alfamin<<" ang max "<<alfamax<<" score "<<score<<" angleToShoot "<<angleToShoot  );
 
     return std::pair<double,double>( alfamin , alfamax );
 }
@@ -868,7 +942,7 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 	double x=reltargetPose.getPosition().x;
 	double y=reltargetPose.getPosition().y;
 
-	LOG_INFO(log, "relObsPosition "<<reltargetPose.getPosition()<<" obsPosition "<<obstaclePosition<<" currRobotPose "<<currRobotPose );
+	//LOG_INFO(log, "relObsPosition "<<reltargetPose.getPosition()<<" obsPosition "<<obstaclePosition<<" currRobotPose "<<currRobotPose );
 
 	if(y<=0){
 		return Set( -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity() , -std::numeric_limits<double>::infinity());
@@ -902,9 +976,9 @@ Set EvaluationModule::findObstacleCoverAngles(Pose currRobotPose,Pose obstaclePo
 		double a1= ( -x*y - obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
 		double a2= ( -x*y + obstacleRadious*sqrt(y*y + x*x -obstacleRadious*obstacleRadious) )/ (obstacleRadious*obstacleRadious-x*x);
 
-		LOG_INFO(log, "a1 "<<a1<<" reltargetPose"<<reltargetPose);
+		//LOG_INFO(log, "a1 "<<a1<<" reltargetPose"<<reltargetPose);
 
-		LOG_INFO(log, "a2 "<<a2<<" reltargetPose"<<reltargetPose);
+		//LOG_INFO(log, "a2 "<<a2<<" reltargetPose"<<reltargetPose);
 
 		if( !boost::math::isnormal(a1) ){
 			double a1= ( -x*y - obstacleRadious*sqrt( y*y + x*x -obstacleRadious*obstacleRadious ) )/ (obstacleRadious*obstacleRadious-x*x);
@@ -973,24 +1047,24 @@ EvaluationModule::~EvaluationModule()
 }
 
 
-std::ostream & operator<<(std::ostream & os, const EvaluationModule::ballState & bState ){
+std::ostream & operator<<(std::ostream & os, const BallState::ballState & bState ){
 	switch(bState){
-	case EvaluationModule::free:
+	case BallState::free:
 		os<<"free";
 		break;
-	case EvaluationModule::out:
+	case BallState::out:
 		os<<"out";
 		break;
-	case EvaluationModule::in_goal:
+	case BallState::in_goal:
 		os<<"in_goal";
 		break;
-	case EvaluationModule::occupied_our:
+	case BallState::occupied_our:
 		os<<"occupied_our";
 		break;
-	case EvaluationModule::occupied_theirs:
+	case BallState::occupied_theirs:
 		os<<"occupied_theirs";
 		break;
-	case EvaluationModule::mine:
+	case BallState::mine:
 		os<<"mine";
 		break;
 	default:

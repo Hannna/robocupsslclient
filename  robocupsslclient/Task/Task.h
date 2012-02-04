@@ -11,6 +11,7 @@
 #include "../Robot/Robot.h"
 #include "../VideoServer/Videoserver.h"
 #include "../EvaluationModule/EvaluationModule.h"
+#include "../EvaluationModule/EvaluationTypes.h"
 //#include "../Thread/Thread.h"
 
 #include <boost/thread/mutex.hpp>
@@ -35,6 +36,7 @@ public:
 		got_ball = 0x10,
 		go_to_ball = 0x20,
 		kick_for_dribble=0x30,
+		//kick_for_dribble=0x30,
 	} predicate;
 
 	enum status{

@@ -68,7 +68,7 @@ class Play
          */
         virtual void stop()=0;
 
-        virtual void updateState(){
+        virtual void updateState( bool forceChangeTactics){
 
         };
 

@@ -352,17 +352,17 @@ void FollowLineAndAvoidObs::execute(void *){
 			measureTime(start_measure, &startLoopTime);
 
 
-			EvaluationModule::ballState bs = evaluation.getBallState(  this->robot.getRobotID( ), &iAmCloserToBall );
+			BallState::ballState bs = evaluation.getBallState(  this->robot.getRobotID( ), &iAmCloserToBall );
 
 			//jesli pilka jest wolna to zdobadz ja
-			if( bs == EvaluationModule::free  && iAmCloserToBall ){
+			if( bs == BallState::free  && iAmCloserToBall ){
 			   LOG_FATAL(log,"EvaluationModule::free ");
 			   newTask = new GetBall( &this->robot );
 			   gettingBall = true;
 			   this->currentTask = TaskSharedPtr(newTask );
 			}
 			//jesli jestes w posiadaniu pilki to jedz do celu
-			else if( bs == EvaluationModule::mine ){
+			else if( bs == BallState::mine ){
 				gettingBall = false;
 				LOG_FATAL(log,"EvaluationModule::mine ");
 				this->currentTask = goToPose;
@@ -449,7 +449,7 @@ void FollowLineAndAvoidObs::execute(void *){
 		   double diffTime = tmp - lapStartTime;
 		   //lastSimTime = tmp;
 		   if( (lastSimTime - startSimTime) < exTime ){
-				if( evaluation.getBallState(  this->robot.getRobotID( ) ) == EvaluationModule::mine)
+				if( evaluation.getBallState(  this->robot.getRobotID( ) ) == BallState::mine)
 					file<<3<<"\t"<<diffTime<<std::endl;
 				else
 					file<<1<<"\t"<<diffTime<<std::endl;

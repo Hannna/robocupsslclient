@@ -33,7 +33,7 @@ void Receive_pass::execute(void*){
  			   break;
  	   }
 
- 		if( evaluation.getBallState(this->robot.getRobotID()) == EvaluationModule::mine ){
+ 		if( evaluation.getBallState(this->robot.getRobotID()) == BallState::mine ){
  			 passRcv=true;
  			 continue;
  		}

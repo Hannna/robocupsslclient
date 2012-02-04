@@ -45,8 +45,8 @@ void GameState::updateRobotVel(Robot::robotID id,std::pair<Vector2D,double> vel)
 	this->robots[id].w=vel.second;
 }
 
-void GameState::updateBallData(Vector2D pos,Vector2D v){
-	this->ball=Ball(pos,v);
+void GameState::updateBallData(Vector2D pos,Vector2D v,BallState::ballState ballState_){
+	this->ball=Ball(pos,v,ballState_);
 }
 void GameState::updateSimTime(double simTime){
 	this->simTime=simTime;
@@ -101,6 +101,14 @@ double GameState::getRobotAngularVelocity(const  Robot::robotID id) const {
 Pose GameState::getBallPos() const {
 	return Pose(this->ball.pos.x,this->ball.pos.y,0.0);
 }
+BallState::ballState GameState::getBallState() const {
+	return this->ball.state;
+}
+
+void GameState::setBallState( BallState::ballState bs){
+	this->ball.state = bs;
+}
+
 double GameState::getSimTime() const {
 	return this->simTime;
 }

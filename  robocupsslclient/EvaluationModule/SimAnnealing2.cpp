@@ -43,6 +43,7 @@ struct GsimanParams2_{
 	const EvaluationModule * evaluation;
 	const GameStatePtr* gameState;
 	const std::string* robotName;
+	Vector2D robotPosition;
 	Vector2D* obstacles;
 	int obs_size;
 }GsimanParams2;
@@ -82,17 +83,14 @@ void S2(const gsl_rng * r, void *xp, double step_size)
 	GsimanParams2* gsimanParams = (GsimanParams2*)xp;
 	do{
 
-		//double	t=	gsl_rng_uniform_int(r,472);
-		//double u = t/100.0;
-		//gsimanParams->answer.x = u;//u * 2 * step_size - step_size + gsimanParams->answer.x;
-		//t=	gsl_rng_uniform_int(r,672); //gsl_rng_uniform_pos(r);
-		//u = t/100.0;
-		//gsimanParams->answer.y = u ;
-
 		double u = gsl_rng_uniform_pos(r);;
 		gsimanParams->answer.x = u * 2 * step_size - step_size + gsimanParams->answer.x;
 		u = gsl_rng_uniform_pos(r);
 		gsimanParams->answer.y = u* 2 * step_size - step_size + gsimanParams->answer.y;
+
+		//if( gsimanParams->answer.distance(gsimanParams->robotPosition) > 2.0){
+		//	continue;
+		//}
 	}while( gsimanParams->answer.x<0.675 || gsimanParams->answer.y<0.675 );
 }
 
@@ -130,6 +128,7 @@ std::pair<Vector2D, double> SimAnnealing2::simAnnnealing2(){
 
 	GsimanParams2 initial_state;
 	initial_state.angleToShoot = 0;
+	initial_state.robotPosition = this->gameState->getRobotPos(this->rid).getPosition();
 	initial_state.robotName = &this->robotName;
 	initial_state.evaluation = &this->evaluation;
 	initial_state.gameState = &this->gameState;
@@ -146,7 +145,7 @@ std::pair<Vector2D, double> SimAnnealing2::simAnnnealing2(){
 	}
 
 
-	gsl_siman_solve(r, &initial_state,E2,S2,M2,NULL,//P2
+	gsl_siman_solve(r, &initial_state,E2,S2,M2,NULL,
 					NULL, NULL, NULL,
 					sizeof(GsimanParams2), params);
 

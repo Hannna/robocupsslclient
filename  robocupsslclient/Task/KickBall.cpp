@@ -135,7 +135,11 @@ Task::status KickBall::run(void * arg, int steps ){
 			//error= fabs(  (currPose.get<2>() - rotation ) / rotation )*100.0;
 			error= fabs(  (currPose.get<2>() - rotation ) );
             //if(  ( error=pow( rotation - currPose.get<2>(),2 )  )   < ROTATION_PRECISION ){
-			if( error < 0.017 ){//1stopien
+			double threshold = 0.017;
+			if(this->predicates & Task::pass){
+				threshold = 0.017 * currPose.getPosition().distance(this->targetPosition);
+			}
+			if( error < threshold ){//1stopien
                 robot->setRelativeSpeed( Vector2D(0.0,0.0), 0 );
                 task_status = Task::ok;
                 LOG_INFO(log,"Task::ok shoot rotation "<<rotation<<" robot rotation "<<currPose.get<2>() );

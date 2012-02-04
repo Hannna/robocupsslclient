@@ -51,7 +51,7 @@ void RefereeClient::execute(void* ){
 	bzero( &rem, sizeof(rem) );
 	bool readyForThrowIn = false;
 
-	EvaluationModule::ballState bState;
+	BallState::ballState bState;
 
     LOG_INFO(log, "startig referee client");
 
@@ -72,7 +72,7 @@ void RefereeClient::execute(void* ){
 			//if( bState == EvaluationModule::occupied_theirs || bState == EvaluationModule::out || bState == EvaluationModule::in_goal ){
 			//if( this->gameStatePacket.cmd == RefereeCommands::start)
 			{
-				if( bState == EvaluationModule::out ){
+				if( bState == BallState::out ){
 					if( (!readyForThrowIn)  ){
 						readyForThrowIn = true;
 						SimControl::getInstance().moveBall( EvaluationModule::getInstance().getPositionForThrowIn() );

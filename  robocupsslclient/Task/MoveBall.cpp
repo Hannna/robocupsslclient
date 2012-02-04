@@ -31,7 +31,11 @@ Task* MoveBall::nextTask(){
 	else if( distanceWithBall >= maxRobotDistanceWithBall ){
 		LOG_INFO(this->log," maxRobotDistanceWithBall exceeded. Change MoveBall -> KickBall");
 		//jesli robot nprzekroczyl maksymalny dystans poruszania sie z pilka kopnij ja do celu i podjedz
-		Task* task = new KickBall( robot, goalPose.getPosition(), goalPose.get<2>() ,Config::getInstance().getDribbleKickForce());
+		//gsimanParams->evaluation->aimAtGoal( (*gsimanParams->gameState),*gsimanParams->robotName, angleToShoot,score);
+	    GameStatePtr currGameState( new GameState() );
+	    double currSimTime=video.updateGameState(currGameState);
+		double rotation = calculateProperAngleToTarget( currGameState->getRobotPos(this->robot->getRobotID() ) ,goalPose );
+		Task* task = new KickBall( robot, goalPose.getPosition(), rotation ,Config::getInstance().getDribbleKickForce());
 		task->markParam(Task::kick_for_dribble);
 		return task;
 	}
@@ -48,7 +52,7 @@ Task* MoveBall::nextTask(){
 
 			//jesli warto strzelic na bramke
 			if( fabs(score) > EvaluationModule::minOpenAngle   ){
-				LOG_INFO(this->log,"MoveBall -> KickBall score "<<score<<"  ang.first"<<ang.first<<" ang.second "<<ang.second );
+				LOG_INFO(this->log,"MoveBall -> KickBall score "<<score<<"  ang.first"<<ang.first<<" ang.second "<<ang.second<<" angleToGoal "<<angleToGoal );
 				//return new KickBall( robot,  convertAnglePI( ang.first + sign*score/2.0 )  ) ;
 				Vector2D targetPosition;
 				if( this->robot->isBlue() )

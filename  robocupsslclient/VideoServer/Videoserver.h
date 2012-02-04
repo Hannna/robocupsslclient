@@ -15,6 +15,8 @@
 #include "../GameState/GameState.h"
 #include "../Logger/Logger.h"
 #include "../Lock/Lock.h"
+#include "../EvaluationModule/EvaluationTypes.h"
+
 
 /**
  *  @author Kamil Muszynski i Maciej Gąbka
@@ -93,6 +95,14 @@ public:
 
 	const Pose  getBallPosition( );
 
+	void resetBallState(){
+		LOG_FATAL(log,"####################$$$$$$$$$$$$$$$$resetBallState");
+		pthread_mutex_lock (&Videoserver::mutex);
+		this->ballState_=BallState::free;
+		LOG_FATAL(log,"####################$$$$$$$$$$$$$$$$resetBallState");
+		pthread_mutex_unlock (&Videoserver::mutex);
+	}
+
 //	static void setRedGoalMidPosition( const Vector2D & );
 //	static void setRedGoalLeftCornerPosition( const Vector2D & );
 //	static void setRedGoalRightCornerPosition( const Vector2D & );
@@ -159,6 +169,7 @@ private:
 	bool stopFlag;
 
 	bool simError;
+	BallState::ballState ballState_;
 };
 
 
