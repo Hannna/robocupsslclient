@@ -15,13 +15,21 @@
 #include "../Tactics/PositionToPass.h"
 #include "../Tactics/Pass.h"
 #include "../Tactics/ShootTactic.h"
+#include "../Tactics/PositionToShoot.h"
+#include "../Tactics/GoToPosition.h"
 
 Experiment_2::Experiment_2( std::string teamColor, const int nrOfROles): Play( teamColor, nrOfROles ) {
 	// TODO Auto-generated constructor stub
 
 }
 
-void Experiment_2::updateState( ){
+void Experiment_2::updateState(bool forceChangeTactics ){
+
+	if( SimControl::getInstance().getSimTime() - this->startSimTime >= 120 ){
+		LOG_FATAL(log,"!!!!!!!!!!!!Tactic stopped@@@@@@@@@@@@@@@@@@");
+		this->stop();
+		return;
+	}
 
 	Play::RoleIterator ii = this->roles.begin();
 	bool changeTactics = false;
@@ -36,7 +44,7 @@ void Experiment_2::updateState( ){
 			}
 		}
 	}
-	if(changeTactics){
+	if(changeTactics || forceChangeTactics){
 		LOG_TRACE(log,"active tactic finished, change tactics");
 		ii = this->roles.begin();
 		for(;ii != this->roles.end();ii++ ){
@@ -52,17 +60,23 @@ void Experiment_2::execute( ){
 	LOG_INFO(log,"starting experiment_2 play  " <<this->teamColor);
 	//getcurrent robot position
 	GameStatePtr gameState( new GameState() );
-	Videoserver::getInstance().updateGameState( gameState );
+	this->startSimTime=Videoserver::getInstance().updateGameState( gameState );
 
 	//rola 1 jazda wzdluz linii w gore
 	RoleIterator ii = this->roles.begin();
+
+	Pose goalPose(Vector2D(3.0 , 5.725 ),0);
+	ii->second->addTactic( new GoToPosition( ii->second->getRobot(), goalPose ) );
 	ii->second->addTactic( new ShootTactic( ii->second->getRobot()) );
 	ii->second->addTactic( new Receive_pass( ii->second->getRobot()) );
 	ii->second->addTactic( new PositionToPass( ii->second->getRobot()) );
+	//ii->second->addTactic( new PositionToShoot( ii->second->getRobot() ) );
 	ii->second->execute();
 
 	Robot::robotID recvID = ii->second->getRobot().getRobotID();
 	ii++;
+	goalPose = Pose(Vector2D(2.7 , 5.725 ),0);
+	ii->second->addTactic( new GoToPosition( ii->second->getRobot(), goalPose ) );
 	ii->second->addTactic( new Pass(ii->second->getRobot(), recvID ) );
 	ii->second->execute();
 }
@@ -71,7 +85,7 @@ void Experiment_2::stop(){
 	Play::RoleIterator ii = this->roles.begin();
 	for(;ii != this->roles.end();ii++ ){
 		if( ii->second->getCurrentTactic() )
-			ii->second->getCurrentTactic()->stopTactic();
+			ii->second->stop();
 	}
 }
 

@@ -9,7 +9,6 @@
 #define SIMANNEALING2_H_
 
 #include "../GameState/GameState.h"
-#include "../GameState/GameState.h"
 #include "../Robot/Robot.h"
 #include "../EvaluationModule/EvaluationModule.h"
 

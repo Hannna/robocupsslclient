@@ -104,7 +104,7 @@ public:
 		inline FieldParams():FIELD_WIDTH( 5.4 ), FIELD_LENGTH( 7.4 ),FIELD_MARIGIN(0.675),
                 FIELD_BOTTOM_LEFT_CORNER(0,0), FIELD_TOP_RIGHT_CORNER(5.4, 7.4),
 				FIELD_MIDDLE_POSE ( 2.7, 3.7 ,0.0 ), FIELD_MIDDLE_VECTOR( 2.7,3.7 ),
-				GOAL_CORNER_LEFT_SHIFT(-0.36, -0.1), GOAL_CORNER_RIGHT_SHIFT(0.36, -0.1),
+				GOAL_CORNER_LEFT_SHIFT(-0.36, -0.2), GOAL_CORNER_RIGHT_SHIFT(0.36, -0.2),
 
 				BOTTOM_GOAL_MID_POSITION( 2.7, 0.675 ),
 				BOTTOM_GOAL_LEFT_CORNER( BOTTOM_GOAL_MID_POSITION + GOAL_CORNER_LEFT_SHIFT ),
@@ -160,7 +160,7 @@ public:
         double dcc;
         const static double maxKickForce=150;
         const static double dribbleKickForce=0.05;
-        const static double maxPassForce=100;
+        const static double maxPassForce=200;
 	};
 	static Config* config;
 	static pthread_mutex_t  mutex;

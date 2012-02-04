@@ -84,7 +84,7 @@ Task::status GetBall::run(void * arg, int steps){
 			//czy pilka jest na wprost robota
 			if ( fabs(angleToBall) < 0.33 ){
 				//czy jest odpowiednia odleglosc
-				if( distanceToBall < 0.02 ){
+				if( distanceToBall < 0.01 ){
 					//LOG_INFO(log, "robotPosition "<<currRobotPose<<" ball position "<< ballPose<<" angleToBall "<<angle<<" distance to ball "<< toBall.length());
 					LOG_INFO(log, "GetBall Task::ok" );
 					return Task::get_ball;
@@ -107,7 +107,7 @@ Task::status GetBall::run(void * arg, int steps){
 				double oldAlfaToCel = robot->getLastTetaToBall();
 
 				double Ker=0.5;
-				double Ko=2;
+				double Ko=2.5;
 				double currGlobalRobotRot = currRobotPose.get<2>();
 
 				// ten kawalek kodu wyznacza kat o jaki robot musi sie obrocic zeby byc skierowanym na cel

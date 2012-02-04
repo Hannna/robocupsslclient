@@ -1,9 +1,9 @@
 #include "Videoserver.h"
-
-#include <signal.h>
-
 #include "../Config/Config.h"
 #include "../Robot/Robot.h"
+#include "../EvaluationModule/EvaluationModule.h"
+
+#include <signal.h>
 
 pthread_mutex_t Videoserver::mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t Videoserver::update_game_state_cv;
@@ -44,6 +44,8 @@ Videoserver::Videoserver():log( getLoggerPtr ("app_debug") )
 	blueGoalLeftCornerPosition = Config::getInstance().field.TOP_GOAL_LEFT_CORNER;
 	blueGoalRightCornerPosition = Config::getInstance().field.TOP_GOAL_RIGHT_CORNER;
 
+	ballState_ == BallState::free;
+
 	Videoserver::gameState=GameStatePtr(new GameState());
 #ifdef GAZEBO
 	lastUpdateTime = 0;
@@ -67,6 +69,7 @@ double Videoserver::updateGameState(GameStatePtr& gameState_) const{
 		if( Videoserver::gameState.get()!=NULL ){
 		    if(gameState_->getSimTime( ) < this->lastUpdateTime){
                 (*gameState_)=(*Videoserver::gameState);
+                gameState_->setBallState( this->ballState_);
 
                 currTime=this->lastUpdateTime;
 		    }
@@ -147,7 +150,12 @@ void Videoserver::update(){
 
 			if(model_name.compare("ball")==0){
 				Vector2D speed = SimControl::getInstance().getBallSpeed();
-				Videoserver::gameState->updateBallData(Vector2D((*ii).second.get<0>(),(*ii).second.get<1>()),speed);
+				Vector2D ballPosition = Vector2D((*ii).second.get<0>(),(*ii).second.get<1>());
+				if(ballState_ == BallState::free)
+					ballState_ = EvaluationModule::getInstance().getBallState(ballPosition);
+
+				LOG_FATAL(log,"ballState_ "<<ballState_);
+				Videoserver::gameState->updateBallData(Vector2D((*ii).second.get<0>(),(*ii).second.get<1>()),speed,ballState_);
 				//LOG_FATAL(log,"model "<<model_name<<" speed "<<speed);
 			}
 			else{

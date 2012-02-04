@@ -13,6 +13,7 @@
 class Rotate : public Task{
 public:
 	Rotate( const Vector2D targetPose,Robot * robot  );
+	Rotate( const Robot::robotID id, Robot * robot );
 	virtual Task* nextTask();
 	virtual ~Rotate();
 protected:
@@ -22,7 +23,8 @@ private:
 	Rotate(const Rotate & r);
 	Rotate& operator=(const Rotate& r);
 	//pozycja do ktorej robot ma byc oborcony przodem
-	const Vector2D targetPosition;
+	Vector2D targetPosition;
+	const Robot::robotID targetRobotId;
 };
 
 #endif /* ROTATE_H_ */

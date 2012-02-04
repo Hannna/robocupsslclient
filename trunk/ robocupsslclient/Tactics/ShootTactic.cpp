@@ -61,9 +61,23 @@ void ShootTactic::execute(void *){
     // SParami ← setCommand(MoveBall, target, KICK IF WE CAN)
 
     Task::predicate predicates = Task::null;
-    while( !this->stop ){
+    while(true){
+        {
+     	LockGuard l(this->mutex);
+     	if(this->stop)
+     		break;
+        }
+
     	LOG_INFO(log,"start calculate best dribble target " );
-    	Pose goalPose  = evaluation.findBestDribbleTarget(robot.getRobotName(), robot.getRobotID());
+    	Vector2D centerPosition(2.7, 1.875);
+    	//(Config::getInstance().field.BOTTOM_GOAL_MID_POSITION
+    	//Config::getInstance().field.BOTTOM_GOAL_MID_POSITION
+    	BallState::ballState bs = evaluation.getBallState(Robot::blue);
+    	if(bs == BallState::in_goal)
+    		break;
+
+    	Pose goalPose  = evaluation.findBestDribbleTarget(centerPosition,
+    			robot.getRobotName(), robot.getRobotID());
     	LOG_INFO(log,"end calculate best dribble target " );
     	taskStatus = Task::not_completed;
 		this->currentTask = TaskSharedPtr( new MoveBall( goalPose, &robot ) );
@@ -91,18 +105,32 @@ void ShootTactic::execute(void *){
 			if( taskStatus == Task::collision ){
 				robot.stop();
 				LOG_FATAL(log,"Shoot tactic Task::collision. exit from tactic " );
-				LockGuard m(mutex);
-				finished = true;
-				return;
+				break;
+				//LockGuard m(mutex);
+				//finished = true;
+				//return;
 			}
 
 			if( taskStatus == Task::kick_ok ){
 				robot.stop();
 				LOG_FATAL(log," Shoot tactic Task::kick_ok " );
-				LockGuard m(mutex);
-				finished = true;
-				 LOG_INFO(log,"exit from shoot tactic " );
-				return;
+
+				taskStatus = Task::ok;
+				while( 1 ){
+					BallState::ballState ballState_  = evaluation.getBallState( robot.getRobotID() );
+					if( ballState_ == BallState::go_to_goal ){
+						usleep(10000);
+					}
+					else if( ballState_ == BallState::in_goal ){
+						LockGuard m(mutex);
+						finished = true;
+						LOG_INFO(log,"exit from shoot tactic " );
+						 pthread_cond_broadcast(&this->finish_cv);
+						return;
+					}
+					else
+						break;
+				}
 			}
 
 			if( taskStatus == Task::get_ball ){
@@ -120,6 +148,7 @@ void ShootTactic::execute(void *){
     }
     LockGuard m(mutex);
     finished = true;
+    pthread_cond_broadcast(&this->finish_cv);
     LOG_INFO(log,"exit from shoot tactic " );
 }
 

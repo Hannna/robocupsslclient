@@ -15,6 +15,7 @@
 #include "../additional.h"
 
 #include "../Robot/Robot.h"
+#include "../EvaluationModule/EvaluationTypes.h"
 
 class GameState;
 typedef boost::shared_ptr <GameState>  GameStatePtr;
@@ -36,9 +37,12 @@ public:
 
 };
 public: class Ball{
-public:	Ball(Vector2D pos_=Vector2D(0,0),Vector2D v_=Vector2D(0,0)): pos(pos_),v(v_){;};
+public:	Ball(Vector2D pos_=Vector2D(0,0),
+		Vector2D v_=Vector2D(0,0),
+		BallState::ballState ballState_= BallState::free ): pos(pos_), v(v_), state( ballState_ ){;};
 	Vector2D pos;
 	Vector2D v;
+	BallState::ballState state;
 };
 public:
 	GameState();
@@ -54,7 +58,9 @@ public:
 
 	Vector2D getBallGlobalVelocity( ) const ;
 	Pose getBallPos() const ;
-	void updateBallData(Vector2D pos,Vector2D v);
+	BallState::ballState getBallState() const ;
+	void setBallState( BallState::ballState bs) ;
+	void updateBallData(Vector2D pos,Vector2D v,BallState::ballState ballState_);
 
 	void updateSimTime(double simTime);
 

@@ -23,17 +23,17 @@ GoToBall::GoToBall(Robot * robot_):Task(robot_) {
 Task* GoToBall::nextTask(){
 
 	//jesli pilka jest na oucie to czekaj
-	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::out){
+	if( evaluationModule.getBallState(this->robot->getRobotID()) == BallState::out){
 		LOG_INFO(log,"out. change GoToBall -> NULL");
 		return NULL;
 	}
 	//jesli pilka jest zajeta przez naszych
-	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::occupied_our){
+	if( evaluationModule.getBallState(this->robot->getRobotID()) == BallState::occupied_our){
 		LOG_INFO(log,"occupied_our change GoToBall -> NULL");
 		return NULL;
 	}
 
-	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::mine ){
+	if( evaluationModule.getBallState(this->robot->getRobotID()) == BallState::mine ){
 		//LOG_INFO(log,"i've got the ball. GoToBall -> kickBall");
 		//Pose nextBallPose = ballPose + ( this->currGameState->getBallGlobalVelocity()*10.0*this->video.getUpdateDeltaTime() );
 		//double dist = ballPose.distance( this->currGameState->getRobotPos( robot->getRobotID()) );
@@ -47,13 +47,13 @@ Task* GoToBall::nextTask(){
 	}
 
 	//jesli pilka jest zajeta przez przeciwnika
-	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::occupied_theirs){
+	if( evaluationModule.getBallState(this->robot->getRobotID()) == BallState::occupied_theirs){
 		LOG_INFO(log,"occupied_theirs change GoToBall -> NULL");
 		return NULL;
 	}
 
 	//jesli pilka jest wolna jedz do niej
-	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::free){
+	if( evaluationModule.getBallState(this->robot->getRobotID()) == BallState::free){
 		Pose nextBallPose = ballPose + ( this->currGameState->getBallGlobalVelocity()*10.0*this->video.getUpdateDeltaTime() );
 		double dist = ballPose.distance( this->currGameState->getRobotPos( robot->getRobotID()) );
 		//jesli pilka jest bliska to chwyc ja
@@ -72,7 +72,7 @@ Task* GoToBall::nextTask(){
 Task::status GoToBall::run(void * arg, int steps){
 
 
-	if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::mine ){
+	if( evaluationModule.getBallState(this->robot->getRobotID()) == BallState::mine ){
 		return Task::ok;
 	}
 
@@ -80,7 +80,7 @@ Task::status GoToBall::run(void * arg, int steps){
 
 	//jesli pilka jest na oucie to czekaj
 	if( (this->predicates & Task::analyse_all_field) == 0){
-		if( evaluationModule.getBallState(this->robot->getRobotID()) == EvaluationModule::out){
+		if( evaluationModule.getBallState(this->robot->getRobotID()) == BallState::out){
 			LOG_INFO(log,"change GoToBall -> NULL");
 			return Task::error;
 		}

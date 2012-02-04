@@ -17,6 +17,7 @@ Role::Role( Robot* robot_ ): log( getLoggerPtr( robot_!=NULL ? robot_->getRobotN
 	this->robot = robot_;
 	currentTactic = NULL;
 	this->finished = false;
+	this->stopped = false;
 }
 
 void Role::stop( ) {
@@ -62,6 +63,8 @@ void Role::stop( ) {
 	}
 	this->robot->stop();
 	LOG_INFO(log,"stop role for robot "<<this->robot->getRobotName());
+	this->stopped = true;
+	this->finished =true;
 }
 
 void Role::addTactic( Tactic * tactic){
@@ -70,6 +73,11 @@ void Role::addTactic( Tactic * tactic){
 
 void Role::executeNextTactic(){
 	LockGuard lock(mutex);
+	if( this->stopped ){
+		this->finished =true;
+		return;
+	}
+
 	//std::cout<<"executeNextTactic for "<<this->robot->getRobotName()<<std::endl;
 	LOG_INFO(log,"executeNextTactic for "<<this->robot->getRobotName());
 
@@ -138,6 +146,21 @@ void Role::disperse( ){
 	currentTactic = new DisperseTactic( *this->robot );
 	currentTactic->start( );
 
+}
+
+bool Role::isFinished(){
+	LockGuard lock(mutex);
+	if(this->currentTacticIter == this->tactics.end())
+		return finished;
+	if( ( *(this->currentTacticIter) )->isFinish() ){
+		TacticIterator ti =this->currentTacticIter;
+		if(ti == this->tactics.end())
+			return true;
+		ti++;
+		if(ti == this->tactics.end())
+			return true;
+	}
+	return finished;
 }
 
 Role::~Role() {

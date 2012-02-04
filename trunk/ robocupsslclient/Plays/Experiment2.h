@@ -18,7 +18,9 @@ public:
 	virtual void stop( );
 	virtual void waitForFinish( );
 	virtual bool isFinished( );
-	virtual void updateState( );
+	virtual void updateState(bool forceChangeTactics );
 	virtual ~Experiment_2( );
+private:
+	double startSimTime;
 };
 #endif /* EXPERIMENT2_H_ */

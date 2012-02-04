@@ -5,7 +5,8 @@
 #include "../VideoServer/Videoserver.h"
 #include "../Robot/Robot.h"
 #include "../Config/Config.h"
-
+#include "../GameState/GameState.h"
+#include "EvaluationTypes.h"
 /*
     @brief Modul odpowiadajacy za ocene sytuacji na planszy
 */
@@ -22,20 +23,7 @@ using namespace evaluation;
 class EvaluationModule
 {
 public:
-	enum ballState{
-		//pilka jest wolna
-		free,
-		//pilka na aucie
-		out,
-		//pilka w bramce
-		in_goal,
-		//pilka zajmowana przez naszych
-		occupied_our,
-		//pilka zajmowana przez przeciwnika
-		occupied_theirs,
-		//
-		mine
-	};
+
     public:
      static EvaluationModule & getInstance();
 
@@ -51,13 +39,18 @@ public:
       */
      score aimAtTeamMate( Robot::robotID myRobotID, Robot::robotID goalRobotID, double * rotationToTarget = NULL );
 
-     ballState getBallState(Robot::robotID, bool * iAmCloserToBall = NULL);
+     bool checkAngleToPass(Vector2D targetPosition, Pose currRobotPosition,double & angleToTarget) const;
+
+     BallState::ballState getBallState(Robot::robotID, bool * iAmCloserToBall = NULL);
+
+     BallState::ballState getBallState(Vector2D ballPosition);
 
      Pose getPositionForThrowIn(){
     	 return Pose(this->positionForThrowIn,0);
      }
 
-     Pose findBestDribbleTarget(const std::string robotName,Robot::robotID rid);
+    // Pose findBestDribbleTarget(const std::string robotName,Robot::robotID rid);
+     Pose findBestDribbleTarget( Vector2D centerPoint, const std::string robotName, Robot::robotID rid );
 
      //bool haveBall_1( const Robot & robot);
 
@@ -81,7 +74,7 @@ public:
         static Mutex mutex;
         const log4cxx::LoggerPtr log;
         Vector2D positionForThrowIn;
-        //ballState ballState_;
+        BallState::ballState ballState_;
 
         EvaluationModule();
         virtual ~EvaluationModule();
@@ -94,6 +87,6 @@ public:
         bool addToList(Set &set,std::list<Set> &sets) const;
 };
 
-std::ostream & operator<<(std::ostream & os, const EvaluationModule::ballState & bState );
+
 
 #endif // EVALUATIONMODULE_H

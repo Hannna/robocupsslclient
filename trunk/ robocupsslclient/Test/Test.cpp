@@ -12,7 +12,7 @@
 #include "../SimControl/SimControl.h"
 
 #include "../EvaluationModule/EvaluationModule.h"
-
+#include "../EvaluationModule/EvaluationTypes.h"
 #include "../Task/GoToPose.h"
 #include "../Task/GetBall.h"
 #include "../Task/Task.h"
@@ -519,13 +519,13 @@ void testDribbler(Robot& robot){
     int steps = 1;
     Task* task = NULL;
     Task* nextTask_ = NULL;
-    EvaluationModule::ballState bs;
+    BallState::ballState bs;
 	EvaluationModule& evaluation=EvaluationModule::getInstance();
     bool gettingBall = false;
 	while(true){
 
     	bs = evaluation.getBallState(  robot.getRobotID( ) );
-    	if( bs == EvaluationModule::free ){
+    	if( bs == BallState::free ){
     		if( !gettingBall ){
     			gettingBall = true;
     			if( task ){
@@ -535,7 +535,7 @@ void testDribbler(Robot& robot){
     			task = new GetBall( &robot );
     		}
     	}
-    	else if( bs == EvaluationModule::mine ){
+    	else if( bs == BallState::mine ){
     		SimControl::getInstance().restart();
     		continue;
     		/*
@@ -838,8 +838,8 @@ void run_experiment_1(){
 		while( !bluePlay->isFinished() ){
 			//bluePlay->waitForFinish();
 			Videoserver::getInstance().updateGameState( gameState );
-			EvaluationModule::ballState bs = EvaluationModule::getInstance().getBallState(Robot::blue0);
-			if( bs == EvaluationModule::out || bs == EvaluationModule::in_goal ){
+			BallState::ballState bs = EvaluationModule::getInstance().getBallState(Robot::blue0);
+			if( bs == BallState::out || bs == BallState::in_goal ){
 				SimControl::getInstance().setSimPos("ball",Config::getInstance().field.FIELD_MIDDLE_POSE);
 			}
 			sleep(1);
@@ -869,24 +869,54 @@ void run_experiment_2(){
 	req.tv_nsec = 10000000;//10ms;
 	struct timespec rem;
 	bzero(&rem, sizeof(rem) );
+	EvaluationModule& evaluation = EvaluationModule::getInstance();
 
-	while(true){
-		Vector2D v( Config::getInstance().field.FIELD_MARIGIN*2.0,Config::getInstance().field.FIELD_MARIGIN*2.0);
 
-		//Config::getInstance().field.
-		SimControl::getInstance().moveBall( Pose( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER-v,0) );
-		boost::shared_ptr<Play> bluePlay ( new Experiment_2("blue",2 ) );
+	Vector2D v( Config::getInstance().field.FIELD_MARIGIN*2.0,Config::getInstance().field.FIELD_MARIGIN*2.0);
 
-		bluePlay->execute();
+	for(int i=0;1<20;i++){
+		std::ostringstream ois;
+		ois<<"score"<<i;
+		std::ofstream file( ois.str().c_str(), ios_base::in | ios_base::trunc );
+		SimControl::getInstance().restart();
+		double startTime = SimControl::getInstance().getSimTime();
+		while( SimControl::getInstance().getSimTime() - startTime < 120){
 
-		while( !bluePlay->isFinished() ){
-			bluePlay->updateState( );
-			usleep(1000);
+			boost::shared_ptr<Play> bluePlay ( new Experiment_2("blue",2 ) );
+			bluePlay->execute();
+			BallState::ballState bs;
+			bool force = false;
+			while(1){
+				bluePlay->updateState(force );
+				bs = evaluation.getBallState(Robot::blue);
+				if( bs ==BallState::out ){
+
+					SimControl::getInstance().moveBall( Pose( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER-v,0) );
+					Videoserver::getInstance().resetBallState();
+					LOG_INFO(log, "################### 123out######################" );
+					bluePlay->stop();
+					break;
+				}
+				if(bs ==BallState::in_goal){
+					file<<"1;"<<SimControl::getInstance().getSimTime()<<std::endl;
+					file.flush();
+					LOG_INFO(log, "################### score 123goal ######################" );
+					SimControl::getInstance().moveBall( Pose( Config::getInstance().field.FIELD_TOP_RIGHT_CORNER-v,0) );
+					Videoserver::getInstance().resetBallState();
+					//bluePlay->stop();
+					bluePlay->updateState( true );
+					while(!bluePlay->isFinished()){
+						bluePlay->updateState( false );
+					}
+					bluePlay->waitForFinish();
+					break;
+				}
+				//std::cout<<" bs "<<bs<<std::endl;
+				usleep(1000);
+			}
+			LOG_FATAL(log, "blue Play finished" );
 		}
-		sleep(2);
-		//bluePlay->waitForFinish();
-		LOG_FATAL(log, "blue Play finished" );
 	}
-	//SimControl::getInstance().restart();
+
 	LOG_INFO(log, "end from experiment 2" );
 }

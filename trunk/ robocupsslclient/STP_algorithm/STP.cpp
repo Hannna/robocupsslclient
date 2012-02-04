@@ -59,7 +59,7 @@ void run_stp(){
 
 	boost::shared_ptr<Play> bluePlay ( new StartPlay("blue") );
 	RefereeCommands::Command command = RefereeCommands::unknown;
-	EvaluationModule::ballState ballState_;
+	BallState::ballState ballState_;
 
 	bluePlay->execute();
 	redPlay->execute();
@@ -143,7 +143,7 @@ void run_stp(){
 				if( redPlay.get() )
 					redPlay->stop();
 
-				if( ballState_== EvaluationModule::out ){
+				if( ballState_== BallState::out ){
 					;
 				}
 

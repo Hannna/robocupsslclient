@@ -492,49 +492,54 @@ void SimControl::unlock()
 
 void SimControl::moveBall(Pose pose){
 
-	LockGuard lock(mutex);
 
-	LOG_FATAL(log,"@@@@@@@@@@@@@@@@@@move ball to "<<pose);
+	{
+		LockGuard lock(mutex);
 
-//	while(simIface->Lock(1)!=1);
-//	simIface->data->responseCount=0;
-	std::string model_name("noname::ball");
+	//	LOG_FATAL(log,"@@@@@@@@@@@@@@@@@@move ball to "<<pose);
 
-	//void SimulationIface::SetState(const std::string &name, Pose &modelPose,
-	//    Vec3 &linearVel, Vec3 &angularVel, Vec3 &linearAccel,
-	//    Vec3 &angularAccel )
-	libgazebo::Vec3 p(pose.get<0>(),pose.get<1>(), 0.1);
-	libgazebo::Pose pose_(p,pose.get<0>(),pose.get<1>(), 0.1 );
-	libgazebo::Vec3 v(0,0,0);
+	//	while(simIface->Lock(1)!=1);
+	//	simIface->data->responseCount=0;
+		std::string model_name("noname::ball");
 
-	simIface->SetState(model_name, pose_, v,v,v,v);
-			//libgazebo::Vec3(0,0,0),libgazebo::Vec3(0,0,0),
-			//slibgazebo::Vec3(0,0,0),libgazebo::Vec3(0,0,0));
+		//void SimulationIface::SetState(const std::string &name, Pose &modelPose,
+		//    Vec3 &linearVel, Vec3 &angularVel, Vec3 &linearAccel,
+		//    Vec3 &angularAccel )
+		libgazebo::Vec3 p(pose.get<0>(),pose.get<1>(), 0.1);
+		libgazebo::Pose pose_(p,pose.get<0>(),pose.get<1>(), 0.1 );
+		libgazebo::Vec3 v(0,0,0);
 
-	/*if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
-		#ifdef OLD
-		gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
-		request->type = gazebo::SimulationRequestData::SET_POSE3D;
-		#else
-		libgazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
-		request->type = libgazebo::SimulationRequestData::SET_POSE3D;
-		#endif
-		bzero(request->name,512);
-		memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
+		simIface->SetState(model_name, pose_, v,v,v,v);
+				//libgazebo::Vec3(0,0,0),libgazebo::Vec3(0,0,0),
+				//slibgazebo::Vec3(0,0,0),libgazebo::Vec3(0,0,0));
 
-		request->modelPose.pos.x = pose.get<0>();
-		request->modelPose.pos.y = pose.get<1>();
-		request->modelPose.pos.z = 0.1;//pose.get<2>();
+		/*if(simIface->data->requestCount<GAZEBO_SIMULATION_MAX_REQUESTS){
+			#ifdef OLD
+			gazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
+			request->type = gazebo::SimulationRequestData::SET_POSE3D;
+			#else
+			libgazebo::SimulationRequestData *request = &(simIface->data->requests[simIface->data->requestCount++]);
+			request->type = libgazebo::SimulationRequestData::SET_POSE3D;
+			#endif
+			bzero(request->name,512);
+			memcpy(request->name, model_name.c_str(), strlen(model_name.c_str()));
 
-		request->modelPose.yaw = 0;
-		request->modelPose.roll = 0;
-		request->modelPose.pitch = 0;
+			request->modelPose.pos.x = pose.get<0>();
+			request->modelPose.pos.y = pose.get<1>();
+			request->modelPose.pos.z = 0.1;//pose.get<2>();
+
+			request->modelPose.yaw = 0;
+			request->modelPose.roll = 0;
+			request->modelPose.pitch = 0;
+		}
+	*/
+	//	simIface->Unlock();
+		int responseCount = 1;
+		this->wait( responseCount );
 	}
-*/
-//	simIface->Unlock();
-	int responseCount = 1;
-	this->wait( responseCount );
-	LOG_FATAL(log,"@@@@@@@@@@@@@@@@@@ EXIT from move ball to ");
+	//Pose position;
+	//getModelPos("ball",position);
+	//LOG_FATAL(log,"@@@@@@@@@@@@@@@@@@ EXIT from move ball. new position "<<position);
 }
 
 /*

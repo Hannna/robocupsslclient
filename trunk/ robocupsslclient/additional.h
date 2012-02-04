@@ -235,7 +235,6 @@ double convertAngle2PI(double angle);
 
 //oblicza jaka rotacje musi miec robot aby byc skierowanym na cel
 double calculateProperAngleToTarget(const Pose &currRobotPose,const Pose &targetPose );
-
 //oblicza kat o jaki trzeba sie obrocic do celu
 double calculateAngleToTarget( const Pose &currRobotPose,const Pose &targetPose );
 

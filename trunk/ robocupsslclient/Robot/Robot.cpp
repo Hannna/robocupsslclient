@@ -1429,7 +1429,8 @@ Vector2D Robot::calculateVelocity(const Vector2D &currVel,const  Pose & currGlob
 
 	double kMAX=1.0;
 	double k=kMAX/currGlobalPose.distance(targetGlobalPose);
-	double xn = (currGlobalPose.distance(targetGlobalPose)- 0.02-0.012-0.06);//*sgn( targetGlobalPose.get<0>()-currGlobalPose.get<0>() );
+	//double xn = (currGlobalPose.distance(targetGlobalPose)- 0.02-0.012-0.06);//*sgn( targetGlobalPose.get<0>()-currGlobalPose.get<0>() );
+	double xn = (currGlobalPose.distance(targetGlobalPose)- 0.02-0.012);
 	double tetaE=atan(-1.0*k*xn)+tetaP;
 	//if( fabs(fabs(tetaE) -fabs(this->tetaE) ) >0.1 )
 		this->tetaE=fabs(tetaE);
