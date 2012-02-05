@@ -114,32 +114,31 @@
 	breaklines=true}
 	Znaczenie poszczególnych parametrów jest następujące:
 	\begin {enumerate}
-	 \item \texttt{stepTime} jest wyrażony w sekundach i określa czas pomiędzy kolejnymi aktualizacjami silnika \texttt{ODE},
-	 \item \texttt{gravity} jest wektorem określającym siłę grawitacji,
-	 \item \texttt{erp} (\textit{error reduction parameter}), przyjmuje wartości z przedziału od $0$ do $1$ i jest odpowiedzialny za redukcję błędów w połączeniach pomiędzy bryłami
-	  (problematyka zostanie szerzej poruszona na stronie \pageref{fig:joints}); \texttt{erp} ustawione na $0$ powoduje, że żadna dodatkowa siła nie jest przykładana do danej bryły, natomiast wartość $1$
-	 powoduje, że wszytskie błędy połączeń zostaną naprawione w kolejnym kroku symulatora,
-	 \item \texttt{cfm}(\textit{constraint force mixing})  odpowiada za sztywność ograniczeń występujących w kolizjach między bryłami; gdy wartość jest równa $0$ ograniczenie wynikające z fizyki
-nie może zostać złamane, ustawienie parametru na wartość dodatnią powoduje, że ograniczenie staje się ``miękkie'', sprężyste,
+	 \item \texttt{StepTime} jest wyrażony w sekundach i określa czas pomiędzy kolejnymi aktualizacjami silnika \texttt{ODE}.
+	 \item \texttt{Gravity} jest wektorem określającym siłę grawitacji.
+	 \item \texttt{Erp} (\textit{error reduction parameter}), przyjmuje wartości z przedziału od $0$ do $1$ i jest odpowiedzialny za redukcję błędów w połączeniach pomiędzy bryłami
+	  (problematyka zostanie szerzej poruszona na stronie \pageref{fig:joints}). \texttt{Erp} ustawione na $0$ powoduje, że żadna dodatkowa siła nie jest przykładana do danej bryły, natomiast wartość $1$
+	 powoduje, że wszytskie błędy połączeń zostaną naprawione w kolejnym kroku symulatora.
+	 \item \texttt{Cfm}(\textit{constraint force mixing})  odpowiada za sztywność ograniczeń występujących w kolizjach między bryłami. Gdy wartość jest równa $0$ ograniczenie wynikające z fizyki
+nie może zostać złamane. Ustawienie parametru na wartość dodatnią powoduje, że ograniczenie staje się ``miękkie'', sprężyste.
 	  
-	 \item \texttt{stepType} odpowiada za rodzaj używanej funkcji z \texttt{ODE} do detekcji kolizji, użytkownik może dokonać wyboru jednej z dwóch wartości:
+	 \item \texttt{StepType} odpowiada za rodzaj używanej z biblioteki ODE funkcji do detekcji kolizji. Użytkownik może dokonać wyboru jednej z dwóch wartości:
 	      \begin{itemize}
 	       \item \textit{world}, używana jest wtedy funkcja \texttt{dWorldStep} operująca na macierzy zawierającej wszystkie ograniczenia; złożoność obliczeniowa tej metody wynosi $m^3$, natomiast pamięciowa
 jest rzędu $m^2$, gdzie $m$ określa ilość wierszy (ograniczeń) analizowanej macierzy,
-	       \item \textit{quick}, wtedy do detekcji kolizji stosowana jest metoda iteracyjna, w literaturze nazywana \texttt{SOR - Successive over-relaxation} należąca do rodziny metod Gaussa–Seidela; jej złożoność obliczeniowa jest rzędu $m*N$,
-		a pamięciowa $m$, gdzie $m$ ma znaczenie jak wyżej,
-		natomiast $N$ jest liczbą iteracji; dla dużych systemów metoda jest dużo bardziej wydajna jednak mniej dokładna, mogą także występować problemy z jej stabilnością; najprostszą metodą na poprawę stabilności
-		jest zwiększanie \texttt{cfm}, 
+	       \item \textit{quick}, wtedy do detekcji kolizji stosowana jest metoda iteracyjna, w literaturze nazywana \textit{SOR - Successive over-relaxation} należąca do rodziny metod Gaussa–Seidela; jej złożoność obliczeniowa jest rzędu $m*N$,
+		a pamięciowa $m$, gdzie $m$ ma znaczenie jak wyżej, natomiast $N$ jest liczbą iteracji;
+		dla dużych systemów metoda jest dużo bardziej wydajna jednak mniej dokładna, mogą także występować problemy z jej stabilnością; najprostszą metodą na poprawę stabilności jest zwiększanie \texttt{cfm}. 
 	      \end{itemize}
-	 \item \texttt{stepIters} określa ilość kroków, gdy do detekcji kolizji wybrano metodę iteracyjną,
-	 \item \texttt{stepW} określa czas relaksacji metody Gaussa–Seidela, 
-	 \item \texttt{contactSurfaceLayer} określa głębokość na jaką bryła może wnikać w podłoże, ustawienie parametru na małą wartość dodatnią zapobiega jitterowi w momencie, gdy ograniczenia są nieustannie tworzone
-	  i zrywane (na przykład podczas ruchu koła po podłożu),
-	 \item \texttt{contactMaxCorrectingVel} jest maksymalną korektą prędkości jaka może wynikać z utworzonych tymczasowo kontaktów; domyślnie parametr przyjmuje nieskończoną wartość zmniejszanie jego
+	 \item \texttt{StepIters} określa ilość kroków, gdy do detekcji kolizji wybrano metodę iteracyjną.
+	 \item \texttt{StepW} określa czas relaksacji metody Gaussa–Seidela. 
+	 \item \texttt{ContactSurfaceLayer} określa głębokość na jaką bryła może wnikać w podłoże, ustawienie parametru na małą wartość dodatnią zapobiega jitterowi w momencie, gdy ograniczenia są nieustannie tworzone
+	  i zrywane (na przykład podczas ruchu koła po podłożu).
+	 \item \texttt{ContactMaxCorrectingVel} jest maksymalną korektą prędkości jaka może wynikać z utworzonych tymczasowo kontaktów. Domyślnie parametr przyjmuje nieskończoną wartość, a jego zmniejszanie
 	   wartości może zapobiec tworzeniu się zagnieżdżonych kontaktów. 
 	\end {enumerate}
 	
-	Domyślnie wartości globalnych parametrów są wykorzystywane podczas symulacji modeli lub połączeń \textit{joints}. Istnieje także możliwość określania wartości cfm i erp
+	Domyślnie  podczas symulacji modeli lub połączeń \textit{joints} wykorzystywane są  globalne wartości parametrów. Istnieje także możliwość określania wartości cfm i erp
 	dla poszczególnych obiektów.\newline
 	Ustawienia interfejsu: typ (dostępne tylko \textit{fltk}), rozmiaru okna i jego pozycja początkowej:
 \begin{lstlisting} [name=gazebo_simple_world]
@@ -204,8 +203,6 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 </model:physical>
 \end{lstlisting}	
 
-
-	
 	\subsubsection{Połączenia pomiędzy bryłami }
 	Tworząc modele można korzystać z trzech podstawowych brył (kula, walec, prostopadłościan), a także z siatek \textit{trimesh} oraz elementów \textit{height field} (stworzonych do generowana terenu -- por. rys. \ref{fig:geoms})).
 	Z kilku brył można tworzyć złożone komponenty (\textit{body}) modelujące np. koła i podwozie robota. Natomiast komponenty typu \textit{body} można łączyć ze soba za pomocą wiązań (\textit{joints}).
