@@ -147,7 +147,7 @@ szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znan
 	\item funkcja nawigacji została wykreślona z krokiem $0.1$.
 	\end{enumerate}
 
-\subsection{Algorytm CVM (\texttt{Curvature Velocity Method})}
+\subsection{Algorytm CVM (\textit{Curvature Velocity Method})}
 	W pracy inżynierskiej \cite{inzynierka} jako docelowy algorytm unikania kolizji wybrany został właśnie \texttt{CVM}.
 	Metoda krzywizn i prędkości (ang. \textit{Curvature Velocity Method}) została zaproponowana przez R. Simmonsa w
 	\cite{CVM_2}, należy do grupy metod bazujących na przeszukiwaniu przestrzeni prędkości, a jej działanie
@@ -349,7 +349,7 @@ szczególnych okolicznościach.Poniżej zostaną zaprezentowane najbardziej znan
 	\includegraphics[scale=0.34]{./algorytmy/CVM_segmentacja2_new}
 	\caption{ Efekt podziału okręgu na części} \label{fig:CVM_segmentacja2}
 	\end{figure} 
-\section{Algorytm RRT\\(\texttt{Rapidly-Exploring Random Tree}) \label{sec:RRT:basic}}
+\section{Algorytm RRT\\(\textit{Rapidly-Exploring Random Tree}) \label{sec:RRT:basic}}
 Kolejnym zupełnie odmiennym podejściem w planowaniu bezkolizyjnej ścieżki jest losowe przeszukiwanie dopuszczalnej przestrzeni położeń robota. Szczegółowe informacje na
 jego temat można znaleźć w \cite{RRT} oraz w \cite{RRT2}.
 Algorytm \texttt{RRT} jest wydajnym algorytmem, który w czasie rzeczywistym może wyznaczyć drogę do celu, jednak nie jest ona optymalna pod względem dynamiki, kinematyki ani długości.
@@ -403,7 +403,7 @@ W opisie algorytmu \ref{alg:RRT} użyte zostały nie omówione jeszcze funkcje, 
 Tak zaimplementowana wersja algorytmu może być zastosowana jako skuteczne narzędzie do bezkolizyjnej nawigacji robotem, jednak jego wydajność można poprawić poprzez
 modyfikacje opisane w kolejnym podrozdziale.
 
-\subsection{Modyfikacje algorytmu, czyli przejście z \texttt{RRT} do \texttt{ERRT} \label{sec:RRT:extend} }
+\subsection{Modyfikacje algorytmu, czyli przejście z RRT do ERRT \label{sec:RRT:extend} }
 Omawiany algorytm można zmodyfikować pod kątem szybkości działania. Po pierwsze elementy drzewa można przechowywać w strukturach ułatwiających przeszukiwanie drzewa,
 w literaturze stosowane są w tym celu \texttt{KD-drzewa}. Kolejną modyfikacją jest zapamiętywanie losowo wybranych węzłów ze ścieżki znalezionej w poprzednim uruchomieniu
 algorytmu. W takim wariancie tymczasowy punkt docelowy obierany jest następująco:

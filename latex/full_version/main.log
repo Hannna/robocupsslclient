@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  5 FEB 2012 15:49
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  5 FEB 2012 16:27
 entering extended mode
  %&-line parsing enabled.
 **main.tex
@@ -1181,12 +1181,8 @@ File: ./grafika/./algorytmy/navigation_func_k_10.png Graphic file (type png)
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[43] [44 <./grafika/./algorytmy/navigation_func_k_10.png (PNG copy)>]
-
-LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 150.
-
-[45] [46]
+[43] [44 <./grafika/./algorytmy/navigation_func_k_10.png (PNG copy)>] [45]
+[46]
 <./grafika/./algorytmy/CVM_dist_new.pdf, id=221, 591.20876pt x 633.36626pt>
 File: ./grafika/./algorytmy/CVM_dist_new.pdf Graphic file (type pdf)
 
@@ -1204,15 +1200,16 @@ File: ./grafika/./algorytmy/CVM_segmentacja_new.pdf Graphic file (type pdf)
 >
 File: ./grafika/./algorytmy/CVM_segmentacja2_new.pdf Graphic file (type pdf)
  <use ./grafika/./algorytmy/CVM_segmentacja2_new.pdf> [51 <./grafika/./algorytm
-y/CVM_segmentacja_new.pdf>]
-
-LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <17.28> not available
-(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 352.
-
-[52 <./grafika/./algorytmy/CVM_segmentacja2_new.pdf>] [53]
+y/CVM_segmentacja_new.pdf>] [52 <./grafika/./algorytmy/CVM_segmentacja2_new.pdf
+>] [53]
 Overfull \hbox (4.83241pt too wide) in paragraph at lines 401--405
 \OT4/cmr/m/n/12 zwra-ca-j¡-ca od-le-gªo±¢ w sen-sie eu-kli-de-so-wym mi¦-dzy dw
 o-ma w¦-zªa-mi drze-wa, \OT4/cmtt/m/n/12 addNode
+ []
+
+
+Overfull \hbox (5.72147pt too wide) in paragraph at lines 406--406
+[]\OT4/cmr/bx/n/14.4 Modyfikacje al-go-ryt-mu, czy-li przej-±cie z RRT do ERRT
  []
 
 [54]
@@ -1329,9 +1326,17 @@ Overfull \hbox (0.21248pt too wide) in paragraph at lines 10--14
 File: ./grafika/./stp/stp.png Graphic file (type png)
 
 <use ./grafika/./stp/stp.png> [74] [75 <./grafika/./stp/stp.png (PNG copy)>]
+
+LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <14.4> not available
+(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 63.
+
 (/usr/share/texmf-texlive/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 ) [76] [77] [78] [79]
+
+LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <17.28> not available
+(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 205.
+
 <./grafika/./testy_stp/navigation_test.png, id=355, 401.5pt x 269.005pt>
 File: ./grafika/./testy_stp/navigation_test.png Graphic file (type png)
 
@@ -1509,7 +1514,7 @@ LaTeX Warning: There were multiply-defined labels.
  )
 (\end occurred inside a group at level 1)
 
-### simple group (level 1) entered at line 75 ({)
+### simple group (level 1) entered at line 78 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
  13661 strings out of 495026
@@ -1541,7 +1546,7 @@ l/plr7.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr8.pfb></usr/share
 xmf-texlive/fonts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/ty
 pe1/public/pl/pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.
 pfb>
-Output written on main.pdf (98 pages, 3070467 bytes).
+Output written on main.pdf (98 pages, 3073358 bytes).
 PDF statistics:
  512 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
