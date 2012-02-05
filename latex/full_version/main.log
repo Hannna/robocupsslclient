@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  5 FEB 2012 20:13
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  6 FEB 2012 00:16
 entering extended mode
  %&-line parsing enabled.
 **main.tex
@@ -832,17 +832,7 @@ Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
 \f@ncyO@erf=\skip68
 \f@ncyO@olf=\skip69
 \f@ncyO@orf=\skip70
-) (./main.aux
-
-LaTeX Warning: Label `eq:CVM_dv' multiply defined.
-
-
-LaTeX Warning: Label `alg:STP' multiply defined.
-
-
-LaTeX Warning: Label `fig:arch' multiply defined.
-
-)
+) (./main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 56.
@@ -975,16 +965,10 @@ LaTeX Font Info:    External font `plex10' loaded for size
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./grafika/./logo_pw_moje.P
 NG> <./grafika/./logo_weiti.PNG>])
 (./tex/streszczenie.tex
-Overfull \hbox (11.28008pt too wide) in paragraph at lines 3--3
-[]\OT4/cmr/bx/it/14.4 Tytuª: \OT4/cmr/bx/n/14.4 Ste-ro-wa-nie ro-bo-tem - za-wo
-d-ni-kiem roz-gry-wek [] 
- []
-
 LaTeX Font Info:    Try loading font information for OT4+cmtt on input line 8.
-(/usr/share/texmf-texlive/tex/latex/polski/ot4cmtt.fd
+ (/usr/share/texmf-texlive/tex/latex/polski/ot4cmtt.fd
 File: ot4cmtt.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
-)) [1] (./main.toc
-[2
+)) [1] (./main.toc [2
 
 ]
 
@@ -1053,7 +1037,7 @@ File: ./grafika/./liga_robocup/F180_budowa3.png Graphic file (type png)
 >
 File: ./grafika/./liga_robocup/robocup_markers.png Graphic file (type png)
  <use ./grafika/./liga_robocup/robocup_markers.png>
-Underfull \hbox (badness 10000) in paragraph at lines 99--118
+Underfull \hbox (badness 10000) in paragraph at lines 99--119
 \OT4/cmr/m/n/12 szwedz-kich.
  []
 
@@ -1202,6 +1186,9 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [43] [44 <./grafika/./algorytmy/navigation_func_k_10.png (PNG copy)>] [45]
 [46]
+
+LaTeX Warning: Reference `eq:CVM_Dv' on page 47 undefined on input line 213.
+
 <./grafika/./algorytmy/CVM_dist_new.pdf, id=219, 591.20876pt x 633.36626pt>
 File: ./grafika/./algorytmy/CVM_dist_new.pdf Graphic file (type pdf)
 
@@ -1210,7 +1197,11 @@ File: ./grafika/./algorytmy/CVM_dist_new.pdf Graphic file (type pdf)
 File: ./grafika/./algorytmy/CVM_styczne_new.pdf Graphic file (type pdf)
 
 <use ./grafika/./algorytmy/CVM_styczne_new.pdf> [48 <./grafika/./algorytmy/CVM_
-dist_new.pdf>] [49 <./grafika/./algorytmy/CVM_styczne_new.pdf>]
+dist_new.pdf>]
+
+LaTeX Warning: Reference `eq:CVM_Dv' on page 49 undefined on input line 295.
+
+[49 <./grafika/./algorytmy/CVM_styczne_new.pdf>]
 <./grafika/./algorytmy/CVM_segmentacja_new.pdf, id=235, 565.11125pt x 430.60875
 pt>
 File: ./grafika/./algorytmy/CVM_segmentacja_new.pdf Graphic file (type pdf)
@@ -1221,13 +1212,13 @@ File: ./grafika/./algorytmy/CVM_segmentacja2_new.pdf Graphic file (type pdf)
  <use ./grafika/./algorytmy/CVM_segmentacja2_new.pdf> [51 <./grafika/./algorytm
 y/CVM_segmentacja_new.pdf>] [52 <./grafika/./algorytmy/CVM_segmentacja2_new.pdf
 >] [53]
-Overfull \hbox (4.83241pt too wide) in paragraph at lines 401--405
+Overfull \hbox (4.83241pt too wide) in paragraph at lines 402--406
 \OT4/cmr/m/n/12 zwra-ca-j¡-ca od-le-gªo±¢ w sen-sie eu-kli-de-so-wym mi¦-dzy dw
 o-ma w¦-zªa-mi drze-wa, \OT4/cmtt/m/n/12 addNode
  []
 
 
-Overfull \hbox (5.72147pt too wide) in paragraph at lines 406--406
+Overfull \hbox (5.72147pt too wide) in paragraph at lines 407--407
 []\OT4/cmr/bx/n/14.4 Modyfikacje al-go-ryt-mu, czy-li przej-±cie z RRT do ERRT
  []
 
@@ -1237,16 +1228,14 @@ File: ./grafika/./algorytmy/tree_with_waypoints.png Graphic file (type png)
 <use ./grafika/./algorytmy/tree_with_waypoints.png>) [55 <./grafika/./algorytmy
 /tree_with_waypoints.png (PNG copy)>] (./tex/opis_testy_rrt.tex [56]
 Rozdzia\PlPrIeC {\l } 6.
+[57
 
-LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <24.88> not available
-(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 1.
-
-<./grafika/./imp_rrt/many_root_child.png, id=265, 288.07625pt x 239.89626pt>
+]
+<./grafika/./imp_rrt/many_root_child.png, id=268, 288.07625pt x 239.89626pt>
 File: ./grafika/./imp_rrt/many_root_child.png Graphic file (type png)
 
-<use ./grafika/./imp_rrt/many_root_child.png> [57
-
-] [58 <./grafika/./imp_rrt/many_root_child.png (PNG copy)>] [59] [60]
+<use ./grafika/./imp_rrt/many_root_child.png> [58 <./grafika/./imp_rrt/many_roo
+t_child.png (PNG copy)>] [59] [60]
 <./grafika/./testy_rrt/mgr_debug.png, id=279, 853.1875pt x 658.46pt>
 File: ./grafika/./testy_rrt/mgr_debug.png Graphic file (type png)
 
@@ -1347,14 +1336,14 @@ File: ./grafika/./stp/stp.png Graphic file (type png)
 <use ./grafika/./stp/stp.png> [74] [75 <./grafika/./stp/stp.png (PNG copy)>]
 
 LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 63.
+(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 62.
 
 (/usr/share/texmf-texlive/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 ) [76] [77] [78] [79]
 
 LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <17.28> not available
-(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 205.
+(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 204.
 
 <./grafika/./testy_stp/navigation_test.png, id=353, 401.5pt x 269.005pt>
 File: ./grafika/./testy_stp/navigation_test.png Graphic file (type png)
@@ -1528,15 +1517,15 @@ G copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf (PNG copy)>]
 
  [97] (./main.aux)
 
-LaTeX Warning: There were multiply-defined labels.
+LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 13666 strings out of 495026
- 227670 string characters out of 1181802
- 326456 words of memory out of 3000000
- 16396 multiletter control sequences out of 15000+50000
- 23395 words of font info for 70 fonts, out of 3000000 for 9000
+ 13668 strings out of 495026
+ 227690 string characters out of 1181802
+ 326454 words of memory out of 3000000
+ 16398 multiletter control sequences out of 15000+50000
+ 23098 words of font info for 69 fonts, out of 3000000 for 9000
  48 hyphenation exceptions out of 8191
  54i,12n,92p,588b,1413s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/share/texmf-texlive/fonts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-texli
@@ -1560,7 +1549,7 @@ pl/plsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy8.pfb></usr/sh
 are/texmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/texmf-texlive/fo
 nts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/
 pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.pfb>
-Output written on main.pdf (98 pages, 3060010 bytes).
+Output written on main.pdf (98 pages, 3059696 bytes).
 PDF statistics:
  510 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
