@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  2 FEB 2012 22:08
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  5 FEB 2012 15:49
 entering extended mode
  %&-line parsing enabled.
 **main.tex
@@ -49,6 +49,11 @@ Package ifvtex Info: VTeX not detected.
 \Gm@dimlist=\toks15
 
 (/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/mdwtools/footnote.sty
+Package: footnote 1997/01/28 1.13 Save footnotes around boxes
+\fn@notes=\box26
+\fn@width=\dimen107
+)
 (/usr/share/texmf-texlive/tex/latex/algorithms/algorithmic.sty
 Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
 
@@ -70,9 +75,9 @@ nment
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count95
 \float@exts=\toks16
-\float@box=\box26
+\float@box=\box27
 \@float@everytoks=\toks17
-\@floatcapt=\box27
+\@floatcapt=\box28
 )
 \@float@every@algorithm=\toks18
 \c@algorithm=\count96
@@ -139,8 +144,8 @@ File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
 )
 Package graphics Info: Driver file: pdftex.def on input line 91.
 )
-\Gin@req@height=\dimen107
-\Gin@req@width=\dimen108
+\Gin@req@height=\dimen108
+\Gin@req@width=\dimen109
 )
 (/usr/share/texmf/tex/latex/pgf/systemlayer/pgfsys.sty
 (/usr/share/texmf/tex/generic/pgf/systemlayer/pgfsys.code.tex
@@ -150,14 +155,14 @@ Package: pgfsys 2008/02/07 v2.00 (rcs-revision 1.31)
 \pgfkeys@pathtoks=\toks22
 \pgfkeys@temptoks=\toks23
 )
-\pgf@x=\dimen109
-\pgf@y=\dimen110
-\pgf@xa=\dimen111
-\pgf@ya=\dimen112
-\pgf@xb=\dimen113
-\pgf@yb=\dimen114
-\pgf@xc=\dimen115
-\pgf@yc=\dimen116
+\pgf@x=\dimen110
+\pgf@y=\dimen111
+\pgf@xa=\dimen112
+\pgf@ya=\dimen113
+\pgf@xb=\dimen114
+\pgf@yb=\dimen115
+\pgf@xc=\dimen116
+\pgf@yc=\dimen117
 \c@pgf@counta=\count99
 \c@pgf@countb=\count100
 \c@pgf@countc=\count101
@@ -188,14 +193,14 @@ Package: pgfcore 2008/01/15 v2.00 (rcs-revision 1.6)
 (/usr/share/texmf/tex/generic/pgf/math/pgfmath.code.tex
 (/usr/share/texmf/tex/generic/pgf/math/pgfmathcalc.code.tex
 (/usr/share/texmf/tex/generic/pgf/math/pgfmathutil.code.tex
-\pgfmath@box=\box28
+\pgfmath@box=\box29
 )
 (/usr/share/texmf/tex/generic/pgf/math/pgfmathparser.code.tex
 \pgfmath@stack=\toks24
 \c@pgfmath@parsecounta=\count105
 \c@pgfmath@parsecountb=\count106
 \c@pgfmath@parsecountc=\count107
-\pgfmath@parsex=\dimen117
+\pgfmath@parsex=\dimen118
 )
 (/usr/share/texmf/tex/generic/pgf/math/pgfmathoperations.code.tex
 (/usr/share/texmf/tex/generic/pgf/math/pgfmathtrig.code.tex)
@@ -203,47 +208,47 @@ Package: pgfcore 2008/01/15 v2.00 (rcs-revision 1.6)
 (/usr/share/texmf/tex/generic/pgf/math/pgfmathbase.code.tex)))
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex
 File: pgfcorepoints.code.tex 2008/02/03  (rcs-revision 1.13)
-\pgf@picminx=\dimen118
-\pgf@picmaxx=\dimen119
-\pgf@picminy=\dimen120
-\pgf@picmaxy=\dimen121
-\pgf@pathminx=\dimen122
-\pgf@pathmaxx=\dimen123
-\pgf@pathminy=\dimen124
-\pgf@pathmaxy=\dimen125
-\pgf@xx=\dimen126
-\pgf@xy=\dimen127
-\pgf@yx=\dimen128
-\pgf@yy=\dimen129
-\pgf@zx=\dimen130
-\pgf@zy=\dimen131
+\pgf@picminx=\dimen119
+\pgf@picmaxx=\dimen120
+\pgf@picminy=\dimen121
+\pgf@picmaxy=\dimen122
+\pgf@pathminx=\dimen123
+\pgf@pathmaxx=\dimen124
+\pgf@pathminy=\dimen125
+\pgf@pathmaxy=\dimen126
+\pgf@xx=\dimen127
+\pgf@xy=\dimen128
+\pgf@yx=\dimen129
+\pgf@yy=\dimen130
+\pgf@zx=\dimen131
+\pgf@zy=\dimen132
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorepathconstruct.code.tex
 File: pgfcorepathconstruct.code.tex 2008/02/13  (rcs-revision 1.14)
-\pgf@path@lastx=\dimen132
-\pgf@path@lasty=\dimen133
+\pgf@path@lastx=\dimen133
+\pgf@path@lasty=\dimen134
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorepathusage.code.tex
 File: pgfcorepathusage.code.tex 2008/01/23  (rcs-revision 1.11)
-\pgf@shorten@end@additional=\dimen134
-\pgf@shorten@start@additional=\dimen135
+\pgf@shorten@end@additional=\dimen135
+\pgf@shorten@start@additional=\dimen136
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex
 File: pgfcorescopes.code.tex 2008/01/15  (rcs-revision 1.26)
-\pgfpic=\box29
-\pgf@hbox=\box30
-\pgf@layerbox@main=\box31
+\pgfpic=\box30
+\pgf@hbox=\box31
+\pgf@layerbox@main=\box32
 \pgf@picture@serial@count=\count108
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex
 File: pgfcoregraphicstate.code.tex 2007/12/12  (rcs-revision 1.8)
-\pgflinewidth=\dimen136
+\pgflinewidth=\dimen137
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoretransformations.code.tex
 File: pgfcoretransformations.code.tex 2008/02/04  (rcs-revision 1.10)
-\pgf@pt@x=\dimen137
-\pgf@pt@y=\dimen138
-\pgf@pt@temp=\dimen139
+\pgf@pt@x=\dimen138
+\pgf@pt@y=\dimen139
+\pgf@pt@temp=\dimen140
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
 File: pgfcorequick.code.tex 2006/10/11  (rcs-revision 1.2)
@@ -259,12 +264,12 @@ File: pgfcorearrows.code.tex 2007/06/07  (rcs-revision 1.8)
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2007/12/10  (rcs-revision 1.9)
-\pgf@max=\dimen140
+\pgf@max=\dimen141
 \pgf@sys@shading@range@num=\count109
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2008/01/15  (rcs-revision 1.1)
-\pgfexternal@startupbox=\box32
+\pgfexternal@startupbox=\box33
 )
 (/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
 File: pgfcorelayers.code.tex 2008/01/15  (rcs-revision 1.1)
@@ -277,7 +282,7 @@ File: pgfcorepatterns.code.tex 2008/01/15  (rcs-revision 1.1)
 )))
 (/usr/share/texmf/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
 File: pgfmoduleshapes.code.tex 2008/02/13  (rcs-revision 1.4)
-\pgfnodeparttextbox=\box33
+\pgfnodeparttextbox=\box34
 \toks@savedmacro=\toks25
 )
 (/usr/share/texmf/tex/generic/pgf/modules/pgfmoduleplot.code.tex
@@ -286,8 +291,8 @@ File: pgfmoduleplot.code.tex 2008/01/15  (rcs-revision 1.1)
 )
 (/usr/share/texmf/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty
 Package: pgfcomp-version-0-65 2007/07/03 v2.00 (rcs-revision 1.7)
-\pgf@nodesepstart=\dimen141
-\pgf@nodesepend=\dimen142
+\pgf@nodesepstart=\dimen142
+\pgf@nodesepend=\dimen143
 )
 (/usr/share/texmf/tex/latex/pgf/compatibility/pgfcomp-version-1-18.sty
 Package: pgfcomp-version-1-18 2007/07/23 v2.00 (rcs-revision 1.1)
@@ -295,8 +300,8 @@ Package: pgfcomp-version-1-18 2007/07/23 v2.00 (rcs-revision 1.1)
 (/usr/share/texmf/tex/latex/pgf/utilities/pgffor.sty
 (/usr/share/texmf/tex/generic/pgf/utilities/pgffor.code.tex
 Package: pgffor 2007/11/07 v2.00 (rcs-revision 1.8)
-\pgffor@iter=\dimen143
-\pgffor@skip=\dimen144
+\pgffor@iter=\dimen144
+\pgffor@skip=\dimen145
 ))
 (/usr/share/texmf/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
 Package: tikz 2008/02/13 v2.00 (rcs-revision 1.27)
@@ -304,16 +309,16 @@ Package: tikz 2008/02/13 v2.00 (rcs-revision 1.27)
 (/usr/share/texmf/tex/generic/pgf/libraries/pgflibraryplothandlers.code.tex
 File: pgflibraryplothandlers.code.tex 2007/03/09 v2.00 (rcs-revision 1.9)
 \pgf@plot@mark@count=\count110
-\pgfplotmarksize=\dimen145
+\pgfplotmarksize=\dimen146
 )
-\tikz@lastx=\dimen146
-\tikz@lasty=\dimen147
-\tikz@lastxsaved=\dimen148
-\tikz@lastysaved=\dimen149
-\tikzleveldistance=\dimen150
-\tikzsiblingdistance=\dimen151
-\tikz@figbox=\box34
-\tikz@tempbox=\box35
+\tikz@lastx=\dimen147
+\tikz@lasty=\dimen148
+\tikz@lastxsaved=\dimen149
+\tikz@lastysaved=\dimen150
+\tikzleveldistance=\dimen151
+\tikzsiblingdistance=\dimen152
+\tikz@figbox=\box35
+\tikz@tempbox=\box36
 \tikztreelevel=\count111
 \tikznumberofchildren=\count112
 \tikznumberofcurrentchild=\count113
@@ -334,8 +339,8 @@ File: tikzlibrarytopaths.code.tex 2008/01/09 v2.00 (rcs-revision 1.1)
 Package: calc 2007/08/22 v4.3 Infix arithmetic (KKT,FJ)
 \calc@Acount=\count119
 \calc@Bcount=\count120
-\calc@Adimen=\dimen152
-\calc@Bdimen=\dimen153
+\calc@Adimen=\dimen153
+\calc@Bdimen=\dimen154
 \calc@Askip=\skip45
 \calc@Bskip=\skip46
 LaTeX Info: Redefining \setlength on input line 76.
@@ -400,12 +405,12 @@ Package: caption 2009/10/09 v3.1k Customizing captions (AR)
 
 (/usr/share/texmf-texlive/tex/latex/caption/caption3.sty
 Package: caption3 2009/10/09 v3.1k caption3 kernel (AR)
-\captionmargin=\dimen154
-\captionmargin@=\dimen155
-\captionwidth=\dimen156
-\caption@indent=\dimen157
-\caption@parindent=\dimen158
-\caption@hangindent=\dimen159
+\captionmargin=\dimen155
+\captionmargin@=\dimen156
+\captionwidth=\dimen157
+\caption@indent=\dimen158
+\caption@parindent=\dimen159
+\caption@hangindent=\dimen160
 )
 \c@ContinuedFloat=\count123
 Package caption Info: float package is loaded.
@@ -414,7 +419,7 @@ Package caption Info: float package is loaded.
 Package: subfig 2005/06/28 ver: 1.3 subfig package
 \c@KVtest=\count124
 \sf@farskip=\skip48
-\sf@captopadj=\dimen160
+\sf@captopadj=\dimen161
 \sf@capskip=\skip49
 \sf@nearskip=\skip50
 \c@subfigure=\count125
@@ -437,11 +442,11 @@ Package: amstext 2000/06/29 v2.01
 (/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
 \@emptytoks=\toks26
-\ex@=\dimen161
+\ex@=\dimen162
 ))
 (/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d
-\pmbraise@=\dimen162
+\pmbraise@=\dimen163
 )
 (/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
@@ -456,9 +461,9 @@ LaTeX Info: Redefining \overline on input line 307.
 LaTeX Info: Redefining \ldots on input line 379.
 LaTeX Info: Redefining \dots on input line 382.
 LaTeX Info: Redefining \cdots on input line 467.
-\Mathstrutbox@=\box36
-\strutbox@=\box37
-\big@size=\dimen163
+\Mathstrutbox@=\box37
+\strutbox@=\box38
+\big@size=\dimen164
 LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \macc@depth=\count136
@@ -471,12 +476,12 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \column@=\count141
 \maxfields@=\count142
 \andhelp@=\toks28
-\eqnshift@=\dimen164
-\alignsep@=\dimen165
-\tagshift@=\dimen166
-\tagwidth@=\dimen167
-\totwidth@=\dimen168
-\lineht@=\dimen169
+\eqnshift@=\dimen165
+\alignsep@=\dimen166
+\tagshift@=\dimen167
+\tagwidth@=\dimen168
+\totwidth@=\dimen169
+\lineht@=\dimen170
 \@envbody=\toks29
 \multlinegap=\skip54
 \multlinetaggap=\skip55
@@ -495,32 +500,32 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
 ))
 (/usr/share/texmf-texlive/tex/latex/wrapfig/wrapfig.sty
-\wrapoverhang=\dimen170
-\WF@size=\dimen171
+\wrapoverhang=\dimen171
+\WF@size=\dimen172
 \c@WF@wrappedlines=\count143
-\WF@box=\box38
+\WF@box=\box39
 \WF@everypar=\toks31
 Package: wrapfig 2003/01/31  v 3.6
 )
 (/usr/share/texmf-texlive/tex/latex/listings/listings.sty
 \lst@mode=\count144
-\lst@gtempboxa=\box39
+\lst@gtempboxa=\box40
 \lst@token=\toks32
 \lst@length=\count145
-\lst@currlwidth=\dimen172
+\lst@currlwidth=\dimen173
 \lst@column=\count146
 \lst@pos=\count147
-\lst@lostspace=\dimen173
-\lst@width=\dimen174
+\lst@lostspace=\dimen174
+\lst@width=\dimen175
 \lst@newlines=\count148
 \lst@lineno=\count149
-\lst@maxwidth=\dimen175
+\lst@maxwidth=\dimen176
 
 (/usr/share/texmf-texlive/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
 \c@lstnumber=\count150
 \lst@skipnumbers=\count151
-\lst@framebox=\box40
+\lst@framebox=\box41
 )
 (/usr/share/texmf-texlive/tex/latex/listings/listings.cfg
 File: listings.cfg 2007/02/22 1.4 listings configuration
@@ -759,11 +764,11 @@ Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
 \LTpre=\skip58
 \LTpost=\skip59
 \LTchunksize=\count152
-\LTcapwidth=\dimen176
-\LT@head=\box41
-\LT@firsthead=\box42
-\LT@foot=\box43
-\LT@lastfoot=\box44
+\LTcapwidth=\dimen177
+\LT@head=\box42
+\LT@firsthead=\box43
+\LT@foot=\box44
+\LT@lastfoot=\box45
 \LT@cols=\count153
 \LT@rows=\count154
 \c@LT@tables=\count155
@@ -773,26 +778,25 @@ Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
 (/usr/share/texmf-texlive/tex/latex/tools/multicol.sty
 Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
 \c@tracingmulticols=\count157
-\mult@box=\box45
-\multicol@leftmargin=\dimen177
+\mult@box=\box46
+\multicol@leftmargin=\dimen178
 \c@unbalance=\count158
 \c@collectmore=\count159
 \doublecol@number=\count160
 \multicoltolerance=\count161
 \multicolpretolerance=\count162
-\full@width=\dimen178
-\page@free=\dimen179
-\premulticols=\dimen180
-\postmulticols=\dimen181
+\full@width=\dimen179
+\page@free=\dimen180
+\premulticols=\dimen181
+\postmulticols=\dimen182
 \multicolsep=\skip60
 \multicolbaselineskip=\skip61
-\partial@page=\box46
-\last@line=\box47
-\mult@rightbox=\box48
-\mult@grightbox=\box49
-\mult@gfirstbox=\box50
-\mult@firstbox=\box51
-\@tempa=\box52
+\partial@page=\box47
+\last@line=\box48
+\mult@rightbox=\box49
+\mult@grightbox=\box50
+\mult@gfirstbox=\box51
+\mult@firstbox=\box52
 \@tempa=\box53
 \@tempa=\box54
 \@tempa=\box55
@@ -809,13 +813,14 @@ Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
 \@tempa=\box66
 \@tempa=\box67
 \@tempa=\box68
+\@tempa=\box69
 \c@columnbadness=\count163
 \c@finalcolumnbadness=\count164
-\last@try=\dimen182
-\multicolovershoot=\dimen183
-\multicolundershoot=\dimen184
-\mult@nat@firstbox=\box69
-\colbreak@box=\box70
+\last@try=\dimen183
+\multicolovershoot=\dimen184
+\multicolundershoot=\dimen185
+\mult@nat@firstbox=\box70
+\colbreak@box=\box71
 )
 (/usr/share/texmf-texlive/tex/latex/fancyhdr/fancyhdr.sty
 \fancy@headwidth=\skip62
@@ -840,20 +845,20 @@ LaTeX Warning: Label `fig:arch' multiply defined.
 )
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
 
 *geometry auto-detecting driver*
 *geometry detected driver: pdftex*
@@ -899,19 +904,19 @@ driver: pdftex
 (/usr/share/texmf/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count165
-\scratchdimen=\dimen185
-\scratchbox=\box71
+\scratchdimen=\dimen186
+\scratchbox=\box72
 \nofMPsegments=\count166
 \nofMParguments=\count167
 \everyMPshowfont=\toks36
 \MPscratchCnt=\count168
-\MPscratchDim=\dimen186
+\MPscratchDim=\dimen187
 \MPnumerator=\count169
 \everyMPtoPDFconversion=\toks37
 )
 Package caption Info: Begin \AtBeginDocument code.
 Package caption3 Info: subfig package 1.2 or 1.3 is loaded.
-LaTeX Info: Redefining \subref on input line 53.
+LaTeX Info: Redefining \subref on input line 56.
 Package caption Info: listings package is loaded.
 Package caption Info: longtable package is loaded.
  (/usr/share/texmf-texlive/tex/latex/caption/ltcaption.sty
@@ -1266,12 +1271,7 @@ File: ./grafika/./testy_rrt/static/max_tree.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/static/max_tree.png> [67 <./grafika/./testy_rrt/stat
 ic/liczba_sciezek.png (PNG copy)> <./grafika/./testy_rrt/static/max_sciezka.png
- (PNG copy)>]
-Overfull \hbox (4.6524pt too wide) in paragraph at lines 212--212
-[]\OT4/cmr/bx/n/17.28 Wyniki eks-pe-ry-men-tów ±ro-do-wi-sku dy-na-micz-
- []
-
-[68 <./grafika/./testy_rrt/static/max_tree.png (PNG copy)>]
+ (PNG copy)>] [68 <./grafika/./testy_rrt/static/max_tree.png (PNG copy)>]
 <./grafika/./testy_rrt/dynamic/sukcesy.png, id=313, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/sukcesy.png Graphic file (type png)
 
@@ -1339,14 +1339,14 @@ File: ./grafika/./testy_stp/navigation_test.png Graphic file (type png)
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[80] [81 <./grafika/./testy_stp/navigation_test.png>] [82])
-(./tex/podsumowanie.tex [83]
+[80] [81 <./grafika/./testy_stp/navigation_test.png>] [82] [83] [84])
+(./tex/podsumowanie.tex [85]
 Rozdzia\PlPrIeC {\l } 8.
-) (./tex/dodatek.tex [84
+) (./tex/dodatek.tex [86
 
 ]
 Dodatek A.
-[85
+[87
 
 ]
 Dodatek B.
@@ -1371,174 +1371,179 @@ Overfull \hbox (12.78018pt too wide) in paragraph at lines 18--18
  []
 
 
-LaTeX Warning: Marginpar on page 86 moved.
+LaTeX Warning: Marginpar on page 88 moved.
 
-(./tex/dodatek_eksp.tex [86
+(./tex/dodatek_eksp.tex [88
 
 ]
 Dodatek C.
 
-<./grafika/./eksperymenty/srodowiska/legenda.pdf, id=379, 438.63875pt x 148.555
+<./grafika/./eksperymenty/srodowiska/legenda.pdf, id=385, 438.63875pt x 148.555
 pt>
 File: ./grafika/./eksperymenty/srodowiska/legenda.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/legenda.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment00.pdf, id=380, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment00.pdf, id=386, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment00.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment00.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment01.pdf, id=381, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment01.pdf, id=387, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment01.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment01.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment05.pdf, id=382, 314.17375pt x 4
+<./grafika/./eksperymenty/srodowiska/eksperyment05.pdf, id=388, 314.17375pt x 4
 45.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment05.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment05.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment06.pdf, id=383, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment06.pdf, id=389, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment06.pdf Graphic file (type 
 pdf)
- <use ./grafika/./eksperymenty/srodowiska/eksperyment06.pdf> [87
+ <use ./grafika/./eksperymenty/srodowiska/eksperyment06.pdf> [89
 
  <./grafika/./eksperymenty/srodowiska/legenda.pdf (PNG copy)>]
-<./grafika/./eksperymenty/srodowiska/eksperyment09.pdf, id=387, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment09.pdf, id=393, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment09.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment09.pdf>
-<./grafika/./eksperymenty/srodowiska/korytarz.pdf, id=388, 315.1775pt x 445.665
+<./grafika/./eksperymenty/srodowiska/korytarz.pdf, id=394, 315.1775pt x 445.665
 pt>
 File: ./grafika/./eksperymenty/srodowiska/korytarz.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/korytarz.pdf>
-<./grafika/./eksperymenty/srodowiska/prosta.pdf, id=389, 315.1775pt x 445.665pt
+<./grafika/./eksperymenty/srodowiska/prosta.pdf, id=395, 315.1775pt x 445.665pt
 >
 File: ./grafika/./eksperymenty/srodowiska/prosta.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/prosta.pdf>
-<./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf, id=390, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf, id=396, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf>
-<./grafika/./eksperymenty/srodowiska/atak1.pdf, id=391, 315.1775pt x 445.665pt>
+<./grafika/./eksperymenty/srodowiska/atak1.pdf, id=397, 315.1775pt x 445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/atak1.pdf Graphic file (type pdf)
 <use ./grafika/./eksperymenty/srodowiska/atak1.pdf>
-<./grafika/./eksperymenty/srodowiska/atak2.pdf, id=392, 315.1775pt x 445.665pt>
+<./grafika/./eksperymenty/srodowiska/atak2.pdf, id=398, 315.1775pt x 445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/atak2.pdf Graphic file (type pdf)
-<use ./grafika/./eksperymenty/srodowiska/atak2.pdf> [88 <./grafika/./eksperymen
+<use ./grafika/./eksperymenty/srodowiska/atak2.pdf> [90 <./grafika/./eksperymen
 ty/srodowiska/eksperyment00.pdf (PNG copy)> <./grafika/./eksperymenty/srodowisk
 a/eksperyment01.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/eksperymen
 t05.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/eksperyment06.pdf (PNG
  copy)>]
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf, id=396, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf, id=403, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf, id=397, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf, id=404, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf, id=398, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf, id=405, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf, id=399, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf, id=406, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf, id=400, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf, id=407, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf, id=401, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf, id=408, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf>
-[89 <./grafika/./eksperymenty/srodowiska/eksperyment09.pdf (PNG copy)> <./grafi
+[91 <./grafika/./eksperymenty/srodowiska/eksperyment09.pdf (PNG copy)> <./grafi
 ka/./eksperymenty/srodowiska/korytarz.pdf (PNG copy)> <./grafika/./eksperymenty
 /srodowiska/prosta.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/waskie_
 przejscie.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/atak1.pdf (PNG c
 opy)> <./grafika/./eksperymenty/srodowiska/atak2.pdf (PNG copy)>]
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf, id=405, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf, id=412, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf, id=406, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf, id=413, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf, id=407, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf, id=414, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf, id=408, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf, id=415, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf>
-[90 <./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf (PNG copy)> <./gr
+[92 <./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf (PNG copy)> <./gr
 afika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf (PNG copy)> <./grafika/./e
 ksperymenty/srodowiska/dynamiczne/eks03.pdf (PNG copy)> <./grafika/./eksperymen
 ty/srodowiska/dynamiczne/eks04.pdf (PNG copy)> <./grafika/./eksperymenty/srodow
 iska/dynamiczne/eks05.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/dyna
-miczne/eks06.pdf (PNG copy)>])) [91 <./grafika/./eksperymenty/srodowiska/dynami
+miczne/eks06.pdf (PNG copy)>])) [93 <./grafika/./eksperymenty/srodowiska/dynami
 czne/eks07.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks0
 8.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf (PN
 G copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf (PNG copy)>]
-(./tex/bibliografia.tex [92] [93
+(./tex/bibliografia.tex [94] [95
 
-] [94]) (./main.tdo)
+] [96]) (./main.tdo)
 \tf@tdo=\write5
 \openout5 = `main.tdo'.
 
- [95] (./main.aux)
+ [97] (./main.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
- ) 
+ )
+(\end occurred inside a group at level 1)
+
+### simple group (level 1) entered at line 75 ({)
+### bottom level 
 Here is how much of TeX's memory you used:
- 13626 strings out of 495026
- 227076 string characters out of 1181802
- 329908 words of memory out of 3000000
- 16359 multiletter control sequences out of 15000+50000
+ 13661 strings out of 495026
+ 227530 string characters out of 1181802
+ 330456 words of memory out of 3000000
+ 16391 multiletter control sequences out of 15000+50000
  23395 words of font info for 70 fonts, out of 3000000 for 9000
  48 hyphenation exceptions out of 8191
- 54i,12n,92p,588b,1389s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-texli
-ve/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plm
-s.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plme.enc}{/usr/share/texmf-t
-exlive/fonts/enc/dvips/pl/pltt.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl
-/plit.enc}</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/s
-hare/texmf-texlive/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/t
-exmf-texlive/fonts/type1/public/pl/plbx12.pfb></usr/share/texmf-texlive/fonts/t
-ype1/public/pl/plbxti10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/ple
-x10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plmi12.pfb></usr/share/
-texmf-texlive/fonts/type1/public/pl/plmi6.pfb></usr/share/texmf-texlive/fonts/t
-ype1/public/pl/plmi8.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr10.
-pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr12.pfb></usr/share/texmf
--texlive/fonts/type1/public/pl/plr17.pfb></usr/share/texmf-texlive/fonts/type1/
-public/pl/plr6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr7.pfb></u
-sr/share/texmf-texlive/fonts/type1/public/pl/plr8.pfb></usr/share/texmf-texlive
-/fonts/type1/public/pl/plsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/
-pl/plsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy8.pfb></usr/sh
-are/texmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/texmf-texlive/fo
-nts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/
-pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.pfb>
-Output written on main.pdf (96 pages, 3066057 bytes).
+ 54i,12n,92p,588b,1609s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plmi.enc}{/usr/sha
+re/texmf-texlive/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texmf-texlive/fonts/en
+c/dvips/pl/plms.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plme.enc}{/usr
+/share/texmf-texlive/fonts/enc/dvips/pl/pltt.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/pl/plit.enc}</usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
+m/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/symbols/msam
+10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/symbols/msbm10.pfb
+></usr/share/texmf-texlive/fonts/type1/public/pl/plbx12.pfb></usr/share/texmf-t
+exlive/fonts/type1/public/pl/plbxti10.pfb></usr/share/texmf-texlive/fonts/type1
+/public/pl/plex10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plmi12.pf
+b></usr/share/texmf-texlive/fonts/type1/public/pl/plmi6.pfb></usr/share/texmf-t
+exlive/fonts/type1/public/pl/plmi8.pfb></usr/share/texmf-texlive/fonts/type1/pu
+blic/pl/plr10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr12.pfb></u
+sr/share/texmf-texlive/fonts/type1/public/pl/plr17.pfb></usr/share/texmf-texliv
+e/fonts/type1/public/pl/plr6.pfb></usr/share/texmf-texlive/fonts/type1/public/p
+l/plr7.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr8.pfb></usr/share
+/texmf-texlive/fonts/type1/public/pl/plsy10.pfb></usr/share/texmf-texlive/fonts
+/type1/public/pl/plsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy
+8.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/te
+xmf-texlive/fonts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/ty
+pe1/public/pl/pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.
+pfb>
+Output written on main.pdf (98 pages, 3070467 bytes).
 PDF statistics:
- 505 PDF objects out of 1000 (max. 8388607)
+ 512 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  373 words of extra memory for PDF output out of 10000 (max. 10000000)
 

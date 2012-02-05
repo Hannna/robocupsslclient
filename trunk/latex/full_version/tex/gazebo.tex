@@ -5,9 +5,9 @@
 
 	\section{Koncepcja}
 	Oprogramowanie składa się z trzech niezależnych aplikacji \textit{Player}, \textit{Stage} oraz \textit{Gazebo}.
-	\textit{Gazebo} oraz \textit{Stage} są środowiskami symulacyjnymi. Z tą różnicą, że \textit{Stage} jest środowiskiem dwuwymiarowym, dedykowanym do symulowanie dużych populacji robotów
+	\textit{Gazebo} oraz \textit{Stage} są środowiskami symulacyjnymi. Z tą różnicą, że \textit{Stage} jest środowiskiem dwuwymiarowym, dedykowanym do symulowania dużych populacji robotów
 	mobilnych. Natomiast \textit{Gazebo} zapewnia pełną trójwymiarową symulację, uwzględniając również oddziaływania fizyczne pomiędzy stosowanymi obiektami.
-	W trakcie realizacji niniejszej pracy wydana została pierwsza stabilna wersja oprogramowanie dostępna pod adresem \url{http://gazebosim.org}.
+	W trakcie realizacji niniejszej pracy wydana została pierwsza stabilna wersja oprogramowania dostępna pod adresem \url{http://gazebosim.org}.
 	Wcześniej wszelkie dane dotyczące wszystkich aplikacji wchodzących w skład projektu dostępne były na stronie \url{http://playerstage.sourceforge.net}. Z uwagi na trudności związane z adaptacją
 	symulatora zdecydowano się na kontynuację prac na wersji pobranej ze starego repozytorium.
 	Ostatnia aplikacja wchodząca w skład projektu, czyli \textit{Player} jest serwerem sieciowym służącym do sterowania rzeczywistymi robotami. Dostarcza prosty interfejs, wspierający komunikację z wieloma 
@@ -24,7 +24,7 @@
 	
 	Wymiana informacji pomiędzy elementami środowiska symulacyjnego \textit{Player/Stage/Gazebo} została przedstawiona na 
 	rysunku~\ref{fig:arch}.
-	Po zapoznaniu się z nim , można lepiej zrozumieć rolę programu \textit{Player}. Pełni on funkcję pośrednika pomiędzy aplikacją klienta, stworzona przez użytkownika
+	Po zapoznaniu się z nim , można lepiej zrozumieć rolę programu \textit{Player}. Pełni on funkcję pośrednika pomiędzy aplikacją klienta, stworzoną przez użytkownika
 	a rzeczywistym robotem lub symulatorami modelującymi jego zachowanie w tym przypadku (\textit{Stage} lub \textit{Gazebo}). 
 	Komunikacja pomiędzy \textit{Player-em}, robotem oraz aplikacją kliencką realizowana jest za pomocą protokołu TCP/IP.
 	Dzięki takiej architekturze z punktu widzenia klienta nie istotne jest, czy interfejsy udostępnione przez \textit{Player-a} sterują rzeczywistym robotem, czy symulowanym odpowiednikiem.
@@ -61,9 +61,9 @@
 
 	W \textit{Gazebo} możliwe jest symulowanie standardowych sensorów stosowanych w robotyce (m.in. czujniki odległości, kamery, GPS). Symulator wyposażony jest w gotowe modele 
 	popularnych robotów (jak np. \textit{Pioneer2DX}, \textit{Pioneer 2AT} oraz \textit{SegwayRMP}).
-	Dozwolone jest także tworzenie własnych modeli
-	Pozwala ponadto na tworzenie własnych modeli, z możliwością konfigurowania ich właściwości fizycznych (takich jak np. masa, współczynnik tarcia, sztywność).
-	Dzięki temu środowisko może w dużym stopniu odzwierciedlać rzeczywistość. Modele można wyposażyć w jeden ze zdefiniowanych kontrolerów umożliwiających sterowanie (zadawanie prędkości, 
+	Dozwolone jest także tworzenie własnych modeli.
+	Środowisko pozwala ponadto na tworzenie własnych modeli brył, z możliwością konfigurowania ich właściwości fizycznych (takich jak np. masa, współczynnik tarcia, sztywność).
+	Dzięki temu symulator może w dużym stopniu odzwierciedlać rzeczywistość. Modele można wyposażyć w jeden ze zdefiniowanych kontrolerów umożliwiających sterowanie (zadawanie prędkości, 
 	czy odczyt danych z sensorów) lub opracować własny.
 	\begin{figure}[!t]
 	\centering
