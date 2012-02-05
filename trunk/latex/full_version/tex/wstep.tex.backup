@@ -25,23 +25,23 @@ Technik Informacyjnych Politechniki Warszawskiej.
 W dalszej części pracy opisano nowe testowe środowisko symulacyjne oraz wprowadzone poprawki modyfikujące działanie symulatora.
 Z racji, iż wcześniejsze ekssperymenty prowadzono w środowisku \emph{Player/Stage/Gazebo} zdecydowano się na dalsze prace na tej platformie.
 Opracowane zostały nowe modele zawodników wzorowane na rzeczywistych, holonomicznych
-biorących udział w rozgrywkach. Opracowano sterownik (element symulatora) umożliwiający: kontrolę nad prędkością robota (wyposażono go dodatkowo w regulator PID), prowadzenie piłki jak i oddawanie strzału.
+biorących udział w rozgrywkach. Przygotowano sterownik (element symulatora) umożliwiający: kontrolę nad prędkością robota (wyposażono go dodatkowo w regulator PID), prowadzenie piłki jak i oddawanie strzału.
  W stosunku do poprzednich prac zdecydowano się także na implementację oraz poddanie testom nowego algorytmu nawigacji.  Rozwiązanie to zostało przetestowane w takich samych warunkach 
-jak poprzednie. Dokonano także analizy i porównania otrzymanych wyników. Zaprezentowano także inne, stosowane w robotyce metody unikania kolizji. Jeden z nich także został zaimplementowany, w celu
-rozwiązywania mniej złożonych zadań, takich jak odjechanie od przeszkody w momencie wystąpienia kolizji.
+jak poprzednie. Dokonano także analizy i porównania otrzymanych wyników. Zaprezentowano również inne, stosowane w robotyce, metody unikania kolizji. Jeden z nich został zaimplementowany w celu
+rozwiązywania mniej złożonych zadań takich jak odjechanie od przeszkody w momencie wystąpienia kolizji.
 
-W pracy zostało przedstawione także jedno z podejść, powszechnie stosowane do koordynacji i planowania działań zawodników (\mbox{\texttt{STP - Skill Tactics Play}} \cite{stp}).
-Zakłada ono planowanie zachowań drużyny na $3$ poziomach. Każdy odnosi się do innej warstwy abstrakcji.
+W tekście przedstawiono jedno z podejść, powszechnie stosowanych do koordynacji i planowania działań zawodników (\mbox{\textit{STP - Skill Tactics Play}} \cite{stp}).
+Zakłada ono planowanie zachowań drużyny na trzech poziomach. Każdy odnosi się do innej warstwy abstrakcji.
 \begin{enumerate} 
-  \item Poziomem najwyżej w hierarchii jest \texttt{Play}. Przez to pojęcie rozumiany jest plan gry dla całej drużyny, uwzględniana jest tutaj koordynacja
-  poczynań pomiędzy zawodnikami. Plan zakłada przydział zawodnika do określonej roli. W oryginalnym rozwiązaniu role przydzielane są dynamicznie w zależności od sytuacji na boisku.
-  W obrębie danego planu zawodnik wykonuje swoją rolę (sekwencję kilku \texttt{Tactic}), aż do momentu zakończenia danego planu lub wyznaczenia kolejnego.
+  \item Najwyżej w hierarchii znajduje się poziom \texttt{Play}. Przez to pojęcie rozumiany jest plan gry dla całej drużyny uwzględniający koordynację
+  poczynań pomiędzy zawodnikami. Plan również zakłada przydział zawodnika do określonej roli. W oryginalnym rozwiązaniu role przydzielane są dynamicznie w zależności od sytuacji na boisku.
+  W obrębie danego planu zawodnik wykonuje swoją rolę (sekwencję kilku \textit{Tactic}) aż do momentu zakończenia danego planu lub wyznaczenia kolejnego.
   
-  \item Przez \texttt{Tactic} rozumiany jest plan działań w obrębie jednej roli. W taktyce zamknięte jest wykonywanie przez robota pojedynczej złożonej akcji.
+  \item Przez \textit{Tactic} rozumiany jest plan działań w obrębie jednej roli. Taktyka ma na celu wykonanie przez robota pojedynczej złożonej akcji.
   Przykładem może być strzał na bramkę. Robot dostaje polecenie oddania strzału na bramkę, zatem plan jego poczynań ma doprowadzić
- do sytuacji, w której osiągnie on pozycję umożliwiającą oddanie strzału na bramkę z zadanym powodzeniem.
- Plan na szczeblu pojedynczego robota jest wykonywany do momentu zmiany planu gry całej drużyny (ponownego przydziału robotów do ról).
- Przykładowe \texttt{Tactics}:
+ do sytuacji, w której osiągnie on pozycję umożliwiającą oddanie strzału na bramkę z określonym powodzeniem.
+ Plan na szczeblu pojedynczego robota jest wykonywany do momentu zmiany strategii gry całej drużyny (ponownego przydziału robotów do ról).
+ Przykładowe \textit{Tactics}:
  \begin{itemize}
   \item strzał na bramkę,
   \item podanie piłki,
@@ -51,28 +51,31 @@ Zakłada ono planowanie zachowań drużyny na $3$ poziomach. Każdy odnosi się 
   \item bronienie pozycji,
   \item dryblowanie z piłką.
  \end{itemize}
+
   Pojedyncza taktyka determinuje skończony automat stanów, w którym elementami są \texttt{Skills}. Wykonanie bieżącej taktyki sprowadza się do przechodzenia pomiędzy kolejnymi zachowaniami robota w obrębie
   danego automatu.
-  \item Najniżej w hierarchii znajduje się pojęcie \texttt{Skills} odnosi się ono do konkretnych umiejętności robota, takich jak:
+\newpage
+  \item Najniżej w hierarchii znajduje się warstwa \textit{Skills}, odnosi się ono do konkretnych umiejętności robota, takich jak:
     \begin{itemize}
-    \item przechwycenie piłki,
-    \item oddanie strzału,
+    \item przechwytywanie piłki,
+    \item oddawanie strzału,
     \item doprowadzenie piłki do celu,
     \item przemieszczenie robota do celu,
     \item podążanie za innym robotem.
     \end{itemize}
-  Na tym szczeblu nie występuje koordynacja w obrębie drużyny. Zachowanie robota zmieniane jest w każdym kroku gry. Z każdego \texttt{Skill}, w każdym momencie określone musi być przejście
-  albo do nowego zadania bądź kontynuowanie tego samego zadania. Przykładowo jeśli zlecimy robotowi przemieszczenie z piłką do celu i piłka 
+
+  Na tym szczeblu nie występuje koordynacja w obrębie drużyny. W każdym kroku gry powinno być określone jakie zachowanie ma wykonywać robot. Z każdego \textit{Skill}, w każdym momencie określone musi być przejście
+  do nowego zadania bądź kontynuowanie tego samego zadania. Przykładowo jeśli zlecimy robotowi przemieszczenie się z piłką do celu a piłka 
   odskoczy robotowi, to powinien do niej podjechać, przechwycić ją, a następnie ponownie prowadzić do zadanego celu (należy jednak cały czas pamiętać, że jeśli nastąpi dobra okazja do strzału
-na bramkę to należy z niej skorzystać.
+na bramkę, robot powinien ją wykorzystać).
 \end{enumerate}
 
- W ramach pracy w pełni zrealizowane zostały dwie warstwy z oryginalnej hierarchii opisanej powyżej (\texttt{Skills} oraz \texttt{Tactics}). Aplikację projektowano w taki sposób, aby pozostawić miejsce
- na pełną implementację warstwy \texttt{Play}, którą zrealizowano jedynie w stopniu niezbędnym do przeprowadzenia eksperymentów.
+ W ramach pracy w pełni zrealizowane zostały dwie warstwy z oryginalnej hierarchii opisanej powyżej (\textit{Skills} oraz \textit{Tactics}). Aplikację projektowano w taki sposób, aby pozostawić miejsce
+ na pełną implementację warstwy \textit{Play}, którą zrealizowano jedynie w stopniu niezbędnym do przeprowadzenia eksperymentów.
 Użyteczność algorytmu sprawdzono podczas przeprowadzonych eksperymentów, wzorowanych na rzeczywistych zadaniach eliminacyjnych stosowanych w rozgrywkach RoboCup w ostatnich latach.
 
 \section{Cel pracy}
-Za główny cel niniejszej pracy postawiono stworzenie oprogramowania umożliwiającego wykonywanie podstawowych elementów gry w piłkę nożną przez roboty. W tym celu posłużono się architekturą {\texttt{STP}. Aby jednak zrealizować to zadanie konieczne było
+Za główny cel niniejszej pracy postawiono stworzenie oprogramowania umożliwiającego wykonywanie podstawowych elementów gry w piłkę nożną przez roboty. W tym celu posłużono się architekturą STP. Aby jednak zrealizować to zadanie konieczne było
 stworzenie środowiska symulacyjnego, umożliwiającego modelowanie rozgrywki \emph{Small-size League}. Przy opracowywaniu modelu środowiska starano się w jak największym stopniu odzwierciedlić realia
 ligi \emph{Small-size League}. Po drugie środowisko symulacyjne miało być na tyle elastyczne, aby w przyszłości umożliwiało testowanie różnorodnych rozwiązań sterowania drużyną.
 Zachowano schemat przepływu informacji z pracy inżynierskiej. Został on zamieszczony na rysunku \ref{fig:przeplyw_sterowania}. Stosowany w rozgrywkach \emph{Small-size League} \texttt{videoserwer} został

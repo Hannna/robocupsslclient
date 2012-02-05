@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  5 FEB 2012 16:27
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.26)  5 FEB 2012 20:13
 entering extended mode
  %&-line parsing enabled.
 **main.tex
@@ -1007,61 +1007,68 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 15.
  [6] [7]
-<./grafika/./zalozenia/przeplyw_sterowania.pdf, id=42, 859.21pt x 571.13374pt>
-File: ./grafika/./zalozenia/przeplyw_sterowania.pdf Graphic file (type pdf)
-
-<use ./grafika/./zalozenia/przeplyw_sterowania.pdf> [8])
-(./tex/liga_robocup.tex [9 <./grafika/./zalozenia/przeplyw_sterowania.pdf>]
+<./grafika/./zalozenia/przeplyw_sterowania.png, id=42, 615.29875pt x 396.48125p
+t>
+File: ./grafika/./zalozenia/przeplyw_sterowania.png Graphic file (type png)
+ <use ./grafika/./zalozenia/przeplyw_sterowania.png> [8])
+(./tex/liga_robocup.tex [9 <./grafika/./zalozenia/przeplyw_sterowania.png (PNG 
+copy)>]
 Rozdzia\PlPrIeC {\l } 2.
 [10
 
-] <./grafika/./liga_robocup/F180.png, id=54, 401.5pt x 115.43124pt>
+] <./grafika/./liga_robocup/F180.png, id=52, 401.5pt x 115.43124pt>
 File: ./grafika/./liga_robocup/F180.png Graphic file (type png)
 
-<use ./grafika/./liga_robocup/F180.png> [11] [12 <./grafika/./liga_robocup/F180
-.png>]
-<./grafika/./liga_robocup/referee_box.png, id=63, 268.00125pt x 369.38pt>
+<use ./grafika/./liga_robocup/F180.png> [11 <./grafika/./liga_robocup/F180.png>
+] <./grafika/./liga_robocup/referee_box.png, id=57, 268.00125pt x 369.38pt>
 File: ./grafika/./liga_robocup/referee_box.png Graphic file (type png)
 
 <use ./grafika/./liga_robocup/referee_box.png>
-LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <7> on input line 79.
-LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <5> on input line 79.
 
-<./grafika/./liga_robocup/dataflow.png, id=64, 401.5pt x 262.9825pt>
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[12]
+LaTeX Font Info:    External font `plex10' loaded for size
+(Font)              <7> on input line 83.
+LaTeX Font Info:    External font `plex10' loaded for size
+(Font)              <5> on input line 83.
+ <./grafika/./liga_robocup/dataflow.png, id=62, 401.5pt x 262.9825pt>
 File: ./grafika/./liga_robocup/dataflow.png Graphic file (type png)
 
 <use ./grafika/./liga_robocup/dataflow.png> [13 <./grafika/./liga_robocup/refer
 ee_box.png>]
-<./grafika/./liga_robocup/F180_budowa1.jpg, id=69, 310.15875pt x 264.99pt>
+<./grafika/./liga_robocup/F180_budowa1.jpg, id=67, 310.15875pt x 264.99pt>
 File: ./grafika/./liga_robocup/F180_budowa1.jpg Graphic file (type jpg)
 
 <use ./grafika/./liga_robocup/F180_budowa1.jpg>
-<./grafika/./liga_robocup/F180_budowa2.png, id=70, 321.2pt x 240.9pt>
+<./grafika/./liga_robocup/F180_budowa2.png, id=68, 321.2pt x 240.9pt>
 File: ./grafika/./liga_robocup/F180_budowa2.png Graphic file (type png)
 
 <use ./grafika/./liga_robocup/F180_budowa2.png>
-<./grafika/./liga_robocup/F180_budowa3.png, id=71, 321.2pt x 240.9pt>
+<./grafika/./liga_robocup/F180_budowa3.png, id=69, 321.2pt x 240.9pt>
 File: ./grafika/./liga_robocup/F180_budowa3.png Graphic file (type png)
 
 <use ./grafika/./liga_robocup/F180_budowa3.png>
-<./grafika/./liga_robocup/robocup_markers.png, id=72, 159.59625pt x 159.59625pt
+<./grafika/./liga_robocup/robocup_markers.png, id=70, 159.59625pt x 159.59625pt
 >
 File: ./grafika/./liga_robocup/robocup_markers.png Graphic file (type png)
- <use ./grafika/./liga_robocup/robocup_markers.png> [14 <./grafika/./liga_roboc
-up/dataflow.png>] [15 <./grafika/./liga_robocup/F180_budowa1.jpg (PNG copy)> <.
-/grafika/./liga_robocup/F180_budowa2.png (PNG copy)> <./grafika/./liga_robocup/
-F180_budowa3.png (PNG copy)> <./grafika/./liga_robocup/robocup_markers.png>])
-(./tex/gazebo.tex [16]
+ <use ./grafika/./liga_robocup/robocup_markers.png>
+Underfull \hbox (badness 10000) in paragraph at lines 99--118
+\OT4/cmr/m/n/12 szwedz-kich.
+ []
+
+[14 <./grafika/./liga_robocup/dataflow.png>] [15 <./grafika/./liga_robocup/F180
+_budowa1.jpg (PNG copy)> <./grafika/./liga_robocup/F180_budowa2.png (PNG copy)>
+ <./grafika/./liga_robocup/F180_budowa3.png (PNG copy)> <./grafika/./liga_roboc
+up/robocup_markers.png>]) (./tex/gazebo.tex [16]
 Rozdzia\PlPrIeC {\l } 3.
-<./grafika/./gazebo/architektura.pdf, id=88, 745.78625pt x 657.45625pt>
+<./grafika/./gazebo/architektura.pdf, id=86, 745.78625pt x 657.45625pt>
 File: ./grafika/./gazebo/architektura.pdf Graphic file (type pdf)
 
 <use ./grafika/./gazebo/architektura.pdf> [17
 
 ]
-<./grafika/./gazebo/wybrana_architektura.png, id=92, 533.995pt x 258.9675pt>
+<./grafika/./gazebo/wybrana_architektura.png, id=90, 533.995pt x 258.9675pt>
 File: ./grafika/./gazebo/wybrana_architektura.png Graphic file (type png)
 
 <use ./grafika/./gazebo/wybrana_architektura.png>
@@ -1069,81 +1076,93 @@ File: ./grafika/./gazebo/wybrana_architektura.png Graphic file (type png)
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [18 <./grafika/./gazebo/architektura.pdf>]
-<./grafika/./gazebo/gazebo_screen.png, id=99, 789.95125pt x 553.06625pt>
+<./grafika/./gazebo/gazebo_screen.png, id=97, 789.95125pt x 553.06625pt>
 File: ./grafika/./gazebo/gazebo_screen.png Graphic file (type png)
 
 <use ./grafika/./gazebo/gazebo_screen.png> [19 <./grafika/./gazebo/wybrana_arch
-itektura.png (PNG copy)>] [20 <./grafika/./gazebo/gazebo_screen.png (PNG copy)>
-]
+itektura.png (PNG copy)>]
+Overfull \hbox (20.61343pt too wide) in paragraph at lines 82--82
+[]\OT4/cmr/m/n/12 poprawic 
+ []
+
+
+Overfull \hbox (20.61343pt too wide) in paragraph at lines 82--82
+[]\OT4/cmr/m/n/12 poprawic 
+ []
+
+[20 <./grafika/./gazebo/gazebo_screen.png (PNG copy)>]
+
+LaTeX Warning: Marginpar on page 21 moved.
+
 
 LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <8> not available
-(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 91.
+(Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 92.
 
-[21] [22] <./grafika/./gazebo/geoms.jpg, id=115, 981.6675pt x 571.13374pt>
+[21] [22] <./grafika/./gazebo/geoms.jpg, id=113, 981.6675pt x 571.13374pt>
 File: ./grafika/./gazebo/geoms.jpg Graphic file (type jpg)
 
 <use ./grafika/./gazebo/geoms.jpg> [23 <./grafika/./gazebo/geoms.jpg>]
-<./grafika/./gazebo/joints.jpg, id=119, 803.0pt x 515.9275pt>
+<./grafika/./gazebo/joints.jpg, id=117, 803.0pt x 515.9275pt>
 File: ./grafika/./gazebo/joints.jpg Graphic file (type jpg)
 
 <use ./grafika/./gazebo/joints.jpg> [24]
-<./grafika/./gazebo/bad_joint.jpg, id=124, 401.5pt x 301.125pt>
+<./grafika/./gazebo/bad_joint.jpg, id=122, 401.5pt x 301.125pt>
 File: ./grafika/./gazebo/bad_joint.jpg Graphic file (type jpg)
 
 <use ./grafika/./gazebo/bad_joint.jpg> [25 <./grafika/./gazebo/joints.jpg> <./g
 rafika/./gazebo/bad_joint.jpg>] [26]
-<./grafika/./gazebo/roboty.png, id=131, 785.93625pt x 391.4625pt>
+<./grafika/./gazebo/roboty.png, id=129, 785.93625pt x 391.4625pt>
 File: ./grafika/./gazebo/roboty.png Graphic file (type png)
 
 <use ./grafika/./gazebo/roboty.png>
-<./grafika/./gazebo/boisko.png, id=132, 871.255pt x 418.56375pt>
+<./grafika/./gazebo/boisko.png, id=130, 871.255pt x 418.56375pt>
 File: ./grafika/./gazebo/boisko.png Graphic file (type png)
 
 <use ./grafika/./gazebo/boisko.png> [27 <./grafika/./gazebo/roboty.png (PNG cop
-y)>]) (./tex/robot_holonomiczny.tex [28 <./grafika/./gazebo/boisko.png>]
+y)>]) [28 <./grafika/./gazebo/boisko.png>] (./tex/robot_holonomiczny.tex
 [29]
 Rozdzia\PlPrIeC {\l } 4.
-<./grafika/./holonomic/holonomic_base.png, id=144, 441.90094pt x 350.05782pt>
+<./grafika/./holonomic/holonomic_base.png, id=142, 441.90094pt x 350.05782pt>
 File: ./grafika/./holonomic/holonomic_base.png Graphic file (type png)
 
 <use ./grafika/./holonomic/holonomic_base.png>
-<./grafika/./holonomic/omnidirectional_wheel.png, id=145, 189.70876pt x 194.727
+<./grafika/./holonomic/omnidirectional_wheel.png, id=143, 189.70876pt x 194.727
 5pt>
 File: ./grafika/./holonomic/omnidirectional_wheel.png Graphic file (type png)
  <use ./grafika/./holonomic/omnidirectional_wheel.png> [30
 
 ] [31 <./grafika/./holonomic/holonomic_base.png (PNG copy)> <./grafika/./holono
 mic/omnidirectional_wheel.png>]
-Overfull \hbox (17.49245pt too wide) in paragraph at lines 47--52
+Overfull \hbox (17.49245pt too wide) in paragraph at lines 45--50
 \OT4/cmr/m/n/12 na-to-miast dla ob-r¦-czy $\OML/plm/m/it/12 I \OT4/cmr/m/n/12 =
  \OML/plm/m/it/12 MR[]$\OT4/cmr/m/n/12 , gdzie $\OML/plm/m/it/12 R$ \OT4/cmr/m/
 n/12 jest od-po-wied-nio pro-mie-niem []
  []
 
 [32]
-<./grafika/./holonomic/linear_speed.png, id=158, 300.3722pt x 146.79843pt>
+<./grafika/./holonomic/linear_speed.png, id=156, 300.3722pt x 146.79843pt>
 File: ./grafika/./holonomic/linear_speed.png Graphic file (type png)
 
 <use ./grafika/./holonomic/linear_speed.png>
-<./grafika/./holonomic/trapezoid_rule.png, id=159, 644.4075pt x 402.50375pt>
+<./grafika/./holonomic/trapezoid_rule.png, id=157, 644.4075pt x 402.50375pt>
 File: ./grafika/./holonomic/trapezoid_rule.png Graphic file (type png)
 
 <use ./grafika/./holonomic/trapezoid_rule.png>
-Overfull \hbox (24.29083pt too wide) in paragraph at lines 131--132
+Overfull \hbox (24.29083pt too wide) in paragraph at lines 129--130
  [][] 
  []
 
 [33 <./grafika/./holonomic/linear_speed.png (PNG copy)>] [34 <./grafika/./holon
 omic/trapezoid_rule.png (PNG copy)>]
-<./grafika/./holonomic/omni_base_dribbling.png, id=166, 461.725pt x 350.30875pt
+<./grafika/./holonomic/omni_base_dribbling.png, id=164, 461.725pt x 350.30875pt
 >
 File: ./grafika/./holonomic/omni_base_dribbling.png Graphic file (type png)
  <use ./grafika/./holonomic/omni_base_dribbling.png>
-<./grafika/./holonomic/dribbling_ball.png, id=167, 449.68pt x 337.26pt>
+<./grafika/./holonomic/dribbling_ball.png, id=165, 449.68pt x 337.26pt>
 File: ./grafika/./holonomic/dribbling_ball.png Graphic file (type png)
 
 <use ./grafika/./holonomic/dribbling_ball.png>
-<./grafika/./holonomic/ball_control.png, id=168, 642.4pt x 481.8pt>
+<./grafika/./holonomic/ball_control.png, id=166, 642.4pt x 481.8pt>
 File: ./grafika/./holonomic/ball_control.png Graphic file (type png)
 
 <use ./grafika/./holonomic/ball_control.png> [35 <./grafika/./holonomic/omni_ba
@@ -1156,25 +1175,25 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 Rozdzia\PlPrIeC {\l } 5.
 [38
 
-] <./grafika/./algorytmy/Bug1.png, id=184, 364.36125pt x 177.66376pt>
+] <./grafika/./algorytmy/Bug1.png, id=182, 364.36125pt x 177.66376pt>
 File: ./grafika/./algorytmy/Bug1.png Graphic file (type png)
 
 <use ./grafika/./algorytmy/Bug1.png>
-<./grafika/./algorytmy/Bug2.png, id=185, 358.33875pt x 200.75pt>
+<./grafika/./algorytmy/Bug2.png, id=183, 358.33875pt x 200.75pt>
 File: ./grafika/./algorytmy/Bug2.png Graphic file (type png)
 
 <use ./grafika/./algorytmy/Bug2.png>
-<./grafika/./algorytmy/VFH_siatka.png, id=186, 803.0pt x 602.25pt>
+<./grafika/./algorytmy/VFH_siatka.png, id=184, 803.0pt x 602.25pt>
 File: ./grafika/./algorytmy/VFH_siatka.png Graphic file (type png)
 
 <use ./grafika/./algorytmy/VFH_siatka.png> [39 <./grafika/./algorytmy/Bug1.png 
 (PNG copy)>] [40 <./grafika/./algorytmy/Bug2.png (PNG copy)>]
-<./grafika/./algorytmy/VFH_hist_biegunowy.png, id=193, 349.305pt x 491.8375pt>
+<./grafika/./algorytmy/VFH_hist_biegunowy.png, id=191, 349.305pt x 491.8375pt>
 File: ./grafika/./algorytmy/VFH_hist_biegunowy.png Graphic file (type png)
 
 <use ./grafika/./algorytmy/VFH_hist_biegunowy.png> [41 <./grafika/./algorytmy/V
 FH_siatka.png>] [42 <./grafika/./algorytmy/VFH_hist_biegunowy.png>]
-<./grafika/./algorytmy/navigation_func_k_10.png, id=203, 1204.5pt x 903.375pt>
+<./grafika/./algorytmy/navigation_func_k_10.png, id=201, 1204.5pt x 903.375pt>
 File: ./grafika/./algorytmy/navigation_func_k_10.png Graphic file (type png)
 
 <use ./grafika/./algorytmy/navigation_func_k_10.png>
@@ -1183,20 +1202,20 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [43] [44 <./grafika/./algorytmy/navigation_func_k_10.png (PNG copy)>] [45]
 [46]
-<./grafika/./algorytmy/CVM_dist_new.pdf, id=221, 591.20876pt x 633.36626pt>
+<./grafika/./algorytmy/CVM_dist_new.pdf, id=219, 591.20876pt x 633.36626pt>
 File: ./grafika/./algorytmy/CVM_dist_new.pdf Graphic file (type pdf)
 
 <use ./grafika/./algorytmy/CVM_dist_new.pdf> [47]
-<./grafika/./algorytmy/CVM_styczne_new.pdf, id=225, 674.52pt x 633.36626pt>
+<./grafika/./algorytmy/CVM_styczne_new.pdf, id=223, 674.52pt x 633.36626pt>
 File: ./grafika/./algorytmy/CVM_styczne_new.pdf Graphic file (type pdf)
 
 <use ./grafika/./algorytmy/CVM_styczne_new.pdf> [48 <./grafika/./algorytmy/CVM_
 dist_new.pdf>] [49 <./grafika/./algorytmy/CVM_styczne_new.pdf>]
-<./grafika/./algorytmy/CVM_segmentacja_new.pdf, id=237, 565.11125pt x 430.60875
+<./grafika/./algorytmy/CVM_segmentacja_new.pdf, id=235, 565.11125pt x 430.60875
 pt>
 File: ./grafika/./algorytmy/CVM_segmentacja_new.pdf Graphic file (type pdf)
  <use ./grafika/./algorytmy/CVM_segmentacja_new.pdf> [50]
-<./grafika/./algorytmy/CVM_segmentacja2_new.pdf, id=242, 674.52pt x 573.14125pt
+<./grafika/./algorytmy/CVM_segmentacja2_new.pdf, id=240, 674.52pt x 573.14125pt
 >
 File: ./grafika/./algorytmy/CVM_segmentacja2_new.pdf Graphic file (type pdf)
  <use ./grafika/./algorytmy/CVM_segmentacja2_new.pdf> [51 <./grafika/./algorytm
@@ -1213,7 +1232,7 @@ Overfull \hbox (5.72147pt too wide) in paragraph at lines 406--406
  []
 
 [54]
-<./grafika/./algorytmy/tree_with_waypoints.png, id=260, 338.26375pt x 377.41pt>
+<./grafika/./algorytmy/tree_with_waypoints.png, id=258, 338.26375pt x 377.41pt>
 File: ./grafika/./algorytmy/tree_with_waypoints.png Graphic file (type png)
 <use ./grafika/./algorytmy/tree_with_waypoints.png>) [55 <./grafika/./algorytmy
 /tree_with_waypoints.png (PNG copy)>] (./tex/opis_testy_rrt.tex [56]
@@ -1222,13 +1241,13 @@ Rozdzia\PlPrIeC {\l } 6.
 LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <24.88> not available
 (Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 1.
 
-<./grafika/./imp_rrt/many_root_child.png, id=267, 288.07625pt x 239.89626pt>
+<./grafika/./imp_rrt/many_root_child.png, id=265, 288.07625pt x 239.89626pt>
 File: ./grafika/./imp_rrt/many_root_child.png Graphic file (type png)
 
 <use ./grafika/./imp_rrt/many_root_child.png> [57
 
 ] [58 <./grafika/./imp_rrt/many_root_child.png (PNG copy)>] [59] [60]
-<./grafika/./testy_rrt/mgr_debug.png, id=281, 853.1875pt x 658.46pt>
+<./grafika/./testy_rrt/mgr_debug.png, id=279, 853.1875pt x 658.46pt>
 File: ./grafika/./testy_rrt/mgr_debug.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/mgr_debug.png> [61] [62 <./grafika/./testy_rrt/mgr_d
@@ -1237,7 +1256,7 @@ Overfull \hbox (2.06044pt too wide) in paragraph at lines 173--173
 []\OT4/cmr/bx/n/17.28 Wyniki eks-pe-ry-men-tów w ±ro-do-wi-sku sta-tycz-
  []
 
-<./grafika/./testy_rrt/static/sukcesy.png, id=291, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/static/sukcesy.png, id=289, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/sukcesy.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/static/sukcesy.png>
@@ -1245,51 +1264,51 @@ Overfull \hbox (30.92342pt too wide) in paragraph at lines 183--185
  [][] 
  []
 
-<./grafika/./testy_rrt/static/czas_dojazdu.png, id=292, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/static/czas_dojazdu.png, id=290, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/czas_dojazdu.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/static/czas_dojazdu.png> [64]
-<./grafika/./testy_rrt/static/czas_rrt.png, id=296, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/static/czas_rrt.png, id=294, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/czas_rrt.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/static/czas_rrt.png> [65 <./grafika/./testy_rrt/stat
 ic/sukcesy.png (PNG copy)>]
-<./grafika/./testy_rrt/static/liczba_sciezek.png, id=300, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/static/liczba_sciezek.png, id=298, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/liczba_sciezek.png Graphic file (type png)
 <use ./grafika/./testy_rrt/static/liczba_sciezek.png>
-<./grafika/./testy_rrt/static/max_sciezka.png, id=301, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/static/max_sciezka.png, id=299, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/max_sciezka.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/static/max_sciezka.png> [66 <./grafika/./testy_rrt/s
 tatic/czas_dojazdu.png (PNG copy)> <./grafika/./testy_rrt/static/czas_rrt.png (
 PNG copy)>]
-<./grafika/./testy_rrt/static/max_tree.png, id=306, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/static/max_tree.png, id=304, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/static/max_tree.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/static/max_tree.png> [67 <./grafika/./testy_rrt/stat
 ic/liczba_sciezek.png (PNG copy)> <./grafika/./testy_rrt/static/max_sciezka.png
  (PNG copy)>] [68 <./grafika/./testy_rrt/static/max_tree.png (PNG copy)>]
-<./grafika/./testy_rrt/dynamic/sukcesy.png, id=313, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/dynamic/sukcesy.png, id=311, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/sukcesy.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/sukcesy.png>
-<./grafika/./testy_rrt/dynamic/czas_dojazdu.png, id=314, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/dynamic/czas_dojazdu.png, id=312, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/czas_dojazdu.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/czas_dojazdu.png>
-<./grafika/./testy_rrt/dynamic/czas_rrt.png, id=315, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/dynamic/czas_rrt.png, id=313, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/czas_rrt.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/czas_rrt.png>
-<./grafika/./testy_rrt/dynamic/liczba_sciezek.png, id=316, 1204.5pt x 903.375pt
+<./grafika/./testy_rrt/dynamic/liczba_sciezek.png, id=314, 1204.5pt x 903.375pt
 >
 File: ./grafika/./testy_rrt/dynamic/liczba_sciezek.png Graphic file (type png)
  <use ./grafika/./testy_rrt/dynamic/liczba_sciezek.png>
-<./grafika/./testy_rrt/dynamic/max_sciezka.png, id=317, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/dynamic/max_sciezka.png, id=315, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/max_sciezka.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/max_sciezka.png>
-<./grafika/./testy_rrt/dynamic/max_tree.png, id=318, 1204.5pt x 903.375pt>
+<./grafika/./testy_rrt/dynamic/max_tree.png, id=316, 1204.5pt x 903.375pt>
 File: ./grafika/./testy_rrt/dynamic/max_tree.png Graphic file (type png)
 
 <use ./grafika/./testy_rrt/dynamic/max_tree.png>)
@@ -1322,7 +1341,7 @@ Overfull \hbox (0.21248pt too wide) in paragraph at lines 10--14
 
 [73
 
-] <./grafika/./stp/stp.png, id=335, 635.37375pt x 567.11874pt>
+] <./grafika/./stp/stp.png, id=333, 635.37375pt x 567.11874pt>
 File: ./grafika/./stp/stp.png Graphic file (type png)
 
 <use ./grafika/./stp/stp.png> [74] [75 <./grafika/./stp/stp.png (PNG copy)>]
@@ -1337,7 +1356,7 @@ File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 LaTeX Font Warning: Font shape `OT4/cmtt/bx/n' in size <17.28> not available
 (Font)              Font shape `OT4/cmtt/m/n' tried instead on input line 205.
 
-<./grafika/./testy_stp/navigation_test.png, id=355, 401.5pt x 269.005pt>
+<./grafika/./testy_stp/navigation_test.png, id=353, 401.5pt x 269.005pt>
 File: ./grafika/./testy_stp/navigation_test.png Graphic file (type png)
 
 <use ./grafika/./testy_stp/navigation_test.png>
@@ -1383,86 +1402,86 @@ LaTeX Warning: Marginpar on page 88 moved.
 ]
 Dodatek C.
 
-<./grafika/./eksperymenty/srodowiska/legenda.pdf, id=385, 438.63875pt x 148.555
+<./grafika/./eksperymenty/srodowiska/legenda.pdf, id=383, 438.63875pt x 148.555
 pt>
 File: ./grafika/./eksperymenty/srodowiska/legenda.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/legenda.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment00.pdf, id=386, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment00.pdf, id=384, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment00.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment00.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment01.pdf, id=387, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment01.pdf, id=385, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment01.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment01.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment05.pdf, id=388, 314.17375pt x 4
+<./grafika/./eksperymenty/srodowiska/eksperyment05.pdf, id=386, 314.17375pt x 4
 45.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment05.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment05.pdf>
-<./grafika/./eksperymenty/srodowiska/eksperyment06.pdf, id=389, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment06.pdf, id=387, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment06.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment06.pdf> [89
 
  <./grafika/./eksperymenty/srodowiska/legenda.pdf (PNG copy)>]
-<./grafika/./eksperymenty/srodowiska/eksperyment09.pdf, id=393, 315.1775pt x 44
+<./grafika/./eksperymenty/srodowiska/eksperyment09.pdf, id=391, 315.1775pt x 44
 5.665pt>
 File: ./grafika/./eksperymenty/srodowiska/eksperyment09.pdf Graphic file (type 
 pdf)
  <use ./grafika/./eksperymenty/srodowiska/eksperyment09.pdf>
-<./grafika/./eksperymenty/srodowiska/korytarz.pdf, id=394, 315.1775pt x 445.665
+<./grafika/./eksperymenty/srodowiska/korytarz.pdf, id=392, 315.1775pt x 445.665
 pt>
 File: ./grafika/./eksperymenty/srodowiska/korytarz.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/korytarz.pdf>
-<./grafika/./eksperymenty/srodowiska/prosta.pdf, id=395, 315.1775pt x 445.665pt
+<./grafika/./eksperymenty/srodowiska/prosta.pdf, id=393, 315.1775pt x 445.665pt
 >
 File: ./grafika/./eksperymenty/srodowiska/prosta.pdf Graphic file (type pdf)
  <use ./grafika/./eksperymenty/srodowiska/prosta.pdf>
-<./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf, id=396, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf, id=394, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/waskie_przejscie.pdf>
-<./grafika/./eksperymenty/srodowiska/atak1.pdf, id=397, 315.1775pt x 445.665pt>
+<./grafika/./eksperymenty/srodowiska/atak1.pdf, id=395, 315.1775pt x 445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/atak1.pdf Graphic file (type pdf)
 <use ./grafika/./eksperymenty/srodowiska/atak1.pdf>
-<./grafika/./eksperymenty/srodowiska/atak2.pdf, id=398, 315.1775pt x 445.665pt>
+<./grafika/./eksperymenty/srodowiska/atak2.pdf, id=396, 315.1775pt x 445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/atak2.pdf Graphic file (type pdf)
 <use ./grafika/./eksperymenty/srodowiska/atak2.pdf> [90 <./grafika/./eksperymen
 ty/srodowiska/eksperyment00.pdf (PNG copy)> <./grafika/./eksperymenty/srodowisk
 a/eksperyment01.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/eksperymen
 t05.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/eksperyment06.pdf (PNG
  copy)>]
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf, id=403, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf, id=401, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks01.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf, id=404, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf, id=402, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks02.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf, id=405, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf, id=403, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks03.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf, id=406, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf, id=404, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks04.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf, id=407, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf, id=405, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks05.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf, id=408, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf, id=406, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks06.pdf Graphic file (ty
 pe pdf)
@@ -1472,22 +1491,22 @@ ka/./eksperymenty/srodowiska/korytarz.pdf (PNG copy)> <./grafika/./eksperymenty
 /srodowiska/prosta.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/waskie_
 przejscie.pdf (PNG copy)> <./grafika/./eksperymenty/srodowiska/atak1.pdf (PNG c
 opy)> <./grafika/./eksperymenty/srodowiska/atak2.pdf (PNG copy)>]
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf, id=412, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf, id=410, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks07.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf, id=413, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf, id=411, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks08.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf, id=414, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf, id=412, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf Graphic file (ty
 pe pdf)
  <use ./grafika/./eksperymenty/srodowiska/dynamiczne/eks09.pdf>
-<./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf, id=415, 315.1775pt x
+<./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf, id=413, 315.1775pt x
  445.665pt>
 File: ./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf Graphic file (ty
 pe pdf)
@@ -1511,44 +1530,39 @@ G copy)> <./grafika/./eksperymenty/srodowiska/dynamiczne/eks10.pdf (PNG copy)>]
 
 LaTeX Warning: There were multiply-defined labels.
 
- )
-(\end occurred inside a group at level 1)
-
-### simple group (level 1) entered at line 78 ({)
-### bottom level 
+ ) 
 Here is how much of TeX's memory you used:
- 13661 strings out of 495026
- 227530 string characters out of 1181802
- 330456 words of memory out of 3000000
- 16391 multiletter control sequences out of 15000+50000
+ 13666 strings out of 495026
+ 227670 string characters out of 1181802
+ 326456 words of memory out of 3000000
+ 16396 multiletter control sequences out of 15000+50000
  23395 words of font info for 70 fonts, out of 3000000 for 9000
  48 hyphenation exceptions out of 8191
- 54i,12n,92p,588b,1609s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plmi.enc}{/usr/sha
-re/texmf-texlive/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texmf-texlive/fonts/en
-c/dvips/pl/plms.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plme.enc}{/usr
-/share/texmf-texlive/fonts/enc/dvips/pl/pltt.enc}{/usr/share/texmf-texlive/font
-s/enc/dvips/pl/plit.enc}</usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
-m/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/symbols/msam
-10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/symbols/msbm10.pfb
-></usr/share/texmf-texlive/fonts/type1/public/pl/plbx12.pfb></usr/share/texmf-t
-exlive/fonts/type1/public/pl/plbxti10.pfb></usr/share/texmf-texlive/fonts/type1
-/public/pl/plex10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plmi12.pf
-b></usr/share/texmf-texlive/fonts/type1/public/pl/plmi6.pfb></usr/share/texmf-t
-exlive/fonts/type1/public/pl/plmi8.pfb></usr/share/texmf-texlive/fonts/type1/pu
-blic/pl/plr10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr12.pfb></u
-sr/share/texmf-texlive/fonts/type1/public/pl/plr17.pfb></usr/share/texmf-texliv
-e/fonts/type1/public/pl/plr6.pfb></usr/share/texmf-texlive/fonts/type1/public/p
-l/plr7.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr8.pfb></usr/share
-/texmf-texlive/fonts/type1/public/pl/plsy10.pfb></usr/share/texmf-texlive/fonts
-/type1/public/pl/plsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy
-8.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/te
-xmf-texlive/fonts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/ty
-pe1/public/pl/pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.
-pfb>
-Output written on main.pdf (98 pages, 3073358 bytes).
+ 54i,12n,92p,588b,1413s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-texli
+ve/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plm
+s.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plme.enc}{/usr/share/texmf-t
+exlive/fonts/enc/dvips/pl/pltt.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl
+/plit.enc}</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/s
+hare/texmf-texlive/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/pl/plbx12.pfb></usr/share/texmf-texlive/fonts/t
+ype1/public/pl/plbxti10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/ple
+x10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plmi12.pfb></usr/share/
+texmf-texlive/fonts/type1/public/pl/plmi6.pfb></usr/share/texmf-texlive/fonts/t
+ype1/public/pl/plmi8.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr10.
+pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr12.pfb></usr/share/texmf
+-texlive/fonts/type1/public/pl/plr17.pfb></usr/share/texmf-texlive/fonts/type1/
+public/pl/plr6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr7.pfb></u
+sr/share/texmf-texlive/fonts/type1/public/pl/plr8.pfb></usr/share/texmf-texlive
+/fonts/type1/public/pl/plsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/
+pl/plsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy8.pfb></usr/sh
+are/texmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/texmf-texlive/fo
+nts/type1/public/pl/pltt10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/
+pltt12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt8.pfb>
+Output written on main.pdf (98 pages, 3060010 bytes).
 PDF statistics:
- 512 PDF objects out of 1000 (max. 8388607)
+ 510 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  373 words of extra memory for PDF output out of 10000 (max. 10000000)
 
