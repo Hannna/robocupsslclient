@@ -1,25 +1,23 @@
 \chapter[Sterowanie modelem robota z \emph{Small-size League}]{Sterowanie modelem robota z \emph{Small-size League} \label{chap:holonomic}}
 %\chaptermark{holonomic}
 Budowę i napęd robota należy dobrać odpowiednio do postawionego zadania. W przypadku ligi \emph{Small-size League}, najważniejszym elementem jest prostota i mobilność
-takiej jednostki, w pracy inżynierskiej \cite{inzynierka} posługiwano się robotem modelem robota o napędzie różnicowym (dwa niezależnie napędzane koła). Decyzję o odwzorowaniu takiego robota
+takiej jednostki. W pracy inżynierskiej \cite{inzynierka} posługiwano się  modelem o napędzie różnicowym (dwa niezależnie napędzane koła). Decyzję o odwzorowaniu takiego robota
 w symulatorze motywowano wtedy próbą odzwierciedlenia rzeczywistego robota \texttt{HMT} \cite{hamada_mgr} stworzonego w ramach koła robotyki \texttt{Bionik} działającego na Wydziale Elektroniki i Technik Informacyjnych Politechniki
 Warszawskiej. W niniejszej pracy zrezygnowano jednak z tego modelu, ponieważ nie był wystarczająco funkcjonalny. Zdecydowano się natomiast na zbudowanie modelu wzorowanego na rzeczywistym zawodniku \emph{Small-size League}.  
 \section{Omówienie omnikierunkowej bazy jezdnej}
-Analogicznie jak podczas rzeczywistej rozgrywki, decydującym elementem jest budowa anatomiczna i zdolności motoryczne zawodników, tak samo podczas
-rozgrywek robotów istotna rolę odgrywa baza jezdna zawodników. W pracy inżynierskiej testom poddawany był robot o napędzie różnicowym. Baza ta posiadała jednak 
-znaczące ograniczenia, które musiały zostać uwzględnione w algorytmach sterujących. Praktyczniejszą w użyciu jest baza omnikierunkowa. Korzystając z takiej bazy w
-wiekszości algorytmów robot może być traktowany jako punkt materialny.
+Analogicznie jak podczas rzeczywistej rozgrywki, decydującym elementem jest budowa anatomiczna i zdolności motoryczne zawodników. Tak samo podczas
+rozgrywek robotów istotna rolę odgrywa baza jezdna zawodników.  W zawodach wykorzystywana jest baza omnikierunkowa, ponieważ jest ona najłatwiejsza w użyciu. Korzystając z takiej bazy w
+większości algorytmów robot może być traktowany jako punkt materialny.
 \subsection{Opis położenia kół}
-Baza omnikierunkowa składa się z umieszczonych symetrycznie co najmniej trzech kół szwedzkich tak jak zaprezentowano to na rysunku \ref{fig:holonomic_base}.
+Baza omnikierunkowa składa się z umieszczonych symetrycznie co najmniej trzech kół szwedzkich (tak jak zaprezentowano to na rysunku \ref{fig:holonomic_base}).
 Każde z kół posiada osobny napęd. Budowę koła omnikierunkowego przedstawiono na ilustracji \ref{fig:omnidirectional_wheel}. 
-\begin{figure}[h]
+\begin{figure}[h!]
 \centering
 \includegraphics[scale=0.7]{./holonomic/holonomic_base}
 \caption{ Rozkład kół w omnikierunkowej bazie jezdnej }\label{fig:holonomic_base}
 \end{figure}
-Koło szwedzkie posiada na swoim
-obwodzie zamontowane w odpowiedni sposób dodatkowe rolki. Umożliwiają one ruch koła w dowolnym kierunku, bez względu na to, 
-jak koło jest zorientowane w przestrzeni. Dzięki temu umożliwia ruch robota w dowolnym kierunku, czyli należy do klasy robotów holonomicznych.
+Koło szwedzkie posiada na swoim obwodzie zamontowane w odpowiedni sposób dodatkowe rolki. Umożliwiają one ruch koła w dowolnym kierunku, bez względu na to, 
+jak koło jest zorientowane w przestrzeni. Dzięki temu taką bazę jezdną można zaliczyć klasy holonomicznych.
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.7]{./holonomic/omnidirectional_wheel}
@@ -27,8 +25,8 @@ jak koło jest zorientowane w przestrzeni. Dzięki temu umożliwia ruch robota w
 \end{figure}
 \subsection{Opis kinematyki oraz dynamiki bazy}
 Podczas sterowania robotem istotnym problemem jest sposób w jaki prędkości i przyspieszenia obrotowe poszczególnych kół przekładają się
-na predkość/przyspieszenie kątowe i liniowe całego robota. Wszytskie poniższe obliczenia zostały wykonane przy założeniu, że koła nie ulegają poślizgowi,
-czyli że cały moment obrotowy śilników przekłada się na prędkość robota.
+na predkość/przyspieszenie kątowe i liniowe całego robota. Wszystkie poniższe obliczenia zostały wykonane przy założeniu, że koła nie ulegają poślizgowi.
+Przy tym uproszczeniu cały moment obrotowy silników przekłada się na prędkość robota.
 Przyspieszenie liniowe i prędkość obrotowa środka masy takiego układu dane jest następującymi wzorami:
 \begin{equation}
 a=\frac{1}{M}(F1+F2+F3)
@@ -88,15 +86,15 @@ Podstawiając do powyższego wzoru $I=\alpha MR^2$ oraz zastępując $\dot{\omeg
  \end{pmatrix}
 \end{equation}
 
-Macierz z powyższego równania o wymiarze $3x3$ zostanie oznaczona symbolem $C_{\alpha}$.
+Macierz z powyższego równania o wymiarze $3x3$ zostanie oznaczona symbolem~$C_{\alpha}$.
 
 Jednak najbardziej interesujący jest sposób w jaki prędkość obrotowa kół przekłada się na prędkość liniową robota.
 Załóżmy, że robot porusza się wzdłuż osi OX, zatem wektor prędkości $(\upsilon_{x}, \upsilon_{y}, R\omega)$ wygląda następująco $(1,0,0)$.
-Rozważmy jedno z kół, tak jak to przedstawiono na rysunku \ref{fig:linear_speed}, dokonując rozkładu wektora prędkości na dwie składowe, jedną zgodną z ruchem
+Rozważmy jedno z kół, tak jak to przedstawiono na rysunku \ref{fig:linear_speed}. Dokonując rozkładu wektora prędkości na dwie składowe, jedną zgodną z ruchem
 obrotowym dużego koła, a drugą zgodną z ruchem małych, poprzecznych kółek otrzymujemy odpowiednio prędkości $\upsilon=-sin\theta$ $\upsilon_{y}=cos\theta$.
-Przy wyznaczaniu prędkośći koła przyjęto założenie, że prędkość dodatnia powoduje obrót w kierunku wyznaczonym przez kciuk prawej dłoni, gdy pokrywa się ona z osią 
+Przy wyznaczaniu prędkości koła przyjęto założenie, że prędkość dodatnia powoduje obrót w kierunku wyznaczonym przez kciuk prawej dłoni, gdy pokrywa się ona z osią 
 silnika.
-Otrzymujemy zatem następujące powiązanie pomiędzy prędkościami robota, a prędkościami poszczególnych silników:
+Otrzymujemy zatem następujące powiązanie pomiędzy prędkościami robota a prędkościami poszczególnych silników:
  \begin{equation}
  \begin{pmatrix}
   \upsilon_1\\
@@ -117,14 +115,14 @@ Otrzymujemy zatem następujące powiązanie pomiędzy prędkościami robota, a p
 \end{equation}
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.7]{./holonomic/linear_speed}
+\includegraphics[scale=1.1]{./holonomic/linear_speed}
 \caption{ Prędkość liniowa dużego koła szwedzkiego i małych kółek, gdy robot porusza się wzdłuż osi OX }\label{fig:linear_speed}
 \end{figure}
 
 \section{Obliczanie profilu prędkości liniowej robota \label{sec:trapezoid_vel}}
 Znając już powiązanie pomiędzy prędkością obrotową kół a prędkością liniową i obrotową robota, ostatnim elementem jest wyznaczenie prędkości prowadzących 
 robota do zadanego punktu. Należy przy tym uwzględnić takie parametry robota jak przyspieszenie i opóźnienie. W tym celu skorzystano z metody opisanej w 
-\cite{trapezy1} oraz \cite{trapezy2}. Polega ona na dekompozycji dwuwymiarowego problemu sterowania robotem, do dwóch problemów jednowymiarowych, tak jak to zaprezentowano
+\cite{trapezy1} oraz \cite{trapezy2}. Polega ona na dekompozycji dwuwymiarowego problemu sterowania robotem do dwóch problemów jednowymiarowych, tak jak to zaprezentowano
 na rysunku \ref{fig:trapezoid_rule}. Ruch robota w kierunku osi OX i w kierunku osi OY jest rozpatrywany osobno. 
 \begin{figure}[H]
 \centering
@@ -147,7 +145,7 @@ Prędkość obliczana jest według następujących reguł:
 \section{Dryblowanie z piłką}
 We wcześniejszym podrozdziale rozwiązano problem sterowania omnikierunkową bazą jezdną. Osobnym zadaniem jest wyznaczanie prędkości robota w sytuacji kiedy posiada on piłkę.
 Robot dryblujący z piłką nie może poruszać się z pełną dowolnością, tak aby nie stracić nad nią kontroli. Problem ten został dokładnie zaprezentowany w \cite{dribbling}. W publikacji co prawda skupiono
-się na modelu robota z rozgrywek \emph{Middle-size League} jednak zaprezentowany algorytm zajduje zastosowanie także w lidze małych robotów.
+się na modelu robota z rozgrywek \emph{Middle-size League} jednak zaprezentowany algorytm znajduje zastosowanie także w lidze małych robotów.
 Na rysunku \ref{fig:omni_base_dribbling} przedstawiono bazę jezdną z zaznaczonym globalnym układem współrzędnych $[X_w;Y_w]$ oraz związanym ze sterowanym robotem $[X_m;Y_m]$, za pomocą wektora $v_r$ zaznaczono
 prędkość liniową z jaką porusza się robot.
 \begin{figure}[h]
@@ -169,5 +167,9 @@ $a_b=cv_e$ powodujące jej odchylenie od punktu $E$. Na rysunku symbolem $\Delta
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.5]{./holonomic/ball_control}
-\caption{ Odchylenie piłki od idealnego położenia podcza manewrowania. Źródło \cite{dribbling} }\label{fig:ball_control}
+\caption{ Odchylenie piłki od idealnego położenia podczas manewrowania. Źródło \cite{dribbling} }\label{fig:ball_control}
 \end{figure}
+W przypadku idealnym rotacja robota wykonującego manewr powinna być równa: $\Theta_{d}=\Theta_{P} + \Delta\Theta$, gdzie $\Theta_{P}$ jest nachyleniem stycznej do trajektorii po której porusza się robot, w punkcie
+będącym rzutem prostokątnym $E$ na ścieżkę.  Do regulacji rotacji robota posiadającego piłkę w publikacji \cite{dribbling}
+wykorzystano regulator \texttt{PD}. Prędkość obrotowa obliczana jest zatem następująco: $\omega=k_p(\Theta_d -\Theta) +k_d(\dot{\Theta}_d -\dot{\Theta} )$. Parametry $k_p$ oraz $k_d$ są dobierane empirycznie.
+
