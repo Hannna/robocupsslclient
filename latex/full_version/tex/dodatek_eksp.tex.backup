@@ -66,16 +66,14 @@ $[0;1]$ zdecydowano się na przetestowanie takich trójek liczb z tego przedzia�
 	\subfloat[]{\includegraphics[scale=0.3]{./eksperymenty/srodowiska/dynamiczne/eks10}}
 	\end{figure}	
 
-	
-
 \section*{Zestawy wag używane w eksperymentach \label{sec:zestawy_wag}}
-
 \begin{table}[H]
 \centering
-\begin{tabular}[t]{|c ||c |c| c| }
+\scalebox{0.8}{
+\begin{tabular}[t]{|c ||c |c| }
 \hline
-Zestaw wag & $\pgoal$ & $\pway2$ \\ \hline\hline
-1 & 0.0 & 0.0\\ \hline
+Zestaw wag & $goalProb$ & $wayPointProb$ \\ \hline\hline
+1 & 0.0 & 0.1\\ \hline
 2 & 0.0 & 0.2\\ \hline
 3 & 0.0 & 0.3\\ \hline
 4 & 0.0 & 0.4\\ \hline
@@ -95,51 +93,58 @@ Zestaw wag & $\pgoal$ & $\pway2$ \\ \hline\hline
 18 & 0.1 & 0.7\\ \hline
 19 & 0.1 & 0.8\\ \hline
 20 & 0.1 & 0.9\\ \hline
-21 & 0.1 & 1.0\\ \hline
-22 & 0.2 & 0.0\\ \hline
-23 & 0.2 & 0.1\\ \hline
-24 & 0.2 & 0.2\\ \hline
-25 & 0.2 & 0.3\\ \hline
-26 & 0.2 & 0.4\\ \hline
-27 & 0.2 & 0.5\\ \hline
-28 & 0.2 & 0.6\\ \hline
+21 & 0.2 & 0.0\\ \hline
+22 & 0.2 & 0.1\\ \hline
+23 & 0.2 & 0.2\\ \hline
+24 & 0.2 & 0.3\\ \hline
+25 & 0.2 & 0.4\\ \hline
+26 & 0.2 & 0.5\\ \hline
+27 & 0.2 & 0.6\\ \hline
+28 & 0.2 & 0.7\\ \hline
+29 & 0.2 & 0.8 \\ \hline
+30 & 0.3 & 0.0 \\ \hline
+31 & 0.3 & 0.1 \\ \hline
+32 & 0.3 & 0.2 \\ \hline
+33 & 0.3 & 0.3 \\ \hline
 \end{tabular}
+}
 \hspace{0.5cm}
-\begin{tabular}[t]{|c ||c |c| c| }
+\scalebox{0.8}{
+\begin{tabular}[t]{|c ||c |c| }
 \hline
-Zestaw wag & $\alpha_1$ & $\alpha_2$\\ \hline\hline
-29 & 0.4 & 0.1 \\ \hline
-30 & 0.4 & 0.2 \\ \hline
-31 & 0.4 & 0.3 \\ \hline
-32 & 0.4 & 0.4 \\ \hline
-33 & 0.4 & 0.5 \\ \hline
-34 & 0.4 & 0.6 \\ \hline
-35 & 0.5 & 0.0 \\ \hline
-36 & 0.5 & 0.1 \\ \hline
-37 & 0.5 & 0.2 \\ \hline
-38 & 0.5 & 0.3 \\ \hline
-39 & 0.5 & 0.4 \\ \hline
-40 & 0.5 & 0.5 \\ \hline
-41 & 0.6 & 0.0 \\ \hline
-42 & 0.6 & 0.1 \\ \hline
-43 & 0.6 & 0.2 \\ \hline
-44 & 0.6 & 0.3 \\ \hline
-45 & 0.6 & 0.4 \\ \hline
-46 & 0.7 & 0.0 \\ \hline
-47 & 0.7 & 0.1 \\ \hline
-48 & 0.7 & 0.2 \\ \hline
-49 & 0.7 & 0.3 \\ \hline
-50 & 0.8 & 0.0 \\ \hline
-51 & 0.8 & 0.1 \\ \hline
-52 & 0.8 & 0.2 \\ \hline
-53 & 0.9 & 0.0 \\ \hline
-54 & 0.9 & 0.1 \\ \hline
-55 & 1.0 & 0.0 \\ \hline
-56 & 1.0 & 0.0 \\ \hline
-57 & 1.0 & 0.0 \\ \hline
-58 & 1.0 & 0.0 \\ \hline
-59 & 1.0 & 0.0 \\ \hline
-60 & 1.0 & 0.0 \\ \hline
-61 & 1.0 & 0.0 \\ \hline
+Zestaw wag &$goalProb$ & $wayPointProb$\\ \hline\hline
+34 & 0.3 & 0.4 \\ \hline
+35 & 0.3 & 0.5 \\ \hline
+36 & 0.3 & 0.6 \\ \hline
+37 & 0.3 & 0.7 \\ \hline
+38 & 0.4 & 0.0 \\ \hline
+39 & 0.4 & 0.1 \\ \hline
+40 & 0.4 & 0.2 \\ \hline
+41 & 0.4 & 0.3 \\ \hline
+42 & 0.4 & 0.4 \\ \hline
+43 & 0.4 & 0.5 \\ \hline
+44 & 0.4 & 0.6 \\ \hline
+45 & 0.5 & 0.0 \\ \hline
+46 & 0.5 & 0.1 \\ \hline
+47 & 0.5 & 0.2 \\ \hline
+48 & 0.5 & 0.3 \\ \hline
+49 & 0.5 & 0.4 \\ \hline
+50 & 0.5 & 0.5 \\ \hline
+51 & 0.6 & 0.1 \\ \hline
+52 & 0.6 & 0.2 \\ \hline
+53 & 0.6 & 0.3 \\ \hline
+54 & 0.6 & 0.4 \\ \hline
+55 & 0.7 & 0.0 \\ \hline
+56 & 0.7 & 0.1 \\ \hline
+57 & 0.7 & 0.2 \\ \hline
+58 & 0.7 & 0.3 \\ \hline
+59 & 0.8 & 0.0 \\ \hline
+60 & 0.8 & 0.1 \\ \hline
+61 & 0.8 & 0.2 \\ \hline
+62 & 0.8 & 0.2 \\ \hline
+63 & 0.9 & 0.0 \\ \hline
+64 & 0.9 & 0.1 \\ \hline
+65 & 1.0 & 0.0 \\ \hline
 \end{tabular}
+}
 \end{table}

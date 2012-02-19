@@ -86,7 +86,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 		\xi d^{*}_{goal}d - \frac{1}{2}(d^{*}_{goal})^{2} & \quad \mbox{dla $d\geqq d^{*}_{goal}$ }\\
 		\end{array} \right. 
 	\end{equation}
-	, gdzie $d=d(q,q_{goal})$ jest odległością danego położenia od celu, $\varepsilon$ jest stałą określającą poziom przyciągania do celu, natomiast $d^{*}_{goal}$ określa próg,
+	gdzie $d=d(q,q_{goal})$ jest odległością danego położenia od celu, $\varepsilon$ jest stałą określającą poziom przyciągania do celu, natomiast $d^{*}_{goal}$ określa próg,
 	po którym funkcja z kwadratowej przechodzi w trójkątną.
 	Oddziaływanie przeszkód opisane jest następującym wzorem:
 	\begin{equation}
@@ -96,7 +96,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 		0 & \quad \mbox{dla $D(q)> Q^{*}$ }\\
 		\end{array} \right.
 	\end{equation}
-	,gdzie $ Q^{*} $ jest zasięgiem pola odpychającego przeszkody, natomiast $\eta$ odpowiada za siłę tego pola. 
+	gdzie $ Q^{*} $ jest zasięgiem pola odpychającego przeszkody, natomiast $\eta$ odpowiada za siłę tego pola. 
 	Kierunek, w którym podążać ma robot wyznaczany jest ze wzoru:
 	\begin{equation}
 	- \nabla U(q) = - \nabla U_{att}(q) - \nabla U_{rep}(q)
@@ -105,7 +105,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	szczególnych sytuacjach robot może utknąć w minimum lokalnym. Sposób w jaki konstruowana jest funkcja celu w żaden sposób nie wyklucza występowania minimów lokalnych.
 	W przypadku, gdy sterowany robot utknie w takim minimum, konieczna jest reakcja ze strony wyższej warstwy nawigującej maszyną. Przykładowo można wykorzystać algorytm 
 	błądzenia losowego.
-\subsubsection{Funkcja nawigacji}
+\subsubsection{Funkcja nawigacji \label{subsubsec:navigation_func}}
 	Istnieje jednak pewna szczególna funkcja, która posiada tylko globalne minimum, została ona zdefiniowana w publikacjach \cite{navi_func1} oraz \cite{navi_func2}.
 	Przykładowy wykres funkcji nawigacji zamieszczony jest na rysunku ~\ref{fig:func_navi}. Zasięg oddziaływania minimum globalnego zależy od kilku istotnych parametrów, które zawarte są 
 	we wzorze opisującym rozkład sztucznego potencjału.
@@ -362,7 +362,7 @@ Budowa drzewa polega na dodawaniu kolejnych węzłów do drzewa w kierunku punkt
 	\label{alg:chooseTarget}
 	\begin{algorithmic}
 	\STATE \texttt{function} \textit{chooseTarget}(\textit{goal:state}) \textit{state};
-	\STATE p = \texttt{uniformRandom in}$[0.0 ...1.0]$
+	\STATE p = \texttt{uniformRandom in} $[0.0 ...1.0]$
 	\IF{$0.0<p<goalProb$} 
 	  \RETURN  \texttt{goal};
 	\ELSIF{ $goalProb<p<1.0$}
@@ -372,7 +372,7 @@ Budowa drzewa polega na dodawaniu kolejnych węzłów do drzewa w kierunku punkt
   \end{algorithm}
 
 Na listingu \ref{alg:chooseTarget} użyta została funkcja \texttt{RandomState}, zwracająca losowy punkt ze zbioru wszystkich możliwych położeń robota.
-W najprostszej realizacji, może ona zwracać współrzędne punktu dobierane z rozkładem jednostajnym z określonego przedziału.
+W najprostszej realizacji, może ona zwracać współrzędne punktu dobierane z rozkładem jednostajnym z określonego wcześniej obszaru.
 W każdej iteracji algorytmu tymczasowy stan docelowy obliczany jest na nowo. Aktualne drzewo, na którym operuje algorytm przeszukiwane jest w celu znalezienia
 węzła \texttt{nearest} położonego najbliżej tego celu. Węzeł \texttt{nearest} rozszerzany jest w kierunku tegoż celu za pomocą funkcji \texttt{extend}.
 Operacja ta w najprostszym ujęciu polega na stworzeniu nowego węzła przesuniętego względem \texttt{nearest} o odcinek \texttt{rrtStep} w kierunku tymczasowego celu.
@@ -399,7 +399,7 @@ W ogólnym ujęciu algorytm \texttt{RRT} wygląda zatem następująco:
 	\RETURN  \texttt{tree};
 	\end{algorithmic}
   \end{algorithm}
-W opisie algorytmu \ref{alg:RRT} użyte zostały nie omówione jeszcze funkcje, \texttt{distance} zwracająca odległość w sensie euklidesowym między dwoma węzłami drzewa,
+W opisie algorytmu \ref{alg:RRT} użyte zostały nie omówione jeszcze funkcje, \texttt{distance} zwracająca odległość w sensie euklidesowym między dwoma punktami zawartymi w węzłach drzewa,
 \texttt{addNode} dodająca węzeł do bieżącego drzewa. Parametr \texttt{rrtStep} jest natomiast wyrażony w metrach.
 Tak zaimplementowana wersja algorytmu może być zastosowana jako skuteczne narzędzie do bezkolizyjnej nawigacji robotem, jednak jego wydajność można poprawić poprzez
 modyfikacje opisane w kolejnym podrozdziale.
@@ -443,9 +443,10 @@ skuteczność na poziomie $80\%$. Kolizje występowały głównie w sytuacjach, 
 związanym ze sterowanym robotem. Przeszkody takiego typu nie były uwzględnianie przez algorytm.
 RRT pozwala na uwzględnianie przeszkód rozsianych po całej planszy. Dodatkowo umożliwia poruszanie się po bardziej złożonych trajektoriach.
 Kolejną zaletą RRT jest prostota w ograniczaniu przestrzeni, z której losowane są tymczasowe punkty docelowe. Dzięki temu w prosty sposób można ograniczyć poruszanie
-się robota tylko do wnętrza boiska. w przypadku CVM istniała konieczność modelowania bandy boiska jako zbioru okręgów, mnożyło to ilość obiektów z jakimi należało detekować
+się robota tylko do wnętrza boiska. W przypadku CVM istniała konieczność modelowania bandy boiska jako zbioru okręgów, mnożyło to ilość obiektów z jakimi należało wykrywać
 kolizje.
-Kolejnym problemem CVM jest nawigacja do celu znajdującego się za robotem, w pracy inżynierskiej wprowadzono modyfikację, zmieniającą parametr odpowiedzialny za kierowanie
-robota na cel, uzależniając go od orientacji robota względem celu. Intencją było wymuszenie obrotu robota w kierunku celu, w sytuacji, gdy orientacja do celu jest duża.
-Modyfikacja poprawiła skuteczność. Jednak nawet dla najlepszego zestawu współczynników wagowych wynosiła ona $80\%$. W przypadku bazy holonomicznej obracanie się w kierunku punktu docelowego nie jest
+Kolejnym problemem CVM jest nawigacja do celu znajdującego się za robotem. W pracy inżynierskiej wprowadzono modyfikację, zmieniającą parametr odpowiedzialny za kierowanie
+robota na cel, uzależniając go od orientacji robota względem celu. Intencją było wymuszenie obrotu robota w kierunku celu, w sytuacji, gdy kąt o jaki powinien obrócić się robot, aby być skierowanym
+na cel ma dużą wartość.
+Modyfikacja ta poprawiła skuteczność algorytmy CVM, jednak nawet dla najlepszego zestawu współczynników wagowych wynosiła ona zaledwie $80\%$. W przypadku bazy holonomicznej obracanie się w kierunku punktu docelowego nie jest
 konieczne, stąd takie sterowanie nie jest optymalne.

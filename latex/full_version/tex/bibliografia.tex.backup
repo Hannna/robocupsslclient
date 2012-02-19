@@ -5,11 +5,11 @@
 	
 \bibitem{RRT}
 J. Bruce, M. Veloso:
-\emph{Real-Time Randomized Path Planning for Robot Navigation}. Carnegie Mellon University
+\emph{Real-Time Randomized Path Planning for Robot Navigation}. Carnegie Mellon University, 2002.
 
 \bibitem{RRT2}
 J.Kim J.M. Esposito, V. Kumar:
-\emph{An RRT-Based algorithm for testing and validating multi-robot controllers}. University of Pennsylvania, US Naval Academy
+\emph{An RRT-Based algorithm for testing and validating multi-robot controllers}. University of Pennsylvania, US Naval Academy, 2005.
 
 \bibitem{duleba}
 	I. Dulęba:
@@ -55,45 +55,50 @@ J.Kim J.M. Esposito, V. Kumar:
  \bibitem{stp}
 	B.Browning, J.Bruce, M.Bowling, M.Veloso:
 	\emph{STP: Skills, tactics and plays for multi-robot control
-             in adversarial environments.}
+             in adversarial environments}.
 	  Carnegie Mellon University, Pittsburgh. 2004.
 
  \bibitem{omni_base_1}
 	R.Rojas, A.Gloye F\"{o}orster:
 	\emph{ Holonomic Control of a robot with an omnidirectional
-	      drive. }
+	      drive}.
 	  Freie Universität Berlin, 2006.
 
 \bibitem{omni_base_2}
 	R.Rojas, A.Gloye F\"{o}orster:
-	\emph{ Design of an omnidirectional universal mobile platform. }
+	\emph{ Design of an omnidirectional universal mobile platform}.
 	  Eindhoven University of Technology, 2005.	  
+\bibitem{dribbling}
+	X. Li, M.Wang, A.Zell:
+	\emph{ Dribbling control of omnidirectional soccer robots}.
+	In Proceedings of 2007 IEEE International Conference on Robotics and Automation (ICRA'07).
+
 \bibitem{inzynierka}
 	M.Gąbka, K.Muszyński
 	Praca dyplomowa inzynierska
 	\emph{Środowisko symulacyjne i algorytm unikania kolizji robota mobilnego
-	grającego w piłkę nożną}
+	grającego w piłkę nożną}.
 	Politechnika Warszawska, 2008.
 
 \bibitem{trapezy1}
-	J.Bruce, M.Bowling, B.Browning, M.Veloso
-	\emph{Multi-Robot Team Response to a Multi-Robot Opponent Team}
-	Carnegie Mellon University, Pittsburgh.
+	J.Bruce, M.Bowling, B.Browning, M.Veloso:
+	\emph{Multi-Robot Team Response to a Multi-Robot Opponent Team}.
+	Carnegie Mellon University, Pittsburgh, 2002.
 
 \bibitem{trapezy2}
-	J.Bruce, M.Veloso
-	\emph{Real-time multi-robot motion planning with safe dynamics}
-	Carnegie Mellon University, Pittsburgh.
+	J.Bruce, M.Veloso:
+	\emph{Real-time multi-robot motion planning with safe dynamics}.
+	Carnegie Mellon University, Pittsburgh, 2006.
 
 \bibitem{navi_func1}
-	D. E. Koditschek, and E.Rimon 
-	\emph{ Robot navigation functions on manifolds with boundary }
+	D. E. Koditschek, and E.Rimon:
+	\emph{Robot navigation functions on manifolds with boundary}.
 	Advances in Applied Mathematics
 	Volume 11 Issue 4, Dec. 1990.
 
 \bibitem{navi_func2}
-	D. E. Koditschek, and E.Rimon 
-	\emph{Exact robot navigation using artificial potential functions }
+	D. E. Koditschek, and E.Rimon:
+	\emph{Exact robot navigation using artificial potential functions}.
 	IEEE Transactions on Robotics and Automation.
 	Vol. 8, no. 5, pp. 501-518. Oct. 1992
 \bibitem{ISR}
