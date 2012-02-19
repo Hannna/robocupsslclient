@@ -44,7 +44,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	Pełna  anglojęzyczna nazwa metody brzmi \mbox{ \emph{Vector Field Histogram}}. Na język polski można ją
 	przetłumaczyć jako algorytm histogramu pola wektorowego. Należy ona do grupy metod, które w czasie
 	rzeczywistym pozwalają na jednoczesne wykrywanie i omijanie przeszkód oraz kierowanie robota na cel.
-	Algorytm ten został szczegółowo opisany w pracy inżynierskiej \cite{inzynierka}, więcej informacji można też znaleźć w publikacjach autorów, \cite{VFH_1} oraz \cite{VFH_2}.
+	Algorytm ten został szczegółowo opisany w pracy inżynierskiej \cite{inzynierka}, więcej informacji można też znaleźć w publikacjach autorów (\cite{VFH_1} oraz \cite{VFH_2}).
 	W skrócie, jego zasada działania opiera się na konstrukcji dwuwymiarowego opisu świata w postaci siatki. Każdemu elementowi siatki przypisany jest poziom ufności oddający prawdopodobieństwo
 	z jakim w danym położeniu może pojawić się przeszkoda (rysunek \ref{fig:VFH_siatka}).
 	\begin{figure}[H]
@@ -55,10 +55,10 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	Tak skonstruowana mapa redukowana jest do jednowymiarowego histogramu biegunowego (rysunek \ref{fig:VFH_hist_biegunowy}), który dodatkowo wygładzany jest przez
 	filtr dolnoprzepustowy. W ten sposób otrzymuje się informację o poziomie ufności wystąpienia przeszkody poruszając się w danym kierunku (świadomie rezygnuje się z informacji o odległości od przeszkody).
 	Na podstawie tego histogramu wyznaczane są sterowania dla robota. Histogram jest analizowany w poszukiwaniu minimów lokalnych, wszystkie doliny, których poziom ufności
-	znajduję się poniżej ustalonego umownie progu są rozważane przy wyznaczaniu kierunku jazdy robota. Jeśli minimów jest kilka wybierane jest to, którego kierunek prowadzi najbliżej
+	znajduje się poniżej ustalonego umownie progu są rozważane przy wyznaczaniu kierunku jazdy robota. Jeśli minimów jest kilka wybierane jest to, którego kierunek prowadzi najbliżej
 	do celu. 
-	Do poprawnego działania algorytm potrzebuje informacji o rozłożeniu przeszkód w otoczeniu robota, w oryginalnej implementacji była ona pozyskiwana z sensorów ultradźwiękowych,
-	można je zastąpić z powodzeniem czujnikami laserowymi. Obraz video z kamery umieszczonej nad eksplorowanym światem także dostarcza tej informacji (jak w rozgrywkach \emph{Small-size League}).
+	Algorytm do poprawnego działania  potrzebuje informacji o rozłożeniu przeszkód w otoczeniu robota. W oryginalnej implementacji była ona pozyskiwana z sensorów ultradźwiękowych.
+	Można je również zastąpić z powodzeniem czujnikami laserowymi. Obraz video z kamery umieszczonej nad eksplorowanym światem także dostarcza tej informacji (jak w rozgrywkach \emph{Small-size League}).
 	\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{./algorytmy/VFH_hist_biegunowy}
@@ -67,7 +67,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 
 	\subsection{Technika dynamicznego okna} \label{subsec:dynamic_window}
 	Popularną, stosowaną w robotyce metodą unikania kolizji jest także technika dynamicznego okna. Algorytm ten analizuje jedynie możliwe do osiągnięcia w danej sytuacji prędkości.
-	Więcej informacji na temat algorytmu można znaleźć w publikacji \cite{dynamic_window} lub w pracy inżynierskiej \cite{inzynierka}.
+	Więcej informacji na temat algorytmu można znaleźć w publikacji \cite{dynamic_window}.
 	Ujmując w jednym zdaniu algorytm polega na przeszukiwaniu zbioru dopuszczalnych prędkości liniowych i kątowych, tak aby maksymalizować funkcję celu. Sposób konstrukcji funkcji celu
 	gwarantuje, że wybrane prędkości będą prowadzić robota w zamierzonym kierunku oraz, że nie natrafi na przeszkodę.
 \subsection{Algorytmy pól potencjałowych}
@@ -79,7 +79,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	\begin{equation}
 	U(q) = U_{att}(q) + U_{rep}(q)
 	\end{equation}
-	\begin{equation}\label{eq:CVM_dv}
+	\begin{equation}\label{eq:U_att}
 		U_{att}(q) = \left\{ 
 		\begin{array}{l l}
 		\frac{1}{2}\xi d^2 & \quad \mbox{dla $d\leqq d^{*}_{goal}$ }\\
@@ -97,24 +97,24 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 		\end{array} \right.
 	\end{equation}
 	,gdzie $ Q^{*} $ jest zasięgiem pola odpychającego przeszkody, natomiast $\eta$ odpowiada za siłę tego pola. 
-	Kierunek w którym podążać ma robot wyznaczany jest ze wzoru:
+	Kierunek, w którym podążać ma robot wyznaczany jest ze wzoru:
 	\begin{equation}
 	- \nabla U(q) = - \nabla U_{att}(q) - \nabla U_{rep}(q)
 	\end{equation}
-	Powyższe podejście w stosunkowo prosty sposób umożliwia wyznaczenie kierunku bezkolizyjnej ścieżki do celu, jednak posiada pewną dość istotną wadę, mianowicie w pewnych, 
+	Powyższe podejście w stosunkowo prosty sposób umożliwia wyznaczenie kierunku bezkolizyjnej ścieżki do celu. Posiada ono jednak pewną dość istotną wadę. Mianowicie w pewnych, 
 	szczególnych sytuacjach robot może utknąć w minimum lokalnym. Sposób w jaki konstruowana jest funkcja celu w żaden sposób nie wyklucza występowania minimów lokalnych.
-	W przypadku, gdy sterowany robot utknie w lokalnym minimum, konieczna jest reakcja ze strony wyższej warstwy nawigującej maszyną, przykładowo można wykorzystać algorytm 
+	W przypadku, gdy sterowany robot utknie w takim minimum, konieczna jest reakcja ze strony wyższej warstwy nawigującej maszyną. Przykładowo można wykorzystać algorytm 
 	błądzenia losowego.
-\subsubsection{Funkcja nawigacji}
-	Istnieje jednak pewna szczególna funkcja, która posiada tylko globalne minimum, została ona zdefiniowana w publikacjach \cite{navi_func1},\cite{navi_func2}.
-	Przykładowy wykres funkcji nawigacji jest zamieszczony poniżej (rysunek ~\ref{fig:func_navi}). Zasięg oddziaływania minimum globalnego zależy od kilku istotnych parametrów, które zawarte są 
+\subsubsection{Funkcja nawigacji \label{subsubsec:navigation_func}}
+	Istnieje jednak pewna szczególna funkcja, która posiada tylko globalne minimum, została ona zdefiniowana w publikacjach \cite{navi_func1} oraz \cite{navi_func2}.
+	Przykładowy wykres funkcji nawigacji zamieszczony jest na rysunku ~\ref{fig:func_navi}. Zasięg oddziaływania minimum globalnego zależy od kilku istotnych parametrów, które zawarte są 
 	we wzorze opisującym rozkład sztucznego potencjału.
-		\begin{figure}[!h]
-		\centering
-		\includegraphics[scale=0.3]{./algorytmy/navigation_func_k_10}
-		\caption{Funkcja nawigacji dla $\kappa=10$}
-		\label{fig:func_navi}
-		\end{figure}
+	\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.3]{./algorytmy/navigation_func_k_10}
+	\caption{Funkcja nawigacji dla $\kappa=10$}
+	\label{fig:func_navi}
+	\end{figure}
 	Dla bieżącego położenia robota $q$ funkcja nawigacji zdefiniowana jest następująco:
 	\begin{equation}
 	\label{eq:navi_func}
@@ -128,16 +128,16 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	\begin{equation}
 	\beta_{i}(q)=(d(q,q_i))^2 - r_i^{2} \text{ dla i = 1...N, gdzie N jest liczbą przeszkód}
 	\end{equation}
-	Powyższa funkcję definiuje się dla każdej z przeszkód o promieniu $r_i$, której środek znajduje się w punkcie $q_i$.
+	Powyższą funkcję definiuje się dla każdej z przeszkód o promieniu $r_i$, której środek znajduje się w punkcie $q_i$.
 	Jak łatwo zauważyć, funkcja ta przyjmuje ujemne wartości wewnątrz okręgu opisującego przeszkodę, natomiast dodatnie na zewnątrz okręgu.
 	Dodatkowo definiuje się funkcję $\beta_{0}(q)= -(d(q,q_0))^{2} + r_0^{2}$, w której parametry $r_0$ oraz $q_0$ oznaczają odpowiednio promień świata w którym porusza się robot
 	oraz środek tego świata.
-	Wzór \ref{eq:navi_func} posiada dwa istotne parametry, $\lambda$ ogranicza przeciwdziedzinę do przedziału $[0,1]$, gdzie wartość $0$ jest tożsama z osiągnięciem celu, natomiast
+	Wzór \ref{eq:navi_func} posiada dwa istotne parametry. Pierwszy z nich, $\lambda$ ogranicza przeciwdziedzinę do przedziału $[0,1]$, gdzie wartość $0$ jest tożsama z osiągnięciem celu, natomiast
 	$1$ jest osiągana na brzegu każdej z przeszkód. Drugi parametr $\kappa$ odpowiednio dobrany powoduje, że blisko celu wykres funkcji $\phi$ przybiera kształt misy.
-	Zwiększanie parametru $\kappa$ powoduje przesuwanie globalnego minimum w kierunku położenia punktu docelowego, zwiększa zatem oddziaływanie przyciągającego pola emitowanego przez 
+	Zwiększanie parametru $\kappa$ powoduje przesuwanie globalnego minimum w kierunku położenia punktu docelowego. Zwiększone jest zatem oddziaływanie przyciągającego pola emitowanego przez 
 	punkt docelowy.
 
-	Wykres funkcji nawigacji przedstawiony na rysunku \ref{fig:func_navi} został sporządzony dla następujących parametrów(wszystkie jednostki wyrażone są w metrach):
+	Wykres funkcji nawigacji przedstawiony na rysunku \ref{fig:func_navi} został sporządzony dla następujących parametrów (wszystkie jednostki wyrażone są w metrach):
 	\begin{enumerate}
 	\item eksplorowany świat ograniczony jest okręgiem o środku w punkcie $q_0(2.7;3.7)$ i promieniu $r_0 = 7.4$,
 	\item $\lambda = 0.2$,
@@ -205,7 +205,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	\end{array} \right. 
 	\end{equation}
 	Dla danego zbioru przeszkód $O$ zawsze wybierana jest odległość do najbliższej przeszkody leżącej na trajektorii. Zatem funkcję dla danego zbioru przeszkód $O$ można zapisać następująco:
- 	\begin{equation}\label{eq:CVM_Dv}
+ 	\begin{equation}\label{eq:CVM_Dv2}
 	D_v(v,\omega,O)= \underset{o \in O}{\operatorname{inf}} d_v(v,\omega,o)
 	\end{equation}
 	W rzeczywistości jednak informacja o położeniu przeszkód jest ograniczona do pewnego obszaru, który może
@@ -353,7 +353,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 \section{Algorytm RRT\\(\textit{Rapidly-Exploring Random Tree}) \label{sec:RRT:basic}}
 Kolejnym zupełnie odmiennym podejściem w planowaniu bezkolizyjnej ścieżki jest losowe przeszukiwanie dopuszczalnej przestrzeni położeń robota. Szczegółowe informacje na
 jego temat można znaleźć w \cite{RRT} oraz w \cite{RRT2}.
-Algorytm \texttt{RRT} jest wydajnym algorytmem, który w czasie rzeczywistym może wyznaczyć drogę do celu, jednak nie jest ona optymalna pod względem dynamiki, kinematyki ani długości.
+Algorytm RRT jest wydajnym algorytmem, który w czasie rzeczywistym może wyznaczyć drogę do celu, jednak nie jest ona optymalna pod względem dynamiki, kinematyki ani długości.
 Podstawową strukturą danych na której operuje algorytm jest drzewo. Jako korzeń przyjmowany jest stan reprezentujący położenie robota w momencie uruchomienia algorytmu.
 Budowa drzewa polega na dodawaniu kolejnych węzłów do drzewa w kierunku punktu obranego w danym kroku jako docelowy. Tymczasowy stan docelowy generowany jest w następujący sposób:
  \begin{algorithm}[H]
@@ -371,13 +371,13 @@ Budowa drzewa polega na dodawaniu kolejnych węzłów do drzewa w kierunku punkt
 	\end{algorithmic}
   \end{algorithm}
 
-Na listingu \ref{alg:chooseTarget} użyta została funkcja \texttt{RandomState()} zwracająca losowy punkt ze zbioru wszystkich możliwych położeń robota.
-W najprostszej realizacji może ona zwracać współrzędne punktu dobierane z rozkładem jednostajnym z zadanego przedziału.
+Na listingu \ref{alg:chooseTarget} użyta została funkcja \texttt{RandomState}, zwracająca losowy punkt ze zbioru wszystkich możliwych położeń robota.
+W najprostszej realizacji, może ona zwracać współrzędne punktu dobierane z rozkładem jednostajnym z określonego przedziału.
 W każdej iteracji algorytmu tymczasowy stan docelowy obliczany jest na nowo. Aktualne drzewo, na którym operuje algorytm przeszukiwane jest w celu znalezienia
-węzła \texttt{nearest} znajdującego się najbliżej tego celu. Węzeł \texttt{nearest} rozszerzany jest w kierunku tegoż celu za pomocą funkcji \texttt{extend}.
+węzła \texttt{nearest} położonego najbliżej tego celu. Węzeł \texttt{nearest} rozszerzany jest w kierunku tegoż celu za pomocą funkcji \texttt{extend}.
 Operacja ta w najprostszym ujęciu polega na stworzeniu nowego węzła przesuniętego względem \texttt{nearest} o odcinek \texttt{rrtStep} w kierunku tymczasowego celu.
 Istotne jest, aby sprawdzić czy nowo wygenerowany stan znajduje się w dopuszczalnej przestrzeni stanów \textdollar. W najprostszym wariancie można zastosować
-heurystykę sprawdzającą jedynie czy położenie to nie koliduje z żadną z przeszkód znajdujących się w danej sytuacji oraz czy robot jest w stanie do niego dotrzeć.
+heurystykę, sprawdzającą jedynie czy położenie to nie koliduje z żadną z przeszkód znajdujących się w danej sytuacji oraz czy robot jest w stanie do niego dotrzeć.
 Bardziej zaawansowane heurystyki powinny sprawdzać czy na przykład podczas przemieszczania  się do nowej pozycji nie nastąpi kolizja z dynamiczną przeszkodą.
 W ogólnym ujęciu algorytm \texttt{RRT} wygląda zatem następująco:
   \begin{algorithm}[H]
@@ -405,8 +405,8 @@ Tak zaimplementowana wersja algorytmu może być zastosowana jako skuteczne narz
 modyfikacje opisane w kolejnym podrozdziale.
 
 \subsection{Modyfikacje algorytmu, czyli przejście z RRT do ERRT \label{sec:RRT:extend} }
-Omawiany algorytm można zmodyfikować pod kątem szybkości działania. Po pierwsze elementy drzewa można przechowywać w strukturach ułatwiających przeszukiwanie drzewa,
-w literaturze stosowane są w tym celu \texttt{KD-drzewa}. Kolejną modyfikacją jest zapamiętywanie losowo wybranych węzłów ze ścieżki znalezionej w poprzednim uruchomieniu
+Omawiany algorytm można zmodyfikować pod kątem szybkości działania. Po pierwsze, elementy drzewa można przechowywać w strukturach ułatwiających przeszukiwanie drzewa.
+W literaturze stosowane są w tym celu \texttt{KD-drzewa}. Kolejną modyfikacją jest zapamiętywanie losowo wybranych węzłów ze ścieżki znalezionej w poprzednim uruchomieniu
 algorytmu. W takim wariancie tymczasowy punkt docelowy obierany jest następująco:
  \begin{algorithm}[H]
 	\caption{ Zmodyfikowana funkcja obliczająca stan docelowy }
@@ -436,16 +436,16 @@ nadmiernego rozrastania drzewa, odległość może uwzględniać dodatkowo odleg
 
 \section{Zalety algorytmu RRT w stosunku \\do CVM}
 Podczas kontynuacji prac nad rozgrywkami RoboCup zdecydowano się na zmianę algorytmu wyznaczającego bezkolizyjną ścieżkę. Zmiana została wymuszona decyzją o zmianie
-modelu sterowanego robota. Bazę jezdną o napędzie różnicowym zastąpiono holonomiczną. Algorytm \textit{CVM} jest algorytmem dedykowanym do robotów o napędzie różnicowym, doskonale
+modelu sterowanego robota. Bazę jezdną o napędzie różnicowym zastąpiono holonomiczną. Algorytm CVM jest algorytmem dedykowanym do robotów o napędzie różnicowym, doskonale
 można ująć w nim ograniczenia na dopuszczalne prędkości. Jednak sterowanie za jego pomocą robotem holonomicznym nie pozwala na pełne wykorzystanie możliwości robota.
-Dodatkowo jak zostało udowodnione w pracy inżynierskiej \cite{inzynierka}, \textit{CVM} w przypadku środowisk z przeszkodami dynamicznymi osiągał skuteczność na poziomie $80\%$. Kolizje występowały 
-głównie w sytuacjach, kiedy przeszkoda uderzała w robota z boku lub z tyłu. Wynikało to z faktu, że trajektoria ruchu takiej przeszkody znajdowała się poniżej osi $OY$ w układzie współrzędnych
+Dodatkowo, jak zostało udowodnione w pracy inżynierskiej \cite{inzynierka}, CVM nie sprawdza się w silnie dynamicznym środowisku. Podczas testów z przeszkodami dynamicznymi osiągał
+skuteczność na poziomie $80\%$. Kolizje występowały głównie w sytuacjach, kiedy przeszkoda uderzała w robota z boku lub z tyłu. Wynikało to z faktu, że trajektoria ruchu takiej przeszkody znajdowała się poniżej osi $OY$ w układzie współrzędnych
 związanym ze sterowanym robotem. Przeszkody takiego typu nie były uwzględnianie przez algorytm.
-\textit{RRT} pozwala na uwzględnianie przeszkód rozsianych po całej planszy. Dodatkowo umożliwia poruszanie się po bardziej złożonych trajektoriach.
-Kolejną zaletą \textit{RRT} jest prostota w ograniczaniu przestrzeni z której losowane są tymczasowe punkty docelowe. Dzięki temu w prosty sposób można ograniczyć poruszanie
-się robota tylko do wnętrza boiska, w przypadku \textit{CVM} istniała konieczność modelowania bandy boiska jako zbioru okręgów, mnożyło to ilość obiektów z jakimi należało detekować
+RRT pozwala na uwzględnianie przeszkód rozsianych po całej planszy. Dodatkowo umożliwia poruszanie się po bardziej złożonych trajektoriach.
+Kolejną zaletą RRT jest prostota w ograniczaniu przestrzeni, z której losowane są tymczasowe punkty docelowe. Dzięki temu w prosty sposób można ograniczyć poruszanie
+się robota tylko do wnętrza boiska. w przypadku CVM istniała konieczność modelowania bandy boiska jako zbioru okręgów, mnożyło to ilość obiektów z jakimi należało detekować
 kolizje.
-Kolejnym problemem \textit{CVM} jest nawigacja do celu znajdującego się za robotem, w pracy inżynierskiej wprowadzono modyfikację, zmieniającą parametr odpowiedzialny za kierowanie
-robota na cel, uzależniając go od orientacji robota względem celu. Intencją było wymuszenie obrotu robota w kierunku celu, w sytuacji gdy orientacja do celu jest duża.
-Modyfikacja poprawiła skuteczność jednak, nawet dla najlepszego zestawu wag wynosiła ona $80\%$. W przypadku bazy holonomicznej obracanie się w kierunku punktu docelowego nie jest
+Kolejnym problemem CVM jest nawigacja do celu znajdującego się za robotem, w pracy inżynierskiej wprowadzono modyfikację, zmieniającą parametr odpowiedzialny za kierowanie
+robota na cel, uzależniając go od orientacji robota względem celu. Intencją było wymuszenie obrotu robota w kierunku celu, w sytuacji, gdy orientacja do celu jest duża.
+Modyfikacja poprawiła skuteczność. Jednak nawet dla najlepszego zestawu współczynników wagowych wynosiła ona $80\%$. W przypadku bazy holonomicznej obracanie się w kierunku punktu docelowego nie jest
 konieczne, stąd takie sterowanie nie jest optymalne.

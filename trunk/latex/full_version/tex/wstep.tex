@@ -1,5 +1,5 @@
 \chapter[Wstęp ]{Wstęp}
-Szybki postęp technologiczny zapoczątkowany w XX wieku umożliwił rozwój nowych dziedzin nauki, między innymi robotyki. Obecnie maszyny mogą zastępować ludzi przy wykonywaniu wielu rozmaitych czynności.
+Szybki postęp techniczny zapoczątkowany w XX wieku umożliwił rozwój nowych dziedzin nauki, między innymi robotyki. Obecnie maszyny mogą zastępować ludzi przy wykonywaniu wielu rozmaitych czynności.
 Innowacyjne rozwiązania stwarzają jednak potrzebę opracowania wymagającego środowiska testowego. Jedną z takich inicjatyw, mających na celu wspieranie rozwoju i popularyzację robotyki, są rozgrywki
 RoboCup. W obrębie przedsięwzięcia wyróżnionych jest kilka lig różniących się zasadami oraz typem robotów biorących udział w zawodach.
 Głównym celem przyświecającym organizatorom jest stworzenie do 2050 roku drużyny robotów zdolnej wygrać z ówczesnymi mistrzami świata.
@@ -9,7 +9,8 @@ Rozwiązanie problemu stawia przed uczestnikami wyzwania konstrukcyjne oraz algo
 zawodnikiem, wyznaczania bezkolizyjnej ścieżki do celu oraz realizacji prostych zachowań niezbędnych podczas rozgrywek.
 \section{Zakres pracy}
 Niniejsza praca jest niejako kontynuacją działań podjętych podczas realizacji pracy inżynierskiej. Tematyka w niej poruszona dotyczy na wstępie samych rozgrywek RoboCup. Jak już napisano we 
-wstępie przedsięwzięcie dotyczy głównie rozgrywek piłkarskich, w których udział biorą roboty. Jednak ze względu na dynamiczny rozwój samej robotyki uczestnicy projektu aaaa.
+wstępie przedsięwzięcie dotyczy głównie rozgrywek piłkarskich, w których udział biorą roboty. W ostatnich latach robotyka cieszy się szerokim zainteresowaniem, dlatego też sam projekt
+został poszerzony o nowe obszary tematyczne.
 Obecnie podział jest następujący:
 \begin{itemize}
 	\item \emph{RoboCupSoccer}, czyli rozgrywki piłkarskie autonomicznych robotów,
@@ -18,24 +19,24 @@ Obecnie podział jest następujący:
 	\item \emph{RoboCupJunior} popularyzujący robotykę wśród młodzieży.
 \end{itemize}
 
-Same rozgrywki piłkarskie \emph{RoboCupSoccer} także są podzielone na kilka lig, tutaj głównym kryterium jest konstrukcja mechaniczna zawodników. Więcej informacji na ten temat zostanie zaprezentowanych w rozdziale
+Same rozgrywki piłkarskie \emph{RoboCupSoccer} także nie są jednolite, zostały one podzielone w zależności od konstrukcji mechanicznej zawodników. Więcej informacji na ten temat zostanie zaprezentowanych w rozdziale
 \ref{chap:robocup}. W ramach samej pracy skupiono się na lidze małych robotów (\emph{Small-size League}), ponieważ już wcześniej prowadzone były prace w tym kierunku na Wydziale Elektroniki i 
 Technik Informacyjnych Politechniki Warszawskiej.
 
 W dalszej części pracy opisano nowe testowe środowisko symulacyjne oraz wprowadzone poprawki modyfikujące działanie symulatora.
-Z racji, iż wcześniejsze ekssperymenty prowadzono w środowisku \emph{Player/Stage/Gazebo} zdecydowano się na dalsze prace na tej platformie.
-Opracowane zostały nowe modele zawodników wzorowane na rzeczywistych, holonomicznych
-biorących udział w rozgrywkach. Przygotowano sterownik (element symulatora) umożliwiający: kontrolę nad prędkością robota (wyposażono go dodatkowo w regulator PID), prowadzenie piłki jak i oddawanie strzału.
+Ponieważ wcześniejsze eksperymenty prowadzono w środowisku \emph{Player/Stage/Gazebo}, zdecydowano się na dalsze prace na tej platformie.
+Opracowane zostały nowe modele zawodników wzorowane na rzeczywistych, holonomicznych robotach
+biorących udział w rozgrywkach. Przygotowano sterownik (element symulatora) umożliwiający: kontrolę nad prędkością robota (wyposażono go dodatkowo w regulator PID), prowadzenie piłki, jak i oddawanie strzału.
  W stosunku do poprzednich prac zdecydowano się także na implementację oraz poddanie testom nowego algorytmu nawigacji.  Rozwiązanie to zostało przetestowane w takich samych warunkach 
 jak poprzednie. Dokonano także analizy i porównania otrzymanych wyników. Zaprezentowano również inne, stosowane w robotyce, metody unikania kolizji. Jeden z nich został zaimplementowany w celu
 rozwiązywania mniej złożonych zadań takich jak odjechanie od przeszkody w momencie wystąpienia kolizji.
 
-W tekście przedstawiono jedno z podejść, powszechnie stosowanych do koordynacji i planowania działań zawodników (\mbox{\textit{STP - Skill Tactics Play}} \cite{stp}).
+W tekście przedstawiono jedno z podejść, powszechnie stosowanych w rozgrywkach do koordynacji i planowania działań zawodników \mbox{\textit{Skill Tactics Play}}~(STP)~\cite{stp}.
 Zakłada ono planowanie zachowań drużyny na trzech poziomach. Każdy odnosi się do innej warstwy abstrakcji.
 \begin{enumerate} 
   \item Najwyżej w hierarchii znajduje się poziom \texttt{Play}. Przez to pojęcie rozumiany jest plan gry dla całej drużyny uwzględniający koordynację
-  poczynań pomiędzy zawodnikami. Plan również zakłada przydział zawodnika do określonej roli. W oryginalnym rozwiązaniu role przydzielane są dynamicznie w zależności od sytuacji na boisku.
-  W obrębie danego planu zawodnik wykonuje swoją rolę (sekwencję kilku \textit{Tactic}) aż do momentu zakończenia danego planu lub wyznaczenia kolejnego.
+  poczynań pomiędzy zawodnikami. Plan zakłada również przydział zawodnika do określonej roli. W oryginalnym rozwiązaniu role przydzielane są dynamicznie w zależności od sytuacji na boisku.
+  W obrębie danego planu zawodnik wykonuje swoją rolę (sekwencję kilku działań (\textit{Tactic})) aż do momentu zakończenia danego planu lub wyznaczenia kolejnego.
   
   \item Przez \textit{Tactic} rozumiany jest plan działań w obrębie jednej roli. Taktyka ma na celu wykonanie przez robota pojedynczej złożonej akcji.
   Przykładem może być strzał na bramkę. Robot dostaje polecenie oddania strzału na bramkę, zatem plan jego poczynań ma doprowadzić
@@ -52,7 +53,7 @@ Zakłada ono planowanie zachowań drużyny na trzech poziomach. Każdy odnosi si
   \item dryblowanie z piłką.
  \end{itemize}
 
-  Pojedyncza taktyka determinuje skończony automat stanów, w którym elementami są \texttt{Skills}. Wykonanie bieżącej taktyki sprowadza się do przechodzenia pomiędzy kolejnymi zachowaniami robota w obrębie
+  Pojedyncza taktyka determinuje skończony automat stanów, w którym elementami są \textit{Skills}. Wykonanie bieżącej taktyki sprowadza się do przechodzenia pomiędzy kolejnymi zachowaniami robota w obrębie
   danego automatu.
 \newpage
   \item Najniżej w hierarchii znajduje się warstwa \textit{Skills}, odnosi się ono do konkretnych umiejętności robota, takich jak:
@@ -83,7 +84,7 @@ ujęty w osobną warstwę  aplikacji komunikująca się bezpośrednio z symulato
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.38]{./zalozenia/przeplyw_sterowania.png}
-\caption{Komunikacja pomiędzy warstwami aplikacji.} \label{fig:przeplyw_sterowania}
+\caption{Komunikacja pomiędzy warstwami aplikacji} \label{fig:przeplyw_sterowania}
 \end{figure}
 Główną motywacją takiej architektury było umożliwienie prostego przystosowania aplikacji do sterowania rzeczywistym robotem pobierającym dane z zewnętrznego serwera. 
 Ponieważ w rozgrywkach biorą udział roboty holonomiczne, zdecydowano się na odejście od modelu robota o napędzie różnicowym stosowanego w pracy inżynierskiej. Opracowano zatem nowy model wzorowany na rzeczywistych

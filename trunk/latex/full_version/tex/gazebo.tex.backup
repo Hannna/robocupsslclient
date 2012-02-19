@@ -45,7 +45,7 @@
 	
  	\subsection{Gazebo}
  	
- 	Aplikacja \textit{Gazebo} jak wynika z wcześniejszego tekstu, umożliwia symulację grup robotów mobilnych. Symulowane
+ 	Aplikacja \textit{Gazebo} umożliwia symulację grup robotów mobilnych. Symulowane
  	środowisko jest w pełni trójwymiarowe, uwzględniona jest dynamika brył oraz obliczane rzeczywiste oddziaływania między komponentami stworzonego świata.
 	Okupione jest to oczywiście większym niż w przypadku \textit{Stage} zużyciem mocy obliczeniowej, dlatego symulowane populacje robotów nie powinny być zbyt liczne.
  	 	
@@ -77,9 +77,15 @@
 	określające przebieg symulacji oraz informacje o występujących w danym świecie modelach.
 	
 	\subsection{Zasady modelowania w Gazebo 0.10}
-	Format pliku \textit{.world} zawierającego opis symulowanego środowiska daje użytkownikowi możliwość konfiguracji wielu kluczowych elementów takich jak: konfiguracja graficznego interfejsu użytkownika,
-	zmiana sposobu renderowania sceny, wybór metody detekcji kolizji, zmiana wartości globalnych parametrów symulacji (m.in krok pracy symulatora). Elementy przykładowego pliku \textit{.world} zostały zaprezentowane na listingach poniżej.
-	\todo{poprawic listing}
+	Format pliku \textit{.world} zawierającego opis symulowanego środowiska daje użytkownikowi możliwość konfiguracji wielu kluczowych elementów takich jak:
+	 \begin{itemize}
+	  \item konfigurację graficznego interfejsu użytkownika,
+	  \item zmianę sposobu renderowania sceny,
+	  \item wybór metody detekcji kolizji,
+	  \item zmianę wartości globalnych parametrów symulacji (m.in kroku pracy symulatora).
+	 \end{itemize}
+
+	Elementy przykładowego pliku \textit{.world} zostały zaprezentowane na listingach poniżej. Każdy opis świata powinien zaczynać się w sposób przedstawiony na \ref{lst::world_start}.
 	%\small
 	%\lstset{language=XML,  basicstyle=\ttfamily\footnotesize,
 	\lstset{language=XML,  basicstyle=\ttfamily\scriptsize, 
@@ -88,12 +94,12 @@
 	backgroundcolor=\color{light-gray},
 	frame=single,
 	breaklines=true}
-	\begin{lstlisting}[name=gazebo_simple_world]
+	\begin{lstlisting}[name=gazebo_simple_world,caption=Nagłówek pliku opisującego świat. \label{lst::world_start}]
 	<?xml version="1.0"?>
 	<gazebo:world>
 	\end{lstlisting}
-	Bardzo istotnym elementem jest konfiguracja fizyki (ODE), interfejs umożliwia konfigurację globalnych parametrów takich jak:
-	\begin{lstlisting}[name=gazebo_simple_world]
+	Bardzo istotnym elementem jest konfiguracja parametrów wykorzystywanych przez bibliotekę ODE, opisujących oddziaływania mechaniczne pomiędzy bryłami. Schemat xml umożliwia konfigurację globalnych parametrów takich jak:
+	\begin{lstlisting}[name=gazebo_simple_world,caption=Parametry symulacji.]
 	<physics:ode>
 		<stepTime>0.001</stepTime>
 		<gravity>0 0 -9.8</gravity>		
@@ -114,35 +120,38 @@
 	breaklines=true}
 	Znaczenie poszczególnych parametrów jest następujące:
 	\begin {enumerate}
-	 \item \texttt{stepTime} jest wyrażony w sekundach i określa czas pomiędzy kolejnymi aktualizacjami silnika \texttt{ODE},
-	 \item \texttt{gravity} jest wektorem określającym siłę grawitacji,
-	 \item \texttt{erp} (\textit{error reduction parameter}), przyjmuje wartości z przedziału od $0$ do $1$ i jest odpowiedzialny za redukcję błędów w połączeniach pomiędzy bryłami
-	  (problematyka zostanie szerzej poruszona na stronie \pageref{fig:joints}); \texttt{erp} ustawione na $0$ powoduje, że żadna dodatkowa siła nie jest przykładana do danej bryły, natomiast wartość $1$
-	 powoduje, że wszytskie błędy połączeń zostaną naprawione w kolejnym kroku symulatora,
-	 \item \texttt{cfm}(\textit{constraint force mixing})  odpowiada za sztywność ograniczeń występujących w kolizjach między bryłami; gdy wartość jest równa $0$ ograniczenie wynikające z fizyki
-nie może zostać złamane, ustawienie parametru na wartość dodatnią powoduje, że ograniczenie staje się ``miękkie'', sprężyste,
+	 \item \texttt{StepTime} jest wyrażony w sekundach i określa odstęp pomiędzy kolejnymi krokami symulatora.
+	 \item \texttt{Gravity} jest wektorem określającym siłę grawitacji.
+	 \item \texttt{Erp} (\textit{error reduction parameter}), jest odpowiedzialny za wartość dodatkowej siły przykładanej do dwóch brył, pomiędzy którymi występuje złączenie (\textit{joint}).
+	  Siła ta powoduje przemieszczenie brył do wymaganej przez typ złączenia poprawnej pozycji, w sytuacji kiedy na skutek błędów symulacji połączone bryły zmienią położenie względem siebie (więcej informacji można znaleźć na stronie \pageref{subsubsec:joints}).
+	  Parametr przyjmuje wartości z przedziału od $0$ do $1$. \texttt{Erp} ustawione na $0$ powoduje, że żadna dodatkowa siła nie jest przykładana do brył, natomiast wartość $1$
+	  powoduje, że wszystkie błędne złączenia zostaną naprawione w kolejnym kroku symulatora.
+	 \item \texttt{Cfm}(\textit{constraint force mixing})  odpowiada za sztywność złączeń (\textit{joints}) pomiędzy bryłami. Gdy wartość jest równa $0$ złączenie jest sztywne, czyli połączone bryły
+	  zachowują stałe położenie względem siebie.
+	  Przykładowo, w złączeniu typu gniazdo -- kula, przy  \textit{cfm} równym zero kula nie może znaleźć się poza gniazdem.
+	  Ustawienie parametru na wartość dodatnią powoduje, że złączenie staje się ``miękkie'', sprężyste. Oznacza to, że bryły mogą wnikać na pewną głębokość w siebie lub oddalać się.
+	  Odpowiednio dobierając \textit{erp} i \textit{cfm} można osiągnąć oscylacje.
 	  
-	 \item \texttt{stepType} odpowiada za rodzaj używanej funkcji z \texttt{ODE} do detekcji kolizji, użytkownik może dokonać wyboru jednej z dwóch wartości:
+	 \item \texttt{StepType} odpowiada za rodzaj używanej z biblioteki ODE funkcji do detekcji kolizji. Użytkownik może dokonać wyboru jednej z dwóch wartości:
 	      \begin{itemize}
 	       \item \textit{world}, używana jest wtedy funkcja \texttt{dWorldStep} operująca na macierzy zawierającej wszystkie ograniczenia; złożoność obliczeniowa tej metody wynosi $m^3$, natomiast pamięciowa
 jest rzędu $m^2$, gdzie $m$ określa ilość wierszy (ograniczeń) analizowanej macierzy,
-	       \item \textit{quick}, wtedy do detekcji kolizji stosowana jest metoda iteracyjna, w literaturze nazywana \texttt{SOR - Successive over-relaxation} należąca do rodziny metod Gaussa–Seidela; jej złożoność obliczeniowa jest rzędu $m*N$,
-		a pamięciowa $m$, gdzie $m$ ma znaczenie jak wyżej,
-		natomiast $N$ jest liczbą iteracji; dla dużych systemów metoda jest dużo bardziej wydajna jednak mniej dokładna, mogą także występować problemy z jej stabilnością; najprostszą metodą na poprawę stabilności
-		jest zwiększanie \texttt{cfm}, 
+	       \item \textit{quick}, wtedy do detekcji kolizji stosowana jest metoda iteracyjna, w literaturze nazywana \textit{SOR - Successive over-relaxation} należąca do rodziny metod Gaussa–Seidela; jej złożoność obliczeniowa jest rzędu $m*N$,
+		a pamięciowa $m$, gdzie $m$ ma znaczenie jak wyżej, natomiast $N$ jest liczbą iteracji;
+		dla dużych systemów metoda jest dużo bardziej wydajna jednak mniej dokładna, mogą także występować problemy z jej stabilnością; najprostszą metodą na poprawę stabilności jest zwiększanie \texttt{cfm}. 
 	      \end{itemize}
-	 \item \texttt{stepIters} określa ilość kroków, gdy do detekcji kolizji wybrano metodę iteracyjną,
-	 \item \texttt{stepW} określa czas relaksacji metody Gaussa–Seidela, 
-	 \item \texttt{contactSurfaceLayer} określa głębokość na jaką bryła może wnikać w podłoże, ustawienie parametru na małą wartość dodatnią zapobiega jitterowi w momencie, gdy ograniczenia są nieustannie tworzone
-	  i zrywane (na przykład podczas ruchu koła po podłożu),
-	 \item \texttt{contactMaxCorrectingVel} jest maksymalną korektą prędkości jaka może wynikać z utworzonych tymczasowo kontaktów; domyślnie parametr przyjmuje nieskończoną wartość zmniejszanie jego
+	 \item \texttt{StepIters} określa ilość kroków, gdy do detekcji kolizji wybrano metodę iteracyjną.
+	 \item \texttt{StepW} określa czas relaksacji metody Gaussa–Seidela. 
+	 \item \texttt{ContactSurfaceLayer} określa głębokość na jaką bryła może wnikać w podłoże, ustawienie parametru na małą wartość dodatnią zapobiega jitterowi w momencie, gdy ograniczenia są nieustannie tworzone
+	  i zrywane (na przykład podczas ruchu koła po podłożu).
+	 \item \texttt{ContactMaxCorrectingVel} jest maksymalną korektą prędkości jaka może wynikać z utworzonych tymczasowo kontaktów. Domyślnie parametr przyjmuje nieskończoną wartość, a jego zmniejszanie
 	   wartości może zapobiec tworzeniu się zagnieżdżonych kontaktów. 
 	\end {enumerate}
 	
-	Domyślnie wartości globalnych parametrów są wykorzystywane podczas symulacji modeli lub połączeń \textit{joints}. Istnieje także możliwość określania wartości cfm i erp
+	Domyślnie  podczas symulacji modeli lub połączeń \textit{joints} wykorzystywane są  globalne wartości parametrów. Istnieje także możliwość określania wartości cfm i erp
 	dla poszczególnych obiektów.\newline
 	Ustawienia interfejsu: typ (dostępne tylko \textit{fltk}), rozmiaru okna i jego pozycja początkowej:
-\begin{lstlisting} [name=gazebo_simple_world]
+\begin{lstlisting} [name=gazebo_simple_world,caption=Konfiguracja interfejsu użytkownika.]
     <rendering:gui>
         <type>fltk</type>
         <size>640 480</size>
@@ -150,7 +159,7 @@ jest rzędu $m^2$, gdzie $m$ określa ilość wierszy (ograniczeń) analizowanej
     </rendering:gui>
 \end{lstlisting}
 	Określenie parametrów renderowanej sceny: techniki cieniowania, tekstury pokrywającej niebo (dostępne inne opcje, jak np. rodzaje oświetlenia, dodawanie mgły itp.):
-\begin{lstlisting} [name=gazebo_simple_world]
+\begin{lstlisting} [name=gazebo_simple_world,caption=Zmiana parametrów renderowania sceny.]
     <rendering:ogre>
         <shadowTechnique>stencilAdditive</shadowTechnique>
         <sky>
@@ -161,7 +170,7 @@ jest rzędu $m^2$, gdzie $m$ określa ilość wierszy (ograniczeń) analizowanej
 \end{lstlisting}
 
 	Do tak stworzonego pliku z opisem świata należy następnie dodać modele.  Dodany obiekt musi zawierać co najmniej jeden element \textit{body}, który jest złożony z elementów \textit{geoms}. Sekcja opisująca przykładowy model piłki mogłaby wyglądać następująco:
-	\begin{figure}[H]
+	\begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.35]{./gazebo/geoms}
 	\caption[Dostępne typy \textit{geoms}]
@@ -204,34 +213,33 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 </model:physical>
 \end{lstlisting}	
 
-
-	
-	\subsubsection{Połączenia pomiędzy bryłami }
+	\subsubsection{Połączenia pomiędzy bryłami \label{subsubsec:joints}}
 	Tworząc modele można korzystać z trzech podstawowych brył (kula, walec, prostopadłościan), a także z siatek \textit{trimesh} oraz elementów \textit{height field} (stworzonych do generowana terenu -- por. rys. \ref{fig:geoms})).
-	Żeby zamodelować robota, należy jeszcze stworzone bryły odpowiednio ze sobą powiązać. Do tego służą elementy typu \textit{joint}, którymi można łączyć komponenty \textit{body} (modelujące np. koła i podwozie robota).
-	Stopnie swobody połączenia zależą od wybranego typu wiązania \textit{joint} (dostępne typy przedstawiono na rys. \ref{fig:joints}). Obiekty połączone wiązaniem tworzą parę kinematyczną.
+	Z kilku brył można tworzyć złożone komponenty (\textit{body}) modelujące np. koła i podwozie robota. Natomiast komponenty typu \textit{body} można łączyć ze sobą za pomocą wiązań (\textit{joints}).
+	Stopnie swobody połączenia zależą od wybranego typu wiązania (dostępne typy przedstawiono na rys. \ref{fig:joints}). Obiekty połączone wiązaniem tworzą parę kinematyczną.
 	\textit{Gazebo} umożliwia nadawanie tak połączonym bryłom prędkości obrotowych względem siebie, co pozwala na modelowanie ruchomych elementów robotów.
 	\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.43]{./gazebo/joints}
 	\caption{Typy połączeń \textit{joints} (Źródło: dokumentacja ODE) \label{fig:joints}}
 	\end{figure}
-	Jak wspomniano wcześniej, w czasie realizowanej symulacji połączenia pomiędzy bryłami mogą ulec wypaczeniu, na skutek sił działających na model. Może to być tarcie,
+	Jak wspomniano wcześniej, w czasie realizowanej symulacji połączenia pomiędzy bryłami mogą ulec wypaczeniu na skutek sił działających na model. Może to być tarcie,
 	siła powodująca obrót bryły czy siły działające na model podczas kolizji. Sytuację taką przedstawiono na rysunku \ref{fig:bad_joint}.
 	\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.43]{./gazebo/bad_joint}
 	\caption{Zepsute połączenie (\textit{joints}) (Źródło: dokumentacja ODE) \label{fig:bad_joint}}
 	\end{figure}
-	Błędy tego typu można redukować za pomocą parametru \texttt{erp} ustawianego globalnie lub dla każdego z połączeń indywidualnie.
+	Błędy tego typu można redukować za pomocą parametru \texttt{erp} ustawianego globalnie lub indywidualnie dla każdego z połączeń.
 	\subsubsection{Sterowniki modeli }
 	Sterowanie zaprojektowanym modelem jest możliwe po uprzednim wyposażeniu go w sterownik (\textit{controller}). Sterowniki implementowane są przez użytkownika w C++ jako klasa dziedzicząca
 	po zdefiniowanym w \textit{libgazebo} interfejsie. Klasa odpowiada za przetwarzanie danych z sensorów robota oraz pozwala
-	na zadawanie prędkości bryłom połączonym wiązaniami. Komunikuje się on z programem sterującym za pośrednictwem interfejsów (bezpośrednio korzystając z \textit{libgazebo} lub poprzez \textit{Playera}).
-	\textit{Gazebo} oczywiście dostarcza gotowe sterowniki, pozwalające na kontrolowanie np. robota z napędem różnicowym, w wersji $0.10$ dodano także przykładowy model robota holonomicznego zawarty
-	w pliku \textit{wizbot.world}. Aby z nich skorzystać, wystarczy przypisać wybrany sterownik do modelu robota, określić, które ze złączeń odpowiadają jego kołom i podać nazwę instancji interfejsu,
-	za pomocą którego odbywać ma się komunikacja pomiędzy klientem a sterownikiem. W przypadku sterowania przemieszczeniem będzie to interfejs \textit{position}, za pomocą którego możemy zadawać prędkości bryłom,
-	ale \textit{Gazebo} posiada też zaimplementowane interfejsy do sterowania innymi elementami np. do komunikacji z laserowymi czujnikami odległości, kamerą bądź chwytakiem manipulatora. 
+	na nadawanie prędkości bryłom połączonym wiązaniami. Sterownik komunikuje się z programem za pośrednictwem interfejsów (bezpośrednio korzystając z \textit{libgazebo} lub poprzez \textit{Playera}).
+	\textit{Gazebo} oczywiście dostarcza gotowe sterowniki pozwalające na kontrolowanie np. robota z napędem różnicowym. W wersji $0.10$ dodano także sterownik robota z holonomiczną bazą jezdną wykorzystywany
+	do sterowania modelem z pliku \textit{wizbot.world}. Aby z nich skorzystać, wystarczy przypisać wybrany sterownik do modelu robota. Określić, które ze złączeń odpowiadają jego kołom i podać nazwę instancji interfejsu,
+	za pomocą którego odbywać ma się komunikacja pomiędzy klientem a sterownikiem. W przypadku sterowania przemieszczeniem będzie to interfejs \textit{position}, za pomocą którego możemy zadawać prędkości bryłom.
+	\textit{Gazebo} posiada też zaimplementowane interfejsy do sterowania innymi elementami np. do komunikacji z laserowymi czujnikami odległości, kamerą bądź chwytakiem manipulatora. 
+	\newpage
 	\lstset{language=XML,  basicstyle=\ttfamily\footnotesize, 
 	commentstyle={}, xleftmargin=20pt, numbers=left, numberstyle=\footnotesize,
 	caption={Przykład przypisanie sterownika do modelu},
@@ -251,16 +259,16 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	
 	\subsection{Realizacja środowiska Ligi RoboCup \label{subsect:realizacjaROBOCUP} }
 	
-	W celu realizacji niniejszej pracy stworzono dla symulatora \textit{Gazebo} modele odpowiadające robotom biorącym udział w \emph{Small-size League}. 
-	Boisko zostało stworzone z wykorzystaniem rzeczywistych wymiarów $5.4[m] x 7.4[m]$, obowiązujących w lidze w 2011 roku 
-	\protect\footnote{\url{http://small-size.informatik.uni-bremen.de/_media/rules:ssl-rules-2011.pdf}}. Wszystkie linie boiska są także zgodne obowiązującymi w tych mistrzostwach.
+	W celu realizacji niniejszej pracy dla symulatora \textit{Gazebo} stworzono modele odpowiadające robotom biorącym udział w \emph{Small-size League}. 
+	Boisko zostało stworzone z wykorzystaniem rzeczywistych wymiarów $5.4[m] x 7.4[m]$ obowiązujących w lidze w 2011 roku 
+	\protect\footnote{\url{http://small-size.informatik.uni-bremen.de/_media/rules:ssl-rules-2011.pdf}}. Wszystkie linie boiska są także zgodne z obowiązującymi w tych mistrzostwach.
 	Margines na auty jest równy $675$[mm].
 	Model piłki odpowiada piłce do golfa, która używana jest w oficjalnych rozgrywkach.
 
-	Wykonane modele robotów wzorowano na konstrukcji rzeczywistych robotów wykorzystywanych w \emph{Small-size League}. Otrzymane modele zaprezentowane są na rysunku \ref{fig:robots}.
-	Główna częścią robota jest walec o promieniu $6[cm]$ i wysokości $4[cm]$, umieszczony na trzech kołach rozmieszczonych symetrycznie na podstawie walca.
+	Wykonano modele zawodników wzorowane na konstrukcji rzeczywistych robotów wykorzystywanych w \emph{Small-size League}. Otrzymane modele zaprezentowane są na rysunku \ref{fig:robots}.
+	Główna częścią robota jest walec o promieniu $6[cm]$ i wysokości $4[cm]$, umieszczony na trzech kołach rozmieszczonych symetrycznie na jego podstawie.
 	Koła symulują zachowanie stosowanych w robotyce kół szwedzkich. Zachowanie takie osiągnięto poprzez dodanie nowego parametru do sekcji opisującej bryłę w symulatorze,
-	określającego kierunek siły tarcia dla danej bryły:
+	który określa kierunek siły tarcia dla danej bryły:
 	\lstset{language=XML,  basicstyle=\ttfamily\footnotesize, 
 	commentstyle={}, xleftmargin=20pt, numbers=left, numberstyle=\footnotesize,
 	caption={Parametr określający kierunek siły tarcia},
@@ -270,22 +278,24 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	\begin{lstlisting}	
 	<fDir1>1 0 0</fDir1>
 	\end{lstlisting}
+	
 	Powyższa wartość oznacza, że tarcie występuje jedynie w kierunku osi $OX$ danej bryły.
-	Należało także wprowadzić poprawkę w silniku fizycznym symulatora, tak aby \texttt{ODE} uwzględniało ten parametr. W strukturze opisującej punkt kontaktowy pomiędzy bryłami
-	ustawiono flagę \textit{dContactMu2}\protect\footnote{\url{http://www.ode.org/ode-latest-userguide.html}} w sytuacji kiedy dla bryły określony jest kierunek tarcia. Rozwiązanie takie umożliwiło ustawienie dla koła dużego tarcia w kierunku ruchu obrotowego oraz małego
-	w kierunku prostopadłym, czyli osiągnięto zachowanie typowe dla kół szwedzkich.
+	Należało także wprowadzić poprawkę w silniku fizycznym symulatora, tak aby ODE uwzględniało ten parametr. W sytuacji kiedy dla bryły określony jest kierunek tarcia,
+	w strukturze opisującej punkt kontaktowy pomiędzy bryłami ustawiono także flagę \textit{dContactMu2}\protect\footnote{\url{http://www.ode.org/ode-latest-userguide.html}} .
+	Rozwiązanie takie umożliwiło ustawienie dużego tarcia koła  w kierunku ruchu obrotowego oraz małego
+	w kierunku prostopadłym. Czyli osiągnięto zachowanie typowe dla kół szwedzkich.
 	\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{./gazebo/roboty}
 	\caption{Opracowane modele robotów  \label{fig:robots}}
 	\end{figure}
 	Robot został dodatkowo wyposażony w \textit{dribbler}\protect\footnote{urządzenie opisano w par.~\ref{sec:budowa_robota}} pomagający utrzymać kontrolę nad piłką.
-	Mimo że \textit{Gazebo} udostępnia sterownik dla napędu holonomicznego, sterowanie robotem wymagało napisania nowego kontrolera, ponieważ nie uwzględniał on obsługi
-	\textit{dribblera}, ani nie umożliwiał oddawania strzałów. Sterownik został zrealizowany w oparciu o teorię zawartą w rozdziale \ref{chap:holonomic}. Z punktu widzenia użytkownika
+	Mimo że \textit{Gazebo} udostępnia sterownik dla napędu holonomicznego, sterowanie robotem wymagało napisania nowego kontrolera. Ponieważ nie uwzględniał on obsługi
+	\textit{dribblera} ani nie umożliwiał oddawania strzałów. Sterownik został zrealizowany w oparciu o teorię zawartą w rozdziale \ref{chap:holonomic}. Z punktu widzenia użytkownika
 	sterowanie robotem odbywa się poprzez ustawianie odpowiedniej prędkości liniowej i kątowej. Sterownik przekształca je na odpowiednie prędkości obrotowe poszczególnych kół.
-	Dodatkowo zaimplementowano programowy regulator \texttt{PID}, sterujący siłą przykładana do kół robota. Dzięki temu uzyskano lepszą dokładność sterowania robotem.
-	Parametry regulatora początkowo dobrano posługując się metodą \texttt{Zieglera-Nicholsa}. Przy wyłączonych członach całkującym i różniczkującym analizowano wykresy rozkładu
-	prędkości obrotowych kół robota w czasie przy ustalonej zadanej prędkości liniowej. Stopniowo zwiększano współczynnik wzmocnienia proporcjonalnego. Wyznaczono wartość wzmocnienia
+	Dodatkowo zaimplementowano programowy regulator PID, sterujący siłą przykładana do kół robota. Dzięki temu uzyskano lepszą dokładność sterowania robotem.
+	Parametry regulatora początkowo dobrano posługując się metodą Zieglera-Nicholsa. Przy wyłączonych członach całkującym i różniczkującym analizowano wykresy rozkładu
+	prędkości obrotowych kół robota w czasie przy ustalonej zadanej prędkości liniowej. Stopniowo zwiększano współczynnik wzmocnienia proporcjonalnego. Wyznaczono wartość wzmocnienia,
 	przy której układ zbliżył się do granicy stabilności (wzmocnienie krytyczne $K_k$) oraz wyznaczono okres drgań $T_k$. 
 	Wartości właściwych wzmocnień poszczególnych  członów wyznaczono zgodnie z procedurą: $K=0.6K_k$, $T_i=T_k$, $T_d=0.12T_k$. Następnie eksperymentalnie dokonano ich korekty.
 	W pliku opisującym model robota istnieje możliwość ręcznego modyfikowania nastaw regulatora.
@@ -299,4 +309,4 @@ Sekcja \textit{visual} bloku \textit{geom} pozwala na przypisanie obiektowi wygl
 	symulatorze, tak aby dla każdej bryły istniała możliwość konfigurowania tego parametru (\textit{angularDamping}) w pliku opisującym model.
 
 	Ponieważ korzystano z niestabilnej wersji oprogramowania (inne nie było jeszcze dostępne), pobranego bezpośrednio z repozytorium deweloperów, należało poprawić jeszcze kilka innych błędów symulatora,
-	miedzy innymi niepoprawną pracę interfejsu umożliwiającego komunikację pomiędzy symulatorem a aplikacją kliencką.
+	miedzy innymi niepoprawną pracę interfejsu \textit{SimulationIface} umożliwiającego komunikację pomiędzy symulatorem a aplikacją kliencką.

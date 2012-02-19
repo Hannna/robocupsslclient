@@ -1,5 +1,5 @@
 \chapter[Wstęp ]{Wstęp}
-Szybki postęp technologiczny zapoczątkowany w XX wieku umożliwił rozwój nowych dziedzin nauki, między innymi robotyki. Obecnie maszyny mogą zastępować ludzi przy wykonywaniu wielu rozmaitych czynności.
+Szybki postęp techniczny zapoczątkowany w XX wieku umożliwił rozwój nowych dziedzin nauki, między innymi robotyki. Obecnie maszyny mogą zastępować ludzi przy wykonywaniu wielu rozmaitych czynności.
 Innowacyjne rozwiązania stwarzają jednak potrzebę opracowania wymagającego środowiska testowego. Jedną z takich inicjatyw, mających na celu wspieranie rozwoju i popularyzację robotyki, są rozgrywki
 RoboCup. W obrębie przedsięwzięcia wyróżnionych jest kilka lig różniących się zasadami oraz typem robotów biorących udział w zawodach.
 Głównym celem przyświecającym organizatorom jest stworzenie do 2050 roku drużyny robotów zdolnej wygrać z ówczesnymi mistrzami świata.
@@ -9,7 +9,8 @@ Rozwiązanie problemu stawia przed uczestnikami wyzwania konstrukcyjne oraz algo
 zawodnikiem, wyznaczania bezkolizyjnej ścieżki do celu oraz realizacji prostych zachowań niezbędnych podczas rozgrywek.
 \section{Zakres pracy}
 Niniejsza praca jest niejako kontynuacją działań podjętych podczas realizacji pracy inżynierskiej. Tematyka w niej poruszona dotyczy na wstępie samych rozgrywek RoboCup. Jak już napisano we 
-wstępie przedsięwzięcie dotyczy głównie rozgrywek piłkarskich, w których udział biorą roboty. Jednak ze względu na dynamiczny rozwój samej robotyki uczestnicy projektu aaaa.
+wstępie przedsięwzięcie dotyczy głównie rozgrywek piłkarskich, w których udział biorą roboty. W ostatnich latach robotyka cieszy się szerokim zainteresowaniem, dlatego też do projektu.
+Jednak ze względu na dynamiczny rozwój samej robotyki, uczestnicy projektu .
 Obecnie podział jest następujący:
 \begin{itemize}
 	\item \emph{RoboCupSoccer}, czyli rozgrywki piłkarskie autonomicznych robotów,
@@ -78,16 +79,16 @@ Użyteczność algorytmu sprawdzono podczas przeprowadzonych eksperymentów, wzo
 Za główny cel niniejszej pracy postawiono stworzenie oprogramowania umożliwiającego wykonywanie podstawowych elementów gry w piłkę nożną przez roboty. W tym celu posłużono się architekturą STP. Aby jednak zrealizować to zadanie konieczne było
 stworzenie środowiska symulacyjnego, umożliwiającego modelowanie rozgrywki \emph{Small-size League}. Przy opracowywaniu modelu środowiska starano się w jak największym stopniu odzwierciedlić realia
 ligi \emph{Small-size League}. Po drugie środowisko symulacyjne miało być na tyle elastyczne, aby w przyszłości umożliwiało testowanie różnorodnych rozwiązań sterowania drużyną.
-Zachowano schemat przepływu informacji z pracy inżynierskiej. Został on zamieszczony na rysunku \ref{fig:przeplyw_sterowania}. Stosowany w rozgrywkach \emph{Small-size League} \texttt{videoserwer} został
-ujęty w osobną warstwę  aplikacji, komunikująca się bezpośrednio z symulatorem. Osobną warstwę stanowi także część aplikacji odpowiedzialna za sterowanie robotem.
+Zachowano schemat przepływu informacji z pracy inżynierskiej, który zamieszczono na rysunku \ref{fig:przeplyw_sterowania}. Stosowany w rozgrywkach \emph{Small-size League} \textit{videoserver} został
+ujęty w osobną warstwę  aplikacji komunikująca się bezpośrednio z symulatorem. Osobną warstwę stanowi także część aplikacji odpowiedzialna za sterowanie robotem.
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.38]{./zalozenia/przeplyw_sterowania.pdf}
+\includegraphics[scale=0.38]{./zalozenia/przeplyw_sterowania.png}
 \caption{Komunikacja pomiędzy warstwami aplikacji.} \label{fig:przeplyw_sterowania}
 \end{figure}
 Główną motywacją takiej architektury było umożliwienie prostego przystosowania aplikacji do sterowania rzeczywistym robotem pobierającym dane z zewnętrznego serwera. 
-Ponieważ w rozgrywkach biorą udział roboty holonomiczne, zdecydowano się na odejście od modelu robota o napędzie różnicowym stosowanego w pracy inżynierskiej (wzorowanego na \texttt{HMT}) i opracowanie nowego wzorowanego na rzeczywistych
+Ponieważ w rozgrywkach biorą udział roboty holonomiczne, zdecydowano się na odejście od modelu robota o napędzie różnicowym stosowanego w pracy inżynierskiej. Opracowano zatem nowy model wzorowany na rzeczywistych
 zawodnikach.
-Kolejnym celem pracy wynikającym bezpośrednio ze zmiany modelu zawodnika, było zaimplementowanie i przetestowanie algorytmu nawigacji robota w dynamicznym środowisku. Zdecydowano się na algorytm \texttt{RRT},
-postanowiono także porównać jego skuteczność z wcześniej stosowanym \texttt{CVM}.
+Kolejnym celem pracy, wynikającym bezpośrednio ze zmiany modelu robota, było zaimplementowanie i przetestowanie algorytmu nawigacji w dynamicznym środowisku. Zdecydowano się na algorytm RRT,
+postanowiono także porównać jego skuteczność z wcześniej stosowanym CVM.
 
