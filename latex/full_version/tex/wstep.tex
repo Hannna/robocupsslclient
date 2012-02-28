@@ -19,7 +19,7 @@ Obecnie podział jest następujący:
 	\item \emph{RoboCupJunior} popularyzujący robotykę wśród młodzieży.
 \end{itemize}
 
-Same rozgrywki piłkarskie \emph{RoboCupSoccer} także nie są jednolite, zostały one podzielone w zależności od konstrukcji mechanicznej zawodników. Więcej informacji na ten temat zostanie zaprezentowanych w rozdziale
+Same rozgrywki piłkarskie \emph{RoboCup Soccer} także nie są jednolite, zostały one podzielone w zależności od konstrukcji mechanicznej zawodników. Więcej informacji na ten temat zostanie zaprezentowanych w rozdziale
 \ref{chap:robocup}. W ramach samej pracy skupiono się na lidze małych robotów (\emph{Small-size League}), ponieważ już wcześniej prowadzone były prace w tym kierunku na Wydziale Elektroniki i 
 Technik Informacyjnych Politechniki Warszawskiej.
 
@@ -77,9 +77,9 @@ Użyteczność algorytmu sprawdzono podczas przeprowadzonych eksperymentów, wzo
 
 \section{Cel pracy}
 Za główny cel niniejszej pracy postawiono stworzenie oprogramowania umożliwiającego wykonywanie podstawowych elementów gry w piłkę nożną przez roboty. W tym celu posłużono się architekturą STP. Aby jednak zrealizować to zadanie konieczne było
-stworzenie środowiska symulacyjnego, umożliwiającego modelowanie rozgrywki \emph{Small-size League}. Przy opracowywaniu modelu środowiska starano się w jak największym stopniu odzwierciedlić realia
-ligi \emph{Small-size League}. Po drugie środowisko symulacyjne miało być na tyle elastyczne, aby w przyszłości umożliwiało testowanie różnorodnych rozwiązań sterowania drużyną.
-Zachowano schemat przepływu informacji z pracy inżynierskiej, który zamieszczono na rysunku \ref{fig:przeplyw_sterowania}. Stosowany w rozgrywkach \emph{Small-size League} \textit{videoserver} został
+stworzenie środowiska symulacyjnego, umożliwiającego modelowanie rozgrywki \emph{Small-Size League}. Przy opracowywaniu modelu środowiska starano się w jak największym stopniu odzwierciedlić realia
+ligi \emph{Small-Size League}. Po drugie środowisko symulacyjne miało być na tyle elastyczne, aby w przyszłości umożliwiało testowanie różnorodnych rozwiązań sterowania drużyną.
+Zachowano schemat przepływu informacji z pracy inżynierskiej, który zamieszczono na rysunku \ref{fig:przeplyw_sterowania}. Stosowany w rozgrywkach \emph{Small-Size League} \textit{videoserver} został
 ujęty w osobną warstwę  aplikacji komunikująca się bezpośrednio z symulatorem. Osobną warstwę stanowi także część aplikacji odpowiedzialna za sterowanie robotem.
 \begin{figure}[H]
 \centering
@@ -89,6 +89,12 @@ ujęty w osobną warstwę  aplikacji komunikująca się bezpośrednio z symulato
 Główną motywacją takiej architektury było umożliwienie prostego przystosowania aplikacji do sterowania rzeczywistym robotem pobierającym dane z zewnętrznego serwera. 
 Ponieważ w rozgrywkach biorą udział roboty holonomiczne, zdecydowano się na odejście od modelu robota o napędzie różnicowym stosowanego w pracy inżynierskiej. Opracowano zatem nowy model wzorowany na rzeczywistych
 zawodnikach.
+
 Kolejnym celem pracy, wynikającym bezpośrednio ze zmiany modelu robota, było zaimplementowanie i przetestowanie algorytmu nawigacji w dynamicznym środowisku. Zdecydowano się na algorytm RRT,
 postanowiono także porównać jego skuteczność z wcześniej stosowanym CVM.
+
+Ostatnim celem niniejszej pracy było opracowanie algorytmów umożliwiających wykonywanie robotowi prostych zachowań, kluczowych dla rozgrywek w piłkę nożną, takich jak dryblowanie z piłką,
+podawanie piłki, wychodzenie na pozycję do strzału czy strzelanie na bramkę. Algorytmy te powinny także zapewniać koordynację działań zawodników w obrębie drużyny.
+Opracowane rozwiązanie musi także umożliwiać łatwą zmianę zachowania robota w zależności od sytuacji na boisku.
+Przygotowane algorytmy powinny umożliwić w przyszłości przeprowadzenie pełnej rozgrywki w lidze  \emph{Small-Size League}.
 

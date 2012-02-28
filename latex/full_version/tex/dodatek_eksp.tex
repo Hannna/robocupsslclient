@@ -1,17 +1,16 @@
 \chapter[Szczegóły eksperymentów]{Szczegóły eksperymentów \label{sec:szczegoly_eksp}}
 \chaptermark{Szczegóły eksperymentów}
-Dodatek zawiera poglądowe rysunki przedstawiające środowiska testowe, na których przeprowadzane były eksperymenty.
-Na każdym z nich zaznaczono inne roboty nie podlegające sterowaniu przez testowany algorytm oraz początkowe położenie 
-i orientację sterowanego robota. 
-W przypadku eksperymentów w środowisku dynamicznym zaznaczono także kierunek i zwrot prędkości z jaka poruszały się przeszkody.
-Poniżej zamieszczono legendę objaśniającą znaczenie użytych symboli.
+W dodatku zamieszczone zostały ilustracje przedstawiające środowiska testowe wykorzystywane w niniejszej pracy oraz w pracy inżynierskiej \cite{inzynierka}.
+Na rysunkach widoczne są wszystkie roboty znajdujące się na boisku, także te nie podlegające sterowaniu przez RRT.
+W przypadku eksperymentów z dynamicznymi przeszkodami zaznaczono także kierunek i zwrot prędkości z jaką poruszały się roboty.
+Użyte symbole objaśnione są w legendzie poniżej.
 	\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.35]{./eksperymenty/srodowiska/legenda}
 	\end{figure}	
-
-W drugiej części dodatku zamieszczono tabelę z zastosowanymi podczas eksperymentów z użyciem algorytmu \textit{CVM} zestawami wag. Ponieważ każda ze składowych funkcji celu (\ref{eq:fcelu_cvm}) algorytmu  zwraca wartość z przedziału 
-$[0;1]$ zdecydowano się na przetestowanie takich trójek liczb z tego przedziału,  które sumują się do jedności.
+Część druga dodatku zawiera tabele zawierające wszystkie wartości przetestowanych zestawów prawdopodobieństw $goalProb$ (odpowiadającego za losowanie punktu w kierunku celu) oraz
+$wayPointProb$ (odpowiadającego za rozszerzanie drzewa RRT w kierunku węzła z poprzedniego uruchomienia).  
+Ponieważ suma prawdopodobieństw powinna wynosić $1$, zdecydowano się na sprawdzenie wszystkich par z przedziału [$0;1$] z krokiem $0.1$. 
 \section*{Środowiska testowe\label{sec:srodowiska_testowe}}
 \subsection*{statyczne:}
 	\begin{figure}[H]

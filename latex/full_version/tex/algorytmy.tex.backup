@@ -9,14 +9,13 @@ Jednym z podstawowych problemów podczas poruszania się każdej jednostki mobil
 Współczesna robotyka zna wiele algorytmów rozwiązujących z mniejszym bądź większym sukcesem to zadanie. Użycie wielu z nich jest jednak w pełni uzasadnione tylko w
 szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej znane algorytmy unikania kolizji (omówione także w pracy inżynierskiej \cite{inzynierka}).
 \subsection{Algorytm Bug}
-	Najprostszym algorytmem unikania kolizji jest algorytm \emph{Bug} naśladujący zachowanie pluskwy. Gdy robot,
-	podążając do punktu docelowego, napotyka przeszkodę, okrąża ją całkowicie i zapamiętuje położenie, w którym
-	znajdował się najbliżej celu. Następnie ponownie podczas powtórnego okrążania przeszkody robot dąży do
-	uprzednio zapamiętanego punktu po czym odrywa się od przeszkody i zaczyna podążać w stronę celu. Ścieżka
-	wyznaczona za pomocą algorytmu została zaprezentowana na rysunku
-	\ref{fig:Bug1}. Robot wykorzystujący ten algorytm powinien być wyposażony w dwa rodzaje czujników:
+	Najprostszym algorytmem, służącym do wyznaczania bezkolizyjnej ścieżki jest algorytm \emph{Bug}. Jak sama nazwa wskazuje zasada jego działania wzorowana
+	jest na zachowaniu pluskwy. W momencie, gdy podążający do celu robot napotka przeszkodę, powinien okrążyć ją całkowicie i zapamiętać pozycję, w której znajdował
+	się najbliżej celu. W kolejnym kroku, robot powinien ponownie okrążyć przeszkodę, z tym wyjątkiem, że jeśli osiągnie uprzednio zapamiętaną pozycję, powinien oderwać się od przeszkody
+	i rozpocząć poruszanie w kierunku właściwego celu. Przykładowe rozwiązanie otrzymane za pomocą algorytmu \emph{Bug} zaprezentowano na rysunku \ref{fig:Bug1}.
+	Stosowanie tej metody wymaga wyposażenie robota w następujące czujniki:
 	\begin{itemize}
-	\item czujnik celu -- wskazujący kierunek do celu oraz umożliwiający pomiar odległości do celu,
+	\item czujnik celu -- wyznaczający kierunek w stronę celu oraz umożliwiający pomiar odległości do celu,
 	\item czujnik lokalnej widoczności -- umożliwiający  podążanie wzdłuż konturu przeszkody. 
 	\end{itemize}
 	\begin{figure}[h]
@@ -24,23 +23,22 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	\includegraphics[scale=0.7]{./algorytmy/Bug1}
 	\caption{ Bezkolizyjna ścieżka wyznaczona przez algorytm Bug }\label{fig:Bug1}
 	\end{figure}
-	Ścieżka wyznaczona przez ten algorytm jest daleka od optymalnej. Robot niezależnie od wybranego kierunku
-	omijania przeszkody musi ją okrążyć całkowicie. W pewnych sytuacjach całkowite okrążenie przeszkody jest niemożliwe. Na przykład jesli robot natrfi na ścianę.
-	W takim przypadku algorytm zawodzi całkowicie.
-	Efektywność algorytmu można poprawić sprawdzając podczas okrążania przeszkody czy punkt w którym aktualnie
-	znajduje  się robot jest poszukiwanym punktem położonym najbliżej celu. Przykładowa ścieżka
-	wyznaczona za pomocą zmodyfikowanej wersji algorytmu jest widoczna na rysunku \ref{fig:Bug2}.
+	Dużą wadą algorytmu jest fakt, że otrzymana ścieżka jest daleka od optymalnego rozwiązania. Sterowany robot zmuszony jest do całkowitego okrążenia przeszkody, niezależnie 
+	od obranego wstępnie kierunku ruchu. Co więcej, w niektórych sytuacjach robot nie jest w stanie okrążyć przeszkody (przykładem może być ściana korytarza). 
+	W takich sytuacjach algorytm nie może zostać wykorzystany.
+	Podstawową wersję algorytmu można zmodyfikować, tak aby poprawić efektywność. Podczas okrążania przeszkody robot może sprawdzać czy punkt w którym aktualnie się znajduje jest poszukiwanym punktem położonym najbliżej celu. 
+	Przykładowa ścieżka wyznaczona za pomocą rozszerzonej wersji algorytmu zamieszczona została na rysunku \ref{fig:Bug2}.
 	Robot otacza przeszkodę w wybranym wcześniej kierunku i odłącza się od niej w momencie przecięcia
- 	prostej łączącej punkt startowy z punktem docelowym. Uzyskana w ten sposób ścieżka nadal zależy od wybranego
-	 a~priori kierunku jazdy.	
+ 	prostej łączącej punkt startowy z punktem docelowym. Uzyskana w ten sposób ścieżka nadal zależy od wybranego a~priori kierunku jazdy.	
 	\begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{./algorytmy/Bug2}
 	\caption{Zasada działania algorytmu Bug w wersji rozszerzonej}\label{fig:Bug2}
 	\end{figure}
-	Obie zaprezentowane wersje algorytmu Bug nie uwzględniają ograniczeń wynikających z kinematyki robota, a w
-	szczególności faktu, że rozpatrywany robot może być nieholonomiczny.
-\subsection{Algorytm VHF}
+	Algorytm Bug w żadnej ze swoich wersji nie uwzględnia ograniczeń wynikających z budowy robota. Jest to jeden z najprostszych algorytmów służących do unikania
+	kolizji, jednak jego efektywność jest bardzo mała. Wyznaczona ścieżka jest daleka od optymalnej, a podczas okrążania przeszkody robot nie może poruszać się z duża prędkością,
+	co wydłuża czas dojazdu do celu.
+\subsection{Algorytm VFH}
 	Pełna  anglojęzyczna nazwa metody brzmi \mbox{ \emph{Vector Field Histogram}}. Na język polski można ją
 	przetłumaczyć jako algorytm histogramu pola wektorowego. Należy ona do grupy metod, które w czasie
 	rzeczywistym pozwalają na jednoczesne wykrywanie i omijanie przeszkód oraz kierowanie robota na cel.
@@ -86,7 +84,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 		\xi d^{*}_{goal}d - \frac{1}{2}(d^{*}_{goal})^{2} & \quad \mbox{dla $d\geqq d^{*}_{goal}$ }\\
 		\end{array} \right. 
 	\end{equation}
-	, gdzie $d=d(q,q_{goal})$ jest odległością danego położenia od celu, $\varepsilon$ jest stałą określającą poziom przyciągania do celu, natomiast $d^{*}_{goal}$ określa próg,
+	gdzie $d=d(q,q_{goal})$ jest odległością danego położenia od celu, $\varepsilon$ jest stałą określającą poziom przyciągania do celu, natomiast $d^{*}_{goal}$ określa próg,
 	po którym funkcja z kwadratowej przechodzi w trójkątną.
 	Oddziaływanie przeszkód opisane jest następującym wzorem:
 	\begin{equation}
@@ -96,7 +94,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 		0 & \quad \mbox{dla $D(q)> Q^{*}$ }\\
 		\end{array} \right.
 	\end{equation}
-	,gdzie $ Q^{*} $ jest zasięgiem pola odpychającego przeszkody, natomiast $\eta$ odpowiada za siłę tego pola. 
+	gdzie $ Q^{*} $ jest zasięgiem pola odpychającego przeszkody, natomiast $\eta$ odpowiada za siłę tego pola. 
 	Kierunek, w którym podążać ma robot wyznaczany jest ze wzoru:
 	\begin{equation}
 	- \nabla U(q) = - \nabla U_{att}(q) - \nabla U_{rep}(q)
@@ -150,17 +148,21 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 
 \subsection{Algorytm CVM (\textit{Curvature Velocity Method})}
 	W pracy inżynierskiej \cite{inzynierka} jako docelowy algorytm unikania kolizji wybrany został właśnie \texttt{CVM}.
+	Główną motywacją wykorzystania tej metody była wykorzystywana wtedy różnicowa baza jezdna. Duża zaletą algorytmu są także niskie nakłady obliczeniowe oraz prosty sposób
+	sterowania zasięgiem algorytmu. Metodę można także łatwo zmodyfikować tak, aby uwzględniała dynamikę przeszkód znajdujących się w danym środowisku.
+
 	Metoda krzywizn i prędkości (ang. \textit{Curvature Velocity Method}) została zaproponowana przez R. Simmonsa w
-	\cite{CVM_2}, należy do grupy metod bazujących na przeszukiwaniu przestrzeni prędkości, a jej działanie
+	\cite{CVM_2}, należy ona do grupy metod bazujących na przeszukiwaniu przestrzeni prędkości, a jej działanie
 	jest zbliżone do techniki dynamicznego okna zaprezentowanej w \ref{subsec:dynamic_window}.
 
-	Spośród wszystkich par $(v,\omega)$ wybierana jest taka, która osiąga największą wartość funkcji celu.
+	Spośród wszystkich par $(v,\omega)$ dozwolonych prędkości liniowych i kątowych, wybierana jest taka, która osiąga największą wartość funkcji celu.
 	Podejście takie umożliwia uwzględnienie przede wszystkim ograniczeń kinematycznych, ale także i dynamicznych.
 	Wyznaczone przez algorytm sterowanie na następny krok definiuje łuk $c=\frac{\omega}{v}$, po którym będzie
 	poruszał się robot do chwili wyznaczenia kolejnego sterowania.
 	
-	Funkcja celu została tak skonstruowana, aby preferować prędkości, które prowadzą do celu, ale jednocześnie  
-	nie powodują kolizji. Ponadto dołożone zostało kryterium na maksymalizację prędkości liniowej robota. Funkcja celu jest zatem sumą ważoną trzech składowych: 
+	Algorytm korzysta z funkcji celu, której konstrukcja ma zapewnić, że wyznaczone prędkości prowadzą robota do celu, ale jednocześnie zapewniają szybki dojazd do zadanego punktu
+	oraz unikanie kolizji.
+	Takie zachowanie osiągnięto definiując funkcję celu jako sumę ważoną następujących trzech składowych:
 	\begin{equation} \label{eq:fcelu_cvm}
 	F(v,\omega)=\alpha_1 \mathcal{V}(v,\omega)+\alpha_2 \mathcal{D}(v,\omega) + \alpha_3 \mathcal{G} (v,\omega))
 	\end{equation}
@@ -171,32 +173,31 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	 \item funkcja $\mathcal{D}(v,\omega)$ określa odległość od najbliższej przeszkody na którą napotka robot poruszający się po trajektorii wyznaczonej przez $(v,\omega)$,
 	 \item funkcja $\mathcal{G}(v,\omega)$ odpowiada za kierowanie się robota na cel.
 	\end{itemize}
-	Zachowaniem robota można sterować poprzez zmianę wartości współczynników wagowych. W skrajnych przypadkach,
-	gdy któryś ze współczynników zostanie wyzerowany, traci on całkowicie wpływ na trajektorię po której
-	porusza się robot. Szczegółowy opis poszczególnych składowych, jak i samego działania metody został
-	zaprezentowany w paragrafie \ref{sec:CVM:action}.
+	Zmiana wartości współczynników wagowych, wpływa bezpośrednio na zmianę zachowania sterowanego robota. Przykładowo, jeśli $\alpha_2$ będzie równe zero, robot nie będzie unikał kolizji.
+	Kluczem do poprawnego działania tej metody jest wyznaczenie odpowiednich wartości współczynników.
+	Zachowaniem robota można sterować poprzez zmianę wartości współczynników wagowych. W dalszej części rozdziału zamieszczono szczegółowy opis poszczególnych składowych funkcji celu
+	oraz zaprezentowano zasadę działania algorytmu.
 
-	\section{Zasada działania CVM \label{sec:CVM:action}} 
-	Omawianie mechanizmu wyboru najlepszego sterowania z wykorzystaniem algorytmu \textit{CVM} należy rozpocząć od przypomnienia funkcji celu (\ref{eq:fcelu_cvm})
+	\section{Opis działania CVM \label{sec:CVM:action}} 
+	Omawianie mechanizmu wyboru najlepszego sterowania z wykorzystaniem algorytmu CVM należy rozpocząć od przypomnienia funkcji celu (\ref{eq:fcelu_cvm})
 	\begin{equation*}
 	F(v,\omega)=\alpha_1 \mathcal{V}(v,\omega)+\alpha_2 \mathcal{D}(v,\omega) + \alpha_3 \mathcal{G} (v,\omega))
 	\end{equation*}
-	W powyższym równaniu składowe odpowiadające za kierowanie na cel oraz za maksymalizację prędkości liniowej zostały zdefiniowane następująco:
+	Składowe odpowiadające za kierowanie robota na cel oraz za maksymalizację prędkości liniowej definiowane są następująco:
 	\begin{gather}
 	\mathcal{V}(v,\omega)=\frac{v}{V_{max}} \label{eq:CVM_speed}\\
 	\mathcal{G}(v,\omega)=1-\frac{|\theta_{cel} -T_{alg}\omega|}{\pi} \label{eq:CVM_head}
 	\end{gather}
 	gdzie:
 	\begin{itemize}
-	 \item $V_{max}$ -- maksymalna prędkość liniowa z jaką może poruszać się robot
-	 \item $T_{alg}$ -- czas na jaki wystawiane jest obliczone sterowanie
-	 \item $\theta_{cel}$ -- orientacja do celu w układzie współrzędnych robota 
+	 \item $V_{max}$ -- jest maksymalną prędkością liniową, którą może osiągnąć robot
+	 \item $T_{alg}$ -- określa odstęp pomiędzy kolejnymi uruchomieniami algorytmu
+	 \item $\theta_{cel}$ -- jest orientacją do celu w układzie współrzędnych związanym ze sterowanym robotem 
 	\end{itemize}
-	Natomiast zdefiniowanie składowej odpowiedzialnej za omijanie przeszkód wymaga określenia pewnych dodatkowych 
-	funkcji wykorzystywanych w algorytmie. Należy dokonać przekształcenia opisu przeszkód we współrzędnych
-	kartezjańskich  do przestrzeni prędkości. Dokonywane jest to za pomocą odległości do punktu $p$, w którym wystąpi kolizja z przeszkodą  $o$, jeśli robot będzie poruszał się po trajektorii $c=\frac{\omega}{v}$. Wartość ta jest oznaczana jako
-	$d_c((0,0),p)$, gdzie $p$ jest punktem zderzenia z przeszkodą.
-	Następnie należy zdefiniować funkcję odległości robota od przeszkody:
+	Zdefiniowanie funkcji odpowiedzialnej za unikanie kolizji jest zadaniem dużo trudniejszym. Na wstępie określone zostaną dodatkowe funkcje wykorzystywane w CVM, służące do 
+	przekształcenia opisu przeszkód we współrzędnych kartezjańskich do przestrzeni prędkości liniowej i kątowej robota. Dla danej przeszkody $o$ wyznaczana jest odległość do punktu $p$, w którym wystąpi
+	kolizja z przeszkodą, jeśli robot będzie poruszał się po trajektorii $c=\frac{\omega}{v}$. Wyznaczona w ten sposób wartość oznaczana jest symbolem
+	$d_c((0,0),p)$, gdzie $p$ jest punktem zderzenia z przeszkodą. Dla danego zestawu prędkości, można zatem zdefiniować funkcję określającą odległość robota od przeszkody:
  	\begin{equation}\label{eq:CVM_dv}
 	d_v(v,\omega,p)= \left\{ 
 	\begin{array}{l l}
@@ -204,18 +205,19 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
   	\infty & \quad \mbox{dla $v=0$ }\\
 	\end{array} \right. 
 	\end{equation}
-	Dla danego zbioru przeszkód $O$ zawsze wybierana jest odległość do najbliższej przeszkody leżącej na trajektorii. Zatem funkcję dla danego zbioru przeszkód $O$ można zapisać następująco:
- 	\begin{equation}\label{eq:CVM_Dv2}
+	W rzeczywistych sytuacjach najczęściej algorytm ma do czynienia z pewnym zbiorem przeszkód $O$. W takiej sytuacji, zawsze wybierana jest odległość do najbliższej przeszkody leżącej na trajektorii wyznaczonej
+	przez zestaw prędkości. Dla danego zbioru przeszkód $O$ funkcję określającą odległość od przeszkody można zatem zapisać następująco:
+ 	\begin{equation}\label{eq:CVM_Dv}
 	D_v(v,\omega,O)= \underset{o \in O}{\operatorname{inf}} d_v(v,\omega,o)
 	\end{equation}
-	W rzeczywistości jednak informacja o położeniu przeszkód jest ograniczona do pewnego obszaru, który może
-	wynikać z zasięgu czujników w jakie wyposażony jest robot, bądź ze sztucznego ograniczenia zasięgu działania
-	algorytmu w przypadku, gdy możliwy jest dostęp do globalnej informacji o położeniu przeszkód. Zasięg algorytmu  będzie  w dalszej część pracy oznaczany jako $L$. Funkcja  (\ref{eq:CVM_Dv})
-	jest zatem ograniczona od góry w sposób następujący:
+	Zazwyczaj jednak informacja o położeniu przeszkód jest ograniczona do pewnego obszaru, może wynikać on na przykład z zasięgu zastosowanych czujników, lub z celowego ograniczenia
+	zasięgu działania algorytmu w przypadku, gdy możliwy jest dostęp do globalnej informacji o położeniu przeszkód. Celowe ograniczenie zasięgu algorytmu może przyspieszyć jego działanie.
+	W przypadku silnie dynamicznego środowiska, uwzględnianie odległych przeszkód może okazać się zbędne. W dalszej części pracy zasięg algorytmu  będzie jako $L$.
+	Uwzględniając powyższe rozważania, funkcja  (\ref{eq:CVM_Dv}) jest zatem ograniczona od góry w sposób następujący:
  	\begin{equation}\label{eq:CVM_Dv_ogr}
-	D_{ogr}(v,\omega,P)= \min(L, D(v,\omega,P))
+	D_{ogr}(v,\omega,O)= \min(L, D_v(v,\omega,O))
 	\end{equation}
-	Po uprzednim zdefiniowaniu niezbędnych funkcji  można podać postać funkcyjną składowej funkcji celu odpowiadającej za unikanie kolizji:
+	Po uprzednim określeniu elementarnych funkcji,  można zdefiniować postać funkcyjną składowej funkcji celu odpowiadającej w algorytmie za unikanie kolizji:
 	\begin{equation} \label{eq:CVM_dist}
 	\mathcal{D}(v,\omega)=\frac{D_{ogr}}{L}
 	\end{equation}
@@ -223,7 +225,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	Aby sposób obliczania odległości do przeszkody był możliwie jak najprostszy, każda przeszkoda jest
 	reprezentowana w algorytmie jako okrąg o  promieniu \emph{r} (wynikającym z jej rozmiarów) i współrzędnych środka $(x_0,y_0)$. Można zatem dość łatwo wyznaczyć odległość, jaką przebędzie robot poruszający się po łuku wyznaczonym przez parę $(v,\omega)$ do
 	momentu przecięcia z okręgiem. Zostało to zobrazowane na rysunku \ref{fig:CVM_dist}.
-	\begin{figure}[!b]
+	\begin{figure}[!h]
 	\centering
 	%\includegraphics[scale=0.43]{./algorytmy/CVM_dist}
 	\includegraphics[scale=0.35]{./algorytmy/CVM_dist_new}
@@ -263,7 +265,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	krzywych stycznych odległość  $d_c((0,0),p)$ jest nieskończona. Natomiast dla krzywizn zawierających się
 	pomiędzy łukami stycznymi można dokonać przybliżenia wartością stałą. Omawiana sytuacja została zobrazowana na
 	rysunku \ref{fig:CVM_styczne}.
-	\begin{figure}[!b]
+	\begin{figure}[!h]
 	\centering
 	%\includegraphics[scale=0.45]{./algorytmy/CVM_styczne}
 	\includegraphics[scale=0.32]{./algorytmy/CVM_styczne_new}
@@ -294,7 +296,6 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	Ze zbioru przedziałów należy następnie utworzyć listę przedziałów $\mathbb{S}$, tak, aby zawierała
 	przedziały $s$ rozłączne o odległości do najbliższej przeszkody (zgodnie z równaniem (\ref{eq:CVM_Dv})).
 	W oryginalnej pracy na temat \textit{CVM} \cite{CVM_2} zaproponowany został algorytm (\ref{alg:CVM_lista}) realizujący to zadanie.
-
 	\begin{algorithm}
 	\caption{tworzy listę rozłącznych przedziałów $\mathbb{S}$}
 	\label{alg:CVM_lista}
@@ -329,7 +330,8 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	\end{algorithm}
 
 	W zależności od rozmieszczenia przeszkód w środowisku przedziały wyznaczone przez krzywizny $c_{min}$ oraz $c_{max}$ charakteryzują się różną szerokością. Często przybliżenie zbioru długości krzywych należących do
-	$[c_{min},c_{max}]$ jedną stałą wartością jest niewystarczające. Zazwyczaj przedział ten zawiera zbiór łuków których odległość od przeszkody jest istotnie mniejsza niż ta wynikająca ze wzoru (\ref{eq:CVM_dv_const}). Sytuacja taka została zilustrowana na rysunku \ref{fig:CVM_segmentacja}.
+	$[c_{min},c_{max}]$ jedną stałą wartością jest niewystarczające. Zazwyczaj przedział ten zawiera zbiór łuków których odległość od przeszkody jest istotnie mniejsza niż ta wynikająca ze wzoru (\ref{eq:CVM_dv_const}).
+	Dotyczy to w szczególności przypadków, kiedy przedział $[c_{min},c_{max}]$ jest szeroki. Sytuacja taka została zilustrowana na rysunku \ref{fig:CVM_segmentacja}.
 	\begin{figure}[!t]
 	\centering
 	%\includegraphics[scale=0.45]{./algorytmy/CVM_segmentacja}
@@ -337,7 +339,7 @@ szczególnych okolicznościach. Poniżej zostaną zaprezentowane najbardziej zna
 	\caption{ Ukazanie sensu zastosowania segmentacji} \label{fig:CVM_segmentacja}
 	\end{figure}
 
-	Jednym z możliwych rozwiązań powyższego problemu jest podzielenie przedziału $[c_{min},c_{max}]$ na kilka
+	Jednym z możliwych rozwiązań powyższego problemu jest dokonanie podziału przedziału $[c_{min},c_{max}]$ na kilka
 	pod przedziałów i do każdego z nich zastosowanie równania (\ref{eq:CVM_dv_const}) w celu wyznaczenia odległości od przeszkody. W pracy przyjęto rozwiązanie analogiczne jak opisane w \cite{majchrowski}.
 	Pierwszym etapem jest wyznaczenie punktu leżącego na okręgu reprezentującym przeszkodę położonego najbliżej robota zgodnie z  metryką euklidesową. Następnie okrąg jest dzielony symetrycznie na $k$  segmentów. Postępowanie takie zostało przedstawione na rysunku \ref{fig:CVM_segmentacja2}. 
 	Dla każdych dwóch sąsiadujących ze sobą punktów leżących pomiędzy punktami styczności $P_{min}$ oraz $P_{max}$
@@ -362,7 +364,7 @@ Budowa drzewa polega na dodawaniu kolejnych węzłów do drzewa w kierunku punkt
 	\label{alg:chooseTarget}
 	\begin{algorithmic}
 	\STATE \texttt{function} \textit{chooseTarget}(\textit{goal:state}) \textit{state};
-	\STATE p = \texttt{uniformRandom in}$[0.0 ...1.0]$
+	\STATE p = \texttt{uniformRandom in} $[0.0 ...1.0]$
 	\IF{$0.0<p<goalProb$} 
 	  \RETURN  \texttt{goal};
 	\ELSIF{ $goalProb<p<1.0$}
@@ -372,14 +374,14 @@ Budowa drzewa polega na dodawaniu kolejnych węzłów do drzewa w kierunku punkt
   \end{algorithm}
 
 Na listingu \ref{alg:chooseTarget} użyta została funkcja \texttt{RandomState}, zwracająca losowy punkt ze zbioru wszystkich możliwych położeń robota.
-W najprostszej realizacji, może ona zwracać współrzędne punktu dobierane z rozkładem jednostajnym z określonego przedziału.
+W najprostszej realizacji, może ona zwracać współrzędne punktu dobierane z rozkładem jednostajnym z określonego wcześniej obszaru.
 W każdej iteracji algorytmu tymczasowy stan docelowy obliczany jest na nowo. Aktualne drzewo, na którym operuje algorytm przeszukiwane jest w celu znalezienia
 węzła \texttt{nearest} położonego najbliżej tego celu. Węzeł \texttt{nearest} rozszerzany jest w kierunku tegoż celu za pomocą funkcji \texttt{extend}.
 Operacja ta w najprostszym ujęciu polega na stworzeniu nowego węzła przesuniętego względem \texttt{nearest} o odcinek \texttt{rrtStep} w kierunku tymczasowego celu.
 Istotne jest, aby sprawdzić czy nowo wygenerowany stan znajduje się w dopuszczalnej przestrzeni stanów \textdollar. W najprostszym wariancie można zastosować
 heurystykę, sprawdzającą jedynie czy położenie to nie koliduje z żadną z przeszkód znajdujących się w danej sytuacji oraz czy robot jest w stanie do niego dotrzeć.
 Bardziej zaawansowane heurystyki powinny sprawdzać czy na przykład podczas przemieszczania  się do nowej pozycji nie nastąpi kolizja z dynamiczną przeszkodą.
-W ogólnym ujęciu algorytm \texttt{RRT} wygląda zatem następująco:
+W ogólnym ujęciu algorytm RRT wygląda zatem następująco:
   \begin{algorithm}[H]
 	\caption{ Ogólna zasada algorytmu \texttt{RRT} }
 	\label{alg:RRT}
@@ -399,7 +401,7 @@ W ogólnym ujęciu algorytm \texttt{RRT} wygląda zatem następująco:
 	\RETURN  \texttt{tree};
 	\end{algorithmic}
   \end{algorithm}
-W opisie algorytmu \ref{alg:RRT} użyte zostały nie omówione jeszcze funkcje, \texttt{distance} zwracająca odległość w sensie euklidesowym między dwoma węzłami drzewa,
+W opisie algorytmu \ref{alg:RRT} użyte zostały nie omówione jeszcze funkcje, \texttt{distance} zwracająca odległość w sensie euklidesowym między dwoma punktami zawartymi w węzłach drzewa,
 \texttt{addNode} dodająca węzeł do bieżącego drzewa. Parametr \texttt{rrtStep} jest natomiast wyrażony w metrach.
 Tak zaimplementowana wersja algorytmu może być zastosowana jako skuteczne narzędzie do bezkolizyjnej nawigacji robotem, jednak jego wydajność można poprawić poprzez
 modyfikacje opisane w kolejnym podrozdziale.
@@ -443,9 +445,10 @@ skuteczność na poziomie $80\%$. Kolizje występowały głównie w sytuacjach, 
 związanym ze sterowanym robotem. Przeszkody takiego typu nie były uwzględnianie przez algorytm.
 RRT pozwala na uwzględnianie przeszkód rozsianych po całej planszy. Dodatkowo umożliwia poruszanie się po bardziej złożonych trajektoriach.
 Kolejną zaletą RRT jest prostota w ograniczaniu przestrzeni, z której losowane są tymczasowe punkty docelowe. Dzięki temu w prosty sposób można ograniczyć poruszanie
-się robota tylko do wnętrza boiska. w przypadku CVM istniała konieczność modelowania bandy boiska jako zbioru okręgów, mnożyło to ilość obiektów z jakimi należało detekować
+się robota tylko do wnętrza boiska. W przypadku CVM istniała konieczność modelowania bandy boiska jako zbioru okręgów, mnożyło to ilość obiektów z jakimi należało wykrywać
 kolizje.
-Kolejnym problemem CVM jest nawigacja do celu znajdującego się za robotem, w pracy inżynierskiej wprowadzono modyfikację, zmieniającą parametr odpowiedzialny za kierowanie
-robota na cel, uzależniając go od orientacji robota względem celu. Intencją było wymuszenie obrotu robota w kierunku celu, w sytuacji, gdy orientacja do celu jest duża.
-Modyfikacja poprawiła skuteczność. Jednak nawet dla najlepszego zestawu współczynników wagowych wynosiła ona $80\%$. W przypadku bazy holonomicznej obracanie się w kierunku punktu docelowego nie jest
+Kolejnym problemem CVM jest nawigacja do celu znajdującego się za robotem. W pracy inżynierskiej wprowadzono modyfikację, zmieniającą parametr odpowiedzialny za kierowanie
+robota na cel, uzależniając go od orientacji robota względem celu. Intencją było wymuszenie obrotu robota w kierunku celu, w sytuacji, gdy kąt o jaki powinien obrócić się robot, aby być skierowanym
+na cel ma dużą wartość.
+Modyfikacja ta poprawiła skuteczność algorytmy CVM, jednak nawet dla najlepszego zestawu współczynników wagowych wynosiła ona zaledwie $80\%$. W przypadku bazy holonomicznej obracanie się w kierunku punktu docelowego nie jest
 konieczne, stąd takie sterowanie nie jest optymalne.

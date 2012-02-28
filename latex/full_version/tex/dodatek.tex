@@ -3,27 +3,32 @@
 \chaptermark{Zawartość płyty CD}	
 Dołączona do pracy płyta CD zawiera następujące elementy:
 \begin{itemize}
-\item pliki źródłowe symulatora \textit{Gazebo} wraz z naniesionymi poprawkami opisanymi w par.~\ref{subsect:realizacjaROBOCUP} -- folder \texttt{gazebo},
-\item modele elementów środowiska \textit{RoboCup} do symulatora \textit{Gazebo} -- folder \texttt{modele},
-\item kod źródłowy aplikacji sterującej robotem (projekt w środowisku \mbox{Eclipse}\footnote{Środowisko jest dostępne pod adresem \url{www.eclipse.org}.} dla C++) wraz z dokumentacją -- folder \texttt{aplikacja\_sterujaca},
-%\item kod źródłowy oraz archiwum \textit{jar} aplikacji \textit{CVM\_debug} opisanej %w~par.~\ref{sec:cvm_debug} -- folder \texttt{CVM\_debug}, 
-\item filmy oraz zrzuty ekranu prezentujące wykonane modele oraz działanie aplikacji sterującej -- folder \texttt{media},
+\item pliki źródłowe wykorzystanej wersji symulatora \textit{Gazebo} wraz z wprowadzonymi poprawkami opisanymi w par.~\ref{subsect:realizacjaROBOCUP} oraz zaimplementowanym
+sterownikiem holonomicznej bazy jezdnej -- folder \texttt{gazebo},
+\item opracowane modele robotów, oraz boiska  -- folder \texttt{modele},
+\item kod źródłowy aplikacji opracowanej aplikacji (projekt w środowisku \mbox{Eclipse}\footnote{Środowisko jest dostępne pod adresem \url{www.eclipse.org}.} dla C++) -- folder \texttt{aplikacja\_sterujaca},
+\item kod źródłowy  aplikacji \textit{RRT\_debug} służącej do wizualizacji działania algorytmu RRT -- folder \texttt{RRT\_debug}, 
+\item otrzymane wyniki przeprowadzonych eksperymentów wraz ze skryptami do tworzenia wykresów -- folder \texttt{wyniki},
+\item zrzuty ekranu prezentujące wykonane modele oraz filmy z symulatora pokazujące realizację przeprowadzonych eksperymentów -- folder \texttt{media},
 \item plik \texttt{praca\_magisterska.pdf} -- wersja elektroniczna niniejszego dokumentu.
 \end{itemize}
 
 
-\chapter[Instrukcja instalacji Gazebo]{Instrukcja instalacji Gazebo}
-\chaptermark{Instrukcja instalacji Gazebo}
-\todo{poprawic opis instalacji gazebo}
-\todo{zmienic numery rewizji zastosowanych aplikacji}
-Instrukcję instalacji można znaleźć w poradniku dostępnym pod adresem \url{http://playerstage.sourceforge.net/doc/Gazebo-manual-svn-html/install.html}. \newline
-W~razie problemów można skorzystać także z opisu dostępnego pod adresem \newline \url{http://www.irobotics.org/gazebo08.f8.html}. Do instalacji należy użyć wersji \textit{Gazebo} dostępnej na płycie CD dołączonej do pracy (jest to wersja 6782 dostępna poprzez repozytorium SVN, zawiera jednak poprawki opisane w~par.~\ref{subsect:realizacjaROBOCUP}). Do poprawnej pracy \textit{Gazebo} wymagana jest obecność dodatkowych aplikacji. Najważniejsze z nich wykorzystano w niniejszej pracy w nastepujących wersjach:
-\begin{itemize}
- \item Player (wymagany do kompilacji Gazebo) -- pobrany z repozytorium SVN w wersji 6350,
- \item ODE pobrane z oficjalnego repozytorium SVN, wersja 1451,
- \item OGRE w wersji 1.4.7,
- \item pozostałe wymagane aplikacje zostały zainstalowane w wersjach zgodnych z opisem w podręczniku instalacji.
-\end{itemize}
+% \chapter[Instrukcja instalacji Gazebo]{Instrukcja instalacji Gazebo}
+% \chaptermark{Instrukcja instalacji Gazebo}
+% \todo{poprawic opis instalacji gazebo}
+% \todo{zmienic numery rewizji zastosowanych aplikacji}
+% Instrukcję instalacji można znaleźć w poradniku dostępnym pod adresem \url{http://playerstage.sourceforge.net/doc/Gazebo-manual-svn-html/install.html}. \newline
+% W~razie problemów można skorzystać także z opisu dostępnego pod adresem \newline \url{http://www.irobotics.org/gazebo08.f8.html}. 
+% Do instalacji należy użyć wersji \textit{Gazebo} dostępnej na płycie CD dołączonej do pracy 
+% (jest to wersja 6782 dostępna poprzez repozytorium SVN, zawiera jednak poprawki opisane w~par.~\ref{subsect:realizacjaROBOCUP}).
+%  Do poprawnej pracy \textit{Gazebo} wymagana jest obecność dodatkowych aplikacji. Najważniejsze z nich wykorzystano w niniejszej pracy w nastepujących wersjach:
+% \begin{itemize}
+%  \item Player (wymagany do kompilacji Gazebo) -- pobrany z repozytorium SVN w wersji 6350,
+%  \item ODE pobrane z oficjalnego repozytorium SVN, wersja 1451,
+%  \item OGRE w wersji 1.4.7,
+%  \item pozostałe wymagane aplikacje zostały zainstalowane w wersjach zgodnych z opisem w podręczniku instalacji.
+% \end{itemize}
 
 
 %\input{./tex/dodatek_CVM}
