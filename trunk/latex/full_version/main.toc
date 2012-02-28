@@ -15,53 +15,52 @@
 \contentsline {subsection}{\numberline {3.3.1}Zasady modelowania w Gazebo 0.10}{19}
 \contentsline {subsubsection}{Po\IeC {\l }\IeC {\k a}czenia pomi\IeC {\k e}dzy bry\IeC {\l }ami }{24}
 \contentsline {subsubsection}{Sterowniki modeli }{25}
-\contentsline {subsection}{\numberline {3.3.2}Realizacja \IeC {\'s}rodowiska Ligi RoboCup }{27}
-\contentsline {chapter}{\numberline {4}Sterowanie modelem robota z \emph {Small-size League}}{30}
-\contentsline {section}{\numberline {4.1}Om\IeC {\'o}wienie omnikierunkowej bazy jezdnej}{30}
-\contentsline {subsection}{\numberline {4.1.1}Opis po\IeC {\l }o\IeC {\.z}enia k\IeC {\'o}\IeC {\l }}{31}
-\contentsline {subsection}{\numberline {4.1.2}Opis kinematyki oraz dynamiki bazy jezdnej}{32}
-\contentsline {section}{\numberline {4.2}Obliczanie profilu pr\IeC {\k e}dko\IeC {\'s}ci liniowej robota }{33}
-\contentsline {section}{\numberline {4.3}Dryblowanie z pi\IeC {\l }k\IeC {\k a} }{35}
-\contentsline {chapter}{\numberline {5}Algorytmy unikania kolizji }{37}
-\contentsline {section}{\numberline {5.1}Kr\IeC {\'o}tki przegl\IeC {\k a}d algorytm\IeC {\'o}w unikania kolizji}{37}
-\contentsline {subsection}{\numberline {5.1.1}Algorytm Bug}{37}
-\contentsline {subsection}{\numberline {5.1.2}Algorytm VHF}{39}
-\contentsline {subsection}{\numberline {5.1.3}Technika dynamicznego okna}{41}
-\contentsline {subsection}{\numberline {5.1.4}Algorytmy p\IeC {\'o}l potencja\IeC {\l }owych}{41}
-\contentsline {subsubsection}{Algorytm w wersji podstawowej}{41}
-\contentsline {subsubsection}{Funkcja nawigacji }{42}
-\contentsline {subsection}{\numberline {5.1.5}Algorytm CVM (\textit {Curvature Velocity Method})}{44}
-\contentsline {section}{\numberline {5.2}Zasada dzia\IeC {\l }ania CVM }{45}
-\contentsline {section}{\numberline {5.3}Algorytm RRT\\(\textit {Rapidly-Exploring Random Tree}) }{51}
-\contentsline {subsection}{\numberline {5.3.1}Modyfikacje algorytmu, czyli przej\IeC {\'s}cie z RRT do ERRT }{53}
-\contentsline {section}{\numberline {5.4}Zalety algorytmu RRT w stosunku \\do CVM}{55}
-\contentsline {chapter}{\numberline {6}Testy zaimplementowanej wersji algorytmu RRT }{56}
-\contentsline {section}{\numberline {6.1}Opis implementacji algorytmu RRT }{56}
-\contentsline {subsection}{\numberline {6.1.1}Parametry zastosowanego algorytmu}{60}
-\contentsline {section}{\numberline {6.2}Aplikacja analizuj\IeC {\k a}ca dzia\IeC {\l }anie algorytmu}{60}
-\contentsline {section}{\numberline {6.3}Opis \IeC {\'s}rodowisk testowych}{61}
-\contentsline {section}{\numberline {6.4}Wyniki eksperyment\IeC {\'o}w w \IeC {\'s}rodowisku statycznym}{63}
-\contentsline {section}{\numberline {6.5}Wyniki eksperyment\IeC {\'o}w w \IeC {\'s}rodowisku dynamicznym}{67}
-\contentsline {section}{\numberline {6.6}Komentarz do wynik\IeC {\'o}w}{71}
-\contentsline {chapter}{\numberline {7}Realizacja z\IeC {\l }o\IeC {\.z}onych funkcji przez robota}{72}
-\contentsline {section}{\numberline {7.1}Opis algorytmu steruj\IeC {\k a}cego zawodnikiem}{73}
-\contentsline {subsection}{\numberline {7.1.1}Om\IeC {\'o}wienie warstwy \texttt {Play}}{75}
-\contentsline {subsection}{\numberline {7.1.2}Om\IeC {\'o}wienie warstwy \texttt {Tactics}}{76}
-\contentsline {subsection}{\numberline {7.1.3}Realizacja \texttt {Skills}}{77}
-\contentsline {subsection}{\numberline {7.1.4}Opis zrealizowanej wersji algorytmu}{78}
-\contentsline {section}{\numberline {7.2}Testy warstw \texttt {tactics} oraz \texttt {skills}}{81}
-\contentsline {section}{\numberline {7.3} Nawigacja w dynamicznym \IeC {\'s}rodowisku }{81}
+\contentsline {subsection}{\numberline {3.3.2}Realizacja \IeC {\'s}rodowiska Ligi RoboCup }{26}
+\contentsline {chapter}{\numberline {4}Sterowanie modelem robota z \emph {Small-size League}}{29}
+\contentsline {section}{\numberline {4.1}Om\IeC {\'o}wienie omnikierunkowej bazy jezdnej}{29}
+\contentsline {subsection}{\numberline {4.1.1}Opis po\IeC {\l }o\IeC {\.z}enia k\IeC {\'o}\IeC {\l }}{30}
+\contentsline {subsection}{\numberline {4.1.2}Opis kinematyki oraz dynamiki bazy jezdnej}{31}
+\contentsline {section}{\numberline {4.2}Obliczanie profilu pr\IeC {\k e}dko\IeC {\'s}ci liniowej robota }{32}
+\contentsline {section}{\numberline {4.3}Dryblowanie z pi\IeC {\l }k\IeC {\k a} }{34}
+\contentsline {chapter}{\numberline {5}Algorytmy unikania kolizji }{36}
+\contentsline {section}{\numberline {5.1}Kr\IeC {\'o}tki przegl\IeC {\k a}d algorytm\IeC {\'o}w unikania kolizji}{36}
+\contentsline {subsection}{\numberline {5.1.1}Algorytm Bug}{36}
+\contentsline {subsection}{\numberline {5.1.2}Algorytm VFH}{38}
+\contentsline {subsection}{\numberline {5.1.3}Technika dynamicznego okna}{40}
+\contentsline {subsection}{\numberline {5.1.4}Algorytmy p\IeC {\'o}l potencja\IeC {\l }owych}{40}
+\contentsline {subsubsection}{Algorytm w wersji podstawowej}{40}
+\contentsline {subsubsection}{Funkcja nawigacji }{41}
+\contentsline {subsection}{\numberline {5.1.5}Algorytm CVM (\textit {Curvature Velocity Method})}{43}
+\contentsline {section}{\numberline {5.2}Opis dzia\IeC {\l }ania CVM }{44}
+\contentsline {section}{\numberline {5.3}Algorytm RRT\\(\textit {Rapidly-Exploring Random Tree}) }{50}
+\contentsline {subsection}{\numberline {5.3.1}Modyfikacje algorytmu, czyli przej\IeC {\'s}cie z RRT do ERRT }{52}
+\contentsline {section}{\numberline {5.4}Zalety algorytmu RRT w stosunku \\do CVM}{54}
+\contentsline {chapter}{\numberline {6}Testy zaimplementowanej wersji algorytmu RRT }{55}
+\contentsline {section}{\numberline {6.1}Opis implementacji algorytmu RRT }{55}
+\contentsline {subsection}{\numberline {6.1.1}Parametry zastosowanego algorytmu}{59}
+\contentsline {section}{\numberline {6.2}Aplikacja analizuj\IeC {\k a}ca dzia\IeC {\l }anie algorytmu}{59}
+\contentsline {section}{\numberline {6.3}Opis \IeC {\'s}rodowisk testowych}{60}
+\contentsline {section}{\numberline {6.4}Wyniki eksperyment\IeC {\'o}w w \IeC {\'s}rodowisku statycznym}{62}
+\contentsline {section}{\numberline {6.5}Wyniki eksperyment\IeC {\'o}w w \IeC {\'s}rodowisku dynamicznym}{66}
+\contentsline {section}{\numberline {6.6}Komentarz do wynik\IeC {\'o}w}{70}
+\contentsline {chapter}{\numberline {7}Realizacja z\IeC {\l }o\IeC {\.z}onych funkcji przez robota}{71}
+\contentsline {section}{\numberline {7.1}Opis algorytmu steruj\IeC {\k a}cego zawodnikiem}{72}
+\contentsline {subsection}{\numberline {7.1.1}Om\IeC {\'o}wienie warstwy \texttt {Play}}{74}
+\contentsline {subsection}{\numberline {7.1.2}Om\IeC {\'o}wienie warstwy \texttt {Tactics}}{75}
+\contentsline {subsection}{\numberline {7.1.3}Realizacja \texttt {Skills}}{76}
+\contentsline {subsection}{\numberline {7.1.4}Opis zrealizowanej wersji algorytmu}{77}
+\contentsline {section}{\numberline {7.2}Testy warstw \texttt {tactics} oraz \texttt {skills}}{80}
+\contentsline {section}{\numberline {7.3} Nawigacja w dynamicznym \IeC {\'s}rodowisku }{80}
 \contentsline {subsection}{\numberline {7.3.1} Wyniki testu nawigacji }{82}
-\contentsline {subsubsection}{Rezultaty uczestnik\IeC {\'o}w eliminacji}{83}
-\contentsline {subsubsection}{Wyniki zaimplementowanego algorytmu wariant 1 }{84}
-\contentsline {subsubsection}{Wyniki zaimplementowanego algorytmu wariant 2}{85}
-\contentsline {subsubsection}{Komentarz do otrzymanych wynik\IeC {\'o}w}{85}
-\contentsline {section}{\numberline {7.4} Strzelanie po podaniu }{86}
-\contentsline {subsection}{\numberline {7.4.1} Wyniki testu }{87}
-\contentsline {subsubsection}{Rezultaty uczestnik\IeC {\'o}w eliminacji}{87}
-\contentsline {subsubsection}{Wyniki zaimplementowanego algorytmu}{88}
+\contentsline {subsubsection}{Rezultaty uczestnik\IeC {\'o}w eliminacji}{82}
+\contentsline {subsubsection}{Wyniki zaimplementowanego algorytmu wariant 1 }{83}
+\contentsline {subsubsection}{Wyniki zaimplementowanego algorytmu wariant 2}{83}
+\contentsline {subsubsection}{Komentarz do otrzymanych wynik\IeC {\'o}w}{84}
+\contentsline {section}{\numberline {7.4} Strzelanie po podaniu }{84}
+\contentsline {subsection}{\numberline {7.4.1} Wyniki testu }{86}
+\contentsline {subsubsection}{Rezultaty uczestnik\IeC {\'o}w eliminacji}{86}
+\contentsline {subsubsection}{Wyniki zaimplementowanego algorytmu}{87}
 \contentsline {subsubsection}{Komentarz do otrzymanych wynik\IeC {\'o}w}{88}
 \contentsline {chapter}{\numberline {8}Podsumowanie}{89}
-\contentsline {chapter}{\numberline {A}Zawarto\IeC {\'s}\IeC {\'c} p\IeC {\l }yty CD }{90}
-\contentsline {chapter}{\numberline {B}Instrukcja instalacji Gazebo}{91}
-\contentsline {chapter}{\numberline {C}Szczeg\IeC {\'o}\IeC {\l }y eksperyment\IeC {\'o}w}{92}
+\contentsline {chapter}{\numberline {A}Zawarto\IeC {\'s}\IeC {\'c} p\IeC {\l }yty CD }{91}
+\contentsline {chapter}{\numberline {B}Szczeg\IeC {\'o}\IeC {\l }y eksperyment\IeC {\'o}w}{92}

@@ -1,23 +1,14 @@
 \chapter{Liga RoboCup \label{chap:robocup}}
 \section{Opis projektu RoboCup \label{sec:opis_robocup}}
-	Jak już wzpomaniano we wstępie, głównym celem przedsięwzięcia RoboCup jest stworzenie do 2050 roku drużyny w pełni autonomicznych robotów humanoidalnych zdolnych wygrać rozgrywkę z aktualnymi mistrzami 
+	Jak już wspomaniano we wstępie, głównym celem rozgrywek \emph{RoboCupSoccer} jest stworzenie do 2050 roku drużyny w pełni autonomicznych robotów humanoidalnych zdolnych wygrać rozgrywkę z aktualnymi mistrzami 
 	świata.
 	W niniejszej pracy problematyka rozgrywek robotów w piłkę nożną zostanie przedstawiona jedynie skrótowo. Skupiono się na omówieniu
-	budowy robota wykorzystywanego w lidze, którą starano się odwzorować. Więcej informacji na temat projektu RoboCup można znajeźć w pracy inżynierskiej \cite{inzynierka} lub 
+	budowy robota wykorzystywanego w lidze, którą starano się odwzorować. Więcej informacji na temat projektu RoboCup można znaleźć w pracy inżynierskiej \cite{inzynierka} lub 
 	na oficjalnej stronie projektu \mbox{\url{http://www.robocup.org}}.
-	 Obecnie projekt został rozszerzony o nowe obszary zastosowań robotów, tematyka została pogrupowana następująco:
-	\begin{itemize}
-	      \item \emph{RoboCupSoccer}, czyli rozgrywki piłkarskie autonomicznych robotów,
-	      \item \emph{RoboCupRescue} obejmujący działania robotów w sytuacjach kryzysowych, czy niebezpiecznych dla ludzi,
-	      \item \emph{RoboCup@Home} skupiający się na robotyce mającej na celu pomaganie człowiekowi w codziennych czynnościach,
-	      \item \emph{RoboCupJunior} popularyzujący robotykę wśród młodzieży.
-	\end{itemize}
-
-	W ramach niniejszej pracy skupiono się na \emph{RoboCupSoccer}.
 	Kluczową rolę w realizacji postawionego zadania pełni konstrukcja zarówno mechaniczna jak i elektroniczna
 	robota. Zawodnik powinien być wyposażony w odpowiedni zestaw czujników umożliwiających osiągnięcie pełnej autonomiczności. 
 	Osobnym problemem jest opracowanie funkcjonalnego oprogramowania umożliwiającego koordynację działań wielu robotów.
-	Projekt jest realizowany nieprzerwanie od września 1993 roku, a mistrzostwa odbywają się regularnie w różnych miejscach na świecie.
+	Projekt RoboCup jest realizowany nieprzerwanie od września 1993 roku, a mistrzostwa odbywają się regularnie w różnych miejscach na świecie.
 	Rozgrywki toczone są w kilku niezależnych od siebie ligach. Aktualnie wyróżnione zostały następujące ligi:
 	\begin{itemize}
 	\item \emph{Soccer Simulation League}
@@ -68,12 +59,12 @@
 	Konstrukcja mechaniczna robota nie jest mocno ograniczona, zalecenia dotyczą głównie wymiarów. Robot powinien zmieścić się w walcu o średnicy 18~[cm] oraz wysokości 15~[cm].
 	Dodatkowo może on być wyposażony w urządzenie do prowadzenia piłki - \textit{dribbler}. Tutaj jednak istnieją pewne ograniczenia dotyczące
 	samej budowy urządzenia oraz wykorzystywania go w czasie gry. Zawodnik nie może pokonać z piłką odległości większej niż 50~[cm]. Po przejechaniu takiego dystansu powinien zdecydować się
-	na podanie jej innemu zawodnikowi lub oddanie strzału na bramkę. Może róznież zdecydować się na kopnięcie jej przed siebie i dalsze podązanie w jej kierunku. Niedostosowanie się do tych zasad powoduje sygnalizowanie przez arbitra
+	na podanie jej innemu zawodnikowi lub oddanie strzału na bramkę. Może również zdecydować się na kopnięcie jej przed siebie i dalsze podążanie w jej kierunku. Niedostosowanie się do tych zasad powoduje sygnalizowanie przez arbitra
 	przewinienia oraz wykonanie rzutu wolnego przez drużynę przeciwną. Konstrukcja urządzenia do dryblowania nie powinna także uniemożliwiać kontaktu z piłką zawodnikowi drużyny przeciwnej.
 
-	Rozgrywka jest całkowicie kontrolowana przez arbitra, który czuwa nad tym, aby  regulamin był przestrzegany. Do
-	jego zadań należy sygnalizowanie przewinień, zdobytych bramek oraz innych typowych sytuacji na boisku.
-	Sędzia ma prawo zmienić swoją decyzje po konsultacjach z asystentem. Arbiter komunikuje się z zawodnikami za pomocą programu, którego interfejs użytkownika zamieszczono na rysunku \ref{fig:referee_box} .
+	Przebieg rozgrywki robotów kontroluje arbiter. Jego zadaniem jest czuwanie nad przestrzeganiem obowiązującego regulaminu. Sygnalizuje on przewinienia, przyznaje punkty za zdobyte bramki
+	oraz wykrywa inne nietypowe sytuacje, jakie mogą wydarzyć się podczas meczu. Decyzja sędziego, tak jak w rzeczywistym meczu, może zostać zmieniona po konsultacjach z asystentem.
+	Arbiter komunikuje się z zawodnikami za pomocą programu, którego interfejs użytkownika zamieszczono na rysunku \ref{fig:referee_box} .
 
 	Wszystkie akcje sędziego wprowadzone do tego programu są udostępniane specjalnym protokołem zawodnikom, dzięki temu rozgrywka nie wymaga ludzkiej ingerencji.
 	\subsection{Schemat komunikacji}
@@ -84,22 +75,23 @@
 	Obecnie w skład systemu może wchodzić kilka kamer.
 	Obraz zarejestrowany przez kamery jest przesyłany do komputera, gdzie jest przetwarzany przez \emph{SSL-Vision} w czasie rzeczywistym. Program dostarcza informację 
 	o położeniu oraz o prędkościach robotów i piłki. Dane te następnie są wykorzystywane przez rywalizujące ze sobą drużyny na potrzeby ich algorytmów.
- 	Algorytm sterujący jako wynik swojego działania powinien zwracać kierunek i prędkość zawodników. Ta ostateczna informacja jest wysyłana droga radiową do robota.
+	Algorytm sterujący drużyną jako wynik swojego działania powinien zwracać kierunek i prędkość zawodników. Informacje te wysyłane są droga radiową do robota.
 	\begin{figure}[H]
 	\centering
 	\includegraphics[ scale=0.5]{./liga_robocup/dataflow}
 	\caption{Schemat komunikacji w  \mbox{\emph{Small Size League}}\newline(źródło: \texttt{www.robocup.org}) }
 	\label{fig:comunication}
 	\end{figure} 	
-	\mbox{\emph{SSL-Vision}} może rozpoznawać nie tylko położenie poszczególnych robotów, ale także ich orientację na
-	płaszczyźnie. Jednak do tego celu niezbędne jest zastosowanie specjalnych znaczników. Każdej z drużyn przed rozpoczęciem rozgrywki zostaje przypisana para kolorów, 
-	jakie zawiera znacznik. Dzięki zastosowaniu dwóch kolorów możliwe jest nie tylko rozróżnianie robotów z różnych drużyn, ale także określanie ich orientacji.
+	System \mbox{\emph{SSL-Vision}} poza określaniem położenia poszczególnych zawodników na boisku, może także określać ich orientację na
+	płaszczyźnie. W tym celu roboty wyposażone są w specjalne, wielokolorowe znaczniki. Przed rozpoczęciem meczu, zawodnicy każdej z drużyn oznaczani są za pomocą wylosowanej pary kolorów, 
+	które zawiera znacznik. Zastosowanie dwukolorowych znaczników umożliwia określanie orientacji robotów.bab.
 
 \section{Budowa robota \label{sec:budowa_robota} w \emph{Small-size League}}
-	Oficjalne zasady ligi nie zobowiązują uczestników do używania konkretnych modeli robotów. Określone są jedynie rygory dotyczące maksymalnych wymiarów robota,
-	oraz sposoby prowadzenia piłki.Obserwując kolejne mistrzostwa, łatwo zauważyć, że wśród zgłaszanych drużyn dominuje jedna konstrukcja mechaniczna.
+	W oficjalnych zasadach ligi \emph{Small-size League} model zawodnika nie jest dokładnie sprecyzowany, uczestniczące drużyny mogą zatem korzystać z przygotowanych przez siebie robotów.
+	Regulamin określa jedynie maksymalne wymiary robota mogącego brać udział w rozgrywce oraz sposób prowadzenia piłki. Analizując jednak budowę zawodników uczestniczących w mistrzostwach
+	w ostatnich latach, szybko można zauważyć, że wśród zgłaszanych drużyn dominuje jedna konstrukcja mechaniczna.
 	Została ona zaprezentowana na  rysunkach \ref{fig:F180_budowa}.
- 	\begin{figure}
+	\begin{figure}
 	\centering
 	\subfloat[]{\label{fig:F180_budowa1}\includegraphics[ scale=0.34]{./liga_robocup/F180_budowa1}}
 	\subfloat[]{\label{fig:F180_budowa2}\includegraphics[ scale=0.38]{./liga_robocup/F180_budowa2}}
@@ -107,25 +99,25 @@
 	\caption{Popularny model robota wykorzystywany w \mbox{lidze \emph{F180}}\newline(źródło: \texttt{www.robocup.org}) }
 	\label{fig:F180_budowa}
 	\end{figure}
-	Podczas gry w piłkę nożną często wynika potrzeba zmiany orientacji w miejscu. W prezentowanym rozwiązaniu
-	zdecydowano się na omnikierunkową bazę jezdną. Składa się ona z trzech niezależnie napędzanych kół szwedzkich.
-	\begin{wrapfigure}{r}{0.42\textwidth}
-	\vspace{-10pt}
-	\begin{center}	
-	\includegraphics[width=0.38\textwidth]{./liga_robocup/robocup_markers}
-	\end{center}
-	\caption{Znacznik umożliwiający systemowi wizyjnemu identyfikację robotów \newline(źródło: \texttt{www.robocup.org})\label{fig:znacznik}}
-	\vspace{-40pt}
-	\end{wrapfigure}
-	Koło szwedzkie posiada taką zaletę, iż dodatkowo poza obrotem wokół własnej osi umożliwia obrót
-	wokół punktu styczności koła z podłożem oraz wokół osi rolek umieszczonych na kole.
-	Dzięki zastosowaniu takiego rozwiązania uzyskano w pełni holonomiczną budowę robota.
-	Robot biorący udział w rozgrywkach musi być zdolny do prowadzenia piłki. Zastosowana konstrukcja jest wyposażona w urządzenie do dryblowania widoczne na rysunkach \ref{fig:F180_budowa1} oraz \ref{fig:F180_budowa3}. 
-	Zbudowane jest ono z walca nadającego piłce wsteczną rotację, przez co nie odbija się ona od robota, a także nie traci on nad nią kontroli w momencie hamowania lub obracania się.
-	
+	Zaprezentowane rozwiązanie wykorzystuje omnikerunkową bazę jezdną. Podejście takie jest bardzo praktyczne, gdyż umożliwia ono zmianę orientacji zawodnika w miejscu, co jest często
+	spotykanym manewrem podczas gry w piłkę nożną. Robot porusza się na trzech niezależnie napędzanych kołach szwedzkich. Zastosowanie kół tego typu jest kluczowe dla osiągnięcia wielokierunkowości
+	bazy jezdnej. Koło szwedzkie, poza obrotem wokół własnej osi umożliwia także obrót wokół punktu styczności koła z podłożem oraz wokół osi rolek umieszczonych na kole.
+	Zawodnik rozgrywek powinien być także wyposażony w urządzenie umożliwiające prowadzenie piłki. Stosowana przez drużyny konstrukcja mechaniczna zawiera urządzenie do dryblowania. Jest ono zaprezentowane
+	na rysunkach \ref{fig:F180_budowa1} oraz \ref{fig:F180_budowa3}. 
+	\textit{Dribbler} zbudowany jest z walca, który obracając się nadaje piłce wsteczną rotację, dzięki temu nie odbija się ona od robota w momencie podania.
+	Urządzenie pozwala także robotowi na kontrolowanie piłki podczas hamowania lub obracania się.
+
 	W regulaminie rozgrywek dopuszczono do stosowania jedynie urządzenia do dryblowania działające na piłkę siłą prostopadłą do podłoża rys.~\ref{fig:F180_budowa1} (we wcześniejszych latach
 	w użyciu były  urządzenia, w których obracany walec był umieszczony pionowo).
-
+	\begin{wrapfigure}{r}{0.42\textwidth}
+	\vspace{-20pt}
+	\begin{center}	
+	\includegraphics[width=0.3\textwidth]{./liga_robocup/robocup_markers}
+	\end{center}
+	\caption{Znacznik umożliwiający systemowi wizyjnemu identyfikację robotów \newline(źródło: \texttt{www.robocup.org})\label{fig:znacznik}}
+	\vspace{-10pt}
+	\end{wrapfigure}
+	
 	Ostatnim ważnym elementem, w który musi być wyposażony robot, jest znacznik (rys.~\ref{fig:znacznik}).
 	Znajduje się on w takim miejscu, aby kamera umieszczona centralnie nad boiskiem mogła go zarejestrować (przykrywa robota od góry).
 	Znaczniki umożliwiają systemowi wizyjnemu określenie, do której drużyny należy dany robot, a także poprawne rozpoznanie jego pozycji, orientacji oraz prędkości

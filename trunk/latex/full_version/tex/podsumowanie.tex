@@ -1,2 +1,25 @@
 \chapter[Podsumowanie]{Podsumowanie}
 \chaptermark{Podsumowanie}
+Podczas realizacji niniejszej pracy stworzono środowisko symulacyjne umożliwiające modelowanie rozgrywek robotów z ligi \emph{Small-Size League}. Ponieważ wcześniejsze prace, opisane w~\cite{inzynierka}
+prowadzono na platformie Player/Stage/Gazebo, zdecydowano się na dalszą pracę z tym środowiskiem. Uaktualniono natomiast wersję stosowanego oprogramowania. Opracowano także nowe modele robotów
+oraz boiska. Wykorzystywane w trakcie eksperymentów modele robotów wzorowane były na rzeczywistych zawodnikach rozgrywek RoboCup. Zmiana bazy jezdnej na wielokierunkową wymusiła implementację nowego sterownika
+robota. Przygotowane środowisko, może posłużyć do dalszych prac na rozgrywkami robotów w piłkę nożną.
+
+W ramach pracy zaimplementowano także algorytm unikania kolizji RRT. Zachowanie algorytmu sprawdzone zostało w środowiskach testowych wykorzystywanych w~\cite{inzynierka}. Dzięki takiemu podejściu
+można było dokonać porównania RRT z wcześniej stosowanym CVM. W wyniku przeprowadzonych eksperymentów udowodniono, że w danych sytuacjach algorytm RRT osiąga dużo lepsze wyniki niż CVM.
+Wybrana metoda rozwiązała także kilka problemów, z którymi CVM nie był w stanie sobie poradzić. Poprzednie rozwiązanie, osiągało dużo słabsze efekty w sytuacjach, kiedy cel znajdował się za robotem.
+Algorytm był także mało skuteczny, gdy punkt docelowy znajdował się za zaporą utworzoną z kilku robotów. W przypadku RRT nie zauważono takich zachowań.
+Sama metoda okazała się też dużo mniej wrażliwa na dobór parametrów z jakimi jest ona uruchamiana (zupełnie przeciwnie zachowywał się CVM). W przypadku silnie dynamicznego środowiska
+jest to bardzo pożądana cecha. Zastosowany algorytm okazał się także szybką metodą, co ma duże znaczenie w rozgrywkach.
+
+W dalszej części został omówiony i zaimplementowany algorytm planowania i koordynacji działań robotów wzorowany na architekturze STP opisany w \cite{stp}. W ramach pracy zrealizowano w pełni dwie
+warstwy z oryginalnego rozwiązania (\texttt{skills} i \texttt{tactics}). Stworzone oporogramowanie umożliwa wykonywanie robotom podstawowych elementów gry w piłkę nożna (prowadzenie piłki, strzał na bramkę,
+podanie piłki do innego zawodnika), jak i bardziej złożonych zachowań. Algorytm został przetestowany podczas realizacji wybranych zadań eliminacyjnych,
+którym musieli sprostać uczestnicy rozgrywek RoboCup w ostatnich latach. W tym celu stworzono także prostą wartswę \texttt{play}, zapewniającą koordynację w obrębie drużyny
+oraz opracowano plany gry rozwiązujące zadania testowe. Otrzymane wyniki zostały porównane z rezultatami uczestników mistrzostw. W przypadku pierwszego eksperymentu zaimplementowane
+rozwiązanie plasowałoby się na trzecim miejscu, natomiast w przypadku drugiego eksperymentu realne byłoby miejsce drugie. Należy jednak oczywiście pamietać, że sterowanie symulowanym
+robotem jest dużo prostsze niż rzeczywistym. Przeprowadzone eksperymenty potwierdzają, że podejście STP może z powodzeniem służyć do koordynacji i planowania działań podczas rzeczywistej rozgrywki.
+Niewątpliwą zaletą architektury STP jest jej funkcjonalność, zachowania zawodników mogą być zmieniane na trzech poziomach w zależności od sytuacji na planszy.
+
+Niniejsza praca dostarcza gotowe środowisko testowe wraz z aplikacją sterującą. Elementy te mogą zostać wykorzystane podczas dalszych prac nad rozgrywkami RoboCup. Stworzone oprogramowanie można
+dalej rozwijać w kierunku przeprowadzenia pełnej rozgrywki wzorowanej na  \emph{Small-Size League}.

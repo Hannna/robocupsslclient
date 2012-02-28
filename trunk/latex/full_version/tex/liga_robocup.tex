@@ -62,9 +62,9 @@
 	na podanie jej innemu zawodnikowi lub oddanie strzału na bramkę. Może również zdecydować się na kopnięcie jej przed siebie i dalsze podążanie w jej kierunku. Niedostosowanie się do tych zasad powoduje sygnalizowanie przez arbitra
 	przewinienia oraz wykonanie rzutu wolnego przez drużynę przeciwną. Konstrukcja urządzenia do dryblowania nie powinna także uniemożliwiać kontaktu z piłką zawodnikowi drużyny przeciwnej.
 
-	Rozgrywka jest całkowicie kontrolowana przez arbitra, który czuwa nad tym, aby  regulamin był przestrzegany. Do
-	jego zadań należy sygnalizowanie przewinień, zdobytych bramek oraz innych typowych sytuacji na boisku.
-	Sędzia ma prawo zmienić swoją decyzje po konsultacjach z asystentem. Arbiter komunikuje się z zawodnikami za pomocą programu, którego interfejs użytkownika zamieszczono na rysunku \ref{fig:referee_box} .
+	Przebieg rozgrywki robotów kontroluje arbiter. Jego zadaniem jest czuwanie nad przestrzeganiem obowiązującego regulaminu. Sygnalizuje on przewinienia, przyznaje punkty za zdobyte bramki
+	oraz wykrywa inne nietypowe sytuacje, jakie mogą wydarzyć się podczas meczu. Decyzja sędziego, tak jak w rzeczywistym meczu, może zostać zmieniona po konsultacjach z asystentem.
+	Arbiter komunikuje się z zawodnikami za pomocą programu, którego interfejs użytkownika zamieszczono na rysunku \ref{fig:referee_box} .
 
 	Wszystkie akcje sędziego wprowadzone do tego programu są udostępniane specjalnym protokołem zawodnikom, dzięki temu rozgrywka nie wymaga ludzkiej ingerencji.
 	\subsection{Schemat komunikacji}
@@ -75,20 +75,21 @@
 	Obecnie w skład systemu może wchodzić kilka kamer.
 	Obraz zarejestrowany przez kamery jest przesyłany do komputera, gdzie jest przetwarzany przez \emph{SSL-Vision} w czasie rzeczywistym. Program dostarcza informację 
 	o położeniu oraz o prędkościach robotów i piłki. Dane te następnie są wykorzystywane przez rywalizujące ze sobą drużyny na potrzeby ich algorytmów.
- 	Algorytm sterujący jako wynik swojego działania powinien zwracać kierunek i prędkość zawodników. Ta ostateczna informacja jest wysyłana droga radiową do robota.
+	Algorytm sterujący drużyną jako wynik swojego działania powinien zwracać kierunek i prędkość zawodników. Informacje te wysyłane są droga radiową do robota.
 	\begin{figure}[H]
 	\centering
 	\includegraphics[ scale=0.5]{./liga_robocup/dataflow}
 	\caption{Schemat komunikacji w  \mbox{\emph{Small Size League}}\newline(źródło: \texttt{www.robocup.org}) }
 	\label{fig:comunication}
 	\end{figure} 	
-	\mbox{\emph{SSL-Vision}} może rozpoznawać nie tylko położenie poszczególnych robotów, ale także ich orientację na
-	płaszczyźnie. Jednak do tego celu niezbędne jest zastosowanie specjalnych znaczników. Każdej z drużyn przed rozpoczęciem rozgrywki zostaje przypisana para kolorów, 
-	jakie zawiera znacznik. Dzięki zastosowaniu dwóch kolorów możliwe jest nie tylko rozróżnianie robotów z różnych drużyn, ale także określanie ich orientacji.
+	System \mbox{\emph{SSL-Vision}} poza określaniem położenia poszczególnych zawodników na boisku, może także określać ich orientację na
+	płaszczyźnie. W tym celu roboty wyposażone są w specjalne, wielokolorowe znaczniki. Przed rozpoczęciem meczu, zawodnicy każdej z drużyn oznaczani są za pomocą wylosowanej pary kolorów, 
+	które zawiera znacznik. Zastosowanie dwukolorowych znaczników umożliwia określanie orientacji robotów.bab.
 
 \section{Budowa robota \label{sec:budowa_robota} w \emph{Small-size League}}
-	Oficjalne zasady ligi nie zobowiązują uczestników do używania konkretnych modeli robotów. Określone są jedynie rygory dotyczące maksymalnych wymiarów robota,
-	oraz sposoby prowadzenia piłki.Obserwując kolejne mistrzostwa, łatwo zauważyć, że wśród zgłaszanych drużyn dominuje jedna konstrukcja mechaniczna.
+	W oficjalnych zasadach ligi \emph{Small-size League} model zawodnika nie jest dokładnie sprecyzowany, uczestniczące drużyny mogą zatem korzystać z przygotowanych przez siebie robotów.
+	Regulamin określa jedynie maksymalne wymiary robota mogącego brać udział w rozgrywce oraz sposób prowadzenia piłki. Analizując jednak budowę zawodników uczestniczących w mistrzostwach
+	w ostatnich latach, szybko można zauważyć, że wśród zgłaszanych drużyn dominuje jedna konstrukcja mechaniczna.
 	Została ona zaprezentowana na  rysunkach \ref{fig:F180_budowa}.
 	\begin{figure}
 	\centering
@@ -98,16 +99,14 @@
 	\caption{Popularny model robota wykorzystywany w \mbox{lidze \emph{F180}}\newline(źródło: \texttt{www.robocup.org}) }
 	\label{fig:F180_budowa}
 	\end{figure}
-	Podczas gry w piłkę nożną często wynika potrzeba zmiany orientacji w miejscu. W prezentowanym rozwiązaniu
-	zdecydowano się na omnikierunkową bazę jezdną. Składa się ona z trzech niezależnie napędzanych kół szwedzkich.
-	Koło szwedzkie posiada taką zaletę, iż dodatkowo poza obrotem wokół własnej osi umożliwia obrót
-	wokół punktu styczności koła z podłożem oraz wokół osi rolek umieszczonych na kole.
-	Dzięki zastosowaniu takiego rozwiązania uzyskano w pełni holonomiczną budowę robota.
-	Robot biorący udział w rozgrywkach musi być zdolny do prowadzenia piłki. Zastosowana konstrukcja jest wyposażona w urządzenie do dryblowania widoczne na rysunkach \ref{fig:F180_budowa1} oraz \ref{fig:F180_budowa3}. 
-	Zbudowane jest ono z walca nadającego piłce wsteczną rotację, przez co nie odbija się ona od robota, a także nie traci on nad nią kontroli w momencie hamowania lub obracania się.
-
-	W regulaminie rozgrywek dopuszczono do stosowania jedynie urządzenia do dryblowania działające na piłkę siłą prostopadłą do podłoża rys.~\ref{fig:F180_budowa1} (we wcześniejszych latach
-	w użyciu były  urządzenia, w których obracany walec był umieszczony pionowo).
+	Zaprezentowane rozwiązanie wykorzystuje omnikerunkową bazę jezdną. Podejście takie jest bardzo praktyczne, gdyż umożliwia ono zmianę orientacji zawodnika w miejscu, co jest często
+	spotykanym manewrem podczas gry w piłkę nożną. Robot porusza się na trzech niezależnie napędzanych kołach szwedzkich. Zastosowanie kół tego typu jest kluczowe dla osiągnięcia wielokierunkowości
+	bazy jezdnej. Koło szwedzkie, poza obrotem wokół własnej osi umożliwia także obrót wokół punktu styczności koła z podłożem oraz wokół osi rolek umieszczonych na kole.
+	
+	Zawodnik rozgrywek powinien być także wyposażony w urządzenie umożliwiające prowadzenie piłki. Stosowana przez drużyny konstrukcja mechaniczna zawiera urządzenie do dryblowania. Jest ono zaprezentowane
+	na rysunkach \ref{fig:F180_budowa1} oraz \ref{fig:F180_budowa3}. 
+	\textit{Dribbler} zbudowany jest z walca, który obracając się nadaje piłce wsteczną rotację, dzięki temu nie odbija się ona od robota w momencie podania.
+	Urządzenie umożliwia robotowi kontrolowanie piłki podczas hamowania lub obracania się.
 	\begin{wrapfigure}{r}{0.42\textwidth}
 	\vspace{-20pt}
 	\begin{center}	
@@ -116,9 +115,9 @@
 	\caption{Znacznik umożliwiający systemowi wizyjnemu identyfikację robotów \newline(źródło: \texttt{www.robocup.org})\label{fig:znacznik}}
 	\vspace{-10pt}
 	\end{wrapfigure}
-	
-	Ostatnim ważnym elementem, w który musi być wyposażony robot, jest znacznik (rys.~\ref{fig:znacznik}).
-	Znajduje się on w takim miejscu, aby kamera umieszczona centralnie nad boiskiem mogła go zarejestrować (przykrywa robota od góry).
-	Znaczniki umożliwiają systemowi wizyjnemu określenie, do której drużyny należy dany robot, a także poprawne rozpoznanie jego pozycji, orientacji oraz prędkości
-	na boisku.
+	W regulaminie rozgrywek dopuszczono do stosowania jedynie urządzenia do dryblowania działające na piłkę siłą prostopadłą do podłoża rys.~\ref{fig:F180_budowa1} (we wcześniejszych latach
+	w użyciu były urządzenia, w których obracany walec był umieszczony pionowo).
 
+	Jak już wspomniano we wcześniejszym paragrafie, każdy uczestniczący w rozgrywce robot musi być wyposażony w znacznik (por. rys.~\ref{fig:znacznik}).
+	Umieszczony jest on w takim miejscu, aby kamery współpracujące z systemem \mbox{\emph{SSL-Vision}} mogły go zarejestrować (przykrywa robota od góry).
+	Dzięki znacznikom system wizyjny może określać przynależność robotów do poszczególnych drużyn, a także rozpoznawać ich pozycję, orientację na płaszczyźnie oraz prędkość.
