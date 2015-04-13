@@ -1,0 +1,1 @@
+Client that simulate behaviour of robocup ssl robots team.
